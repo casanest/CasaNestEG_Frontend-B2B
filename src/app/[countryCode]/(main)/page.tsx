@@ -31,11 +31,12 @@ export default async function Home(props: {
     Headline: "Welcome to Our Website!",
     Text: "We are excited to have you here. Discover our products and services, tailored just for you.",
     CTA: {
-      BtnLink: "/shop",
+      BtnLink: "/store",
       BtnText: "Shop Now"
     },
     Image: {
-      url: "https://images.pexels.com/photos/31346262/pexels-photo-31346262/free-photo-of-idyllic-view-of-amalfi-coastline-italy.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      // url: "https://images.pexels.com/photos/31346262/pexels-photo-31346262/free-photo-of-idyllic-view-of-amalfi-coastline-italy.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      url: "https://images.pexels.com/photos/5662862/pexels-photo-5662862.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
       alternativeText: "Placeholder Banner Image"
     }
   }
@@ -44,7 +45,6 @@ export default async function Home(props: {
   return (
     <>
       <Hero data={fakeData} />
-
       <div className="py-12">
         <ul className="flex flex-col gap-x-6">
           <FeaturedProducts collections={collections} region={region} />

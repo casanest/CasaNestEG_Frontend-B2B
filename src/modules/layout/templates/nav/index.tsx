@@ -13,21 +13,51 @@ export default async function Nav() {
     <div className="sticky top-0 inset-x-0 z-50 group">
       <header className="relative h-16 mx-auto border-b duration-200 bg-white border-ui-border-base">
         <nav className="content-container txt-xsmall-plus text-ui-fg-subtle flex items-center justify-between w-full h-full text-small-regular">
-          <div className="flex-1 basis-0 h-full flex items-center">
+          <div className="flex-1 basis-0 h-full flex items-center md:hidden">
             <div className="h-full">
               <SideMenu regions={regions} />
             </div>
           </div>
 
-          <div className="flex items-center h-full">
+
+
+          <div className="flex items-center h-full md:hidden">
             <LocalizedClientLink
               href="/"
-              className="txt-compact-xlarge-plus hover:text-ui-fg-base uppercase"
+              className="text-3xl font-extrabold tracking-widest uppercase bg-gradient-to-r from-yellow-400 to-yellow-500 bg-clip-text text-transparent hover:from-yellow-500 hover:to-yellow-400 transition-all duration-300 ease-in-out leading-none "
               data-testid="nav-store-link"
             >
               LA CASA
             </LocalizedClientLink>
+
+
           </div>
+
+          <div className="hidden md:flex flex-1 basis-0 h-full flex items-center">
+            <LocalizedClientLink
+              href="/"
+              className="text-3xl font-extrabold tracking-widest uppercase bg-gradient-to-r from-yellow-400 to-yellow-500 bg-clip-text text-transparent hover:from-yellow-500 hover:to-yellow-400 transition-all duration-300 ease-in-out leading-none"
+              data-testid="nav-store-link"
+            >
+              LA CASA
+            </LocalizedClientLink>
+
+
+          </div>
+
+          <div className="hidden md:flex items-center h-full gap-x-6">
+            <div>
+              <LocalizedClientLink href="/store" className="text-lg text-black hover:font-semibold">
+                Shop
+              </LocalizedClientLink>
+            </div>
+            <div>
+              <LocalizedClientLink href="/about" className="text-lg text-black hover:font-semibold">
+                About Us
+              </LocalizedClientLink>
+            </div>
+          </div>
+
 
           <div className="flex items-center gap-x-6 h-full flex-1 basis-0 justify-end">
             <div className="hidden small:flex items-center gap-x-6 h-full">
@@ -36,6 +66,23 @@ export default async function Nav() {
                 href="/account"
                 data-testid="nav-account-link"
               >
+                {/* user icon */}
+                {/* <span className="w-6 h-6">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </span> */}
                 Account
               </LocalizedClientLink>
             </div>
@@ -46,7 +93,25 @@ export default async function Nav() {
                   href="/cart"
                   data-testid="nav-cart-link"
                 >
-                  Cart (0)
+
+                  {/* <span className="w-6 h-6">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <circle cx="9" cy="21" r="1"></circle>
+                      <circle cx="20" cy="21" r="1"></circle>
+                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                  </span> */}
+                  Cart(0)
                 </LocalizedClientLink>
               }
             >

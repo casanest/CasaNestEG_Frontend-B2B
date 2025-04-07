@@ -31,11 +31,15 @@ const Hero = ({ data }: { data: HeroBanner }) => {
           {Headline}
         </Heading>
         <Box className="flex flex-col-reverse justify-between gap-8 medium:flex-row medium:items-center">
-          <Button asChild className="w-max">
-            <LocalizedClientLink href={CTA.BtnLink}>
+          <Button
+            asChild
+            className="w-max bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-black shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out rounded-full px-6 py-3"
+          >
+            <LocalizedClientLink href={CTA.BtnLink} className='text-lg text-black'>
               {CTA.BtnText}
             </LocalizedClientLink>
           </Button>
+
           <Text
             size="lg"
             className="max-w-full text-basic-primary medium:max-w-[410px] medium:text-end"
@@ -43,6 +47,7 @@ const Hero = ({ data }: { data: HeroBanner }) => {
             {text}
           </Text>
         </Box>
+
       </Container>
     </>
   )
