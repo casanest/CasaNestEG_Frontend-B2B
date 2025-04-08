@@ -14,6 +14,7 @@ import LineItemOptions from "@modules/common/components/line-item-options"
 import LineItemPrice from "@modules/common/components/line-item-price"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Thumbnail from "@modules/products/components/thumbnail"
+import { ShoppingCart } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { Fragment, useEffect, useRef, useState } from "react"
 
@@ -82,10 +83,17 @@ const CartDropdown = ({
       <Popover className="relative h-full">
         <PopoverButton className="h-full">
           <LocalizedClientLink
-            className="hover:text-ui-fg-base"
+            className="relative hover:text-ui-fg-base"
             href="/cart"
             data-testid="nav-cart-link"
-          >{`Cart (${totalItems})`}</LocalizedClientLink>
+          >
+            <ShoppingCart className="w-6 h-6 text-[#043364]" />
+            {totalItems > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full px-1.5">
+                {totalItems}
+              </span>
+            )}
+          </LocalizedClientLink>
         </PopoverButton>
         <Transition
           show={cartDropdownOpen}
@@ -193,7 +201,7 @@ const CartDropdown = ({
                   </div>
                   <LocalizedClientLink href="/cart" passHref>
                     <Button
-                      className="w-full"
+                      className="w-full bg-[#043364] "
                       size="large"
                       data-testid="go-to-cart-button"
                     >
@@ -203,22 +211,36 @@ const CartDropdown = ({
                 </div>
               </>
             ) : (
-              <div>
-                <div className="flex py-16 flex-col gap-y-4 items-center justify-center">
-                  <div className="bg-gray-900 text-small-regular flex items-center justify-center w-6 h-6 rounded-full text-white">
-                    <span>0</span>
-                  </div>
-                  <span>Your shopping bag is empty.</span>
-                  <div>
-                    <LocalizedClientLink href="/store">
-                      <>
-                        <span className="sr-only">Go to all products page</span>
-                        <Button onClick={close}>Explore products</Button>
-                      </>
-                    </LocalizedClientLink>
-                  </div>
+              <div className="flex flex-col items-center justify-center py-20 px-4 text-center bg-white rounded-xl shadow-sm">
+                {/* Icon Circle */}
+                <div className="flex items-center justify-center w-10 h-10 bg-[#043364] rounded-full text-white text-sm font-semibold animate-bounce">
+                  <span>0</span>
+                </div>
+
+                {/* Message */}
+                <h2 className="mt-6 text-xl font-semibold text-gray-800">
+                  Your shopping bag is empty
+                </h2>
+                <p className="mt-2 text-gray-600 text-sm max-w-sm">
+                  Looks like you haven't added anything yet. Explore our products and find something you like!
+                </p>
+
+                {/* Button */}
+                <div className="mt-6">
+                  <LocalizedClientLink href="/store">
+                    <>
+                      <span className="sr-only">Go to all products page</span>
+                      <Button
+                        className="bg-[#043364] text-white px-6 py-2 rounded-full shadow hover:bg-[#032850] transition"
+                        onClick={close}
+                      >
+                        Explore Products
+                      </Button>
+                    </>
+                  </LocalizedClientLink>
                 </div>
               </div>
+
             )}
           </PopoverPanel>
         </Transition>

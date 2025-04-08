@@ -1,23 +1,29 @@
 import { Heading, Text } from "@medusajs/ui"
-
 import InteractiveLink from "@modules/common/components/interactive-link"
+import { ShoppingCart } from "lucide-react" // or any icon library you're using
 
 const EmptyCartMessage = () => {
   return (
-    <div className="py-48 px-2 flex flex-col justify-center items-start" data-testid="empty-cart-message">
-      <Heading
-        level="h1"
-        className="flex flex-row text-3xl-regular gap-x-2 items-baseline"
-      >
-        Cart
+    <div
+      className="py-32 px-4 md:px-10 rounded-lg text-center flex flex-col justify-center items-center"
+      data-testid="empty-cart-message"
+    >
+      <ShoppingCart className="w-14 h-14 text-[#043364] mb-4" />
+
+      <Heading level="h1" className="text-3xl font-semibold text-[#043364]">
+        Your Cart is Empty
       </Heading>
-      <Text className="text-base-regular mt-4 mb-6 max-w-[32rem]">
-        You don&apos;t have anything in your cart. Let&apos;s change that, use
-        the link below to start browsing our products.
+
+      <Text className="text-base text-[#043364] my-4 max-w-lg">
+        You don&apos;t have anything in your cart yet. Let&apos;s change that!
+        Use the link below to start browsing our latest products.
       </Text>
-      <div>
-        <InteractiveLink href="/store">Explore products</InteractiveLink>
-      </div>
+
+      <InteractiveLink
+        href="/store"
+      >
+        Explore Products
+      </InteractiveLink>
     </div>
   )
 }

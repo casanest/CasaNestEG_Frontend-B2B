@@ -36,7 +36,7 @@ export default async function Home(props: {
     },
     Image: {
       // url: "https://images.pexels.com/photos/31346262/pexels-photo-31346262/free-photo-of-idyllic-view-of-amalfi-coastline-italy.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-      url: "https://images.pexels.com/photos/5662862/pexels-photo-5662862.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      url: "https://i.pinimg.com/736x/f0/27/c1/f027c19f65c5f05257a1ed0bb962c6a4.jpg",
       alternativeText: "Placeholder Banner Image"
     }
   }
