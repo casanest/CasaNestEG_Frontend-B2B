@@ -11,17 +11,17 @@ export default function TopNav() {
   }
 
   return (
-    <div className="w-full text-xs md:text-sm text-gray-500  shadow-md bg-[#043364] top-0 z-[60]">
-      <div className="flex items-center justify-between content-container mx-auto h-[36px]">
+    <div className="w-full text-xs md:text-sm text-gray-500 shadow-md bg-[#043364] top-0 z-[60] overflow-hidden">
+      <div className="flex flex-wrap items-center justify-between content-container mx-auto h-[36px] px-2 md:px-0">
         {/* Left: Help + Social Icons */}
         <div className="flex items-center gap-3 text-white font-medium">
-          <span className="">
+          <span className="truncate">
             Need help?{" "}
             <a href="tel:01095305663" className="hover:underline font-semibold">
               01095305663
             </a>
           </span>
-          <div className="hidden md:flex  flex items-center gap-2 text-base ml-2">
+          <div className="hidden md:flex items-center gap-2 text-base ml-2">
             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500">
               <FaFacebookF />
             </a>
@@ -38,8 +38,8 @@ export default function TopNav() {
         </div>
 
         {/* Right: Links + Language */}
-        <div className=" flex items-center gap-4 text-blue-500 font-medium">
-          <div className="hidden md:flex flex items-center gap-4 text-white">
+        <div className="flex items-center gap-4 text-blue-500 font-medium">
+          <div className="hidden md:flex items-center gap-4 text-white">
             <LocalizedClientLink
               href="/about"
               className="hover:text-blue-500 transition-colors duration-200 text-sm"
