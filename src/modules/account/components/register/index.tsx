@@ -20,7 +20,7 @@ const Register = ({ setCurrentView }: Props) => {
       className="max-w-sm flex flex-col items-center"
       data-testid="register-page"
     >
-      <h1 className="text-large-semi uppercase mb-6">
+      <h1 className="text-large-semi uppercase mb-6 text-[#043364]">
         Become a Medusa Store Member
       </h1>
       <p className="text-center text-base-regular text-ui-fg-base mb-4">
@@ -72,14 +72,14 @@ const Register = ({ setCurrentView }: Props) => {
           By creating an account, you agree to Medusa Store&apos;s{" "}
           <LocalizedClientLink
             href="/content/privacy-policy"
-            className="underline"
+            className="underline text-[#043364]"
           >
             Privacy Policy
           </LocalizedClientLink>{" "}
           and{" "}
           <LocalizedClientLink
             href="/content/terms-of-use"
-            className="underline"
+            className="underline text-[#043364]"
           >
             Terms of Use
           </LocalizedClientLink>
@@ -93,7 +93,7 @@ const Register = ({ setCurrentView }: Props) => {
         Already a member?{" "}
         <button
           onClick={() => setCurrentView(LOGIN_VIEW.SIGN_IN)}
-          className="underline"
+          className="underline text-[#043364]"
         >
           Sign in
         </button>

@@ -57,12 +57,12 @@ export default async function Nav() {
 
             <div className="hidden md:flex items-center h-full gap-x-6">
               <div>
-                <LocalizedClientLink href="/store" className="text-lg text-black hover:font-semibold">
+                <LocalizedClientLink href="/store" className="text-lg text-[#043364] hover:font-semibold ">
                   Shop
                 </LocalizedClientLink>
               </div>
               <div>
-                <LocalizedClientLink href="/about" className="text-lg text-black hover:font-semibold">
+                <LocalizedClientLink href="/about" className="text-lg text-[#043364] hover:font-semibold">
                   About Us
                 </LocalizedClientLink>
               </div>
@@ -77,22 +77,6 @@ export default async function Nav() {
                   data-testid="nav-account-link"
                 >
                   {/* user icon */}
-                  {/* <span className="w-6 h-6">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                </span> */}
                   <User className="w-6 h-6 text-[#043364]" />
                 </LocalizedClientLink>
               </div>

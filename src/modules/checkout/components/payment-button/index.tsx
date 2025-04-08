@@ -7,6 +7,7 @@ import { Button } from "@medusajs/ui"
 import { useElements, useStripe } from "@stripe/react-stripe-js"
 import React, { useState } from "react"
 import ErrorMessage from "../error-message"
+import confetti from "canvas-confetti"
 
 type PaymentButtonProps = {
   cart: HttpTypes.StoreCart
@@ -128,6 +129,7 @@ const StripePaymentButton = ({
           return onPaymentCompleted()
         }
 
+
         return
       })
   }
@@ -137,6 +139,7 @@ const StripePaymentButton = ({
       <Button
         disabled={disabled || notReady}
         onClick={handlePayment}
+
         size="large"
         isLoading={submitting}
         data-testid={dataTestId}
