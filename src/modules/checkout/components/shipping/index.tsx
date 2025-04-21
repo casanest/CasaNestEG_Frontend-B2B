@@ -150,7 +150,7 @@ const Shipping: React.FC<ShippingProps> = ({
 
   return (
     <div className="bg-white">
-      <div className="flex flex-row items-center justify-between mb-6">
+      <div className="text-[#043364] flex flex-row items-center justify-between mb-6">
         <Heading
           level="h2"
           className={clx(
@@ -362,7 +362,7 @@ const Shipping: React.FC<ShippingProps> = ({
             />
             <Button
               size="large"
-              className="mt"
+              className="mt bg-[#043364] hover:bg-blue-900 text-white"
               onClick={handleSubmit}
               isLoading={isLoading}
               disabled={!cart.shipping_methods?.[0]}

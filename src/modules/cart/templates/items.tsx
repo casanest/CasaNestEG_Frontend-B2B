@@ -17,20 +17,20 @@ const ItemsTemplate = ({ cart }: ItemsTemplateProps) => {
         <Heading className="text-[2rem] leading-[2.75rem]">Cart</Heading>
       </div>
       <Table>
-        <Table.Header className="border-t-0">
-          <Table.Row className="text-ui-fg-subtle txt-medium-plus">
-            <Table.HeaderCell className="!pl-0">Item</Table.HeaderCell>
+        <Table.Header className="border-t-0 text-[#043364]">
+          <Table.Row className="text-ui-fg-subtle txt-medium-plus text-[#043364]">
+            <Table.HeaderCell className="!pl-5 ">Item</Table.HeaderCell>
             <Table.HeaderCell></Table.HeaderCell>
             <Table.HeaderCell>Quantity</Table.HeaderCell>
             <Table.HeaderCell className="hidden small:table-cell">
               Price
             </Table.HeaderCell>
-            <Table.HeaderCell className="!pr-0 text-right">
+            <Table.HeaderCell className="!pr-5 text-right">
               Total
             </Table.HeaderCell>
           </Table.Row>
         </Table.Header>
-        <Table.Body>
+        <Table.Body className="border-t-0 bg-white text-ui-fg-base px-5">
           {items
             ? items
                 .sort((a, b) => {

@@ -20,7 +20,7 @@ const Review = ({ cart }: { cart: any }) => {
 
   return (
     <div className="bg-white">
-      <div className="flex flex-row items-center justify-between mb-6">
+      <div className="text-[#043364] flex flex-row items-center justify-between mb-6">
         <Heading
           level="h2"
           className={clx(

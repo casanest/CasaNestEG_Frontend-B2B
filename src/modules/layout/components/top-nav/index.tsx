@@ -12,7 +12,7 @@ export default function TopNav() {
 
   return (
     <div className="w-full text-xs md:text-sm text-gray-500 shadow-md bg-[#043364] top-0 z-[60] overflow-hidden">
-      <div className="flex flex-wrap items-center justify-between content-container mx-auto h-[36px] px-2 md:px-0">
+      <div className="flex flex-wrap items-center justify-between content-container mx-auto h-[36px]  ">
         {/* Left: Help + Social Icons */}
         <div className="flex items-center gap-3 text-white font-medium">
           <span className="truncate">

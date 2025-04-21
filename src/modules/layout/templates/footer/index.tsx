@@ -12,6 +12,7 @@ import { LaCasaLogo } from "@modules/common/icons/solace-logo"
 import { LinkedinIcon } from "@modules/common/icons/linkedin"
 import { FacebookIcon } from "@modules/common/icons/facebook"
 import { XLogoIcon } from "@modules/common/icons/twitter"
+import Image from "next/image"
 
 function SocialMedia({ className }: { className?: string }) {
   return (
@@ -42,7 +43,7 @@ export default async function Footer() {
   return (
     <Container
       as="footer"
-      className="mx-0 max-w-full border-t border-basic-primary bg-static px-0 py-0 small:px-0 small:py-0"
+      className="mx-0 max-w-full border-t border-basic-primary bg-static px-0 py-0 small:px-0 small:py-0 text-[#043364]"
     >
       <Container className="flex flex-col gap-6 text-static small:gap-12">
         <Box className="flex flex-col gap-8 small:gap-12 large:flex-row xl:gap-0">
@@ -50,9 +51,15 @@ export default async function Footer() {
           <Box className="flex flex-col justify-between xl:min-w-[437px]">
             <LocalizedClientLink
               href="/"
-              className="w-max cursor-pointer text-static"
+              className="text-3xl font-extrabold tracking-widest uppercase text-transparent bg-clip-text hover:from-blue-600 hover:to-blue-800 transition-all duration-300 ease-in-out leading-none"
+              data-testid="nav-store-link"
             >
-              <LaCasaLogo />
+              <Image
+                src="/lacasaLogo.png"
+                alt="Logo"
+                width={200}
+                height={200}
+              />
             </LocalizedClientLink>
             <SocialMedia className="hidden large:flex" />
           </Box>
@@ -155,11 +162,12 @@ export default async function Footer() {
         <Divider alignment="horizontal" variant="secondary" />
 
         {/* Bottom bar */}
-        <Box className="flex flex-wrap gap-6 gap-y-1 justify-between">
+        <Box className="flex flex-wrap gap-6 gap-y-1 justify-center items-center">
           <Text size="md" className="shrink-0 text-secondary">
             © {new Date().getFullYear()} LA CASA. All rights reserved.
           </Text>
         </Box>
+
       </Container>
     </Container>
   )

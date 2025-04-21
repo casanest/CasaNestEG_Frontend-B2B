@@ -139,7 +139,6 @@ const StripePaymentButton = ({
       <Button
         disabled={disabled || notReady}
         onClick={handlePayment}
-
         size="large"
         isLoading={submitting}
         data-testid={dataTestId}
@@ -182,6 +181,7 @@ const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
         onClick={handlePayment}
         size="large"
         data-testid="submit-order-button"
+        className="bg-[#043364] hover:bg-blue-900 text-white"
       >
         Place order
       </Button>

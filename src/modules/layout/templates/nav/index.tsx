@@ -16,7 +16,7 @@ export default async function Nav() {
   return (
     <>
       <TopNav />
-      <div className=" sticky top-0 inset-x-0 z-[50] group">
+      <div className=" sticky w-full top-0 inset-x-0 z-[50] group">
         <header className="relative h-16 mx-auto border-b duration-200 bg-white border-ui-border-base">
           <nav className="content-container txt-xsmall-plus text-ui-fg-subtle flex items-center justify-between w-full h-full text-small-regular">
             <div className="flex-1 basis-0 h-full flex items-center md:hidden">
@@ -115,7 +115,9 @@ export default async function Nav() {
             </div>
           </nav>
         </header>
-      <MegaMenu />
+      </div>
+      <div className="hidden md:block w-full bg-ui-bg-subtle border-b border-ui-border-base">
+        <MegaMenu />
       </div>
     </>
   )
