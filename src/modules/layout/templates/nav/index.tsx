@@ -114,10 +114,11 @@ export default async function Nav() {
               </Suspense>
             </div>
           </nav>
+
         </header>
+          <MegaMenu />
       </div>
       <div className="hidden md:block w-full bg-ui-bg-subtle border-b border-ui-border-base">
-        <MegaMenu />
       </div>
     </>
   )

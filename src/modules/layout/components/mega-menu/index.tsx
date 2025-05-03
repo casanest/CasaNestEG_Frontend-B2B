@@ -166,11 +166,87 @@ const categories: MenuItem[] = [
             },
         ],
         image: '/assets/mega-wearable.png', // Your uploaded image path
+    },
+    {
+        title: 'Smart Home',
+        columns: [
+            {
+                title: 'Smart Home',
+                subCategories: [
+                    { label: 'Smart Home', href: '#' },
+                    { label: 'Smart Home', href: '#' },
+                    { label: 'Smart Home', href: '#' },
+                    { label: 'Smart Home', href: '#' },
+                ],
+            },
+        ],
+        image: '/assets/mega-smart-home.png', // Your uploaded image path
+    },
+    {
+        title: 'Gaming',
+        columns: [
+            {
+                title: 'Gaming',
+                subCategories: [
+                    { label: 'Gaming', href: '#' },
+                    { label: 'Gaming', href: '#' },
+                    { label: 'Gaming', href: '#' },
+                    { label: 'Gaming', href: '#' },
+                ],
+            },
+        ],
+        image: '/assets/mega-gaming.png', // Your uploaded image path
+    },
+    {
+        title: 'Accessories',
+        columns: [
+            {
+                title: 'Accessories',
+                subCategories: [
+                    { label: 'Accessories', href: '#' },
+                    { label: 'Accessories', href: '#' },
+                    { label: 'Accessories', href: '#' },
+                    { label: 'Accessories', href: '#' },
+                ],
+            },
+        ],
+        image: '/assets/mega-accessories.png', // Your uploaded image path
+    },
+    {
+        title: 'Wearable Devices',
+        columns: [
+            {
+                title: 'Wearable Devices',
+                subCategories: [
+                    { label: 'Wearable Devices', href: '#' },
+                    { label: 'Wearable Devices', href: '#' },
+                    { label: 'Wearable Devices', href: '#' },
+                    { label: 'Wearable Devices', href: '#' },
+                ],
+            },
+        ],
+        image: '/assets/mega-wearable.png', // Your uploaded image path
+    },
+    {
+        title: 'Smart Home',
+        columns: [
+            {
+                title: 'Smart Home',
+                subCategories: [
+                    { label: 'Smart Home', href: '#' },
+                    { label: 'Smart Home', href: '#' },
+                    { label: 'Smart Home', href: '#' },
+                    { label: 'Smart Home', href: '#' },
+                ],
+            },
+        ],
+        image: '/assets/mega-smart-home.png', // Your uploaded image path
     }
+
 ]
 
 // Cutoff for visible categories before showing "More"
-const VISIBLE_CATEGORIES_COUNT = 4;
+const VISIBLE_CATEGORIES_COUNT = 9;
 
 const MegaMenu = () => {
     const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -180,18 +256,18 @@ const MegaMenu = () => {
     const hiddenCategories = categories.slice(VISIBLE_CATEGORIES_COUNT);
 
     return (
-        <nav className="hidden md:block bg-white shadow relative z-50 w-full">
-            <ul className="flex px-6 py-2 border-b text-sm font-medium text-[#043364]">
+        <nav className="hidden md:block bg-white shadow relative z-50 w-full ">
+            <ul className="flex px-6 border-b text-sm font-medium space-x-8 text-[#043364]">
                 {visibleCategories.map((menu, index) => (
                     <li
                         key={index}
-                        className="relative px-4 py-2 cursor-pointer hover:text-red-600"
+                        className=" px-4 py-4 cursor-pointer hover:text-red-600"
                         onMouseEnter={() => setOpenIndex(index)}
                         onMouseLeave={() => setOpenIndex(null)}
                     >
                         {menu.title}
                         {openIndex === index && (
-                            <div className="absolute left-0 top-full w-full max-w-screen-xl bg-white rounded-b-lg z-50 flex p-6 shadow-md mx-auto">
+                            <div className="absolute left-0 top-full bg-white right-0 rounded-b-lg z-50 flex p-6 shadow-md overflow-hidden">
                                 {/* Subcategories */}
                                 <div className="flex flex-1 gap-12">
                                     {menu.columns.map((col, colIdx) => (
@@ -232,7 +308,7 @@ const MegaMenu = () => {
                 {/* More Dropdown */}
                 {hiddenCategories.length > 0 && (
                     <li
-                        className="relative px-4 py-2 cursor-pointer hover:text-red-600"
+                        className="relative px-4 py-4 cursor-pointer hover:text-red-600"
                         onMouseEnter={() => setShowMore(true)}
                         onMouseLeave={() => {
                             setShowMore(false);
@@ -240,8 +316,8 @@ const MegaMenu = () => {
                         }}
                     >
                         More
-                        {showMore && (
-                            <ul className="absolute left-0 top-full w-56 bg-white shadow-lg rounded-md py-2 z-50">
+                        {/* {showMore && (
+                            <ul className="absolute left-0 top-full w-56 bg-white shadow-lg rounded-b-md border py-2 z-50">
                                 {hiddenCategories.map((menu, index) => (
                                     <li
                                         key={index}
@@ -250,9 +326,8 @@ const MegaMenu = () => {
                                         onMouseLeave={() => setOpenIndex(null)}
                                     >
                                         {menu.title}
-                                        {/* Optional nested submenu for "More" */}
                                         {openIndex === index + VISIBLE_CATEGORIES_COUNT && (
-                                            <div className="absolute left-full top-0 bg-white w-[1000px] p-6 rounded-md shadow-lg z-50 flex">
+                                            <div className="absolute left-full top-0 bg-white p-6 rounded-b-md shadow-lg border z-50 flex">
                                                 <div className="flex flex-1 gap-12">
                                                     {menu.columns.map((col, colIdx) => (
                                                         <div key={colIdx} className="min-w-[180px]">
@@ -289,7 +364,7 @@ const MegaMenu = () => {
                                     </li>
                                 ))}
                             </ul>
-                        )}
+                        )} */}
                     </li>
                 )}
             </ul>
