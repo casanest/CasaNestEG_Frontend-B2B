@@ -124,9 +124,8 @@ export default async function SearchResultsTemplate({
             /> */}
             <Suspense fallback={<SkeletonProductGrid />}>
               <PaginatedProducts
-                products={results}
+                productsIds={results.map((p) => p.id)}
                 page={pageNumber}
-                count={count}
                 countryCode={countryCode}
               />
             </Suspense>

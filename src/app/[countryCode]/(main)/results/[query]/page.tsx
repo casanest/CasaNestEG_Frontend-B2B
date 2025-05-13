@@ -30,7 +30,6 @@ export default async function SearchResults(props: Params) {
 
   const region = await getRegion(countryCode)
 
-  console.log('region', region)
 
   return (
     <SearchResultsTemplate
