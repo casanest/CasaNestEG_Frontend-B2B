@@ -126,7 +126,7 @@ export default async function SearchResultsTemplate({
               <PaginatedProducts
                 products={results}
                 page={pageNumber}
-                total={count}
+                count={count}
                 countryCode={countryCode}
               />
             </Suspense>
