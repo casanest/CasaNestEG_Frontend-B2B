@@ -85,6 +85,7 @@ export default function CategoryTemplate({
           }
         >
           <PaginatedProducts
+          products={category.products}
             sortBy={sort}
             page={pageNumber}
             categoryId={category.id}

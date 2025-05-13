@@ -86,6 +86,67 @@ export async function getOrSetCart(countryCode: string) {
 
   return cart
 }
+export async function addToCartCheapestVariant({
+  productHandle,
+  regionId,
+  countryCode,
+}: {
+  productHandle: string
+  regionId: string
+  countryCode: string
+}) {
+  if (!productHandle || !regionId || !countryCode) {
+    return {
+      success: false,
+      error: 'Missing required parameters',
+    }
+  }
+
+  try {
+    const detailedProduct = await getProductByHandle(productHandle, regionId)
+
+    if (!detailedProduct) {
+      return {
+        success: false,
+        error: 'Product not found',
+      }
+    }
+
+    // Find the cheapest variant
+    const cheapestVariant = detailedProduct.variants.reduce(
+      (cheapest, current) =>
+        cheapest.calculated_price.original_amount <
+          current.calculated_price.original_amount
+          ? cheapest
+          : current
+    )
+
+    if (cheapestVariant.inventory_quantity <= 0) {
+      return {
+        success: false,
+        error: 'Product is out of stock',
+      }
+    }
+
+    await addToCart({
+      variantId: cheapestVariant.id, // Add the cheapest variant to the cart
+      quantity: 1,
+      countryCode,
+    })
+
+    return {
+      success: true,
+      message: 'Product added to cart',
+    }
+  } catch (error) {
+    console.error('Error adding product to cart:', error)
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'An unknown error occurred',
+    }
+  }
+}
 
 export async function updateCart(data: HttpTypes.StoreUpdateCart) {
   const cartId = await getCartId()
