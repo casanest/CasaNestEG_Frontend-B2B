@@ -1,9 +1,10 @@
 'use client';
 
-import Link from 'next/link';
 import { useState } from 'react';
 import Image from 'next/image';
+import LocalizedClientLink from '@modules/common/components/localized-client-link'
 
+// أنواع البيانات
 type SubCategory = { label: string; href: string };
 type Category = {
     title: string;
@@ -16,279 +17,70 @@ type MenuItem = {
     image?: string;
 };
 
-const categories: MenuItem[] = [
-    {
-        title: 'Mobile, Tablet',
-        columns: [
-            {
-                title: 'Mobile Accessories',
-                subCategories: [
-                    { label: 'Power Bank', href: '#' },
-                    { label: 'Mobile Covers', href: '#' },
-                    { label: 'Selfie Sticks', href: '#' },
-                    { label: 'Ring Lights', href: '#' },
-                    { label: 'Earphones', href: '#' },
-                    { label: 'Chargers', href: '#' },
-                    { label: 'Mobile Cables', href: '#' },
-                    { label: 'Mobile Holder', href: '#' },
-                    { label: 'Styli', href: '#' },
-                ],
-            },
-            {
-                title: 'Wearable Devices',
-                subCategories: [
-                    { label: 'Smart watches', href: '#' },
-                    { label: 'Band', href: '#' },
-                    { label: 'Strap', href: '#' },
-                ],
-            },
-            {
-                title: 'Phones & Tablet',
-                subCategories: [
-                    { label: 'Smart Phone', href: '#' },
-                    { label: 'Tablet', href: '#' },
-                    { label: 'Cell Phones (Buttons)', href: '#' },
-                ],
-            },
-        ],
-        image: '/assets/mega-mobile.png', // Your uploaded image path
-    },
-    {
-        title: 'Computers & Laptops',
-        columns: [
-            {
-                title: 'Computers',
-                subCategories: [
-                    { label: 'Desktop', href: '#' },
-                    { label: 'Laptop', href: '#' },
-                    { label: 'Gaming', href: '#' },
-                    { label: 'Tablet', href: '#' },
-                ],
-            },
-            {
-                title: 'Computer Accessories',
-                subCategories: [
-                    { label: 'Mouse', href: '#' },
-                    { label: 'Keyboard', href: '#' },
-                    { label: 'Webcam', href: '#' },
-                    { label: 'Headset', href: '#' },
-                    { label: 'Microphone', href: '#' },
-                    { label: 'Speakers', href: '#' },
-                    { label: 'Printer', href: '#' },
-                    { label: 'Scanner', href: '#' },
-                ],
-            },
-            {
-                title: 'Networking',
-                subCategories: [
-                    { label: 'Router', href: '#' },
-                    { label: 'Switches', href: '#' },
-                    { label: 'Modem', href: '#' },
-                ],
-            },
-            {
-                title: 'Storage Devices',
-                subCategories: [
-                    { label: 'External Hard Drive', href: '#' },
-                    { label: 'USB Flash Drive', href: '#' },
-                    { label: 'Memory Card', href: '#' },
-                ],
-            },
-            {
-                title: 'Software',
-                subCategories: [
-                    { label: 'Operating System', href: '#' },
-                    { label: 'Antivirus', href: '#' },
-                    { label: 'Office Suite', href: '#' },
-                    { label: 'Graphic Design', href: '#' },
-                    { label: 'Video Editing', href: '#' },
-                ]
-            }
-        ],
-        image: '/assets/mega-computer.png', // Your uploaded image path
-    },
-    {
-        title: 'Smart Home',
-        columns: [
-            {
-                title: 'Smart Home',
-                subCategories: [
-                    { label: 'Smart Home', href: '#' },
-                    { label: 'Smart Home', href: '#' },
-                    { label: 'Smart Home', href: '#' },
-                    { label: 'Smart Home', href: '#' },
-                ],
-            },
-        ],
-        image: '/assets/mega-smart-home.png', // Your uploaded image path
-    },
-    {
-        title: 'Gaming',
-        columns: [
-            {
-                title: 'Gaming',
-                subCategories: [
-                    { label: 'Gaming', href: '#' },
-                    { label: 'Gaming', href: '#' },
-                    { label: 'Gaming', href: '#' },
-                    { label: 'Gaming', href: '#' },
-                ],
-            },
-        ],
-        image: '/assets/mega-gaming.png', // Your uploaded image path
-    },
-    {
-        title: 'Accessories',
-        columns: [
-            {
-                title: 'Accessories',
-                subCategories: [
-                    { label: 'Accessories', href: '#' },
-                    { label: 'Accessories', href: '#' },
-                    { label: 'Accessories', href: '#' },
-                    { label: 'Accessories', href: '#' },
-                ],
-            },
-        ],
-        image: '/assets/mega-accessories.png', // Your uploaded image path
-    },
-    {
-        title: 'Wearable Devices',
-        columns: [
-            {
-                title: 'Wearable Devices',
-                subCategories: [
-                    { label: 'Wearable Devices', href: '#' },
-                    { label: 'Wearable Devices', href: '#' },
-                    { label: 'Wearable Devices', href: '#' },
-                    { label: 'Wearable Devices', href: '#' },
-                ],
-            },
-        ],
-        image: '/assets/mega-wearable.png', // Your uploaded image path
-    },
-    {
-        title: 'Smart Home',
-        columns: [
-            {
-                title: 'Smart Home',
-                subCategories: [
-                    { label: 'Smart Home', href: '#' },
-                    { label: 'Smart Home', href: '#' },
-                    { label: 'Smart Home', href: '#' },
-                    { label: 'Smart Home', href: '#' },
-                ],
-            },
-        ],
-        image: '/assets/mega-smart-home.png', // Your uploaded image path
-    },
-    {
-        title: 'Gaming',
-        columns: [
-            {
-                title: 'Gaming',
-                subCategories: [
-                    { label: 'Gaming', href: '#' },
-                    { label: 'Gaming', href: '#' },
-                    { label: 'Gaming', href: '#' },
-                    { label: 'Gaming', href: '#' },
-                ],
-            },
-        ],
-        image: '/assets/mega-gaming.png', // Your uploaded image path
-    },
-    {
-        title: 'Accessories',
-        columns: [
-            {
-                title: 'Accessories',
-                subCategories: [
-                    { label: 'Accessories', href: '#' },
-                    { label: 'Accessories', href: '#' },
-                    { label: 'Accessories', href: '#' },
-                    { label: 'Accessories', href: '#' },
-                ],
-            },
-        ],
-        image: '/assets/mega-accessories.png', // Your uploaded image path
-    },
-    {
-        title: 'Wearable Devices',
-        columns: [
-            {
-                title: 'Wearable Devices',
-                subCategories: [
-                    { label: 'Wearable Devices', href: '#' },
-                    { label: 'Wearable Devices', href: '#' },
-                    { label: 'Wearable Devices', href: '#' },
-                    { label: 'Wearable Devices', href: '#' },
-                ],
-            },
-        ],
-        image: '/assets/mega-wearable.png', // Your uploaded image path
-    },
-    {
-        title: 'Smart Home',
-        columns: [
-            {
-                title: 'Smart Home',
-                subCategories: [
-                    { label: 'Smart Home', href: '#' },
-                    { label: 'Smart Home', href: '#' },
-                    { label: 'Smart Home', href: '#' },
-                    { label: 'Smart Home', href: '#' },
-                ],
-            },
-        ],
-        image: '/assets/mega-smart-home.png', // Your uploaded image path
-    }
+// 🧠 تحويل بيانات navigation القادمة من backend إلى MenuItem[]
+const mapNavigationToMegaMenu = (navItem: any): MenuItem[] => {
+    if (!navItem || !Array.isArray(navItem.category_children)) return [];
 
-]
+    return navItem.category_children.map((cat: any) => ({
+        title: cat.name,
+        columns: [
+            {
+                title: cat.name,
+                subCategories: (cat.category_children || []).map((child: any) => ({
+                    label: child.name,
+                    href: child.handle.startsWith('/') ? child.handle : `/categories/${child.handle}`,
+                })),
+            },
+        ],
+        image: undefined, // يمكنك تعديل هذا لاحقًا لو أردت إضافة صور
+    }));
+};
 
-// Cutoff for visible categories before showing "More"
+// عدد التصنيفات التي تظهر قبل "More"
 const VISIBLE_CATEGORIES_COUNT = 9;
 
-const MegaMenu = () => {
+const MegaMenu = ({ navigation }: { navigation: any[] }) => {
+    const menuItems = mapNavigationToMegaMenu(navigation[0]);
+
     const [openIndex, setOpenIndex] = useState<number | null>(null);
     const [showMore, setShowMore] = useState(false);
 
-    const visibleCategories = categories.slice(0, VISIBLE_CATEGORIES_COUNT);
-    const hiddenCategories = categories.slice(VISIBLE_CATEGORIES_COUNT);
+    const visibleCategories = menuItems.slice(0, VISIBLE_CATEGORIES_COUNT);
+    const hiddenCategories = menuItems.slice(VISIBLE_CATEGORIES_COUNT);
 
     return (
-        <nav className="hidden md:block bg-white shadow relative z-50 w-full ">
-            <ul className="flex px-6 border-b text-sm font-medium space-x-8 text-[#043364]">
+        <nav className="hidden md:block bg-white shadow relative z-10 w-full">
+            <ul className="flex px-6  bg-gray-50 border-b text-sm font-medium space-x-8 text-gray-700">
                 {visibleCategories.map((menu, index) => (
                     <li
                         key={index}
-                        className=" px-4 py-4 cursor-pointer hover:text-red-600"
+                        className="px-4 py-4 cursor-pointer  hover:text-[#043364] hover:bg-white hover:border-b-2 border-[#043364] "
                         onMouseEnter={() => setOpenIndex(index)}
                         onMouseLeave={() => setOpenIndex(null)}
                     >
                         {menu.title}
                         {openIndex === index && (
                             <div className="absolute left-0 top-full bg-white right-0 rounded-b-lg z-50 flex p-6 shadow-md overflow-hidden">
-                                {/* Subcategories */}
                                 <div className="flex flex-1 gap-12">
                                     {menu.columns.map((col, colIdx) => (
                                         <div key={colIdx} className="min-w-[180px]">
                                             <h4 className="text-md font-semibold text-[#043364] mb-2">
-                                                {col.title} <span className="ml-1">›</span>
+                                                <LocalizedClientLink href={`/categories/${col.title.toLowerCase()}`} >
+                                                    {col.title} <span className="ml-1">›</span>
+                                                </LocalizedClientLink>
                                             </h4>
                                             <ul className="text-sm text-gray-700 space-y-1">
                                                 {col.subCategories.map((sub, subIdx) => (
                                                     <li key={subIdx}>
-                                                        <Link href={sub.href} className="hover:text-blue-600 transition">
+                                                        <LocalizedClientLink href={sub.href} className="hover:text-blue-600 transition">
                                                             {sub.label}
-                                                        </Link>
+                                                        </LocalizedClientLink>
                                                     </li>
                                                 ))}
                                             </ul>
                                         </div>
                                     ))}
                                 </div>
-
-                                {/* Right Image */}
                                 {menu.image && (
                                     <div className="flex-shrink-0 ml-6">
                                         <Image
@@ -316,12 +108,12 @@ const MegaMenu = () => {
                         }}
                     >
                         More
-                        {/* {showMore && (
+                        {showMore && (
                             <ul className="absolute left-0 top-full w-56 bg-white shadow-lg rounded-b-md border py-2 z-50">
                                 {hiddenCategories.map((menu, index) => (
                                     <li
                                         key={index}
-                                        className="px-4 py-2 hover:bg-gray-100 hover:text-red-600"
+                                        className="px-4 py-2 hover:bg-gray-100 hover:text-red-600 relative"
                                         onMouseEnter={() => setOpenIndex(index + VISIBLE_CATEGORIES_COUNT)}
                                         onMouseLeave={() => setOpenIndex(null)}
                                     >
@@ -337,26 +129,24 @@ const MegaMenu = () => {
                                                             <ul className="text-sm text-gray-700 space-y-1">
                                                                 {col.subCategories.map((sub, subIdx) => (
                                                                     <li key={subIdx}>
-                                                                        <Link href={sub.href} className="hover:text-blue-600 transition">
+                                                                        <LocalizedClientLink href={sub.href} className="hover:text-blue-600 transition">
                                                                             {sub.label}
-                                                                        </Link>
+                                                                        </LocalizedClientLink>
                                                                     </li>
                                                                 ))}
                                                             </ul>
                                                         </div>
                                                     ))}
                                                 </div>
-
                                                 {menu.image && (
                                                     <div className="flex-shrink-0 ml-6">
                                                         <Image
                                                             src={menu.image}
                                                             alt="Promo"
-                                                            width={400}
-                                                            height={260}
-                                                            className="object-contain rounded-lg"
+                                                            width={300}
+                                                            height={200}
+                                                            className="object-contain"
                                                         />
-
                                                     </div>
                                                 )}
                                             </div>
@@ -364,7 +154,7 @@ const MegaMenu = () => {
                                     </li>
                                 ))}
                             </ul>
-                        )} */}
+                        )}
                     </li>
                 )}
             </ul>

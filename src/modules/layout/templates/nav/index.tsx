@@ -9,37 +9,55 @@ import TopNav from "@modules/layout/components/top-nav"
 import Image from "next/image"
 import { User } from "lucide-react"
 import MegaMenu from "@modules/layout/components/mega-menu"
-
+import NavContent from "./nav-content"
+import { Container } from "@modules/common/components/container"
+import { listCategories } from "@lib/data/categories"
+import { listCollections } from "@lib/data/collections"
+import { createNavigation } from "@lib/constants"
+import { listProducts } from "@lib/data/products"
 export default async function Nav() {
   const regions = await listRegions().then((regions: StoreRegion[]) => regions)
+  const productCategories = await listCategories()
+  const products = await listProducts({
+    queryParams: {
+      limit: 4,
+      offset: 0,
+      region_id: regions[0]?.id,
+      // is_giftcard: false,
+    },
+    // countryCode: regions[0]?.countries[0]?.iso_2,
+    regionId: regions[0]?.id,
+  })
+  const { products: recommendedProducts } = products.response
+  console.log("recommendedProducts", recommendedProducts)
+  const { collections } = await listCollections()
+  console.log("collections", collections)
+  const navigation = createNavigation(productCategories, collections)
 
   return (
     <>
       <TopNav />
-      <div className=" sticky w-full top-0 inset-x-0 z-[50] group">
+      <div className=" sticky w-full top-0 inset-x-0 z-[40] group">
         <header className="relative h-16 mx-auto border-b duration-200 bg-white border-ui-border-base">
-          <nav className="content-container txt-xsmall-plus text-ui-fg-subtle flex items-center justify-between w-full h-full text-small-regular">
-            <div className="flex-1 basis-0 h-full flex items-center md:hidden">
-              <div className="h-full">
-                <SideMenu regions={regions} />
-              </div>
+          <nav className="content-container txt-xsmall-plus text-ui-fg-subtle flex items-center justify-between w-full h-full text-small-regular">            <div className="flex-1 basis-0 h-full flex items-center md:hidden">
+            <div className="flex items-center ">
+              <SideMenu productCategories={productCategories} collections={collections} />
             </div>
-            <div className="flex items-center h-full md:hidden">
+            <div className="flex items-center  md:hidden">
               <LocalizedClientLink
                 href="/"
-                className="text-3xl font-extrabold tracking-widest uppercase text-transparent bg-clip-text hover:from-blue-600 hover:to-blue-800 transition-all duration-300 ease-in-out leading-none"
+                className="text-4xl font-extrabold tracking-widest uppercase text-transparent bg-clip-text hover:from-blue-600 hover:to-blue-800 transition-all duration-300 ease-in-out leading-none"
                 data-testid="nav-store-link"
               >
                 <Image
                   src="/lacasaLogo.png"
                   alt="Logo"
-                  width={100}
-                  height={100}
+                  width={150}
+                  height={150}
                 />
               </LocalizedClientLink>
-
             </div>
-
+          </div>
             <div className="hidden md:flex flex-1 basis-0 h-full flex items-center">
               <LocalizedClientLink
                 href="/"
@@ -53,25 +71,15 @@ export default async function Nav() {
                   height={150}
                 />
               </LocalizedClientLink>
-
             </div>
-
-            <div className="hidden md:flex items-center h-full gap-x-6">
-              <div>
-                <LocalizedClientLink href="/store" className="text-lg text-[#043364] hover:font-semibold ">
-                  Shop
-                </LocalizedClientLink>
-              </div>
-              <div>
-                <LocalizedClientLink href="/about" className="text-lg text-[#043364] hover:font-semibold">
-                  About Us
-                </LocalizedClientLink>
-              </div>
+            <div className=" flex-1 basis-0 h-full flex items-center">
             </div>
-
 
             <div className="flex items-center gap-x-6 h-full flex-1 basis-0 justify-end">
-              <div className="hidden small:flex items-center gap-x-6 h-full">
+              <div className="flex items-center gap-x-6 h-full">
+                <NavContent products={recommendedProducts} />
+              </div>
+              <div className="flex items-center gap-x-6 h-full">
                 <LocalizedClientLink
                   className="hover:text-ui-fg-base"
                   href="/account"
@@ -116,7 +124,7 @@ export default async function Nav() {
           </nav>
 
         </header>
-          <MegaMenu />
+        <MegaMenu navigation={navigation} />
       </div>
       <div className="hidden md:block w-full bg-ui-bg-subtle border-b border-ui-border-base">
       </div>

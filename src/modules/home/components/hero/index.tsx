@@ -6,12 +6,12 @@ import { Container } from '@modules/common/components/container'
 import { Heading } from '@modules/common/components/heading'
 import LocalizedClientLink from '@modules/common/components/localized-client-link'
 import { Text } from '@modules/common/components/text'
-import { HeroBanner } from 'types/strapi'
+// import { HeroBanner } from 'types/strapi'
 
 //       url: "https://images.pexels.com/photos/31346262/pexels-photo-31346262/free-photo-of-idyllic-view-of-amalfi-coastline-italy.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
 
 
-const Hero = ({ data }: { data: HeroBanner }) => {
+const Hero = ({ data }: { data: any }) => {
   const { Headline, Text: text, CTA, Image: bannerImage } = data
 
   return (

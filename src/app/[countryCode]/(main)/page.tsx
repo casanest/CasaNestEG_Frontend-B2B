@@ -44,7 +44,7 @@ export default async function Home(props: {
 
   return (
     <>
-      <Hero data={fakeData} />
+      {/* <Hero data={fakeData} /> */}
       <div className="py-12">
         <ul className="flex flex-col gap-x-6">
           <FeaturedProducts collections={collections} region={region} />

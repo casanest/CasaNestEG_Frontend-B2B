@@ -1,5 +1,6 @@
 import React from "react"
 import { CreditCard } from "@medusajs/icons"
+import { StoreCollection, StoreProductCategory } from '@medusajs/types'
 
 import Ideal from "@modules/common/icons/ideal"
 import Bancontact from "@modules/common/icons/bancontact"
@@ -66,3 +67,44 @@ export const noDivisionCurrencies = [
   "xdr",
   "xau",
 ]
+
+export const createNavigation = (
+  productCategories: StoreProductCategory[],
+  collections?: StoreCollection[]
+) => [
+    {
+      name: 'Shop',
+      handle: '/store',
+      category_children: productCategories
+        .filter((category) => !category.parent_category)
+        .map((category) => ({
+          name: category.name,
+          type: 'parent_category',
+          handle: `/categories/${category.handle}`,
+          category_children: category.category_children.map((subCategory) => ({
+            name: subCategory.name,
+            handle: `/categories/${subCategory.handle}`,
+            icon: null,
+            category_children: null,
+          })),
+        })),
+    },
+    {
+      name: 'Collections',
+      handle: '/store',
+      category_children: !collections
+        ? null
+        : collections.map((collection) => ({
+          name: collection.title,
+          type: 'collection',
+          handle: `/collections/${collection.handle}`,
+          handle_id: collection.handle,
+          category_children: null,
+        })),
+    },
+    {
+      name: 'About Us',
+      handle: '/about-us',
+      category_children: null,
+    },
+  ]
