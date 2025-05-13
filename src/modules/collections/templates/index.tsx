@@ -35,6 +35,7 @@ export default function CollectionTemplate({
           }
         >
           <PaginatedProducts
+          products={collection?.products}
             sortBy={sort}
             page={pageNumber}
             collectionId={collection.id}
