@@ -2586,6 +2586,13 @@
   resolved "https://registry.npmjs.org/@types/react-dom/-/react-dom-18.3.6.tgz"
   integrity sha512-nf22//wEbKXusP6E9pfOCDwFdHAX4u172eaJI4YkDRQEZiorm6KfYnSC2SWLDMVWUOWPERmJnN0ujeAfTBLvrw==
 
+"@types/react-image-magnify@^2.7.4":
+  version "2.7.4"
+  resolved "https://registry.npmjs.org/@types/react-image-magnify/-/react-image-magnify-2.7.4.tgz"
+  integrity sha512-EzKC1eNf9OIO5JwvAoE9+XHcuJXeWqV9gutvO7Ae7L2rtQVZ3zd+08AREGI9mUZT5sQ4KHydjD1D5Bzwe/sJuA==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-instantsearch-core@*":
   version "6.26.10"
   resolved "https://registry.npmjs.org/@types/react-instantsearch-core/-/react-instantsearch-core-6.26.10.tgz"
