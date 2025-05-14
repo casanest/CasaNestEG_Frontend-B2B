@@ -124,9 +124,9 @@ export default async function Nav() {
           </nav>
 
         </header>
-        <MegaMenu navigation={navigation} />
       </div>
       <div className="hidden md:block w-full bg-ui-bg-subtle border-b border-ui-border-base">
+        <MegaMenu  navigation={navigation} />
       </div>
     </>
   )
