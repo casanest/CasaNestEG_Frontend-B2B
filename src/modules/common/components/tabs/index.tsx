@@ -4,7 +4,7 @@ import { cn } from '@lib/util/cn'
 import * as RadixTabs from '@radix-ui/react-tabs'
 
 export const Tabs = forwardRef<
-  React.ElementRef<typeof RadixTabs.Root>,
+  React.ElementRef<typeof RadixTabs.Root>, 
   React.ComponentPropsWithoutRef<typeof RadixTabs.Root>
 >(({ className, children, ...props }, ref) => (
   <RadixTabs.Root ref={ref} className={cn('w-full', className)} {...props}>
