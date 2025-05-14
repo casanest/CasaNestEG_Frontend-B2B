@@ -110,3 +110,11 @@
     @apply text-[32px] leading-[44px] font-semibold;
   }
 }
+/* globals.css or relevant stylesheet */
+.magnify-center {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  /* Prevent interaction if not needed */
+}
