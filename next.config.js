@@ -1,11 +1,16 @@
 const checkEnvVariables = require("./check-env-variables")
+const nextIntl = require("next-intl/plugin")
+
 
 checkEnvVariables()
 
 /**
  * @type {import('next').NextConfig}
  */
-const nextConfig = {
+
+const withNextIntl = nextIntl("./src/lib/i18n/request-config.js")
+
+const configOpts = {
   reactStrictMode: true,
   logging: {
     fetches: {
@@ -36,17 +41,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "medusa-server-testing.s3.us-east-1.amazonaws.com",
       },
-       // Add via.placeholder.com to the allowed domains
-      {
-        protocol: 'https',
-        hostname: 'images.pexels.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'i.pinimg.com',
-      },
     ],
   },
 }
+
+const nextConfig = withNextIntl(configOpts)
 
 module.exports = nextConfig
