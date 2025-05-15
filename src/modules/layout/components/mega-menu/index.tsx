@@ -49,8 +49,8 @@ const MegaMenu = ({ navigation }: { navigation: any[] }) => {
     const hiddenCategories = menuItems.slice(VISIBLE_CATEGORIES_COUNT);
 
     return (
-        <nav className="hidden md:block bg-white shadow relative z-10 w-full">
-            <ul className="flex px-6  bg-gray-50 border-b text-sm font-medium space-x-8 text-gray-700">
+        <nav className="hidden md:block bg-white  relative z-10 w-full">
+            <ul className="flex px-6  bg-[#f5f8fc] border-b text-sm font-medium space-x-8 text-gray-700">
                 {visibleCategories.map((menu, index) => (
                     <li
                         key={index}

@@ -27,6 +27,7 @@
     "algoliasearch": "^5.24.0",
     "canvas-confetti": "^1.9.3",
     "embla-carousel-react": "^8.6.0",
+    "framer-motion": "^12.11.3",
     "lodash": "^4.17.21",
     "lucide-react": "^0.487.0",
     "next": "15.0.3",

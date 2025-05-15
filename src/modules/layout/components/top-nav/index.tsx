@@ -41,7 +41,7 @@ export default function TopNav() {
         <div className="flex items-center gap-4 text-blue-500 font-medium">
           <div className="hidden md:flex items-center gap-4 text-white">
             <LocalizedClientLink
-              href="/about"
+              href="/about-us"
               className="hover:text-blue-500 transition-colors duration-200 text-sm"
             >
               About Us
