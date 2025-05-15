@@ -60,9 +60,9 @@ export const ControlledSearchBox = ({
   }
 
   return (
-    <div className="relative w-full bg-primary large:mx-auto large:w-max">
+    <div className="relative w-full bg-[#f5f8fc] md:mx-auto large:w-max md:align-center md:justify-center md:items-center md:rounded">
       <form action="" noValidate onSubmit={handleSubmit} onReset={handleReset}>
-        <Box className="flex w-full items-center justify-between border border-action-primary large:relative large:w-[400px] xl:w-[600px] ">
+        <Box className="flex w-full items-center justify-between border border-action-primary md:rounded-md large:relative large:w-[400px] xl:w-[600px] ">
           <Input
             ref={inputRef}
             data-testid="search-input"
@@ -74,7 +74,7 @@ export const ControlledSearchBox = ({
             type="search"
             value={query}
             onChange={handleChange}
-            className="w-full !border-none bg-transparent pr-5 text-lg placeholder:text-basic-primary focus:outline-none py-2 px-5"
+            className="w-full !border-none bg-transparent pr-5 text-lg placeholder:text-basic-primary focus:outline-none py-2 px-5 md:rounded"
           />
           {query && (
             <button

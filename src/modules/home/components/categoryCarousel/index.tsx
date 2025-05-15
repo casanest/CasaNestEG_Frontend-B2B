@@ -12,58 +12,57 @@ const categories = [
         title: "Built-in Oven",
         image: "/logoLacasa.jpg",
         link: "/categories/ovens",
-        bgColor: "bg-gradient-to-tr from-blue-400 to-blue-700",
+        bgColor: "bg-gradient-to-tr from-blue-600 to-[#043364]",
     },
     {
         title: "Range Hood",
         image: "/images/hood.png",
         link: "/categories/hoods",
-        bgColor: "bg-gradient-to-tr from-indigo-500 to-blue-900",
+        bgColor: "bg-gradient-to-tr from-blue-700 to-[#043364]",
     },
     {
         title: "Built-in Cooker",
         image: "/images/cooker.png",
         link: "/categories/cookers",
-        bgColor: "bg-gradient-to-tr from-teal-500 to-cyan-700",
+        bgColor: "bg-gradient-to-tr from-blue-500 to-[#043364]",
     },
     {
         title: "Refrigerators",
         image: "/images/fridge.png",
         link: "/categories/refrigerators",
-        bgColor: "bg-gradient-to-tr from-sky-500 to-blue-800",
+        bgColor: "bg-gradient-to-tr from-cyan-500 to-[#043364]",
     },
     {
         title: "Washing Machines",
         image: "/images/washer.png",
         link: "/categories/washers",
-        bgColor: "bg-gradient-to-tr from-violet-500 to-purple-700",
+        bgColor: "bg-gradient-to-tr from-indigo-500 to-[#043364]",
     },
     {
         title: "Microwave Ovens",
         image: "/images/microwave.png",
         link: "/categories/microwaves",
-        bgColor: "bg-gradient-to-tr from-pink-500 to-rose-700",
+        bgColor: "bg-gradient-to-tr from-sky-500 to-[#043364]",
     },
     {
         title: "Dishwashers",
         image: "/images/dishwasher.png",
         link: "/categories/dishwashers",
-        bgColor: "bg-gradient-to-tr from-emerald-500 to-green-700",
+        bgColor: "bg-gradient-to-tr from-teal-500 to-[#043364]",
     },
     {
         title: "Coffee Machines",
         image: "/images/coffee.png",
         link: "/categories/coffee-machines",
-        bgColor: "bg-gradient-to-tr from-yellow-500 to-orange-700",
+        bgColor: "bg-gradient-to-tr from-amber-500 to-[#043364]",
     },
     {
         title: "Wine Coolers",
         image: "/images/wine-cooler.png",
         link: "/categories/wine-coolers",
-        bgColor: "bg-gradient-to-tr from-red-500 to-orange-700",
+        bgColor: "bg-gradient-to-tr from-violet-500 to-[#043364]",
     },
 ];
-
 const CategoryCarousel = () => {
     return (
         <section className="relative bg-white py-12 sm:py-16">

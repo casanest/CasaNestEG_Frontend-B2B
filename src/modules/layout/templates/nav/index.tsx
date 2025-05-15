@@ -76,7 +76,7 @@ export default async function Nav() {
             </div>
 
             <div className="flex items-center gap-x-6 h-full flex-1 basis-0 justify-end">
-              <div className="flex items-center gap-x-6 h-full">
+              <div className="flex items-center h-full">
                 <NavContent products={recommendedProducts} />
               </div>
               <div className="flex items-center gap-x-6 h-full">
@@ -124,9 +124,9 @@ export default async function Nav() {
           </nav>
 
         </header>
-      </div>
-      <div className="hidden md:block w-full bg-ui-bg-subtle border-b border-ui-border-base">
-        <MegaMenu  navigation={navigation} />
+        <div className="hidden sticky md:block w-full bg-ui-bg-subtle border-b border-ui-border-base">
+          <MegaMenu navigation={navigation} />
+        </div>
       </div>
     </>
   )

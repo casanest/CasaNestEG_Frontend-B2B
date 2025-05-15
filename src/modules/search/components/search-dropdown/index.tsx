@@ -21,7 +21,7 @@ export default function SearchDropdown({
   countryCode: string
   recommendedProducts: StoreProduct[]
 }) {
-  const [delayClose, setDelayClose] = useState(null)
+  const [delayClose, setDelayClose] = useState<ReturnType<typeof setTimeout> | null>(null)
   const handleMouseEnter = () => {
     if (delayClose) {
       clearTimeout(delayClose)
@@ -47,7 +47,7 @@ export default function SearchDropdown({
     <div
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="hidden bg-white w-full h-full large:absolute large:left-1/2 large:top-4 large:z-30 large:block large:-translate-x-1/2 z-200"
+      className="bg-white w-full h-full large:absolute large:left-1/2 large:top-4 large:z-30 large:block large:-translate-x-1/2 z-200 pt-2"
     >
       <ControlledSearchBox
         countryCode={countryCode}

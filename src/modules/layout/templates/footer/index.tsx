@@ -46,7 +46,7 @@ export default async function Footer() {
       className="mx-0 max-w-full border-t border-basic-primary bg-static px-0 py-0 small:px-0 small:py-0 text-[#043364]"
     >
       <Container className="flex flex-col gap-6 text-static small:gap-12">
-        <Box className="flex flex-col gap-8 small:gap-12 large:flex-row xl:gap-0">
+        <Box className="flex flex-col gap-8 small:gap-12 md:flex-row xl:gap-0">
           {/* Logo and Social Icons */}
           <Box className="flex flex-col justify-between xl:min-w-[437px]">
             <LocalizedClientLink
@@ -63,6 +63,7 @@ export default async function Footer() {
             </LocalizedClientLink>
             <SocialMedia className="hidden large:flex" />
           </Box>
+
 
           {/* Categories, Collections, and Links */}
           <Box className=" shrink grow gap-10 small:flex xl:gap-16">
@@ -85,7 +86,7 @@ export default async function Footer() {
                       <li key={c.id} className="flex flex-col gap-2 text-static">
                         <LocalizedClientLink
                           href={`/categories/${c.handle}`}
-                          className={cn("w-max hover:text-static hover:font-semibold text-static ", children )}
+                          className={cn("w-max hover:text-static hover:font-semibold text-static ", children)}
                           data-testid={formatNameForTestId(`${c.name}-link`)}
                         >
                           {c.name}
@@ -111,10 +112,11 @@ export default async function Footer() {
                 </ul>
               </Box>
             )}
+            
 
             {collections && collections.length > 0 && (
-              <Box className="flex flex-col gap-y-2">
-                <Heading as="h3" className="mb-2 text-lg">
+              <Box className="flex flex-col gap-y-2  mt-5">
+                <Heading as="h3" className="mb-2 text-lg font-semibold">
                   Collections
                 </Heading>
                 <ul className="grid grid-cols-1 gap-2 text-static">
@@ -132,8 +134,9 @@ export default async function Footer() {
                 </ul>
               </Box>
             )}
+            
 
-            <Box className="flex flex-col gap-y-2">
+            <Box className="flex flex-col gap-y-2 mt-5">
               <Heading as="h3" className="mb-2 text-lg font-semibold">Company</Heading>
               <ul className="grid grid-cols-1 gap-y-2 text-static">
                 <li>

@@ -19,7 +19,7 @@ export default function NavContent(props: any) {
   console.log("props.products", props.products)
 
   return (
-    <Box className="flex h-full w-full items-center justify-between px-4 bg-white">
+    <Box className="flex h-full w-full items-center justify-between  bg-white">
       {isSearchOpen && (
         <SearchDropdown
           setIsOpen={setIsSearchOpen}
@@ -48,8 +48,9 @@ export default function NavContent(props: any) {
       {!isSearchOpen && (
         <Button
           variant="icon"
+          color={"#fff"}
           withIcon
-          className="ml-auto h-auto !p-2 xsmall:!p-3.5"
+          className="ml-auto h-auto !p-2 xsmall:!p-3.5 text-[#043364] text-2xl font-extrabold"
           onClick={() => setIsSearchOpen(true)}
           data-testid="search-button"
         >
