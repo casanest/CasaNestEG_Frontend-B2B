@@ -5,6 +5,7 @@ import Hero from "@modules/home/components/hero"
 import { listCollections } from "@lib/data/collections"
 import { getRegion } from "@lib/data/regions"
 import HeroCarousel from "@modules/home/components/heroCarousel"
+import CategoryCarousel from "@modules/home/components/categoryCarousel"
 
 export const metadata: Metadata = {
   title: "LA CASA",
@@ -47,6 +48,7 @@ export default async function Home(props: {
     <>
       {/* <Hero data={fakeData} /> */}
       <HeroCarousel />
+      <CategoryCarousel />
       <div className="py-12">
         <ul className="flex flex-col gap-x-6">
           <FeaturedProducts collections={collections} region={region} />

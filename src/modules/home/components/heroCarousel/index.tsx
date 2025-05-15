@@ -47,7 +47,7 @@ const HeroCarousel = () => {
     const [emblaRef, emblaApi] = useEmblaCarousel({
         loop: true,
         skipSnaps: false,
-        duration: 20
+        duration: 30
     });
 
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -143,7 +143,7 @@ const HeroCarousel = () => {
 
     return (
         <section
-            className="relative w-full h-[70vh] min-h-[500px] max-h-[800px] overflow-hidden"
+            className="relative w-full h-[50vh] md:h-[80vh] min-h-[400px] max-h-[500px] overflow-hidden"
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
             onTouchStart={handleTouchStart}
@@ -218,7 +218,7 @@ const HeroCarousel = () => {
 
             {/* Navigation Arrows */}
             <motion.div
-                className={`absolute top-1/2 w-full flex justify-between px-4 z-10`}
+                className={`hidden sm:flex sm:absolute top-1/2 w-full flex justify-between px-4 z-10`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: isHovering ? 1 : 0.2 }}
                 transition={{ duration: 0.3 }}
