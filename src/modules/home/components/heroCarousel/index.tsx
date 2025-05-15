@@ -143,7 +143,7 @@ const HeroCarousel = () => {
 
     return (
         <section
-            className="relative w-full h-[50vh] md:h-[80vh] min-h-[400px] max-h-[500px] overflow-hidden"
+            className="relative w-full h-[40vh] md:h-[80vh] min-h-[400px] max-h-[500px] overflow-hidden"
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
             onTouchStart={handleTouchStart}
