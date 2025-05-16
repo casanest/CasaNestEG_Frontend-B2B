@@ -39,9 +39,9 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
     }, [emblaApi])
 
     return (
-        <div className="flex flex-col items-center gap-6 w-full max-w-5xl mx-auto px-4 relative max-h-[calc(100vh-5rem)]">
+        <div className="flex flex-col items-center gap-6 w-full max-w-5xl mx-auto px-4 relative">
             {/* Zoomed Image */}
-            <div className="w-full relative aspect-[4/5] border rounded-lg overflow-hidden max-w-lg shadow-md">
+            <div className="w-full max-w-lg aspect-[4/5] relative border rounded-lg overflow-hidden shadow-md mb-4">
                 {selectedImage?.url && (
                     <ReactImageMagnify
                         {...{
@@ -56,7 +56,7 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
                                 height: 1600,
                             },
                             enlargedImageContainerDimensions: {
-                                width: "250%",
+                                width: "200%",
                                 height: "200%",
                             },
                             enlargedImagePosition: "over",
@@ -68,14 +68,14 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
             {/* Thumbnails with navigation */}
             <div className="relative w-50 px-4">
                 <div className="overflow-hidden" ref={emblaRef}>
-                    <div className="flex gap-3 py-2 px-10">
+                    <div className="flex gap-3 py-2 px-12">
                         {images.map((img, index) => (
                             <button
                                 key={img.id}
                                 onClick={() => scrollTo(index)}
                                 aria-label={`Select image ${index + 1}`}
                                 className={clsx(
-                                    "relative w-14 h-14 md:w-16 md:h-16 rounded-md overflow-hidden border-2 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400",
+                                    "relative w-16 h-16 rounded-md overflow-hidden border-2 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400",
                                     selectedIndex === index
                                         ? "border-blue-500 ring-2 ring-blue-300"
                                         : "border-gray-200 hover:border-blue-400"
@@ -100,14 +100,14 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
                     <button
                         onClick={scrollPrev}
                         aria-label="Scroll to previous image"
-                        className="absolute left-1 top-1/2 -translate-y-1/2 bg-white shadow-md p-1.5 rounded-full z-10 hover:bg-gray-100 transition"
+                        className="absolute left-0 top-1/2 -translate-y-1/2 bg-white shadow-md p-2 rounded-full z-10 hover:bg-gray-100 transition"
                     >
                         <ChevronLeft className="w-5 h-5" />
                     </button>
                     <button
                         onClick={scrollNext}
                         aria-label="Scroll to next image"
-                        className="absolute right-1 top-1/2 -translate-y-1/2 bg-white shadow-md p-1.5 rounded-full z-10 hover:bg-gray-100 transition"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 bg-white shadow-md p-2 rounded-full z-10 hover:bg-gray-100 transition"
                     >
                         <ChevronRight className="w-5 h-5" />
                     </button>
@@ -118,6 +118,7 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
 }
 
 export default ImageGallery
+
 
 // "use client"
 // import { useState, useCallback, useEffect, useRef } from "react"
