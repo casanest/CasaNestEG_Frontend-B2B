@@ -10,58 +10,53 @@ import { motion } from "framer-motion";
 const categories = [
     {
         title: "Built-in Oven",
-        image: "/logoLacasa.jpg",
+        image: "/cat1.png",
         link: "/categories/ovens",
-        bgColor: "bg-gradient-to-tr from-blue-600 to-[#043364]",
+        bgColor: "bg-gradient-to-tr from-teal-500 to-[#043364]",
     },
     {
         title: "Range Hood",
-        image: "/images/hood.png",
+        image: "/cat2.png",
         link: "/categories/hoods",
-        bgColor: "bg-gradient-to-tr from-blue-700 to-[#043364]",
+        bgColor: "bg-gradient-to-tr from-teal-500 to-[#043364]",
     },
     {
         title: "Built-in Cooker",
-        image: "/images/cooker.png",
+        image: "/cat3.png",
         link: "/categories/cookers",
-        bgColor: "bg-gradient-to-tr from-blue-500 to-[#043364]",
+        bgColor: "bg-gradient-to-tr from-teal-500 to-[#043364]",
     },
     {
         title: "Refrigerators",
-        image: "/images/fridge.png",
+        image: "/cat4.png",
         link: "/categories/refrigerators",
-        bgColor: "bg-gradient-to-tr from-cyan-500 to-[#043364]",
+        bgColor: "bg-gradient-to-tr from-teal-500 to-[#043364]",
     },
     {
         title: "Washing Machines",
-        image: "/images/washer.png",
+        image: "/cat5.png",
         link: "/categories/washers",
-        bgColor: "bg-gradient-to-tr from-indigo-500 to-[#043364]",
+        bgColor: "bg-gradient-to-tr from-teal-500 to-[#043364]",
     },
     {
         title: "Microwave Ovens",
-        image: "/images/microwave.png",
+        image: "/cat6.png",
         link: "/categories/microwaves",
-        bgColor: "bg-gradient-to-tr from-sky-500 to-[#043364]",
+        bgColor: "bg-gradient-to-tr from-teal-500 to-[#043364]",
     },
     {
         title: "Dishwashers",
-        image: "/images/dishwasher.png",
+        image: "/cat7.png",
         link: "/categories/dishwashers",
         bgColor: "bg-gradient-to-tr from-teal-500 to-[#043364]",
     },
     {
         title: "Coffee Machines",
-        image: "/images/coffee.png",
+        image: "/cat8.png",
         link: "/categories/coffee-machines",
-        bgColor: "bg-gradient-to-tr from-amber-500 to-[#043364]",
+        bgColor: "bg-gradient-to-tr from-teal-500 to-[#043364]",
     },
-    {
-        title: "Wine Coolers",
-        image: "/images/wine-cooler.png",
-        link: "/categories/wine-coolers",
-        bgColor: "bg-gradient-to-tr from-violet-500 to-[#043364]",
-    },
+ 
 ];
 const CategoryCarousel = () => {
     return (
@@ -104,19 +99,23 @@ const CategoryCarousel = () => {
                                 <Link href={cat.link} passHref>
                                     <motion.div
                                         whileHover={{ y: -5 }}
-                                        className="flex flex-col items-center cursor-pointer h-full  py-4"
+                                        className="flex flex-col items-center cursor-pointer h-full  py-10"
                                     >
                                         {/* Image container with half-circle text at bottom */}
                                         <div className="relative w-full h-40 sm:h-48 md:h-56 flex justify-center">
                                             {/* Product image */}
-                                            <div className={`relative w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 rounded-full ${cat.bgColor} flex items-center justify-center`}>
+                                            <div className={`relative w-32 h-32 sm:w-36 sm:h-36 md:w-50 md:h-50 rounded-full ${cat.bgColor} flex items-center justify-center mb-4`}>
                                                 <motion.img
                                                     src={cat.image}
                                                     alt={cat.title}
-                                                    className="w-3/4 h-full object-contain z-10 transition-transform duration-150 ease-in-out"
+                                                    className="w-full h-full object-contain z-10 transition-transform duration-150 ease-in-out mb-[70px]" 
                                                     whileHover={{ scale: 1.1 }}
                                                     animate={{ y: [-5, 5, -5] }}
                                                     transition={{ duration: 1, repeat: Infinity, ease: "easeOut" }}
+                                                    loading="lazy"
+                                                   // increase width and height for better visibility
+                                                    width={200}
+                                                    height={200}
                                                 />
                                             </div>
 

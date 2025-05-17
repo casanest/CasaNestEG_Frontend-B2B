@@ -18,7 +18,7 @@ type Slide = {
 
 const slides: Slide[] = [
     {
-        image: '/hero/fridge-1.jpg',
+        image: '/home1.jpg',
         alt: 'Refrigerator filled with fresh fruits and juices',
         link: '/categories/refrigerators',
         title: 'Keep Your Summer Cool',
@@ -26,7 +26,7 @@ const slides: Slide[] = [
         cta: 'Shop Now'
     },
     {
-        image: '/hero/fridge-2.jpg',
+        image: '/home2.jpg',
         alt: 'Modern refrigerator with golden accents',
         link: '/categories/refrigerators?type=premium',
         title: 'Smart Cooling Technology',
@@ -34,7 +34,7 @@ const slides: Slide[] = [
         cta: 'View Premium'
     },
     {
-        image: '/hero/kitchen-1.jpg',
+        image: '/home3.jpg',
         alt: 'Elegant kitchen with modern appliances',
         link: '/categories/kitchen',
         title: 'Complete Kitchen Solutions',
