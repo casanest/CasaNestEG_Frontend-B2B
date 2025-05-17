@@ -2,10 +2,13 @@
 
 import { motion } from "framer-motion"
 import { Sparkles, Users, TrendingUp, Home } from "lucide-react"
+import { useLocale } from "next-intl";
 
 const primary = "#043364"
 
 export default function AboutUs() {
+  const locale = useLocale();
+  const isRTL = locale === "ar";
   return (
     <main className="min-h-screen bg-white text-gray-800 px-4 sm:px-8 py-16 flex flex-col items-center">
       {/* Header */}
@@ -16,10 +19,10 @@ export default function AboutUs() {
         className="text-center max-w-3xl"
       >
         <h1 className="text-4xl sm:text-5xl font-extrabold mb-4 flex items-center justify-center gap-2" style={{ color: primary }}>
-          <Sparkles size={36} color={primary} /> About LA CASA
+          <Sparkles size={36} color={primary} /> {locale === "ar" ? "من نحن" : "About LA CASA"}
         </h1>
         <p className="text-base sm:text-lg text-gray-600">
-          We blend comfort, design, and practicality into lifestyle products that elevate every home.
+          {locale === "ar" ? "نحن نوفر منتجات لسلامة وتصميم ومناقشة مميزة في مجال المنزل لتزيين حياتكم بالقدرة الذاتية." : "We blend comfort, design, and practicality into lifestyle products that elevate every home."}
         </p>
       </motion.div>
 
@@ -27,14 +30,13 @@ export default function AboutUs() {
       <section className="mt-16 grid gap-8 md:grid-cols-2 max-w-6xl w-full">
         {[
           {
-            title: "Who We Are",
-            desc:
-              "Founded with a passion for lifestyle innovation, LA CASA brings you hand-picked products that add value and elegance to your daily life.",
+            title: locale === "ar" ? "من نحن" : "Who We Are",
+            desc: locale === "ar" ? "نحن مجموعة من المصممين والمهندسين الذين يسعون لتقديم منتجات منزلية مبتكرة تجمع بين الجمال والوظيفة." : "We are a team of designers and engineers dedicated to creating innovative home products that blend beauty and functionality.",
           },
           {
-            title: "Our Mission",
+            title: locale === "ar" ? "مهمتنا" : "Our Mission",
             desc:
-              "To create delightful experiences through smart, functional, and beautiful home solutions tailored to modern living.",
+              locale === "ar" ? "تقديم منتجات منزلية ذات جودة عالية وتصميم مبتكر تلبي احتياجات عملائنا وتضفي لمسة من الأناقة على منازلهم." : "To provide high-quality home products with innovative designs that meet our customers' needs and add a touch of elegance to their homes.",
           },
         ].map((item, i) => (
           <motion.div
@@ -61,7 +63,7 @@ export default function AboutUs() {
       >
         <h3 className="text-2xl font-semibold mb-2" style={{ color: primary }}>Our Vision</h3>
         <p className="text-gray-700 text-sm sm:text-base">
-          To be the trusted companion in every home—where design meets function and elegance meets daily life.
+          {locale === "ar" ? "أن نكون الخيار الأول في عالم المنتجات المنزلية من خلال تقديم تصاميم مبتكرة وجودة عالية." : "To be the first choice in the world of home products by offering innovative designs and high quality."}
         </p>
       </motion.div>
 
@@ -73,12 +75,15 @@ export default function AboutUs() {
         viewport={{ once: true }}
         className="mt-24 max-w-6xl w-full"
       >
-        <h2 className="text-3xl font-bold text-center mb-10" style={{ color: primary }}>Our Core Values</h2>
+        <h2 className="text-3xl font-bold text-center mb-10" style={{ color: primary }}>{locale === "ar" ? "قيمنا" : "Our Core Values"}</h2>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 text-center">
           {[
-            { icon: <Home size={32} color={primary} />, title: "Quality", desc: "Premium materials and craftsmanship you can trust." },
-            { icon: <TrendingUp size={32} color={primary} />, title: "Innovation", desc: "We stay ahead of trends to bring you cutting-edge design." },
-            { icon: <Users size={32} color={primary} />, title: "Customer Focus", desc: "You’re at the heart of everything we do." },
+            { icon: <Home size={32} color={primary} />, title: locale === "ar" ? "جودة عالية" : "High Quality", desc: locale === "ar" ? "نحن نؤمن بأن الجودة هي أساس كل منتج." : "We believe quality is the foundation of every product." },
+            { icon: <TrendingUp size={32} color={primary} />, title: locale === "ar" ? "الابتكار" : "Innovation", desc: locale === "ar" ? "نسعى دائمًا لتقديم تصاميم جديدة ومبتكرة." : "We always strive to offer new and innovative designs." },
+            { icon: <Sparkles size={32} color={primary} />, title: locale === "ar" ? "الاستدامة" : "Sustainability", desc: locale === "ar" ? "نلتزم بتقديم منتجات صديقة للبيئة." : "We are committed to providing eco-friendly products." },
+            { icon: <Users size={32} color={primary} />, title: locale === "ar" ? "العمل الجماعي" : "Teamwork", desc: locale === "ar" ? "نؤمن بقوة العمل الجماعي لتحقيق أهدافنا." : "We believe in the power of teamwork to achieve our goals." },
+            { icon: <Sparkles size={32} color={primary} />, title: locale === "ar" ? "الصحة والاستقامة" : "Honesty and Integrity", desc: locale === "ar" ? "نحن نؤمن بأهمية الصدق والنزاهة في كل ما نقوم به." : "We believe in the importance of honesty and integrity in everything we do." },
+            { icon: <Users size={32} color={primary} />, title: locale === "ar" ? "المؤسسة" : "The Heart", desc: locale === "ar" ? "نحن نؤمن بأن كل منتج يحمل لمسة من القلب." : "We believe that every product carries a touch of heart." },
           ].map((val, i) => (
             <div key={i} className="bg-gray-50 rounded-2xl p-6 sm:p-8 shadow-sm">
               <div className="flex justify-center mb-3">{val.icon}</div>
@@ -97,16 +102,24 @@ export default function AboutUs() {
         viewport={{ once: true }}
         className="mt-24 max-w-6xl w-full"
       >
-        <h2 className="text-3xl font-bold text-center mb-10" style={{ color: primary }}>Meet the Team</h2>
+        <h2 className="text-3xl font-bold text-center mb-10" style={{ color: primary }}>
+          {locale === "ar" ? "أعضاء الفريق" : "Meet the Team"}
+        </h2>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {["Alex", "Nora", "Youssef"].map((name, i) => (
+          {(locale === "ar"
+            ? ["أليكس", "نورا", "يوسف"]
+            : ["Alex", "Nora", "Youssef"]
+          ).map((name, i) => (
             <div key={i} className="bg-white rounded-2xl p-6 text-center shadow-md">
               <div className="w-20 h-20 mx-auto rounded-full bg-blue-100 mb-4" />
               <h4 className="font-semibold text-lg" style={{ color: primary }}>{name}</h4>
-              <p className="text-sm text-gray-500">Creative Director</p>
+              <p className="text-sm text-gray-500">
+                {locale === "ar" ? "المسمى الوظيفي" : "Job Title"}
+              </p>
             </div>
           ))}
         </div>
+
       </motion.section>
 
       {/* Stats */}
@@ -117,11 +130,27 @@ export default function AboutUs() {
         viewport={{ once: true }}
         className="mt-24 max-w-5xl w-full grid grid-cols-1 sm:grid-cols-3 text-center gap-6"
       >
-        {[
-          { number: "10K+", label: "Happy Customers" },
-          { number: "150+", label: "Products Available" },
-          { number: "4.9/5", label: "Customer Rating" },
-        ].map((stat, i) => (
+        {(locale === "ar"
+          ? [
+            {
+              number: "10K+",
+              label: "عملاء سعداء",
+            },
+            {
+              number: "150+",
+              label: "منتجات متاحة",
+            },
+            {
+              number: "4.9/5",
+              label: "تقييم العملاء",
+            }
+          ]
+          : [
+            { number: "10K+", label: "Happy Customers" },
+            { number: "150+", label: "Products Available" },
+            { number: "4.9/5", label: "Customer Rating" },
+          ]
+        ).map((stat, i) => (
           <div key={i} className="bg-[#f0f5ff] p-6 rounded-xl shadow-sm">
             <h3 className="text-3xl font-bold" style={{ color: primary }}>{stat.number}</h3>
             <p className="text-gray-700">{stat.label}</p>

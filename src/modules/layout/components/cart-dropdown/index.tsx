@@ -20,8 +20,10 @@ import { Fragment, useEffect, useRef, useState } from "react"
 
 const CartDropdown = ({
   cart: cartState,
+  locale
 }: {
-  cart?: HttpTypes.StoreCart | null
+  cart?: HttpTypes.StoreCart | null,
+  locale: string
 }) => {
   const [activeTimer, setActiveTimer] = useState<NodeJS.Timer | undefined>(
     undefined
@@ -78,7 +80,8 @@ const CartDropdown = ({
     <div
       className="h-full z-50"
       onMouseEnter={openAndCancel}
-      onMouseLeave={close}
+      onMouseLeave={close} b
+      dir={locale === "ar" ? "rtl" : "ltr"}
     >
       <Popover className="relative h-full">
         <PopoverButton className="h-full">
@@ -107,15 +110,16 @@ const CartDropdown = ({
         >
           <PopoverPanel
             static
-            className="hidden small:block absolute top-[calc(100%+1px)] right-0 bg-white border-x border-b border-gray-200 w-[420px] text-ui-fg-base"
+            className={`hidden small:block absolute top-[calc(100%+1px)] ${locale === "en" ? "right-0" : "left-0"} bg-white border-x border-b border-gray-200 w-[420px] text-ui-fg-base`}
             data-testid="nav-cart-dropdown"
+            dir={locale === "ar" ? "rtl" : "ltr"}
           >
             <div className="p-4 flex items-center justify-center">
-              <h3 className="text-large-semi text-[#043364]">Cart</h3>
+              <h3 className="text-large-semi text-[#043364]">{locale === "en" ? "Cart" : "سلة التسوق"}</h3>
             </div>
             {cartState && cartState.items?.length ? (
               <>
-                <div className="overflow-y-scroll max-h-[402px] px-4 grid grid-cols-1 gap-y-8 no-scrollbar p-px">
+                <div dir={locale === "ar" ? "rtl" : "ltr"} className="overflow-y-scroll max-h-[402px] px-4 grid grid-cols-1 gap-y-8 no-scrollbar p-px">
                   {cartState.items
                     .sort((a, b) => {
                       return (a.created_at ?? "") > (b.created_at ?? "")
@@ -138,7 +142,7 @@ const CartDropdown = ({
                             size="square"
                           />
                         </LocalizedClientLink>
-                        <div className="flex flex-col justify-between flex-1">
+                        <div dir={locale === "ar" ? "rtl" : "ltr"} className="flex flex-col justify-between flex-1">
                           <div className="flex flex-col flex-1">
                             <div className="flex items-start justify-between">
                               <div className="flex flex-col overflow-ellipsis whitespace-nowrap mr-4 w-[180px]">
@@ -159,7 +163,7 @@ const CartDropdown = ({
                                   data-testid="cart-item-quantity"
                                   data-value={item.quantity}
                                 >
-                                  Quantity: {item.quantity}
+                                  {locale === "en" ? "Quantity" : "الكمية"} {item.quantity}
                                 </span>
                               </div>
                               <div className="flex justify-end">
@@ -176,7 +180,7 @@ const CartDropdown = ({
                             className="mt-1"
                             data-testid="cart-item-remove-button"
                           >
-                            Remove
+                            {locale === "en" ? "Remove" : "إزالة"}
                           </DeleteButton>
                         </div>
                       </div>
@@ -185,7 +189,7 @@ const CartDropdown = ({
                 <div className="p-4 flex flex-col gap-y-4 text-small-regular">
                   <div className="flex items-center justify-between">
                     <span className="text-ui-fg-base font-semibold">
-                      Subtotal{" "}
+                      {locale === "en" ? "Subtotal" : "المجموع"}{" "}
                       <span className="font-normal">(excl. taxes)</span>
                     </span>
                     <span
@@ -205,7 +209,7 @@ const CartDropdown = ({
                       size="large"
                       data-testid="go-to-cart-button"
                     >
-                      Go to cart
+                      {locale === "en" ? "Go to Cart" : "اذهب إلى السلة"}
                     </Button>
                   </LocalizedClientLink>
                 </div>
@@ -219,22 +223,25 @@ const CartDropdown = ({
 
                 {/* Message */}
                 <h2 className="mt-6 text-xl font-semibold text-gray-800">
-                  Your shopping bag is empty
+                  {locale === "en" ? "Your cart is empty" : "سلة التسوق فارغة"}
                 </h2>
                 <p className="mt-2 text-gray-600 text-sm max-w-sm">
-                  Looks like you haven't added anything yet. Explore our products and find something you like!
+                  {locale === "en"
+                    ? "Looks like you haven't added anything to your cart yet."
+                    : "يبدو أنك لم تضف أي شيء إلى سلة التسوق الخاصة بك بعد."
+                  }
                 </p>
 
                 {/* Button */}
                 <div className="mt-6">
                   <LocalizedClientLink href="/store">
                     <>
-                      <span className="sr-only">Go to all products page</span>
+                        <span className="sr-only">{locale === "en" ? "Go to all products page" : "اذهب إلى صفحة جميع المنتجات"}</span>
                       <Button
                         className="bg-[#043364] text-white px-6 py-2 rounded-full shadow hover:bg-[#032850] transition"
                         onClick={close}
                       >
-                        Explore Products
+                        {locale === "en" ? "Go to Products" : "اذهب إلى المنتجات"}
                       </Button>
                     </>
                   </LocalizedClientLink>

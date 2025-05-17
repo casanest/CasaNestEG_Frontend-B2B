@@ -1,24 +1,25 @@
 import { Metadata } from "next"
 
 import FeaturedProducts from "@modules/home/components/featured-products"
-import Hero from "@modules/home/components/hero"
-import { listCollections } from "@lib/data/collections"
-import { getRegion } from "@lib/data/regions"
 import HeroCarousel from "@modules/home/components/heroCarousel"
 import CategoryCarousel from "@modules/home/components/categoryCarousel"
 
+import { listCollections } from "@lib/data/collections"
+import { getRegion } from "@lib/data/regions"
+import StoreFeatures from "@modules/home/components/storeFeatures"
+import PromotionBanner from "@modules/home/components/promotionBanner"
+
 export const metadata: Metadata = {
   title: "LA CASA",
-  description:
-    "Welcome to LA CASA, your one-stop shop for all your life needs!",
+  description: "Welcome to LA CASA, your one-stop shop for all your life needs!",
 }
 
-export default async function Home(props: {
-  params: Promise<{ countryCode: string }>
+export default async function Home({
+  params,
+}: {
+  params: { countryCode: string; locale: string }
 }) {
-  const params = await props.params
-
-  const { countryCode } = params
+  const { countryCode, locale } = params
 
   const region = await getRegion(countryCode)
 
@@ -29,30 +30,25 @@ export default async function Home(props: {
   if (!collections || !region) {
     return null
   }
-  const fakeData = {
-    Headline: "Welcome to Our Website!",
-    Text: "We are excited to have you here. Discover our products and services, tailored just for you.",
-    CTA: {
-      BtnLink: "/store",
-      BtnText: "Shop Now"
-    },
-    Image: {
-      // url: "https://images.pexels.com/photos/31346262/pexels-photo-31346262/free-photo-of-idyllic-view-of-amalfi-coastline-italy.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-      url: "https://i.pinimg.com/736x/f0/27/c1/f027c19f65c5f05257a1ed0bb962c6a4.jpg",
-      alternativeText: "Placeholder Banner Image"
-    }
-  }
 
+  const dir = locale === "ar" ? "rtl" : "ltr"
 
   return (
     <>
-      {/* <Hero data={fakeData} /> */}
-      <HeroCarousel />
-      <CategoryCarousel />
-      <div className="py-12">
-        <ul className="flex flex-col gap-x-6">
-          <FeaturedProducts collections={collections} region={region} />
+      <div className="" dir={dir}>
+        <div className="md:content-container md:mx-auto" dir={dir}>
+          <HeroCarousel locale={locale} />
+        </div>
+        <div className="" dir={dir}>
+          <CategoryCarousel locale={locale} />
+        </div>
+        <PromotionBanner locale={locale} />
+        <ul className="flex flex-col gap-y-12 py-5">
+          <FeaturedProducts collections={collections} region={region} locale={locale} />
         </ul>
+      </div>
+      <div className="" dir={dir}>
+        <StoreFeatures locale={locale} />
       </div>
     </>
   )

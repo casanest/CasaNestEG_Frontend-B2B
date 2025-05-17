@@ -16,40 +16,42 @@ type Slide = {
     cta: string;
 };
 
-const slides: Slide[] = [
-    {
-        image: '/home1.jpg',
-        alt: 'Refrigerator filled with fresh fruits and juices',
-        link: '/categories/refrigerators',
-        title: 'Keep Your Summer Cool',
-        subtitle: 'Discover our premium refrigerator collection',
-        cta: 'Shop Now'
-    },
-    {
-        image: '/home2.jpg',
-        alt: 'Modern refrigerator with golden accents',
-        link: '/categories/refrigerators?type=premium',
-        title: 'Smart Cooling Technology',
-        subtitle: 'Energy efficient with smart features',
-        cta: 'View Premium'
-    },
-    {
-        image: '/home3.jpg',
-        alt: 'Elegant kitchen with modern appliances',
-        link: '/categories/kitchen',
-        title: 'Complete Kitchen Solutions',
-        subtitle: 'Everything for your modern kitchen',
-        cta: 'Explore Collection'
-    },
-];
 
-const HeroCarousel = () => {
+const HeroCarousel = ({ locale }: { locale: string }) => {
+    const isRTL = locale === "ar";
     const [emblaRef, emblaApi] = useEmblaCarousel({
         loop: true,
         skipSnaps: false,
-        duration: 30
+        duration: 30,
+        direction: isRTL ? 'rtl' : 'ltr'
     });
-
+    
+    const slides: Slide[] = [
+        {
+            image: '/home1.jpg',
+            alt: 'Refrigerator filled with fresh fruits and juices',
+            link: '/categories/refrigerators',
+            title: isRTL ? 'ثلاجات مميزة' : 'Premium Refrigerators',
+            subtitle: isRTL ? 'استمتع بأفضل تجربة تبريد' : 'Experience the best cooling',
+            cta: isRTL ? 'استكشف الآن' : 'Explore Now'
+        },
+        {
+            image: '/home2.jpg',
+            alt: 'Modern kitchen with built-in appliances', 
+            link: '/categories/kitchen',
+            title: isRTL ? 'مطبخ عصري' : 'Modern Kitchen',
+            subtitle: isRTL ? 'كل ما تحتاجه لمطبخك' : 'Everything you need for your kitchen',
+            cta: isRTL ? 'استكشف الآن' : 'Explore Now'
+        },
+        {
+            image: '/home3.jpg',
+            alt: 'Elegant kitchen with modern appliances',
+            link: '/categories/kitchen',
+            title: isRTL ? 'أجهزة مطبخ أنيقة' : 'Elegant Kitchen Appliances',
+            subtitle: isRTL ? 'أضف لمسة من الأناقة' : 'Add a touch of elegance',
+            cta: isRTL ? 'استكشف الآن' : 'Explore Now'
+        },
+    ];
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [isHovering, setIsHovering] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
@@ -72,28 +74,17 @@ const HeroCarousel = () => {
 
     useEffect(() => {
         if (!emblaApi) return;
-
-        const onSelect = () => {
-            setSelectedIndex(emblaApi.selectedScrollSnap());
-        };
-
+        const onSelect = () => setSelectedIndex(emblaApi.selectedScrollSnap());
         emblaApi.on('select', onSelect);
         onSelect();
-
-        return () => {
-            emblaApi.off('select', onSelect);
-        };
+        return () => emblaApi.off('select', onSelect);
     }, [emblaApi]);
 
     useEffect(() => {
         if (!emblaApi) return;
-
         const interval = setInterval(() => {
-            if (!isHovering && !isDragging) {
-                emblaApi.scrollNext();
-            }
+            if (!isHovering && !isDragging) emblaApi.scrollNext();
         }, 5000);
-
         return () => clearInterval(interval);
     }, [emblaApi, isHovering, isDragging]);
 
@@ -112,103 +103,53 @@ const HeroCarousel = () => {
         setIsDragging(false);
     };
 
-    // Animation variants
-    const slideIn = {
-        hidden: { opacity: 0, x: 50 },
-        visible: {
-            opacity: 1,
-            x: 0,
-            transition: { duration: 0.6, ease: "easeOut" }
-        },
-        exit: { opacity: 0, x: -50 }
-    };
-
-    const fadeIn = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: { duration: 0.8, ease: "easeOut" }
-        }
-    };
-
-    const buttonHover = {
-        scale: 1.05,
-        backgroundColor: "#06529c", // Slightly lighter shade of primary
-        transition: { duration: 0.2 }
-    };
-
-    const buttonTap = {
-        scale: 0.95
-    };
-
     return (
         <section
-            className="relative w-full h-[40vh] md:h-[80vh] min-h-[400px] max-h-[500px] overflow-hidden"
+            className="relative w-full h-[25vh] md:h-[60vh]  max-h-[500px] overflow-hidden md:rounded-lg shadow-lg mt-2"
+            dir={isRTL ? 'rtl' : 'ltr'}
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
         >
-            {/* Carousel container */}
             <div className="embla h-full" ref={emblaRef}>
                 <div className="embla__container flex h-full">
                     {slides.map((slide, idx) => (
                         <div key={`slide-${idx}`} className="embla__slide min-w-full relative flex">
                             <Link href={slide.link} className="w-full h-full block">
-                                <motion.div
-                                    className="absolute inset-0"
-                                    initial={{ scale: 1.1 }}
-                                    animate={{ scale: 1 }}
-                                    transition={{ duration: 8, ease: "linear" }}
-                                >
-                                    <Image
-                                        src={slide.image}
-                                        alt={slide.alt}
-                                        fill
-                                        className="object-cover"
-                                        priority={idx === 0}
-                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
-                                    />
-                                </motion.div>
-
-                                <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex flex-col justify-center items-start px-6 sm:pl-10 md:pl-20 text-white">
-                                    <AnimatePresence mode="wait">
-                                        {selectedIndex === idx && (
-                                            <motion.div
-                                                className="max-w-2xl"
-                                                initial="hidden"
-                                                animate="visible"
-                                                exit="exit"
-                                                variants={slideIn}
-                                                key={`content-${idx}`}
-                                            >
-                                                <motion.h2
-                                                    className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4"
-                                                    variants={fadeIn}
-                                                >
-                                                    {slide.title}
-                                                </motion.h2>
-                                                <motion.p
-                                                    className="text-lg sm:text-xl md:text-2xl mb-6"
-                                                    variants={fadeIn}
-                                                    transition={{ delay: 0.1 }}
-                                                >
-                                                    {slide.subtitle}
-                                                </motion.p>
-                                                <motion.button
-                                                    className="text-white px-6 py-2 sm:px-8 sm:py-3 rounded-full text-base sm:text-lg font-medium focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900"
-                                                    style={{ backgroundColor: "#043364" }}
-                                                    variants={fadeIn}
-                                                    transition={{ delay: 0.2 }}
-                                                    whileHover={buttonHover}
-                                                    whileTap={buttonTap}
-                                                    aria-label={slide.cta}
-                                                >
-                                                    {slide.cta}
-                                                </motion.button>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
+                                <Image
+                                    src={slide.image}
+                                    alt={slide.alt}
+                                    fill
+                                    className="object-cover"
+                                    priority={idx === 0}
+                                />
+                                <div className={`absolute inset-0 flex flex-col justify-center items-start p-8 md:p-16 text-white bg-black/30 md:px-24 `}
+                                dir={isRTL ? 'rtl' : 'ltr'}>
+                                    <motion.h2
+                                        className="text-lg md:text-5xl font-bold mb-2"
+                                        initial={{ opacity: 0, x: isRTL ? 100 : -100 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ duration: 0.5 }}
+                                    >
+                                        {slide.title}
+                                    </motion.h2>
+                                    <motion.p
+                                        className="text-sm md:text-xl mb-6 max-w-md"
+                                        initial={{ opacity: 0, x: isRTL ? 100 : -100 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ duration: 0.5, delay: 0.2 }}
+                                    >
+                                        {slide.subtitle}
+                                    </motion.p>
+                                    <motion.button
+                                        className=" text-sm md:text-lg py-3 bg-primary text-white rounded-lg  hover:bg-primary-dark transition-colors"
+                                        initial={{ opacity: 0, y: 50 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.5, delay: 0.4 }}
+                                    >
+                                        {slide.cta}
+                                    </motion.button>
                                 </div>
                             </Link>
                         </div>
@@ -218,24 +159,24 @@ const HeroCarousel = () => {
 
             {/* Navigation Arrows */}
             <motion.div
-                className={`hidden sm:flex sm:absolute top-1/2 w-full flex justify-between px-4 z-10`}
+                className="hidden sm:flex sm:absolute top-1/2 w-full flex justify-between px-4 z-10"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: isHovering ? 1 : 0.2 }}
                 transition={{ duration: 0.3 }}
             >
                 <motion.button
-                    onClick={scrollPrev}
+                    onClick={isRTL ? scrollNext : scrollPrev}
                     className="bg-white/90 hover:bg-white text-gray-900 p-2 sm:p-3 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-white"
-                    aria-label="Previous slide"
+                    aria-label={isRTL ? "التالي" : "Previous slide"}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                 >
                     <ChevronLeft size={24} className="w-5 h-5 sm:w-7 sm:h-7" />
                 </motion.button>
                 <motion.button
-                    onClick={scrollNext}
+                    onClick={isRTL ? scrollPrev : scrollNext}
                     className="bg-white/90 hover:bg-white text-gray-900 p-2 sm:p-3 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-white"
-                    aria-label="Next slide"
+                    aria-label={isRTL ? "السابق" : "Next slide"}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                 >
@@ -244,11 +185,11 @@ const HeroCarousel = () => {
             </motion.div>
 
             {/* Indicators */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+            <div className={`absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10`}>
                 {slides.map((_, index) => (
                     <motion.button
                         key={`indicator-${index}`}
-                        className={`rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white`}
+                        className="rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white"
                         style={{
                             width: index === selectedIndex ? '32px' : '16px',
                             height: '16px',
