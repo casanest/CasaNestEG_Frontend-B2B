@@ -8,6 +8,7 @@ import { listCollections } from "@lib/data/collections"
 import { getRegion } from "@lib/data/regions"
 import StoreFeatures from "@modules/home/components/storeFeatures"
 import PromotionBanner from "@modules/home/components/promotionBanner"
+import CallToActionBanner from "@modules/home/components/call-to-action-banner"
 
 export const metadata: Metadata = {
   title: "LA CASA",
@@ -42,11 +43,17 @@ export default async function Home({
         <div className="" dir={dir}>
           <CategoryCarousel locale={locale} />
         </div>
+        {/* <div className="" dir={dir}>
+          <CategoryCarousel locale={locale} />
+          </div> */}
         <PromotionBanner locale={locale} />
         <ul className="flex flex-col gap-y-12 py-5">
           <FeaturedProducts collections={collections} region={region} locale={locale} />
         </ul>
       </div>
+      {/* <div className="md:content-container" dir={dir}>
+        <CallToActionBanner locale={locale} />
+      </div> */}
       <div className="" dir={dir}>
         <StoreFeatures locale={locale} />
       </div>

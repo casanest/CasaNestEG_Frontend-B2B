@@ -13,7 +13,7 @@ const PromotionBanner = ({ locale }: { locale: string }) => {
         seconds: 0
     });
 
-    // Set the end date for the promotion (3 days from now)
+    // Calculate time left
     const calculateTimeLeft = () => {
         const endDate = new Date();
         endDate.setDate(endDate.getDate() + 3);
@@ -45,68 +45,62 @@ const PromotionBanner = ({ locale }: { locale: string }) => {
     ];
 
     return (
-        <section className="bg-gradient-to-r from-[#048364] to-[#043364] text-white py-8" dir={isRTL ? 'rtl' : 'ltr'}>
-            <div className="md:content-container container mx-auto px-4">
+        <section className="bg-gradient-to-r from-[#048364] to-[#043364] text-white py-6 sm:py-8" dir={isRTL ? 'rtl' : 'ltr'}>
+            <div className="container mx-auto px-4 max-w-7xl">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="flex flex-col md:flex-row items-center justify-between gap-6"
+                    className="flex flex-col gap-6 sm:gap-8 md:flex-row md:items-center md:justify-between"
                 >
-                    {/* Promotion Text */}
-                    <div className="flex items-center gap-4">
+                    {/* Promo Text */}
+                    <div className="flex items-center gap-4 text-center md:text-left justify-center md:justify-start">
                         <div className="p-3 bg-white/20 rounded-full">
-                            <Zap size={28} className="text-yellow-300" />
+                            <Zap size={24} className="text-yellow-300" />
                         </div>
                         <div>
-                            <h2 className="text-xl md:text-2xl font-bold">
+                            <h2 className="text-lg sm:text-xl md:text-2xl font-bold">
                                 {isRTL ? "عرض محدود الوقت!" : "Limited Time Offer!"}
                             </h2>
-                            <p className="text-sm md:text-base opacity-90">
-                                {isRTL ?
-                                    "خصم حتى 40% على جميع المنتجات المختارة" :
-                                    "Up to 40% off on all selected products"}
+                            <p className="text-xs sm:text-sm md:text-base opacity-90">
+                                {isRTL ? "خصم حتى 40% على جميع المنتجات المختارة" : "Up to 40% off on all selected products"}
                             </p>
                         </div>
                     </div>
 
-                    {/* Countdown Timer */}
-                    <div className="flex items-center gap-2 md:gap-4">
-                        <Clock size={24} className="opacity-80" />
-                        <div className="flex gap-2 md:gap-4">
-                            {countdownItems.map((item, index) => (
-                                <div key={index} className="flex flex-col items-center">
-                                    <div className="bg-white/20 px-3 py-1 rounded-md min-w-[50px] text-center">
-                                        <span className="font-mono font-bold text-lg">
-                                            {item.value.toString().padStart(2, '0')}
+                    {/* Countdown */}
+                    <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                            <Clock size={20} className="opacity-80" />
+                            <div className="flex gap-2">
+                                {countdownItems.map((item, index) => (
+                                    <div key={index} className="flex flex-col items-center">
+                                        <div className="bg-white/20 px-2 py-1 rounded-md min-w-[40px] sm:min-w-[50px] text-center">
+                                            <span className="font-mono font-bold text-base sm:text-lg">
+                                                {item.value.toString().padStart(2, '0')}
+                                            </span>
+                                        </div>
+                                        <span className="text-xs sm:text-sm mt-1 opacity-80">
+                                            {item.label}
                                         </span>
                                     </div>
-                                    <span className="text-xs mt-1 opacity-80">
-                                        {item.label}
-                                    </span>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
                     </div>
 
-                    {/* CTA Button */}
-                    {/* <div className="hidden md:flex items-center gap-4">
-                        <Zap size={24} className="opacity-80" />
-                        <p className="text-sm md:text-base opacity-90">
-                            {isRTL ?
-                                "تسوق الآن قبل فوات الأوان!" :
-                                "Shop now before it's too late!"}
-                        </p>
-                    </div> */}
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="px-6 py-3 bg-white text-[#043364] font-bold rounded-lg shadow-md hover:shadow-lg transition-all"
-                        onClick={() => window.location.href = '/store'}
-                        aria-label={isRTL ? "تسوق الآن" : "Shop Now"}
-                    >
-                        {isRTL ? "تسوق الآن" : "Shop Now"}
-                    </motion.button>
+                    {/* CTA */}
+                    <div className="flex justify-center md:justify-end">
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="px-4 sm:px-6 py-2 sm:py-3 bg-white text-[#043364] font-bold rounded-lg shadow-md hover:shadow-lg transition-all text-sm sm:text-base"
+                            onClick={() => window.location.href = '/store'}
+                            aria-label={isRTL ? "تسوق الآن" : "Shop Now"}
+                        >
+                            {isRTL ? "تسوق الآن" : "Shop Now"}
+                        </motion.button>
+                    </div>
                 </motion.div>
             </div>
         </section>
