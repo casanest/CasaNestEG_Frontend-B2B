@@ -88,7 +88,7 @@ export default async function SearchResultsTemplate({
 
   return (
     <>
-      <Container className="flex flex-col gap-8 !py-8">
+      <Container dir="rtl" className="flex flex-col gap-8 !py-8">
         {results && results.length > 0 ? (
           <>
             <Box className="flex flex-col gap-4">
@@ -97,7 +97,7 @@ export default async function SearchResultsTemplate({
               /> */}
               <Heading
                 as="h1"
-                className="text-4xl text-basic-primary small:text-5xl"
+                className="text-4xl text-basic-primary small:text-5xl text-[#043364]"
               >
                 &quot;{safeDecodeURIComponent(query)}&quot;
               </Heading>

@@ -8,8 +8,9 @@ import { SortOptions } from "@modules/store/components/refinement-list/sort-prod
 import PaginatedProducts from "@modules/store/templates/paginated-products"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { HttpTypes } from "@medusajs/types"
+import { getLocale } from "next-intl/server"
 
-export default function CategoryTemplate({
+export default async function CategoryTemplate({
   category,
   sortBy,
   page,
@@ -35,9 +36,10 @@ export default function CategoryTemplate({
   }
 
   getParents(category)
-
+  const locale = await getLocale()
   return (
     <div
+      dir={locale === "ar" ? "rtl" : "ltr"}
       className="flex flex-col small:flex-row small:items-start py-6 content-container"
       data-testid="category-container"
     >

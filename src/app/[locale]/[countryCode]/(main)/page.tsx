@@ -1,18 +1,13 @@
 import { Metadata } from "next"
 
-// import FeaturedProducts from "@modules/home/components/featured-products"
-// import HeroCarousel from "@modules/home/components/heroCarousel"
-// import CategoryCarousel from "@modules/home/components/categoryCarousel"
-
 import { listCollections } from "@lib/data/collections"
 import { getRegion } from "@lib/data/regions"
-// import StoreFeatures from "@modules/home/components/storeFeatures"
-// import PromotionBanner from "@modules/home/components/promotionBanner"
 import CallToActionBanner from "@modules/home/components/call-to-action-banner"
 import HeroCarousel from "@modules/home/components/heroCarousel"
 import CategoryCarousel from "@modules/home/components/categoryCarousel"
 import PromotionBanner from "@modules/home/components/promotionBanner"
 import FeaturedProducts from "@modules/home/components/featured-products"
+import StoreFeatures from "@modules/home/components/storeFeatures"
 
 export const metadata: Metadata = {
   title: "LA CASA",
@@ -52,11 +47,11 @@ export default async function Home({
           <FeaturedProducts collections={collections} region={region} locale={locale}  />
         </ul>
       </div>
-      {/* <div className="md:content-container" dir={dir}>
+      <div className="md:content-container" dir={dir}>
         <CallToActionBanner locale={locale} />
-      </div> */}
+      </div>
       <div className="" dir={dir}>
-        {/* <StoreFeatures locale={locale} /> */}
+        <StoreFeatures locale={locale} />
       </div>
     </>
   )

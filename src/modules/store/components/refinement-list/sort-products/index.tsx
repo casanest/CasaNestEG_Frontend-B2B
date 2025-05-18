@@ -8,39 +8,42 @@ type SortProductsProps = {
   sortBy: SortOptions
   setQueryParams: (name: string, value: SortOptions) => void
   "data-testid"?: string
+  locale: string
 }
-
-const sortOptions = [
-  {
-    value: "created_at",
-    label: "Latest Arrivals",
-  },
-  {
-    value: "price_asc",
-    label: "Price: Low -> High",
-  },
-  {
-    value: "price_desc",
-    label: "Price: High -> Low",
-  },
-]
 
 const SortProducts = ({
   "data-testid": dataTestId,
   sortBy,
   setQueryParams,
+  locale,
 }: SortProductsProps) => {
+  const sortOptions = [
+    {
+      value: "created_at",
+      label: locale === "ar" ? "الأحدث" : "Newest",
+    },
+    {
+      value: "price_asc",
+      label: locale === "ar" ? "السعر: الأقل -> الأعلى" : "Price: Low -> High",
+    },
+    {
+      value: "price_desc",
+      label: locale === "ar" ? "السعر: الأعلى -> الأقل" : "Price: High -> Low",
+    },
+  ]
+
   const handleChange = (value: SortOptions) => {
     setQueryParams("sortBy", value)
   }
 
   return (
     <FilterRadioGroup
-      title="Sort by"
+      title={locale === "ar" ? "ترتيب حسب" : "Sort by"}
       items={sortOptions}
       value={sortBy}
       handleChange={handleChange}
       data-testid={dataTestId}
+      locale={locale}
     />
   )
 }
