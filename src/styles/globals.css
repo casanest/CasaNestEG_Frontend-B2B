@@ -118,3 +118,7 @@
   pointer-events: none;
   /* Prevent interaction if not needed */
 }
+
+.embla__container {
+  touch-action: pan-y;
+}

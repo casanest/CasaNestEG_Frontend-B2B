@@ -45,7 +45,7 @@ const FilterRadioGroup = ({
               className={clx(
                 "!txt-compact-small !transform-none text-ui-fg-subtle hover:cursor-pointer",
                 {
-                  "text-ui-fg-base": i.value === value,
+                  "text-[#043364]": i.value === value,
                 }
               )}
               data-testid="radio-label"

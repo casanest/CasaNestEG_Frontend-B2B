@@ -25,7 +25,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
         duration: 30,
         direction: isRTL ? 'rtl' : 'ltr'
     });
-    
+
     const slides: Slide[] = [
         {
             image: '/home1.jpg',
@@ -37,7 +37,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
         },
         {
             image: '/home2.jpg',
-            alt: 'Modern kitchen with built-in appliances', 
+            alt: 'Modern kitchen with built-in appliances',
             link: '/categories/kitchen',
             title: isRTL ? 'مطبخ عصري' : 'Modern Kitchen',
             subtitle: isRTL ? 'كل ما تحتاجه لمطبخك' : 'Everything you need for your kitchen',
@@ -125,7 +125,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
                                     priority={idx === 0}
                                 />
                                 <div className={`absolute inset-0 flex flex-col justify-center items-start p-8 md:p-16 text-white bg-black/30 md:px-24 `}
-                                dir={isRTL ? 'rtl' : 'ltr'}>
+                                    dir={isRTL ? 'rtl' : 'ltr'}>
                                     <motion.h2
                                         className="text-lg md:text-5xl font-bold mb-2"
                                         initial={{ opacity: 0, x: isRTL ? 100 : -100 }}
