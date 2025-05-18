@@ -2,7 +2,7 @@ import { Heading, Text } from "@medusajs/ui"
 import InteractiveLink from "@modules/common/components/interactive-link"
 import { ShoppingCart } from "lucide-react" // or any icon library you're using
 
-const EmptyCartMessage = () => {
+const EmptyCartMessage = ({ locale }: { locale: string }) => {
   return (
     <div
       className="py-32 px-4 md:px-10 rounded-lg text-center flex flex-col justify-center items-center"
@@ -11,18 +11,20 @@ const EmptyCartMessage = () => {
       <ShoppingCart className="w-14 h-14 text-[#043364] mb-4" />
 
       <Heading level="h1" className="text-3xl font-semibold text-[#043364]">
-        Your Cart is Empty
+        {locale === "ar" ? "سلة التسوق فارغة" : "Your cart is empty"}
       </Heading>
 
       <Text className="text-base text-[#043364] my-4 max-w-lg">
-        You don&apos;t have anything in your cart yet. Let&apos;s change that!
-        Use the link below to start browsing our latest products.
+        {
+          locale === "ar" ? "لا يوجد منتجات في سلة التسوق الخاصة بك." : "No products in your cart."
+        }
       </Text>
 
       <InteractiveLink
         href="/store"
       >
-        Explore Products
+        {
+          locale === "ar" ? "الذهاب للمتجر" : "Go to store"}
       </InteractiveLink>
     </div>
   )
