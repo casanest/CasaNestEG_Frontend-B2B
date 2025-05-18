@@ -6,7 +6,7 @@ import CategoryCarousel from "@modules/home/components/categoryCarousel"
 
 import { listCollections } from "@lib/data/collections"
 import { getRegion } from "@lib/data/regions"
-import StoreFeatures from "@modules/home/components/storeFeatures"
+// import StoreFeatures from "@modules/home/components/storeFeatures"
 import PromotionBanner from "@modules/home/components/promotionBanner"
 import CallToActionBanner from "@modules/home/components/call-to-action-banner"
 
@@ -38,24 +38,24 @@ export default async function Home({
     <>
       <div className="" dir={dir}>
         <div className="md:content-container md:mx-auto" dir={dir}>
-          <HeroCarousel locale={locale} />
+          <HeroCarousel  />
         </div>
         <div className="" dir={dir}>
-          <CategoryCarousel locale={locale} />
+          <CategoryCarousel />
         </div>
         {/* <div className="" dir={dir}>
           <CategoryCarousel locale={locale} />
           </div> */}
         <PromotionBanner locale={locale} />
         <ul className="flex flex-col gap-y-12 py-5">
-          <FeaturedProducts collections={collections} region={region} locale={locale} />
+          <FeaturedProducts collections={collections} region={region}  />
         </ul>
       </div>
       {/* <div className="md:content-container" dir={dir}>
         <CallToActionBanner locale={locale} />
       </div> */}
       <div className="" dir={dir}>
-        <StoreFeatures locale={locale} />
+        {/* <StoreFeatures locale={locale} /> */}
       </div>
     </>
   )

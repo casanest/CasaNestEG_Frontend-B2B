@@ -15,10 +15,7 @@ import { listCategories } from "@lib/data/categories"
 import { listCollections } from "@lib/data/collections"
 import { createNavigation } from "@lib/constants"
 import { listProducts } from "@lib/data/products"
-import { useLocale } from "next-intl"
 export default async function Nav() {
-  const locale = useLocale();
-  const isRTL = locale === "ar";
   const regions = await listRegions().then((regions: StoreRegion[]) => regions)
   const productCategories = await listCategories()
   const products = await listProducts({
@@ -42,29 +39,25 @@ export default async function Nav() {
       <TopNav />
       <div className=" sticky w-full top-0 inset-x-0 z-[40] group">
         <header className="relative h-16 mx-auto border-b duration-200 bg-white border-ui-border-base">
-          <nav className="content-container txt-xsmall-plus text-ui-fg-subtle flex items-center justify-between w-full h-full text-small-regular"
-            dir={isRTL ? "rtl" : "ltr"}
-          >
-            <div
-              className="flex-1 basis-0 h-full flex items-center md:hidden">
-              <div className="flex items-center ">
-                <SideMenu productCategories={productCategories} collections={collections} />
-              </div>
-              <div className="flex items-center  md:hidden">
-                <LocalizedClientLink
-                  href="/"
-                  className="text-4xl font-extrabold tracking-widest uppercase text-transparent bg-clip-text hover:from-blue-600 hover:to-blue-800 transition-all duration-300 ease-in-out leading-none"
-                  data-testid="nav-store-link"
-                >
-                  <Image
-                    src="/lacasaLogo.png"
-                    alt="Logo"
-                    width={150}
-                    height={150}
-                  />
-                </LocalizedClientLink>
-              </div>
+          <nav className="content-container txt-xsmall-plus text-ui-fg-subtle flex items-center justify-between w-full h-full text-small-regular">            <div className="flex-1 basis-0 h-full flex items-center md:hidden">
+            <div className="flex items-center ">
+              <SideMenu productCategories={productCategories} collections={collections} />
             </div>
+            <div className="flex items-center  md:hidden">
+              <LocalizedClientLink
+                href="/"
+                className="text-4xl font-extrabold tracking-widest uppercase text-transparent bg-clip-text hover:from-blue-600 hover:to-blue-800 transition-all duration-300 ease-in-out leading-none"
+                data-testid="nav-store-link"
+              >
+                <Image
+                  src="/lacasaLogo.png"
+                  alt="Logo"
+                  width={150}
+                  height={150}
+                />
+              </LocalizedClientLink>
+            </div>
+          </div>
             <div className="hidden md:flex flex-1 basis-0 h-full flex items-center">
               <LocalizedClientLink
                 href="/"
@@ -102,7 +95,6 @@ export default async function Nav() {
                     className="hover:text-ui-fg-base flex gap-2"
                     href="/cart"
                     data-testid="nav-cart-link"
-                    
                   >
 
                     <span className="w-6 h-6">
@@ -126,7 +118,7 @@ export default async function Nav() {
                   </LocalizedClientLink>
                 }
               >
-                <CartButton locale={locale} />
+                <CartButton />
               </Suspense>
             </div>
           </nav>

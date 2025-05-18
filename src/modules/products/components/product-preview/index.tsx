@@ -1,4 +1,5 @@
 import { Text } from "@medusajs/ui"
+import { listProducts } from "@lib/data/products"
 import { getProductPrice } from "@lib/util/get-product-price"
 import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
@@ -9,15 +10,11 @@ export default async function ProductPreview({
   product,
   isFeatured,
   region,
-  locale,
 }: {
   product: HttpTypes.StoreProduct
   isFeatured?: boolean
   region: HttpTypes.StoreRegion
-  locale: string // "en", "ar", ...
 }) {
-  const { cheapestPrice } = getProductPrice({ product })
-  const dir = locale === "ar" ? "rtl" : "ltr"
   // const pricedProduct = await listProducts({
   //   regionId: region.id,
   //   queryParams: { id: [product.id!] },
@@ -26,24 +23,21 @@ export default async function ProductPreview({
   // if (!pricedProduct) {
   //   return null
   // }
+
+  const { cheapestPrice } = getProductPrice({
+    product,
+  })
+
   return (
-    <LocalizedClientLink
-      href={`/products/${product.handle}`}
-      className="group"
-      size="small"
-      dir={dir} // ⬅️ لإجبار الاتجاه داخل الرابط
-    >
-      <div data-testid="product-wrapper" dir={dir}>
+    <LocalizedClientLink href={`/products/${product.handle}`} className="group" size="small">
+      <div data-testid="product-wrapper">
         <Thumbnail
           thumbnail={product.thumbnail}
           images={product.images}
           size="full"
           isFeatured={isFeatured}
         />
-        <div
-          className={`flex txt-compact-medium mt-4 justify-between`}
-          dir={dir} // ⬅️ لإجبار الاتجاه داخل النص
-        >
+        <div className="flex txt-compact-medium mt-4 justify-between">
           <Text className="text-ui-fg-subtle" data-testid="product-title">
             {product.title}
           </Text>

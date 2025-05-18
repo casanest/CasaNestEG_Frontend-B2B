@@ -25,8 +25,6 @@ import { ArrowLeftIcon } from '@modules/common/icons/arrow-left'
 import X from '@modules/common/icons/x'
 import { ChevronRightIcon } from '@modules/common/icons/chevron-right'
 import { BarsIcon } from '@modules/common/icons/bars'
-import { usePathname } from 'next/navigation'
-import { useLocale } from 'next-intl'
 
 interface CategoryItem {
   name: string
@@ -36,30 +34,16 @@ interface CategoryItem {
 const SideMenu = ({
   productCategories,
   collections,
-  // locale,
 }: {
   productCategories: StoreProductCategory[]
   collections: StoreCollection[]
-  // locale: string
 }) => {
   const [categoryStack, setCategoryStack] = useState<CategoryItem[]>([])
   const currentCategory = categoryStack[categoryStack.length - 1] || null
   const [isOpen, setIsOpen] = useState(false)
 
-    const pathname = usePathname();
-    const locale = useLocale();
-  
-    const switchTo = (newLocale: string) => {
-      // Remove current locale from pathname
-      const pathWithoutLocale = pathname.replace(`/${locale}`, '');
-      const newPath = `/${newLocale}${pathWithoutLocale}`;
-  
-      // Force full page reload
-      window.location.href = newPath;
-    };
-
-  // console.log('Categories:', productCategories)
-  // console.log('Collections:', collections)
+  console.log('Categories:', productCategories)
+  console.log('Collections:', collections)
 
   const navigation = useMemo(
     () => createNavigation(productCategories, collections),
@@ -96,7 +80,7 @@ const SideMenu = ({
 
 
       return (
-        <Fragment key={index} >
+        <Fragment key={index}>
           <Button
             variant="ghost"
             className="w-full justify-between"
@@ -131,7 +115,6 @@ const SideMenu = ({
           {index === lastCategoryIndex && (
             <Divider className="my-4 -ml-4 w-[calc(100%+2rem)]" />
           )}
-          
         </Fragment>
       )
     })
@@ -163,7 +146,7 @@ const SideMenu = ({
     !currentCategory || currentCategory.name !== 'Collections'
 
   return (
-    <Dialog  open={isOpen} onOpenChange={handleOpenDialogChange}>
+    <Dialog open={isOpen} onOpenChange={handleOpenDialogChange}>
       <DialogTrigger asChild>
         <Button
           variant="icon"
@@ -178,7 +161,6 @@ const SideMenu = ({
         <DialogContent
           className="!max-h-full !max-w-full !rounded-none"
           aria-describedby={undefined}
-          dir={locale === 'ar' ? 'rtl' : 'ltr'}
         >
           <DialogHeader className="flex items-center gap-4 !p-4 text-xl text-basic-primary small:text-2xl">
             {currentCategory && (
@@ -223,14 +205,7 @@ const SideMenu = ({
                 </Button>
               )}
               {renderCategories(getActiveCategories())}
-              
             </Box>
-            <button
-              onClick={() => switchTo(locale === "en" ? "ar" : "en")}
-              className="mt-4 w-full rounded-md border border-ui-border-base bg-ui-bg-base px-4 py-2 text-sm font-semibold text-ui-fg-base shadow-sm transition-colors duration-200 hover:bg-ui-bg-interactive hover:text-ui-fg-interactive hover:text-white"
-            >
-              {locale === "en" ? "تغيير إلى العربية" : "Change to English"}
-            </button>
           </DialogBody>
         </DialogContent>
       </DialogPortal>
