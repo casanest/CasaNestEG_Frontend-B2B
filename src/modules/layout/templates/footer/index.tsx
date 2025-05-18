@@ -1,3 +1,5 @@
+// "use client"
+
 import { listCategories } from "@lib/data/categories"
 import { listCollections } from "@lib/data/collections"
 import { cn } from "@lib/util/cn"
@@ -13,25 +15,31 @@ import { LinkedinIcon } from "@modules/common/icons/linkedin"
 import { FacebookIcon } from "@modules/common/icons/facebook"
 import { XLogoIcon } from "@modules/common/icons/twitter"
 import Image from "next/image"
+import { getLocale } from "next-intl/server"
 
 function SocialMedia({ className }: { className?: string }) {
+  const socials = [
+    { href: "#", icon: <LinkedinIcon />, label: "LinkedIn", testId: "linkedin-link" },
+    { href: "#", icon: <FacebookIcon />, label: "Facebook", testId: "facebook-link" },
+    { href: "#", icon: <XLogoIcon />, label: "X (Twitter)", testId: "x-link" },
+  ]
+
   return (
     <Box className={cn("flex gap-2", className)}>
-      <div className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full text-static">
-        <LocalizedClientLink href="#" data-testid="linkedin-link">
-          <LinkedinIcon />
-        </LocalizedClientLink>
-      </div>
-      <div className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full text-static">
-        <LocalizedClientLink href="#" data-testid="facebook-link">
-          <FacebookIcon />
-        </LocalizedClientLink>
-      </div>
-      <div className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full text-static">
-        <LocalizedClientLink href="#" data-testid="x-link">
-          <XLogoIcon />
-        </LocalizedClientLink>
-      </div>
+      {socials.map(({ href, icon, label, testId }) => (
+        <div
+          key={testId}
+          className="flex h-12 w-12 items-center justify-center rounded-full text-static hover:bg-blue-100 transition-colors"
+        >
+          <LocalizedClientLink
+            href={href}
+            data-testid={testId}
+            aria-label={label}
+          >
+            {icon}
+          </LocalizedClientLink>
+        </div>
+      ))}
     </Box>
   )
 }
@@ -39,65 +47,62 @@ function SocialMedia({ className }: { className?: string }) {
 export default async function Footer() {
   const productCategories = await listCategories()
   const { collections } = await listCollections({ fields: "*products" })
+  const locale = await getLocale()
+  const isRTL = locale === "ar"
 
   return (
     <Container
       as="footer"
-      className="mx-0 max-w-full border-t border-basic-primary bg-static px-0 py-0 small:px-0 small:py-0 text-[#043364]"
+      dir={isRTL ? "rtl" : "ltr"}
+      className="mx-0 max-w-full border-t border-basic-primary bg-static px-0 py-0 text-[#043364]"
     >
-      <Container className="flex flex-col gap-6 text-static small:gap-12">
-        <Box className="flex flex-col gap-8 small:gap-12 md:flex-row xl:gap-0">
-          {/* Logo and Social Icons */}
-          <Box className="flex flex-col justify-between xl:min-w-[437px]">
+      <Container className="flex flex-col gap-6 small:gap-12 text-static px-4 py-6 small:px-6">
+        <Box className="flex flex-col gap-8 md:flex-row xl:gap-0">
+          {/* Logo & Social */}
+          <Box className="flex flex-col justify-between xl:min-w-[437px] gap-4">
             <LocalizedClientLink
               href="/"
-              className="text-3xl font-extrabold tracking-widest uppercase text-transparent bg-clip-text hover:from-blue-600 hover:to-blue-800 transition-all duration-300 ease-in-out leading-none"
+              className="inline-block"
               data-testid="nav-store-link"
+              aria-label="Homepage"
             >
               <Image
                 src="/lacasaLogo.png"
-                alt="Logo"
+                alt="La Casa Logo"
                 width={200}
                 height={200}
+                priority
               />
             </LocalizedClientLink>
             <SocialMedia className="hidden large:flex" />
           </Box>
 
-
-          {/* Categories, Collections, and Links */}
-          <Box className=" shrink grow gap-10 small:flex xl:gap-16">
-            {productCategories && productCategories.length > 0 && (
+          {/* Links */}
+          <Box className="flex flex-wrap justify-between gap-10 xl:gap-16 flex-grow">
+            {productCategories.length > 0 && (
               <Box className="flex flex-col gap-y-2">
-                <Heading as="h3" className="mb-2 text-lg font-semibold">
-                  Categories
-                </Heading>
-                <ul className="grid grid-cols-1 gap-2" data-testid="footer-categories">
-                  {productCategories.slice(0, 6).map((c) => {
+                <Heading as="h3" className="mb-2 text-lg font-semibold">Categories</Heading>
+                <ul className="grid gap-2" data-testid="footer-categories">
+                  {productCategories.slice(0, 6).map(c => {
                     if (c.parent_category) return null
-
-                    const children = c.category_children?.map(child => ({
-                      name: child.name,
-                      handle: child.handle,
-                      id: child.id
-                    })) ?? null
+                    const children = c.category_children ?? []
 
                     return (
-                      <li key={c.id} className="flex flex-col gap-2 text-static">
+                      <li key={c.id} className="flex flex-col gap-2">
                         <LocalizedClientLink
                           href={`/categories/${c.handle}`}
-                          className={cn("w-max hover:text-static hover:font-semibold text-static ", children)}
+                          className="hover:font-semibold"
                           data-testid={formatNameForTestId(`${c.name}-link`)}
                         >
                           {c.name}
                         </LocalizedClientLink>
-                        {children && (
-                          <ul className="ml-3 grid grid-cols-1 gap-2">
+                        {children.length > 0 && (
+                          <ul className={`${isRTL ? "mr-3" : "ml-3"} grid gap-1`}>
                             {children.map(child => (
                               <li key={child.id}>
                                 <LocalizedClientLink
                                   href={`/categories/${child.handle}`}
-                                  className="hover:text-static"
+                                  className="text-sm hover:text-blue-800"
                                   data-testid={formatNameForTestId(`${child.name}-link`)}
                                 >
                                   {child.name}
@@ -112,19 +117,16 @@ export default async function Footer() {
                 </ul>
               </Box>
             )}
-            
 
-            {collections && collections.length > 0 && (
-              <Box className="flex flex-col gap-y-2  mt-5">
-                <Heading as="h3" className="mb-2 text-lg font-semibold">
-                  Collections
-                </Heading>
-                <ul className="grid grid-cols-1 gap-2 text-static">
+            {collections.length > 0 && (
+              <Box className="flex flex-col gap-y-2">
+                <Heading as="h3" className="mb-2 text-lg font-semibold">Collections</Heading>
+                <ul className="grid gap-2">
                   {collections.slice(0, 6).map(c => (
                     <li key={c.id}>
                       <LocalizedClientLink
                         href={`/collections/${c.handle}`}
-                        className="w-max hover:text-static hover:font-semibold text-static "
+                        className="hover:font-semibold"
                         data-testid={formatNameForTestId(`${c.title}-link`)}
                       >
                         {c.title}
@@ -134,23 +136,37 @@ export default async function Footer() {
                 </ul>
               </Box>
             )}
-            
 
-            <Box className="flex flex-col gap-y-2 mt-5">
+            <Box className="flex flex-col gap-y-2">
               <Heading as="h3" className="mb-2 text-lg font-semibold">Company</Heading>
-              <ul className="grid grid-cols-1 gap-y-2 text-static">
+              <ul className="grid gap-y-2">
                 <li>
-                  <a href="https://github.com" target="_blank" rel="noreferrer" className="w-max hover:text-static hover:font-semibold text-static ">
+                  <a
+                    href="https://github.com"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:font-semibold"
+                  >
                     GitHub
                   </a>
                 </li>
                 <li>
-                  <a href="https://docs.company.com" target="_blank" rel="noreferrer" className="w-max hover:text-static hover:font-semibold text-static ">
+                  <a
+                    href="https://docs.company.com"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:font-semibold"
+                  >
                     Documentation
                   </a>
                 </li>
                 <li>
-                  <a href="https://example.com/source" target="_blank" rel="noreferrer" className="w-max hover:text-static hover:font-semibold text-static ">
+                  <a
+                    href="https://example.com/source"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:font-semibold"
+                  >
                     Source Code
                   </a>
                 </li>
@@ -158,19 +174,16 @@ export default async function Footer() {
             </Box>
           </Box>
 
-          {/* Social Media (for small viewports) */}
+          {/* Social on mobile */}
           <SocialMedia className="flex large:hidden" />
         </Box>
 
         <Divider alignment="horizontal" variant="secondary" />
 
-        {/* Bottom bar */}
-        <Box className="flex flex-wrap gap-6 gap-y-1 justify-center items-center">
-          <Text size="md" className="shrink-0 text-secondary">
-            © {new Date().getFullYear()} LA CASA. All rights reserved.
-          </Text>
+        {/* Footer Bottom */}
+        <Box className="flex flex-wrap justify-center items-center gap-4 text-sm text-secondary">
+          <Text size="md">© {new Date().getFullYear()} LA CASA. All rights reserved.</Text>
         </Box>
-
       </Container>
     </Container>
   )
