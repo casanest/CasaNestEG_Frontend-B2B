@@ -1,14 +1,18 @@
 import { Metadata } from "next"
 
-import FeaturedProducts from "@modules/home/components/featured-products"
-import HeroCarousel from "@modules/home/components/heroCarousel"
-import CategoryCarousel from "@modules/home/components/categoryCarousel"
+// import FeaturedProducts from "@modules/home/components/featured-products"
+// import HeroCarousel from "@modules/home/components/heroCarousel"
+// import CategoryCarousel from "@modules/home/components/categoryCarousel"
 
 import { listCollections } from "@lib/data/collections"
 import { getRegion } from "@lib/data/regions"
 // import StoreFeatures from "@modules/home/components/storeFeatures"
-import PromotionBanner from "@modules/home/components/promotionBanner"
+// import PromotionBanner from "@modules/home/components/promotionBanner"
 import CallToActionBanner from "@modules/home/components/call-to-action-banner"
+import HeroCarousel from "@modules/home/components/heroCarousel"
+import CategoryCarousel from "@modules/home/components/categoryCarousel"
+import PromotionBanner from "@modules/home/components/promotionBanner"
+import FeaturedProducts from "@modules/home/components/featured-products"
 
 export const metadata: Metadata = {
   title: "LA CASA",
@@ -38,17 +42,14 @@ export default async function Home({
     <>
       <div className="" dir={dir}>
         <div className="md:content-container md:mx-auto" dir={dir}>
-          <HeroCarousel  />
+          <HeroCarousel locale={locale}  />
         </div>
         <div className="" dir={dir}>
-          <CategoryCarousel />
-        </div>
-        {/* <div className="" dir={dir}>
           <CategoryCarousel locale={locale} />
-          </div> */}
+        </div>
         <PromotionBanner locale={locale} />
         <ul className="flex flex-col gap-y-12 py-5">
-          <FeaturedProducts collections={collections} region={region}  />
+          <FeaturedProducts collections={collections} region={region} locale={locale}  />
         </ul>
       </div>
       {/* <div className="md:content-container" dir={dir}>

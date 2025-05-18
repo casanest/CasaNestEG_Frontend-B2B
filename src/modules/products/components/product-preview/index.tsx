@@ -10,10 +10,12 @@ export default async function ProductPreview({
   product,
   isFeatured,
   region,
+  locale,
 }: {
   product: HttpTypes.StoreProduct
   isFeatured?: boolean
   region: HttpTypes.StoreRegion
+  locale: string
 }) {
   // const pricedProduct = await listProducts({
   //   regionId: region.id,
@@ -30,7 +32,7 @@ export default async function ProductPreview({
 
   return (
     <LocalizedClientLink href={`/products/${product.handle}`} className="group" size="small">
-      <div data-testid="product-wrapper">
+      <div dir={locale === "ar" ? "rtl" : "ltr"} data-testid="product-wrapper">
         <Thumbnail
           thumbnail={product.thumbnail}
           images={product.images}

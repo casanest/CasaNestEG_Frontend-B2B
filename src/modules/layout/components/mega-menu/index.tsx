@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import LocalizedClientLink from '@modules/common/components/localized-client-link'
+import { useLocale } from 'next-intl';
 
 // أنواع البيانات
 type SubCategory = { label: string; href: string };
@@ -40,6 +41,8 @@ const mapNavigationToMegaMenu = (navItem: any): MenuItem[] => {
 const VISIBLE_CATEGORIES_COUNT = 9;
 
 const MegaMenu = ({ navigation }: { navigation: any[] }) => {
+    const locale = useLocale();
+    const isRTL = locale === "ar";
     const menuItems = mapNavigationToMegaMenu(navigation[0]);
 
     const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -49,8 +52,8 @@ const MegaMenu = ({ navigation }: { navigation: any[] }) => {
     const hiddenCategories = menuItems.slice(VISIBLE_CATEGORIES_COUNT);
 
     return (
-        <nav className="hidden md:block bg-white  relative z-10 w-full">
-            <ul className="flex px-6  bg-[#f5f8fc] border-b text-sm font-medium space-x-8 text-gray-700">
+        <nav dir={isRTL ? "rtl" : "ltr"} className="hidden md:block bg-[#f5f8fc]  relative z-10 w-full">
+            <ul className="flex px-6 content-container  border-b text-sm font-medium space-x-8 text-gray-700">
                 {visibleCategories.map((menu, index) => (
                     <li
                         key={index}
@@ -60,8 +63,8 @@ const MegaMenu = ({ navigation }: { navigation: any[] }) => {
                     >
                         {menu.title}
                         {openIndex === index && (
-                            <div className="absolute left-0 top-full bg-white right-0 rounded-b-lg z-50 flex p-6 shadow-md overflow-hidden">
-                                <div className="flex flex-1 gap-12">
+                            <div className="absolute  left-0 top-full bg-white right-0 rounded-b-lg z-50 flex p-6 shadow-md overflow-hidden">
+                                <div className="flex content-container flex-1 gap-12">
                                     {menu.columns.map((col, colIdx) => (
                                         <div key={colIdx} className="min-w-[180px]">
                                             <h4 className="text-md font-semibold text-[#043364] mb-2">
