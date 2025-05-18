@@ -58,7 +58,7 @@ const PromotionBanner = ({ locale }: { locale: string }) => {
                         <div className="p-3 bg-white/20 rounded-full">
                             <Zap size={24} className="text-yellow-300" />
                         </div>
-                        <div>
+                        <div className={`flex flex-col gap-1 ${isRTL ? 'text-right' : 'text-left'}`}>
                             <h2 className="text-lg sm:text-xl md:text-2xl font-bold">
                                 {isRTL ? "عرض محدود الوقت!" : "Limited Time Offer!"}
                             </h2>

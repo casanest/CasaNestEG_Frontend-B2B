@@ -105,82 +105,106 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
 
     return (
         <section
-            className="relative w-full h-[25vh] md:h-[60vh]  max-h-[500px] overflow-hidden md:rounded-lg shadow-lg mt-2"
+            className="relative w-full h-[30vh] sm:h-[40vh] lg:h-[50vh]  overflow-hidden md:rounded-lg shadow-xl md:my-2"
             dir={isRTL ? 'rtl' : 'ltr'}
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
+            // onMouseEnter={() => setIsHovering(true)}
+            // onMouseLeave={() => setIsHovering(false)}
+            onMouseEnter={() => {
+                setIsHovering(true);
+                stopAutoPlay();
+            }}
+            onMouseLeave={() => {
+                setIsHovering(false);
+                startAutoPlay();
+            }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
         >
             <div className="embla h-full" ref={emblaRef}>
                 <div className="embla__container flex h-full">
-                    {slides.map((slide, idx) => (
-                        <div key={`slide-${idx}`} className="embla__slide min-w-full relative flex">
-                            <Link href={slide.link} className="w-full h-full block">
-                                <Image
-                                    src={slide.image}
-                                    alt={slide.alt}
-                                    fill
-                                    className="object-cover"
-                                    priority={idx === 0}
-                                />
-                                <div className={`absolute inset-0 flex flex-col justify-center items-start p-8 md:p-16 text-white bg-black/30 md:px-24 `}
-                                    dir={isRTL ? 'rtl' : 'ltr'}>
-                                    <motion.h2
-                                        className="text-lg md:text-5xl font-bold mb-2"
-                                        initial={{ opacity: 0, x: isRTL ? 100 : -100 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ duration: 0.5 }}
-                                    >
-                                        {slide.title}
-                                    </motion.h2>
-                                    <motion.p
-                                        className="text-sm md:text-xl mb-6 max-w-md"
-                                        initial={{ opacity: 0, x: isRTL ? 100 : -100 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ duration: 0.5, delay: 0.2 }}
-                                    >
-                                        {slide.subtitle}
-                                    </motion.p>
-                                    <motion.button
-                                        className=" text-sm md:text-lg py-3 bg-primary text-white rounded-lg  hover:bg-primary-dark transition-colors"
-                                        initial={{ opacity: 0, y: 50 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.5, delay: 0.4 }}
-                                    >
-                                        {slide.cta}
-                                    </motion.button>
-                                </div>
-                            </Link>
-                        </div>
-                    ))}
+                    <AnimatePresence initial={false} custom={isRTL}>
+                        {slides.map((slide, idx) => (
+                            <div key={`slide-${idx}`} className="embla__slide min-w-full relative flex">
+                                <Link href={slide.link} className="w-full h-full block">
+                                    <Image
+                                        src={slide.image}
+                                        alt={slide.alt}
+                                        fill
+                                        className="object-cover"
+                                        priority={idx === 0}
+                                        quality={90}
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+                                    />
+                                    <div className={`absolute inset-0 flex flex-col justify-center items-start p-6 sm:p-12 lg:p-16 xl:p-24 text-white bg-gradient-to-r ${isRTL ? 'from-black/70 via-black/40 to-transparent' : 'from-black/70 via-black/40 to-transparent'}`}>
+                                        <motion.div
+                                            className="max-w-xl"
+                                            initial={{ opacity: 0, x: isRTL ? 100 : -100 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: isRTL ? -100 : 100 }}
+                                            transition={{ duration: 0.7 }}
+                                        >
+                                            <motion.h2
+                                                className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 leading-tight"
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ duration: 0.5, delay: 0.2 }}
+                                            >
+                                                {slide.title}
+                                            </motion.h2>
+                                            <motion.p
+                                                className="text-sm sm:text-lg lg:text-xl mb-6 sm:mb-8 max-w-md lg:max-w-lg"
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ duration: 0.5, delay: 0.4 }}
+                                            >
+                                                {slide.subtitle}
+                                            </motion.p>
+                                            <motion.button
+                                                className="px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base lg:text-lg font-medium bg-[#043364] hover:bg-[#06529c] text-white rounded-lg transition-colors duration-300 shadow-lg"
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ duration: 0.5, delay: 0.6 }}
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                            >
+                                                {slide.cta}
+                                            </motion.button>
+                                        </motion.div>
+                                    </div>
+                                </Link>
+                            </div>
+                        ))}
+                    </AnimatePresence>
                 </div>
             </div>
 
             {/* Navigation Arrows */}
             <motion.div
-                className="hidden sm:flex sm:absolute top-1/2 w-full flex justify-between px-4 z-10"
+                className="hidden sm:flex sm:absolute top-1/2 -translate-y-1/2 w-full justify-between px-4 z-10"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: isHovering ? 1 : 0.2 }}
+                animate={{ opacity: isHovering ? 1 : 0.5 }}
                 transition={{ duration: 0.3 }}
+                whileHover={{ opacity: 1 }}
             >
                 <motion.button
                     onClick={isRTL ? scrollNext : scrollPrev}
-                    className="bg-white/90 hover:bg-white text-gray-900 p-2 sm:p-3 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-white"
+                    className="bg-white/90 hover:bg-white text-gray-900 p-2 sm:p-3 rounded-full shadow-xl focus:outline-none focus:ring-2 focus:ring-white/50"
                     aria-label={isRTL ? "التالي" : "Previous slide"}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
+                    whileHover={{ scale: 1.1, backgroundColor: "#043364", color: "white" }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
                 >
-                    <ChevronLeft size={24} className="w-5 h-5 sm:w-7 sm:h-7" />
+                    <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
                 </motion.button>
                 <motion.button
                     onClick={isRTL ? scrollPrev : scrollNext}
-                    className="bg-white/90 hover:bg-white text-gray-900 p-2 sm:p-3 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-white"
+                    className="bg-white/90 hover:bg-white text-gray-900 p-2 sm:p-3 rounded-full shadow-xl focus:outline-none focus:ring-2 focus:ring-white/50"
                     aria-label={isRTL ? "السابق" : "Next slide"}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
+                    whileHover={{ scale: 1.1, backgroundColor: "#043364", color: "white" }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
                 >
-                    <ChevronRight size={24} className="w-5 h-5 sm:w-7 sm:h-7" />
+                    <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
                 </motion.button>
             </motion.div>
 
@@ -189,15 +213,18 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
                 {slides.map((_, index) => (
                     <motion.button
                         key={`indicator-${index}`}
-                        className="rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white"
+                        className={`rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white ${index === selectedIndex ? 'opacity-100' : 'opacity-70'}`}
                         style={{
-                            width: index === selectedIndex ? '32px' : '16px',
-                            height: '16px',
-                            backgroundColor: index === selectedIndex ? "#043364" : "rgba(255, 255, 255, 0.5)"
+                            width: index === selectedIndex ? '24px' : '12px',
+                            height: '12px',
+                            backgroundColor: index === selectedIndex ? "#043364" : "rgba(255, 255, 255, 0.7)"
                         }}
                         onClick={() => scrollTo(index)}
                         aria-label={`Go to slide ${index + 1}`}
-                        whileHover={{ backgroundColor: index === selectedIndex ? "#06529c" : "rgba(255, 255, 255, 0.8)" }}
+                        whileHover={{
+                            scale: 1.2,
+                            backgroundColor: index === selectedIndex ? "#06529c" : "rgba(255, 255, 255, 0.9)"
+                        }}
                         transition={{ duration: 0.2 }}
                     />
                 ))}
