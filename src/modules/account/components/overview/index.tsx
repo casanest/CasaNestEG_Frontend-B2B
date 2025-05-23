@@ -4,22 +4,26 @@ import ChevronDown from "@modules/common/icons/chevron-down"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { convertToLocale } from "@lib/util/money"
 import { HttpTypes } from "@medusajs/types"
+import { getLocale } from "next-intl/server"
+import { ChevronLeftIcon } from "@modules/common/icons/chevron-left"
+import { ChevronRightIcon } from "@modules/common/icons/chevron-right"
 
 type OverviewProps = {
   customer: HttpTypes.StoreCustomer | null
   orders: HttpTypes.StoreOrder[] | null
 }
 
-const Overview = ({ customer, orders }: OverviewProps) => {
+const Overview = async ({ customer, orders }: OverviewProps) => {
+  const locale = await getLocale()
   return (
-    <div data-testid="overview-page-wrapper">
+    <div className="text-[#043364]" dir={locale === "ar" ? "rtl" : "ltr"} data-testid="overview-page-wrapper">
       <div className="hidden small:block">
         <div className="text-xl-semi flex justify-between items-center mb-4">
           <span data-testid="welcome-message" data-value={customer?.first_name}>
-            Hello {customer?.first_name}
+            {locale === "ar" ? "مرحبا" : "Welcome"} {customer?.first_name}
           </span>
-          <span className="text-small-regular text-ui-fg-base">
-            Signed in as:{" "}
+          <span className="text-small-regular ">
+            {locale === "ar" ? "تم تسجيل الدخول باسم:" : "Signed in as:"}{" "}
             <span
               className="font-semibold"
               data-testid="customer-email"
@@ -33,7 +37,7 @@ const Overview = ({ customer, orders }: OverviewProps) => {
           <div className="flex flex-col gap-y-4 h-full col-span-1 row-span-2 flex-1">
             <div className="flex items-start gap-x-16 mb-6">
               <div className="flex flex-col gap-y-4">
-                <h3 className="text-large-semi">Profile</h3>
+                <h3 className="text-large-semi">{locale === "ar" ? "الملف الشخصي" : "Profile"}</h3>
                 <div className="flex items-end gap-x-2">
                   <span
                     className="text-3xl-semi leading-none"
@@ -43,13 +47,13 @@ const Overview = ({ customer, orders }: OverviewProps) => {
                     {getProfileCompletion(customer)}%
                   </span>
                   <span className="uppercase text-base-regular text-ui-fg-subtle">
-                    Completed
+                    {locale === "ar" ? "مكتمل" : "Completed"}
                   </span>
                 </div>
               </div>
 
               <div className="flex flex-col gap-y-4">
-                <h3 className="text-large-semi">Addresses</h3>
+                <h3 className="text-large-semi">{locale === "ar" ? "العناوين" : "Addresses"}</h3>
                 <div className="flex items-end gap-x-2">
                   <span
                     className="text-3xl-semi leading-none"
@@ -59,7 +63,7 @@ const Overview = ({ customer, orders }: OverviewProps) => {
                     {customer?.addresses?.length || 0}
                   </span>
                   <span className="uppercase text-base-regular text-ui-fg-subtle">
-                    Saved
+                    {locale === "ar" ? "محفوظة" : "Saved"}
                   </span>
                 </div>
               </div>
@@ -67,7 +71,7 @@ const Overview = ({ customer, orders }: OverviewProps) => {
 
             <div className="flex flex-col gap-y-4">
               <div className="flex items-center gap-x-2">
-                <h3 className="text-large-semi">Recent orders</h3>
+                <h3 className="text-large-semi">{locale === "ar" ? "أحدث الطلبات" : "Recent orders"}</h3>
               </div>
               <ul
                 className="flex flex-col gap-y-4"
@@ -86,12 +90,12 @@ const Overview = ({ customer, orders }: OverviewProps) => {
                         >
                           <Container className="bg-gray-50 flex justify-between items-center p-4">
                             <div className="grid grid-cols-3 grid-rows-2 text-small-regular gap-x-4 flex-1">
-                              <span className="font-semibold">Date placed</span>
+                              <span className="font-semibold">{locale === "ar" ? "تاريخ الطلب" : "Date placed"}</span>
                               <span className="font-semibold">
-                                Order number
+                                {locale === "ar" ? "رقم الطلب" : "Order number"}
                               </span>
                               <span className="font-semibold">
-                                Total amount
+                                {locale === "ar" ? "مجموع الطلب" : "Total amount"}
                               </span>
                               <span data-testid="order-created-date">
                                 {new Date(order.created_at).toDateString()}
@@ -114,9 +118,16 @@ const Overview = ({ customer, orders }: OverviewProps) => {
                               data-testid="open-order-button"
                             >
                               <span className="sr-only">
-                                Go to order #{order.display_id}
+                                {locale === "ar" ? "فتح الطلب" : "Open order"} #{order.display_id}
                               </span>
-                              <ChevronDown className="-rotate-90" />
+                              {
+                                locale === 'ar' ? (
+                                  <ChevronLeftIcon className="h-5 w-5" />
+                                ) : (
+                                  <ChevronRightIcon className="h-5 w-5" />
+                                )
+                              }
+                              {/* <ChevronDown className="-rotate-90" /> */}
                             </button>
                           </Container>
                         </LocalizedClientLink>

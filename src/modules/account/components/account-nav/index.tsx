@@ -11,6 +11,13 @@ import Package from "@modules/common/icons/package"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { HttpTypes } from "@medusajs/types"
 import { signout } from "@lib/data/customer"
+import { useLocale } from "next-intl";
+import { ArrowLeftIcon } from "@modules/common/icons/arrow-left"
+import { ArrowRightIcon } from "lucide-react"
+import { ChevronLeftIcon } from '@modules/common/icons/chevron-left'
+import { ChevronRightIcon } from '@modules/common/icons/chevron-right'
+
+
 
 const AccountNav = ({
   customer,
@@ -19,6 +26,7 @@ const AccountNav = ({
 }) => {
   const route = usePathname()
   const { countryCode } = useParams() as { countryCode: string }
+  const locale = useLocale();
 
   const handleLogout = async () => {
     await signout(countryCode)
@@ -27,23 +35,28 @@ const AccountNav = ({
   return (
     <div>
       <div className="small:hidden" data-testid="mobile-account-nav">
-        {route !== `/${countryCode}/account` ? (
+        {route !== `/${locale}/${countryCode}/account` ? (
           <LocalizedClientLink
             href="/account"
-            className="flex items-center gap-x-2 text-small-regular py-2"
+            className="flex items-center gap-x-2 text-small-regular py-2 text-[#043364] "
             data-testid="account-main-link"
           >
             <>
-              <ChevronDown className="transform rotate-90" />
-              <span>Account</span>
+              {
+                locale === "ar" ? <ArrowRightIcon size={15} direction="left" />
+                  : <ArrowLeftIcon size={15} direction="right" />
+              }
+              <span>{
+                locale === "ar" ? "الحساب" : "Account"
+              }</span>
             </>
           </LocalizedClientLink>
         ) : (
           <>
-            <div className="text-xl-semi mb-4 px-8">
-              Hello {customer?.first_name}
+            <div className="text-xl-semi mb-4 px-8 text-[#043364] ">
+              {locale === "ar" ? "مرحبا" : "Hello"} {customer?.first_name}
             </div>
-            <div className="text-base-regular">
+            <div className="text-base-regular text-[#043364]">
               <ul>
                 <li>
                   <LocalizedClientLink
@@ -54,9 +67,15 @@ const AccountNav = ({
                     <>
                       <div className="flex items-center gap-x-2">
                         <User size={20} />
-                        <span>Profile</span>
+                        <span>{locale === "ar" ? "الملف الشخصي" : "Profile"}</span>
                       </div>
-                      <ChevronDown className="transform -rotate-90" />
+                      {
+                        locale === 'ar' ? (
+                          <ChevronLeftIcon className="h-5 w-5" />
+                        ) : (
+                          <ChevronRightIcon className="h-5 w-5" />
+                        )
+                      }
                     </>
                   </LocalizedClientLink>
                 </li>
@@ -69,9 +88,15 @@ const AccountNav = ({
                     <>
                       <div className="flex items-center gap-x-2">
                         <MapPin size={20} />
-                        <span>Addresses</span>
+                        <span>{locale === "ar" ? "العناوين" : "Addresses"}</span>
                       </div>
-                      <ChevronDown className="transform -rotate-90" />
+                      {
+                        locale === 'ar' ? (
+                          <ChevronLeftIcon className="h-5 w-5" />
+                        ) : (
+                          <ChevronRightIcon className="h-5 w-5" />
+                        )
+                      }
                     </>
                   </LocalizedClientLink>
                 </li>
@@ -83,9 +108,15 @@ const AccountNav = ({
                   >
                     <div className="flex items-center gap-x-2">
                       <Package size={20} />
-                      <span>Orders</span>
+                      <span>{locale === "ar" ? "الطلبات" : "Orders"}</span>
                     </div>
-                    <ChevronDown className="transform -rotate-90" />
+                    {
+                      locale === 'ar' ? (
+                        <ChevronLeftIcon className="h-5 w-5" />
+                      ) : (
+                        <ChevronRightIcon className="h-5 w-5" />
+                      )
+                    }
                   </LocalizedClientLink>
                 </li>
                 <li>
@@ -97,9 +128,15 @@ const AccountNav = ({
                   >
                     <div className="flex items-center gap-x-2">
                       <ArrowRightOnRectangle />
-                      <span>Log out</span>
+                      <span>{locale === "ar" ? "تسجيل الخروج" : "Logout"}</span>
                     </div>
-                    <ChevronDown className="transform -rotate-90" />
+                    {
+                      locale === 'ar' ? (
+                        <ChevronLeftIcon className="h-5 w-5" />
+                      ) : (
+                        <ChevronRightIcon className="h-5 w-5" />
+                      )
+                    }
                   </button>
                 </li>
               </ul>
@@ -107,20 +144,20 @@ const AccountNav = ({
           </>
         )}
       </div>
-      <div className="hidden small:block" data-testid="account-nav">
+      <div className="hidden small:block text-[#043364]" data-testid="account-nav">
         <div>
           <div className="pb-4">
-            <h3 className="text-base-semi">Account</h3>
+            <h3 className="text-base-semi">{locale === "ar" ? "الحساب" : "Account"}</h3>
           </div>
-          <div className="text-base-regular">
-            <ul className="flex mb-0 justify-start items-start flex-col gap-y-4">
+          <div className="text-base-regular text-[#043364]">
+            <ul className="flex mb-0 justify-start items-start flex-col gap-y-4 text-[#043364]">
               <li>
                 <AccountNavLink
                   href="/account"
                   route={route!}
                   data-testid="overview-link"
                 >
-                  Overview
+                  {locale === "ar" ? "نظرة عامة" : "Overview"}
                 </AccountNavLink>
               </li>
               <li>
@@ -129,7 +166,7 @@ const AccountNav = ({
                   route={route!}
                   data-testid="profile-link"
                 >
-                  Profile
+                  {locale === "ar" ? "الملف الشخصي" : "Profile"}
                 </AccountNavLink>
               </li>
               <li>
@@ -138,7 +175,7 @@ const AccountNav = ({
                   route={route!}
                   data-testid="addresses-link"
                 >
-                  Addresses
+                  {locale === "ar" ? "العناوين" : "Addresses"}
                 </AccountNavLink>
               </li>
               <li>
@@ -147,7 +184,7 @@ const AccountNav = ({
                   route={route!}
                   data-testid="orders-link"
                 >
-                  Orders
+                  {locale === "ar" ? "الطلبات" : "Orders"}
                 </AccountNavLink>
               </li>
               <li className="text-grey-700">
@@ -156,7 +193,7 @@ const AccountNav = ({
                   onClick={handleLogout}
                   data-testid="logout-button"
                 >
-                  Log out
+                  {locale === "ar" ? "تسجيل الخروج" : "Logout"}
                 </button>
               </li>
             </ul>
@@ -186,8 +223,8 @@ const AccountNavLink = ({
   return (
     <LocalizedClientLink
       href={href}
-      className={clx("text-ui-fg-subtle hover:text-ui-fg-base", {
-        "text-ui-fg-base font-semibold": active,
+      className={clx("text-ui-fg-subtle hover:text-[#043364]", {
+        "text-[#043364] font-semibold": active,
       })}
       data-testid={dataTestId}
     >

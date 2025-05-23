@@ -27,6 +27,9 @@ import { ChevronRightIcon } from '@modules/common/icons/chevron-right'
 import { BarsIcon } from '@modules/common/icons/bars'
 import { usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl'
+import { l } from 'framer-motion/dist/types.d-CQt5spQA'
+import { ArrowRightIcon } from 'lucide-react'
+import { ChevronLeftIcon } from '@modules/common/icons/chevron-left'
 
 interface CategoryItem {
   name: string
@@ -117,7 +120,13 @@ const SideMenu = ({
                   {item.icon && item.icon}
                   {item.name}
                 </span>
-                <ChevronRightIcon className="h-5 w-5" />
+                {
+                  locale === 'ar' ? (
+                    <ChevronLeftIcon className="h-5 w-5" />
+                  ) : (
+                    <ChevronRightIcon className="h-5 w-5" />
+                  )
+                }
               </>
             ) : (
               <LocalizedClientLink href={item.handle}>
@@ -180,25 +189,30 @@ const SideMenu = ({
           aria-describedby={undefined}
           dir={locale === 'ar' ? 'rtl' : 'ltr'}
         >
-          <DialogHeader className="flex items-center gap-4 !p-4 text-xl text-basic-primary small:text-2xl">
+          <DialogHeader dir={locale === 'ar' ? 'rtl' : 'ltr'} className="flex items-center gap-4 !p-4 text-xl text-basic-primary small:text-2xl">
             {currentCategory && (
               <Button variant="tonal" withIcon size="sm" onClick={handleBack}>
-                <ArrowLeftIcon className="h-5 w-5" />
+                {/* <ArrowLeftIcon className="h-5 w-5" direction={locale === 'ar' ? 'right' : 'left'} /> */}
+                {locale === 'ar' ? (
+                  <ArrowRightIcon className="h-5 w-5" direction="left" />
+                ) : (
+                  <ArrowLeftIcon className="h-5 w-5" direction="right" />
+                )}
               </Button>
             )}
-            {currentCategory?.name || 'Menu'}
+            {currentCategory?.name || locale === 'ar' ? 'القائمة' : 'Menu'}
             <Button
               onClick={() => handleOpenDialogChange(false)}
               variant="icon"
               withIcon
               size="sm"
-              className="ml-auto p-2"
+              className={`${locale === 'ar' ? 'mr-auto' : 'ml-auto'} p-2 `}
             >
               <X />
             </Button>
           </DialogHeader>
           <VisuallyHidden.Root>
-            <DialogTitle>Menu modal</DialogTitle>
+            <DialogTitle>{locale === 'ar' ? 'القائمة' : 'Menu'}</DialogTitle>
           </VisuallyHidden.Root>
           <DialogBody className="overflow-y-auto p-4 small:p-5">
             <Box className="flex flex-col">

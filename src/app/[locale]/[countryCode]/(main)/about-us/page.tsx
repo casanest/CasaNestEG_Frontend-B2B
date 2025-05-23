@@ -17,6 +17,7 @@ export default function AboutUs() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         className="text-center max-w-3xl"
+        dir={isRTL ? "rtl" : "ltr"}
       >
         <h1 className="text-4xl sm:text-5xl font-extrabold mb-4 flex items-center justify-center gap-2" style={{ color: primary }}>
           <Sparkles size={36} color={primary} /> {locale === "ar" ? "من نحن" : "About LA CASA"}
@@ -45,7 +46,8 @@ export default function AboutUs() {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="bg-gray-50 rounded-3xl shadow-md p-6 sm:p-8"
+            className={`bg-gray-50 rounded-3xl shadow-md p-6 sm:p-8`}
+            dir={isRTL ? "rtl" : "ltr"}
           >
             <h2 className="text-2xl font-bold mb-3" style={{ color: primary }}>{item.title}</h2>
             <p className="text-gray-700 text-sm sm:text-base">{item.desc}</p>
@@ -60,8 +62,9 @@ export default function AboutUs() {
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
         className="mt-20 max-w-3xl bg-[#f0f5ff] border border-[#cddff9] rounded-3xl p-8 sm:p-10 text-center shadow-lg"
+        dir={isRTL ? "rtl" : "ltr"}
       >
-        <h3 className="text-2xl font-semibold mb-2" style={{ color: primary }}>Our Vision</h3>
+        <h3 className="text-2xl font-semibold mb-2" style={{ color: primary }}>{locale === "ar" ? "رؤيتنا" : "Our Vision"}</h3>
         <p className="text-gray-700 text-sm sm:text-base">
           {locale === "ar" ? "أن نكون الخيار الأول في عالم المنتجات المنزلية من خلال تقديم تصاميم مبتكرة وجودة عالية." : "To be the first choice in the world of home products by offering innovative designs and high quality."}
         </p>
@@ -74,6 +77,7 @@ export default function AboutUs() {
         transition={{ duration: 0.8 }}
         viewport={{ once: true }}
         className="mt-24 max-w-6xl w-full"
+        dir={isRTL ? "rtl" : "ltr"}
       >
         <h2 className="text-3xl font-bold text-center mb-10" style={{ color: primary }}>{locale === "ar" ? "قيمنا" : "Our Core Values"}</h2>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 text-center">
@@ -100,6 +104,7 @@ export default function AboutUs() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
         viewport={{ once: true }}
+        dir={isRTL ? "rtl" : "ltr"}
         className="mt-24 max-w-6xl w-full"
       >
         <h2 className="text-3xl font-bold text-center mb-10" style={{ color: primary }}>
