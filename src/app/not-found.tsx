@@ -17,7 +17,7 @@ export default function NotFound() {
   const locale = useLocale(); // "ar", "en", ...
   const dir = locale === "ar" ? "rtl" : "ltr";
   return (
-    <div className="flex flex-col gap-4 items-center justify-center min-h-[calc(100vh-64px)]">
+    <div dir={dir} className="flex flex-col gap-4 items-center justify-center min-h-[calc(100vh-64px)]">
       <h1 className="text-2xl-semi text-ui-fg-base">{t(k.PAGE_NOT_FOUND)}</h1>
       <p className="text-small-regular text-ui-fg-base">
         {t(k.THE_PAGE_YOU_TRIED_TO_ACCESS_D)}
@@ -26,6 +26,7 @@ export default function NotFound() {
         href="/"
         className={`flex items-center gap-x-1 group ${dir === "rtl" ? "flex-row-reverse" : "flex-row"
           }`}
+          dir={dir}
       >
         <Text className={`text-ui-fg-interactive ${dir === "rtl" ? "items-right" : "group-hover:translate-x-1"}`}>{t(k.GO_TO_FRONTPAGE)}</Text>
         <ArrowUpRightMini

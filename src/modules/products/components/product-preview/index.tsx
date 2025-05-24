@@ -5,6 +5,7 @@ import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Thumbnail from "../thumbnail"
 import PreviewPrice from "./price"
+import { getLocale } from "next-intl/server"
 
 export default async function ProductPreview({
   product,
@@ -29,6 +30,7 @@ export default async function ProductPreview({
   const { cheapestPrice } = getProductPrice({
     product,
   })
+
 
   return (
     <LocalizedClientLink href={`/products/${product.handle}`} className="group" size="small">

@@ -11,6 +11,7 @@ import { useParams } from "next/navigation"
 import { useEffect, useMemo, useRef, useState } from "react"
 import ProductPrice from "../product-price"
 import MobileActions from "./mobile-actions"
+import { useLocale } from "next-intl"
 
 type ProductActionsProps = {
   product: HttpTypes.StoreProduct
@@ -34,7 +35,7 @@ export default function ProductActions({
   const [options, setOptions] = useState<Record<string, string | undefined>>({})
   const [isAdding, setIsAdding] = useState(false)
   const countryCode = useParams().countryCode as string
-
+  const locale = useLocale()
   // If there is only 1 variant, preselect the options
   useEffect(() => {
     if (product.variants?.length === 1) {
@@ -149,16 +150,20 @@ export default function ProductActions({
             isAdding ||
             !isValidVariant
           }
-          variant="primary"
-          className="w-full h-10"
+          // variant="primary"
+          className="w-full h-10 bg-[#043364] text-white hover:bg-[#093964]"
           isLoading={isAdding}
           data-testid="add-product-button"
         >
           {!selectedVariant && !options
-            ? "Select variant"
+            ? locale === "ar" ? "اختر خيارًا" : "Select an option"
             : !inStock || !isValidVariant
-            ? "Out of stock"
-            : "Add to cart"}
+              ? locale === "ar"
+                ? "غير متوفر"
+                : "Out of stock"
+              : locale === "ar"
+                ? "أضف إلى السلة"
+                : "Add to cart"}
         </Button>
         <MobileActions
           product={product}
