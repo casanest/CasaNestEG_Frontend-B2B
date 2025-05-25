@@ -31,6 +31,9 @@ export default async function ProductPreview({
     product,
   })
 
+  console.log("Product Preview", 
+    product,)
+
 
   return (
     <LocalizedClientLink href={`/products/${product.handle}`} className="group" size="small">
@@ -43,7 +46,9 @@ export default async function ProductPreview({
         />
         <div className="flex txt-compact-medium mt-4 justify-between">
           <Text className="text-ui-fg-subtle" data-testid="product-title">
-            {product.title}
+            {locale === "ar"
+              ? (product.metadata?.title_ar as string ?? product.title)
+              : product.title}
           </Text>
           <div className="flex items-center gap-x-2">
             {cheapestPrice && <PreviewPrice price={cheapestPrice} />}

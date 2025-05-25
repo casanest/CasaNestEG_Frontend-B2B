@@ -11,6 +11,18 @@ checkEnvVariables()
 const withNextIntl = nextIntl("./src/lib/i18n/request-config.js")
 
 const configOpts = {
+  async headers() {
+    return [
+        {
+            source: '/:path*', // Match all routes
+            headers: [
+                { key: 'Cache-Control', value: 'no-store, no-cache, must-revalidate, proxy-revalidate' },
+                { key: 'Pragma', value: 'no-cache' },
+                { key: 'Expires', value: '0' },
+            ],
+        },
+    ];
+},
   reactStrictMode: true,
   logging: {
     fetches: {
@@ -23,6 +35,7 @@ const configOpts = {
   typescript: {
     ignoreBuildErrors: true,
   },
+
   images: {
     remotePatterns: [
       {
