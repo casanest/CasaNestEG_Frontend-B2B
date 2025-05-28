@@ -18,6 +18,8 @@ export default function TopNav() {
     // Force full page reload
     window.location.href = newPath;
   };
+  
+
 
   const translations = {
     helpText: isRTL ? "تحتاج مساعدة؟" : "Need help?",

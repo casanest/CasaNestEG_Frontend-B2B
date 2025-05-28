@@ -69,15 +69,14 @@ const ShippingDetails = ({ order }: ShippingDetailsProps) => {
             {isRTL ? "اتصال" : "Contact"}
           </Text>
           <div className="flex flex-col gap-y-1">
-            <Text className="txt-medium text-ui-fg-subtle">
+            <Text className="txt-medium text-ui-fg-subtle break-all">
               {order.shipping_address?.phone}
             </Text>
-            <Text className="txt-medium text-ui-fg-subtle">
+            <Text className="txt-medium text-ui-fg-subtle break-words">
               {order.email}
             </Text>
           </div>
         </div>
-
         {/* Shipping Method */}
         <div
           className="flex-1 min-w-0"
