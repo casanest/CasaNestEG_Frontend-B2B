@@ -4,6 +4,7 @@ import React, { useEffect, useState, useActionState } from "react"
 import { PencilSquare as Edit, Trash } from "@medusajs/icons"
 import { Button, Heading, Text, clx } from "@medusajs/ui"
 
+import { useLocale } from "next-intl"
 import useToggleState from "@lib/hooks/use-toggle-state"
 import CountrySelect from "@modules/checkout/components/country-select"
 import Input from "@modules/common/components/input"
@@ -15,6 +16,7 @@ import {
   deleteCustomerAddress,
   updateCustomerAddress,
 } from "@lib/data/customer"
+import { l } from "framer-motion/dist/types.d-CQt5spQA"
 
 type EditAddressProps = {
   region: HttpTypes.StoreRegion
@@ -27,6 +29,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
   address,
   isActive = false,
 }) => {
+  const locale = useLocale()
   const [removing, setRemoving] = useState(false)
   const [successState, setSuccessState] = useState(false)
   const { state, open, close: closeModal } = useToggleState(false)
@@ -64,15 +67,16 @@ const EditAddress: React.FC<EditAddressProps> = ({
   return (
     <>
       <div
+        dir={locale === "ar" ? "rtl" : "ltr"}
         className={clx(
-          "border rounded-rounded p-5 min-h-[220px] h-full w-full flex flex-col justify-between transition-colors",
+          "border rounded-rounded p-5 min-h-[220px] h-full w-full flex flex-col justify-between transition-colors text-[#043364]",
           {
             "border-gray-900": isActive,
           }
         )}
         data-testid="address-container"
       >
-        <div className="flex flex-col">
+        <div dir={locale === "ar" ? "rtl" : "ltr"} className="flex flex-col">
           <Heading
             className="text-left text-base-semi"
             data-testid="address-name"
@@ -101,37 +105,43 @@ const EditAddress: React.FC<EditAddressProps> = ({
             </span>
           </Text>
         </div>
-        <div className="flex items-center gap-x-4">
+        <div className="flex items-center gap-x-4 text-[#043364]">
           <button
-            className="text-small-regular text-ui-fg-base flex items-center gap-x-2"
+            className="text-small-regular text-ui-fg-base flex items-center gap-x-2 text-[#043364]"
             onClick={open}
             data-testid="address-edit-button"
           >
             <Edit />
-            Edit
+            {locale === "ar" ? "تعديل" : "Edit"}
           </button>
           <button
-            className="text-small-regular text-ui-fg-base flex items-center gap-x-2"
+            className="text-small-regular text-ui-fg-base flex items-center gap-x-2 text-[#043364]"
             onClick={removeAddress}
             data-testid="address-delete-button"
           >
             {removing ? <Spinner /> : <Trash />}
-            Remove
+            {removing
+              ? locale === "ar"
+                ? "جاري الحذف..."
+                : "Removing..."
+              : locale === "ar"
+              ? "حذف"
+              : "Delete"}
           </button>
         </div>
       </div>
 
-      <Modal isOpen={state} close={close} data-testid="edit-address-modal">
+      <Modal  isOpen={state} close={close} data-testid="edit-address-modal">
         <Modal.Title>
-          <Heading className="mb-2">Edit address</Heading>
+          <Heading className="mb-2 text-[#043364]">{locale === "ar" ? "تعديل العنوان" : "Edit address"}</Heading>
         </Modal.Title>
-        <form action={formAction}>
+        <form dir={locale === "ar" ? "rtl" : "ltr"}  action={formAction}>
           <input type="hidden" name="addressId" value={address.id} />
           <Modal.Body>
-            <div className="grid grid-cols-1 gap-y-2">
-              <div className="grid grid-cols-2 gap-x-2">
+            <div className="grid grid-cols-1 gap-y-1 md:gap-y-2">
+              <div className="grid grid-cols-2 gap-x-2 ">
                 <Input
-                  label="First name"
+                  label={locale === "ar" ? "الاسم الأول" : "First name"}
                   name="first_name"
                   required
                   autoComplete="given-name"
@@ -139,7 +149,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
                   data-testid="first-name-input"
                 />
                 <Input
-                  label="Last name"
+                  label={locale === "ar" ? "الاسم الأخير" : "Last name"}
                   name="last_name"
                   required
                   autoComplete="family-name"
@@ -148,14 +158,14 @@ const EditAddress: React.FC<EditAddressProps> = ({
                 />
               </div>
               <Input
-                label="Company"
+                label={locale === "ar" ? "الشركة" : "Company"}
                 name="company"
                 autoComplete="organization"
                 defaultValue={address.company || undefined}
                 data-testid="company-input"
               />
               <Input
-                label="Address"
+                label={locale === "ar" ? "العنوان 1" : "Address 1"}
                 name="address_1"
                 required
                 autoComplete="address-line1"
@@ -163,7 +173,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
                 data-testid="address-1-input"
               />
               <Input
-                label="Apartment, suite, etc."
+                label={locale === "ar" ? "العنوان 2" : "Address 2"}
                 name="address_2"
                 autoComplete="address-line2"
                 defaultValue={address.address_2 || undefined}
@@ -171,7 +181,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
               />
               <div className="grid grid-cols-[144px_1fr] gap-x-2">
                 <Input
-                  label="Postal code"
+                  label={locale === "ar" ? "الرمز البريدي" : "Postal code"}
                   name="postal_code"
                   required
                   autoComplete="postal-code"
@@ -179,7 +189,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
                   data-testid="postal-code-input"
                 />
                 <Input
-                  label="City"
+                  label={locale === "ar" ? "المدينة" : "City"}
                   name="city"
                   required
                   autoComplete="locality"
@@ -188,7 +198,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
                 />
               </div>
               <Input
-                label="Province / State"
+                label={locale === "ar" ? "المقاطعة" : "Province/State"}
                 name="province"
                 autoComplete="address-level1"
                 defaultValue={address.province || undefined}
@@ -203,7 +213,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
                 data-testid="country-select"
               />
               <Input
-                label="Phone"
+                label={locale === "ar" ? "رقم الهاتف" : "Phone"}
                 name="phone"
                 autoComplete="phone"
                 defaultValue={address.phone || undefined}
@@ -217,7 +227,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
             )}
           </Modal.Body>
           <Modal.Footer>
-            <div className="flex gap-3 mt-6">
+            <div className="flex gap-3 mt-3  ">
               <Button
                 type="reset"
                 variant="secondary"
@@ -225,9 +235,9 @@ const EditAddress: React.FC<EditAddressProps> = ({
                 className="h-10"
                 data-testid="cancel-button"
               >
-                Cancel
+                {locale === "ar" ? "إلغاء" : "Cancel"}
               </Button>
-              <SubmitButton data-testid="save-button">Save</SubmitButton>
+              <SubmitButton className="bg-[#043364] hover:bg-[#043964] text-white" data-testid="save-button">{locale === "ar" ? "حفظ" : "Save"}</SubmitButton>
             </div>
           </Modal.Footer>
         </form>

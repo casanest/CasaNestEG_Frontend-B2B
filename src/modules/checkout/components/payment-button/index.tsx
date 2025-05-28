@@ -8,6 +8,7 @@ import { useElements, useStripe } from "@stripe/react-stripe-js"
 import React, { useState } from "react"
 import ErrorMessage from "../error-message"
 import confetti from "canvas-confetti"
+import { useLocale } from "next-intl"
 
 type PaymentButtonProps = {
   cart: HttpTypes.StoreCart
@@ -18,6 +19,8 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
   cart,
   "data-testid": dataTestId,
 }) => {
+  const locale = useLocale()
+
   const notReady =
     !cart ||
     !cart.shipping_address ||
@@ -54,6 +57,7 @@ const StripePaymentButton = ({
   notReady: boolean
   "data-testid"?: string
 }) => {
+  const locale = useLocale()
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
@@ -143,7 +147,7 @@ const StripePaymentButton = ({
         isLoading={submitting}
         data-testid={dataTestId}
       >
-        Place order
+       {locale === "en" ? "Place order" : "إتمام الطلب"}
       </Button>
       <ErrorMessage
         error={errorMessage}
@@ -183,7 +187,7 @@ const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
         data-testid="submit-order-button"
         className="bg-[#043364] hover:bg-blue-900 text-white"
       >
-        Place order
+        {useLocale() === "en" ? "Place order" : "إتمام الطلب"}
       </Button>
       <ErrorMessage
         error={errorMessage}

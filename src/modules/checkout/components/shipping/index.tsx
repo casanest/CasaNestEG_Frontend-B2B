@@ -12,6 +12,7 @@ import Divider from "@modules/common/components/divider"
 import MedusaRadio from "@modules/common/components/radio"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
+import { useLocale } from "next-intl"
 
 const PICKUP_OPTION_ON = "__PICKUP_ON"
 const PICKUP_OPTION_OFF = "__PICKUP_OFF"
@@ -51,6 +52,8 @@ const Shipping: React.FC<ShippingProps> = ({
   cart,
   availableShippingMethods,
 }) => {
+  const locale = useLocale()
+  const isRTL = locale === "ar"
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingPrices, setIsLoadingPrices] = useState(true)
 
@@ -149,7 +152,7 @@ const Shipping: React.FC<ShippingProps> = ({
   }, [isOpen])
 
   return (
-    <div className="bg-white">
+    <div dir={isRTL ? "rtl" : "ltr"} className="bg-white">
       <div className="text-[#043364] flex flex-row items-center justify-between mb-6">
         <Heading
           level="h2"
@@ -161,7 +164,7 @@ const Shipping: React.FC<ShippingProps> = ({
             }
           )}
         >
-          Delivery
+          {locale === "en" ? "Delivery" : "توصيل"}
           {!isOpen && (cart.shipping_methods?.length ?? 0) > 0 && (
             <CheckCircleSolid />
           )}
@@ -176,20 +179,20 @@ const Shipping: React.FC<ShippingProps> = ({
                 className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
                 data-testid="edit-delivery-button"
               >
-                Edit
+                {locale === "en" ? "Edit" : "تعديل"}
               </button>
             </Text>
           )}
       </div>
       {isOpen ? (
         <>
-          <div className="grid">
+          <div dir={isRTL ? "rtl" : "ltr"} className="grid">
             <div className="flex flex-col">
               <span className="font-medium txt-medium text-ui-fg-base">
-                Shipping method
+                {locale === "en" ? "Shipping method" : "طريقة التوصيل"}
               </span>
               <span className="mb-4 text-ui-fg-muted txt-medium">
-                How would you like you order delivered
+                {locale === "en" ? "How would you like you order delivered" : "كيف تود تسليم الطلبات"}
               </span>
             </div>
             <div data-testid="delivery-options-container">
@@ -223,7 +226,7 @@ const Shipping: React.FC<ShippingProps> = ({
                           checked={showPickupOptions === PICKUP_OPTION_ON}
                         />
                         <span className="text-base-regular">
-                          Pick up your order
+                          {locale === "en" ? "Pick up your order" : "استلام الطلب"}
                         </span>
                       </div>
                       <span className="justify-self-end text-ui-fg-base">
@@ -295,10 +298,10 @@ const Shipping: React.FC<ShippingProps> = ({
             <div className="grid">
               <div className="flex flex-col">
                 <span className="font-medium txt-medium text-ui-fg-base">
-                  Store
+                  {locale === "en" ? "Store" : "متجر"}
                 </span>
                 <span className="mb-4 text-ui-fg-muted txt-medium">
-                  Choose a store near you
+                  {locale === "en" ? "Choose a store near you" : "اختر متجر قريب"}
                 </span>
               </div>
               <div data-testid="delivery-options-container">
@@ -368,7 +371,7 @@ const Shipping: React.FC<ShippingProps> = ({
               disabled={!cart.shipping_methods?.[0]}
               data-testid="submit-delivery-option-button"
             >
-              Continue to payment
+              {locale === "ar" ? "التقدم للدفع" : "Continue to payment"}
             </Button>
           </div>
         </>

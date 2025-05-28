@@ -9,7 +9,7 @@ import {
   useRef,
   useState,
 } from "react"
-
+import { useLocale } from "next-intl"
 import ChevronDown from "@modules/common/icons/chevron-down"
 
 type NativeSelectProps = {
@@ -19,7 +19,12 @@ type NativeSelectProps = {
 } & Omit<SelectHTMLAttributes<HTMLSelectElement>, "size">
 
 const CartItemSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
-  ({ placeholder = "Select...", className, children, ...props }, ref) => {
+  ({ placeholder, className, children, ...props }, ref) => {
+    const locale = useLocale()
+    const isRTL = locale === "ar"
+    const defaultPlaceholder = isRTL ? "الكمية" : "Quantity"
+    const finalPlaceholder = placeholder || defaultPlaceholder
+
     const innerRef = useRef<HTMLSelectElement>(null)
     const [isPlaceholder, setIsPlaceholder] = useState(false)
 
@@ -37,7 +42,7 @@ const CartItemSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
     }, [innerRef.current?.value])
 
     return (
-      <div>
+      <div dir={isRTL ? "rtl" : "ltr"}>
         <IconBadge
           onFocus={() => innerRef.current?.focus()}
           onBlur={() => innerRef.current?.blur()}
@@ -52,15 +57,26 @@ const CartItemSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
           <select
             ref={innerRef}
             {...props}
-            className="appearance-none bg-transparent border-none px-4 transition-colors duration-150 focus:border-gray-700 outline-none w-16 h-16 items-center justify-center"
+            className={clx(
+              "appearance-none bg-transparent border-none px-4 transition-colors duration-150 focus:border-gray-700 outline-none w-16 h-16 items-center justify-center",
+              {
+                "text-right": isRTL,
+                "text-left": !isRTL
+              }
+            )}
           >
             <option disabled value="">
-              {placeholder}
+              {finalPlaceholder}
             </option>
             {children}
           </select>
-          <span className="absolute flex pointer-events-none justify-end w-8 group-hover:animate-pulse">
-            <ChevronDown />
+          <span className={clx("absolute flex pointer-events-none w-8 group-hover:animate-pulse", {
+            "left-0": isRTL,
+            "right-0": !isRTL
+          })}>
+            <ChevronDown className={clx({
+              "rotate-180": isRTL
+            })} />
           </span>
         </IconBadge>
       </div>

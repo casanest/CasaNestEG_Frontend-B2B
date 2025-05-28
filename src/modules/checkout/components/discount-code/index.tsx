@@ -10,6 +10,7 @@ import { HttpTypes } from "@medusajs/types"
 import Trash from "@modules/common/icons/trash"
 import ErrorMessage from "../error-message"
 import { SubmitButton } from "../submit-button"
+import { useLocale } from "next-intl";
 
 type DiscountCodeProps = {
   cart: HttpTypes.StoreCart & {
@@ -19,6 +20,7 @@ type DiscountCodeProps = {
 
 const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
   const [isOpen, setIsOpen] = React.useState(false)
+  const locale = useLocale()
 
   const { items = [], promotions = [] } = cart
   const removePromotionCode = async (code: string) => {
@@ -52,7 +54,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
   const [message, formAction] = useActionState(submitPromotionForm, null)
 
   return (
-    <div className="w-full bg-white flex flex-col">
+    <div dir={locale === "ar" ? "rtl" : "ltr"} className="w-full bg-white flex flex-col">
       <div className="txt-medium">
         <form action={(a) => addPromotionCode(a)} className="w-full mb-5">
           <Label className="flex gap-x-1 my-2 items-center">
@@ -62,7 +64,8 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
               className="txt-medium text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
               data-testid="add-discount-button"
             >
-              Add Promotion Code(s)
+              {locale === "ar" ? "إضافة رمز ترويجي" : "Add Promotion Code"}
+              
             </button>
 
             {/* <Tooltip content="You can add multiple promotion codes">
@@ -85,7 +88,8 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
                   variant="secondary"
                   data-testid="discount-apply-button"
                 >
-                  Apply
+                  {locale === "ar" ? "تطبيق" : "Apply"}
+                  
                 </SubmitButton>
               </div>
 

@@ -3,14 +3,18 @@ import ChevronDown from "@modules/common/icons/chevron-down"
 import MedusaCTA from "@modules/layout/components/medusa-cta"
 import SideMenu from "@modules/layout/components/side-menu"
 import Image from "next/image"
+import { getLocale } from "next-intl/server"
+import { ChevronRightIcon } from "@modules/common/icons/chevron-right"
 
-export default function CheckoutLayout({
+export default async function CheckoutLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const locale = await getLocale()
+  const isRTL = locale === "ar"
   return (
-    <div className="w-full bg-white relative small:min-h-screen">
+    <div dir={isRTL ? "rtl" : "ltr"} className="w-full bg-white relative small:min-h-screen">
       <div className="h-16 bg-white border-b ">
         <nav className="flex h-full items-center content-container justify-between">
           {/* <div className=" flex-1 basis-0 h-full flex items-center bg-blue-500">
@@ -43,12 +47,12 @@ export default function CheckoutLayout({
                 className="text-small-semi text-ui-fg-base flex items-center gap-x-2 uppercase flex-1 basis-0"
                 data-testid="back-to-cart-link"
               >
-                <ChevronDown className="rotate-90" size={16} />
+                <ChevronRightIcon className={isRTL ? "" : "rotate-180"} size={16} />
                 <span className="mt-px hidden small:block txt-compact-plus text-ui-fg-subtle hover:text-ui-fg-base ">
-                  Back to shopping cart
+                  {isRTL ? "العودة إلى عربة التسوق" : "Back to shopping cart"}
                 </span>
                 <span className="mt-px block small:hidden txt-compact-plus text-ui-fg-subtle hover:text-ui-fg-base">
-                  Back
+                  {isRTL ? "العودة" : "Back"}
                 </span>
               </LocalizedClientLink>
             </div>
@@ -60,7 +64,7 @@ export default function CheckoutLayout({
               data-testid="nav-store-link"
             >
               <Image
-                src="/lacasaLogo.png"
+                src="/lacasaLogo.jpg"
                 alt="Logo"
                 width={100}
                 height={100}
@@ -76,7 +80,7 @@ export default function CheckoutLayout({
               data-testid="nav-store-link"
             >
               <Image
-                src="/lacasaLogo.png"
+                src="/lacasaLogo.jpg"
                 alt="Logo"
                 width={150}
                 height={150}

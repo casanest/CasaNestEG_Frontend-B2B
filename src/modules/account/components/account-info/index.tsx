@@ -2,8 +2,10 @@ import { Disclosure } from "@headlessui/react"
 import { Badge, Button, clx } from "@medusajs/ui"
 import { useEffect } from "react"
 
+import { getLocale } from "next-intl/server"
 import useToggleState from "@lib/hooks/use-toggle-state"
 import { useFormStatus } from "react-dom"
+import { useLocale } from "next-intl"
 
 type AccountInfoProps = {
   label: string
@@ -28,6 +30,7 @@ const AccountInfo = ({
 }: AccountInfoProps) => {
   const { state, close, toggle } = useToggleState()
 
+  const locale =  useLocale() // Removed because 'await' is not allowed here
   const { pending } = useFormStatus()
 
   const handleToggle = () => {
@@ -63,7 +66,7 @@ const AccountInfo = ({
             data-testid="edit-button"
             data-active={state}
           >
-            {state ? "Cancel" : "Edit"}
+            {state ? locale === "en" ? "Cancel" : "الغاء" : locale === "en" ? "Edit" : "تعديل"}
           </Button>
         </div>
       </div>
@@ -82,7 +85,7 @@ const AccountInfo = ({
           data-testid="success-message"
         >
           <Badge className="p-2 my-4" color="green">
-            <span>{label} updated succesfully</span>
+            <span>{label} {locale === "en" ? "updated successfully" : "تم التحديث بنجاح"}</span>
           </Badge>
         </Disclosure.Panel>
       </Disclosure>
@@ -122,11 +125,11 @@ const AccountInfo = ({
             <div className="flex items-center justify-end mt-2">
               <Button
                 isLoading={pending}
-                className="w-full small:max-w-[140px]"
+                className="w-full small:max-w-[140px] bg-[#043364] hover:bg-[#043964] text-white "
                 type="submit"
                 data-testid="save-button"
               >
-                Save changes
+                {locale === "en" ? "Save changes" : "حفظ التغييرات"}
               </Button>
             </div>
           </div>

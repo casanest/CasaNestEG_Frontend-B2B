@@ -13,6 +13,7 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import Spinner from "@modules/common/icons/spinner"
 import Thumbnail from "@modules/products/components/thumbnail"
 import { useState } from "react"
+import { useLocale } from "next-intl"
 
 type ItemProps = {
   item: HttpTypes.StoreCartLineItem
@@ -21,6 +22,8 @@ type ItemProps = {
 }
 
 const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
+  const locale = useLocale()
+  const isRTL = locale === "ar"
   const [updating, setUpdating] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -45,8 +48,11 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
   const maxQuantity = item.variant?.manage_inventory ? 10 : maxQtyFromInventory
 
   return (
-    <Table.Row className="w-full" data-testid="product-row">
-      <Table.Cell className="!pl-2 p-4 w-24">
+    <Table.Row className="w-full" data-testid="product-row" dir={isRTL ? "rtl" : "ltr"}>
+      <Table.Cell className={clx("p-4 w-24", {
+        "!pr-2": isRTL,
+        "!pl-2": !isRTL
+      })}>
         <LocalizedClientLink
           href={`/products/${item.product_handle}`}
           className={clx("flex", {
@@ -62,7 +68,10 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
         </LocalizedClientLink>
       </Table.Cell>
 
-      <Table.Cell className="text-left">
+      <Table.Cell className={clx({
+        "text-right": isRTL,
+        "text-left": !isRTL
+      })}>
         <Text
           className="txt-medium-plus text-ui-fg-base"
           data-testid="product-title"
@@ -74,7 +83,9 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
 
       {type === "full" && (
         <Table.Cell>
-          <div className="flex gap-2 items-center w-28">
+          <div className={clx("flex gap-2 items-center w-28", {
+            "flex-row-reverse": isRTL
+          })}>
             <DeleteButton id={item.id} data-testid="product-delete-button" />
             <CartItemSelect
               value={item.quantity}
@@ -82,7 +93,6 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
               className="w-14 h-10 p-4"
               data-testid="product-select-button"
             >
-              {/* TODO: Update this with the v2 way of managing inventory */}
               {Array.from(
                 {
                   length: Math.min(maxQuantity, 10),
@@ -93,7 +103,6 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
                   </option>
                 )
               )}
-
               <option value={1} key={1}>
                 1
               </option>
@@ -105,7 +114,10 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
       )}
 
       {type === "full" && (
-        <Table.Cell className="hidden small:table-cell">
+        <Table.Cell className={clx("hidden small:table-cell", {
+          "text-right": isRTL,
+          "text-left": !isRTL
+        })}>
           <LineItemUnitPrice
             item={item}
             style="tight"
@@ -114,14 +126,20 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
         </Table.Cell>
       )}
 
-      <Table.Cell className="!pr-3 text-right">
+      <Table.Cell className={clx({
+        "!pl-3": isRTL,
+        "!pr-3": !isRTL
+      })}>
         <span
-          className={clx("!pr-0", {
+          className={clx({
             "flex flex-col items-end h-full justify-center": type === "preview",
+            "flex flex-col items-start h-full justify-center": type === "preview" && isRTL,
           })}
         >
           {type === "preview" && (
-            <span className="flex gap-x-1 ">
+            <span className={clx("flex", {
+              "flex-row-reverse": isRTL
+            })}>
               <Text className="text-ui-fg-muted">{item.quantity}x </Text>
               <LineItemUnitPrice
                 item={item}

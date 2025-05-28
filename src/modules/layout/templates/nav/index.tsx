@@ -37,6 +37,38 @@ export default async function Nav() {
   console.log("collections", collections)
   const navigation = createNavigation(productCategories, collections)
 
+  const LaCasaLogo = ({ width = '200', height = '100', color = '#000' }) => (
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 200 100"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* Main "LA CASA" text */}
+      <text
+        x="20"
+        y="50"
+        fontFamily="Arial, sans-serif"
+        fontSize="36"  // Slightly smaller to fit the extra letters
+        fontWeight="bold"
+        fill={color}
+      >
+        LA CASA
+      </text>
+
+      {/* Subtitle "ideas aa for life" */}
+      <text
+        x="20"
+        y="80"
+        fontFamily="Arial, sans-serif"
+        fontSize="14"
+        fill={color}
+      >
+        ideas aa for life
+      </text>
+    </svg>
+  );
+
   return (
     <>
       <TopNav />
@@ -50,31 +82,33 @@ export default async function Nav() {
               <div className="flex items-center ">
                 <SideMenu productCategories={productCategories} collections={collections} />
               </div>
-              <div className="flex items-center  md:hidden">
+              <div className="flex items-center h-full  md:hidden">
                 <LocalizedClientLink
                   href="/"
                   className="text-4xl font-extrabold tracking-widest uppercase text-transparent bg-clip-text hover:from-blue-600 hover:to-blue-800 transition-all duration-300 ease-in-out leading-none"
                   data-testid="nav-store-link"
                 >
                   <Image
-                    src="/lacasaLogo.png"
+                    src="/lacasaLogo.jpg"
                     alt="Logo"
-                    width={150}
+                    width={170}
                     height={150}
                   />
                 </LocalizedClientLink>
               </div>
             </div>
             <div className="hidden md:flex flex-1 basis-0 h-full flex items-center">
+              {/* <LaCasaLogo width="300" height="70" color="#ff5722" /> */}
+
               <LocalizedClientLink
                 href="/"
                 className="text-3xl font-extrabold tracking-widest uppercase text-transparent bg-clip-text hover:from-blue-600 hover:to-blue-800 transition-all duration-300 ease-in-out leading-none"
                 data-testid="nav-store-link"
               >
                 <Image
-                  src="/lacasaLogo.png"
+                  src="/lacasaLogo.jpg"
                   alt="Logo"
-                  width={150}
+                  width={170}
                   height={150}
                 />
               </LocalizedClientLink>

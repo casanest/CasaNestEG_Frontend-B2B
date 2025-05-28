@@ -12,6 +12,7 @@ import PaymentContainer, {
 import Divider from "@modules/common/components/divider"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
+import { useLocale } from "next-intl"
 
 const Payment = ({
   cart,
@@ -20,6 +21,8 @@ const Payment = ({
   cart: any
   availablePaymentMethods: any[]
 }) => {
+  const locale = useLocale()
+  const isRTL = locale === "ar"
   const activeSession = cart.payment_collection?.payment_sessions?.find(
     (paymentSession: any) => paymentSession.status === "pending"
   )
@@ -119,7 +122,7 @@ const Payment = ({
             }
           )}
         >
-          Payment
+          {locale === "ar" ? "طريقة الدفع" : "Payment"}
           {!isOpen && paymentReady && <CheckCircleSolid />}
         </Heading>
         {!isOpen && paymentReady && (
@@ -129,7 +132,7 @@ const Payment = ({
               className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
               data-testid="edit-payment-button"
             >
-              Edit
+              {locale === "ar" ? "تعديل" : "Edit"}
             </button>
           </Text>
         )}
@@ -169,13 +172,13 @@ const Payment = ({
           {paidByGiftcard && (
             <div className="flex flex-col w-1/3">
               <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                Payment method
+                {locale === "ar" ? "طريقة الدفع" : "Payment method"}
               </Text>
               <Text
                 className="txt-medium text-ui-fg-subtle"
                 data-testid="payment-method-summary"
               >
-                Gift card
+                {locale === "ar" ? "بطاقة النقاط" : " Gift card"}
               </Text>
             </div>
           )}
@@ -197,8 +200,12 @@ const Payment = ({
             data-testid="submit-payment-button"
           >
             {!activeSession && isStripeFunc(selectedPaymentMethod)
-              ? " Enter card details"
-              : "Continue to review"}
+              ? locale === "ar"
+                ? "ادخال بطاقة الدفع"
+                : "Enter card details"
+              : locale === "ar"
+                ? "متابعة المراجعة"
+                : "Continue to review"}
           </Button>
         </div>
 

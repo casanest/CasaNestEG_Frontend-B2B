@@ -1,19 +1,47 @@
-import { Heading } from "@medusajs/ui"
+import { Heading, clx } from "@medusajs/ui"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import React from "react"
+import { useLocale } from "next-intl"
 
 const Help = () => {
+  const locale = useLocale()
+  const isRTL = locale === "ar"
+
   return (
-    <div className="mt-6">
-      <Heading className="text-base-semi">Need help?</Heading>
-      <div className="text-base-regular my-2">
-        <ul className="gap-y-2 flex flex-col">
+    <div
+      className="mt-6"
+      dir={isRTL ? "rtl" : "ltr"}
+    >
+      <Heading
+        className={clx("text-base-semi mb-2", {
+          "text-right": isRTL,
+          "text-left": !isRTL
+        })}
+      >
+        {isRTL ? "هل تحتاج مساعدة؟" : "Need help?"}
+      </Heading>
+
+      <div className={clx("text-base-regular", {
+        "text-right": isRTL,
+        "text-left": !isRTL
+      })}>
+        <ul className={clx("gap-y-2 flex flex-col", {
+          "pr-4": isRTL,
+          "pl-4": !isRTL
+        })}>
           <li>
-            <LocalizedClientLink href="/contact">Contact</LocalizedClientLink>
+            <LocalizedClientLink
+              href="/contact"
+              className="hover:text-ui-fg-interactive transition-colors"
+            >
+              {isRTL ? "اتصل بنا" : "Contact"}
+            </LocalizedClientLink>
           </li>
           <li>
-            <LocalizedClientLink href="/contact">
-              Returns & Exchanges
+            <LocalizedClientLink
+              href="/returns"
+              className="hover:text-ui-fg-interactive transition-colors"
+            >
+              {isRTL ? "المرتجعات والاستبدال" : "Returns & Exchanges"}
             </LocalizedClientLink>
           </li>
         </ul>

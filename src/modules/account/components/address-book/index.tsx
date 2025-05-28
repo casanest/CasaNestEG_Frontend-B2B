@@ -3,17 +3,19 @@ import React from "react"
 import AddAddress from "../address-card/add-address"
 import EditAddress from "../address-card/edit-address-modal"
 import { HttpTypes } from "@medusajs/types"
+import { getLocale } from "next-intl/server"
 
 type AddressBookProps = {
   customer: HttpTypes.StoreCustomer
   region: HttpTypes.StoreRegion
 }
 
-const AddressBook: React.FC<AddressBookProps> = ({ customer, region }) => {
+const AddressBook: React.FC<AddressBookProps> = async ({ customer, region }) => {
+  const locale = await getLocale()
   const { addresses } = customer
   return (
-    <div className="w-full">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 mt-4">
+    <div dir={locale === "ar" ? "rtl" : "ltr"} className="w-full">
+      <div dir={locale === "ar" ? "rtl" : "ltr"} className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 mt-4">
         <AddAddress region={region} addresses={addresses} />
         {addresses.map((address) => {
           return (

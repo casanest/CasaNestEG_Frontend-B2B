@@ -2,10 +2,10 @@ import { Listbox, Transition } from "@headlessui/react"
 import { ChevronUpDown } from "@medusajs/icons"
 import { clx } from "@medusajs/ui"
 import { Fragment, useMemo } from "react"
-
 import Radio from "@modules/common/components/radio"
 import compareAddresses from "@lib/util/compare-addresses"
 import { HttpTypes } from "@medusajs/types"
+import { useLocale } from "next-intl"
 
 type AddressSelectProps = {
   addresses: HttpTypes.StoreCustomerAddress[]
@@ -21,6 +21,9 @@ const AddressSelect = ({
   addressInput,
   onSelect,
 }: AddressSelectProps) => {
+  const locale = useLocale()
+  const isRTL = locale === "ar"
+
   const handleSelect = (id: string) => {
     const savedAddress = addresses.find((a) => a.id === id)
     if (savedAddress) {
@@ -32,19 +35,25 @@ const AddressSelect = ({
     return addresses.find((a) => compareAddresses(a, addressInput))
   }, [addresses, addressInput])
 
+  const defaultText = isRTL ? "اختر عنوان" : "Choose an address"
+
   return (
     <Listbox onChange={handleSelect} value={selectedAddress?.id}>
-      <div className="relative">
+      <div dir={isRTL ? "rtl" : "ltr"} className="relative">
         <Listbox.Button
-          className="relative w-full flex justify-between items-center px-4 py-[10px] text-left bg-white cursor-default focus:outline-none border rounded-rounded focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-gray-300 focus-visible:ring-offset-2 focus-visible:border-gray-300 text-base-regular"
+          className={clx(
+            "relative w-full flex justify-between items-center px-4 py-[10px] bg-white cursor-default focus:outline-none border rounded-rounded focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-gray-300 focus-visible:ring-offset-2 focus-visible:border-gray-300 text-base-regular",
+            {
+              "text-right": isRTL,
+              "text-left": !isRTL,
+            }
+          )}
           data-testid="shipping-address-select"
         >
           {({ open }) => (
             <>
               <span className="block truncate">
-                {selectedAddress
-                  ? selectedAddress.address_1
-                  : "Choose an address"}
+                {selectedAddress ? selectedAddress.address_1 : defaultText}
               </span>
               <ChevronUpDown
                 className={clx("transition-rotate duration-200", {
@@ -61,7 +70,14 @@ const AddressSelect = ({
           leaveTo="opacity-0"
         >
           <Listbox.Options
-            className="absolute z-20 w-full overflow-auto text-small-regular bg-white border border-top-0 max-h-60 focus:outline-none sm:text-sm"
+            dir={isRTL ? "rtl" : "ltr"}
+            className={clx(
+              "absolute z-20 w-full overflow-auto text-small-regular bg-white border border-top-0 max-h-60 focus:outline-none sm:text-sm",
+              {
+                "text-right": isRTL,
+                "text-left": !isRTL,
+              }
+            )}
             data-testid="shipping-address-options"
           >
             {addresses.map((address) => {
@@ -69,16 +85,31 @@ const AddressSelect = ({
                 <Listbox.Option
                   key={address.id}
                   value={address.id}
-                  className="cursor-default select-none relative pl-6 pr-10 hover:bg-gray-50 py-4"
+                  className={clx(
+                    "cursor-default select-none relative hover:bg-gray-50 py-4",
+                    {
+                      "pr-10 pl-6": isRTL,
+                      "pl-6 pr-10": !isRTL,
+                    }
+                  )}
                   data-testid="shipping-address-option"
                 >
-                  <div className="flex gap-x-4 items-start">
+                  <div className={clx("flex gap-x-4 items-start", {
+                    "flex-row-reverse": isRTL
+                  })}>
                     <Radio
                       checked={selectedAddress?.id === address.id}
                       data-testid="shipping-address-radio"
+                      className={clx({
+                        "ml-4": isRTL,  // Add margin to the left in RTL
+                        "mr-4": !isRTL  // Add margin to the right in LTR
+                      })}
                     />
-                    <div className="flex flex-col">
-                      <span className="text-left text-base-semi">
+                    <div className={clx("flex flex-col w-full", {
+                      "text-right": isRTL,
+                      "text-left": !isRTL
+                    })}>
+                      <span className="text-base-semi">
                         {address.first_name} {address.last_name}
                       </span>
                       {address.company && (
@@ -86,7 +117,7 @@ const AddressSelect = ({
                           {address.company}
                         </span>
                       )}
-                      <div className="flex flex-col text-left text-base-regular mt-2">
+                      <div className="flex flex-col mt-2">
                         <span>
                           {address.address_1}
                           {address.address_2 && (
