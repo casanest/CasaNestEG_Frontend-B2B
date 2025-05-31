@@ -72,7 +72,25 @@ const Products = ({ isRTL }: { isRTL: boolean }) => {
             originalPrice: "$65.00",
             discount: "-30%",
             hasDiscount: true
-        }
+        },
+        {
+            id: 8,
+            title: isRTL ? "جيكل - كرسي سيارة للأطفال ساتورن زيب 360 أيزو فيكس - أسود" : "Gel - Baby Car Seat Satorn Zib 360 Azov Fix - Black",
+            image: "/cat3.png",
+            price: "$216.47",
+            originalPrice: "$352.62",
+            discount: "-39%",
+            hasDiscount: true
+        },
+        {
+            id: 9,
+            title: isRTL ? "جيكل - كرسي سيارة للأطفال ساتورن زيب 360 أيزو فيكس - أسود" : "Gel - Baby Car Seat Satorn Zib 360 Azov Fix - Black",
+            image: "/cat5.png",
+            price: "$216.47",
+            originalPrice: "$352.62",
+            discount: "-39%",
+            hasDiscount: true
+        },
     ];
 
     return (
@@ -153,7 +171,7 @@ const Products = ({ isRTL }: { isRTL: boolean }) => {
 
                                 {/* Add to cart button */}
                                 <button
-                                    className={`absolute bottom-3 md:bottom-4 ${isRTL ? 'left-4' : 'right-4'} bg-blue-600 text-white rounded-full w-8 h-8 md:w-9 md:h-9 flex items-center justify-center text-lg md:text-xl hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg`}
+                                    className={`absolute bottom-3 md:bottom-4 ${isRTL ? 'left-4' : 'right-4'} bg-gradient-to-tl from-emerald-500 to-[#022a55] text-white rounded-full w-8 h-8 md:w-9 md:h-9 flex items-center justify-center text-lg md:text-xl hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg`}
                                     aria-label={isRTL ? "إضافة إلى السلة" : "Add to cart"}
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

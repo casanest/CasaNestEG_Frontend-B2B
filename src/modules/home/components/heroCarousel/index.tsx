@@ -160,7 +160,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
                                                 {slide.subtitle}
                                             </motion.p>
                                             <motion.button
-                                                className="px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base lg:text-lg font-medium bg-[#043364] hover:bg-[#06529c] text-white rounded-lg transition-colors duration-300 shadow-lg"
+                                                className="px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base lg:text-lg font-medium bg-gradient-to-tl from-emerald-500 to-[#022a55] text-white rounded-lg transition-colors duration-300 shadow-lg"
                                                 initial={{ opacity: 0, y: 20 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 transition={{ duration: 0.5, delay: 0.6 }}

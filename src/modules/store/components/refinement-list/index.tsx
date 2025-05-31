@@ -5,6 +5,7 @@ import { useCallback, useState, useEffect } from "react"
 import { ChevronDown, ChevronUp, X, Filter, Sliders } from "lucide-react"
 import { Button, Badge, Drawer } from "@medusajs/ui"
 import SortProducts, { SortOptions } from "./sort-products"
+import { XCircleIcon } from "@modules/common/icons/x-circle"
 
 type RefinementListProps = {
   sortBy: SortOptions
@@ -148,7 +149,7 @@ const RefinementList = ({ sortBy, 'data-testid': dataTestId, locale }: Refinemen
 
   // Filters content component (reused in drawer and desktop)
   const FiltersContent = () => (
-    <div className="flex flex-col gap-6 h-full">
+    <div className="flex flex-col gap-6 h-full p-10 md:p-0">
       {/* Header with filter count */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -437,17 +438,39 @@ const RefinementList = ({ sortBy, 'data-testid': dataTestId, locale }: Refinemen
         open={mobileFiltersOpen}
         onOpenChange={setMobileFiltersOpen}
         direction={isRTL ? 'right' : 'left'}
+        shouldScaleBackground={true}
+        dismissible={true}
+        className="z-[1000]"
       >
-        <Drawer.Content className="h-full max-w-[320px]">
-          <div className="p-4 h-full overflow-y-auto">
+        <Drawer.Content className={`
+    h-[100%] w-full max-w-md 
+    bg-white dark:bg-gray-900
+    rounded-t-[10px] shadow-2xl
+    fixed bottom-0 ${isRTL ? 'right-0' : 'left-0'}
+    focus:outline-none
+    z-[1000]
+    
+  `}>
+
+          {/* Scrollable content area */}
+          <div className="h-[calc(95%)] overflow-y-auto p-6">
             <FiltersContent />
           </div>
+
+    
         </Drawer.Content>
+
+        {/* Backdrop */}
+        {/* <Drawer.Overlay className={`
+    fixed inset-0 bg-black/50 
+    backdrop-blur-sm
+    z-[999]
+  `} /> */}
       </Drawer>
 
       {/* Desktop filters */}
       <div
-        className="hidden md:flex flex-col gap-6 w-full small:w-72 p-4 bg-ui-bg-subtle rounded-lg shadow-sm border border-ui-border-base"
+        className="hidden md:flex flex-col gap-6 w-full small:w-70 max-w-70 p-4 bg-ui-bg-subtle rounded-lg shadow-sm "
         data-testid={dataTestId}
       >
         <FiltersContent />

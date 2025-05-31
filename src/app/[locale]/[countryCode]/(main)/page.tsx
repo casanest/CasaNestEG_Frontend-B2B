@@ -38,15 +38,15 @@ export default async function Home({
     <>
       <div className="" dir={dir}>
         <div className="md:content-container md:mx-auto" dir={dir}>
-          <HeroCarousel locale={locale}  />
+          <HeroCarousel locale={locale} />
         </div>
         <div className="" dir={dir}>
           <CategoryCarousel locale={locale} />
         </div>
-          <ProductGrid  />
+        <ProductGrid />
         <PromotionBanner locale={locale} />
         <ul className="flex flex-col gap-y-12 py-5">
-          <FeaturedProducts collections={collections} region={region} locale={locale}  />
+          <FeaturedProducts collections={collections} region={region} locale={locale} />
         </ul>
       </div>
       <div className="md:content-container" dir={dir}>
