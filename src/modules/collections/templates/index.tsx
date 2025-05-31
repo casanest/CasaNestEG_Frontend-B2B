@@ -23,7 +23,9 @@ export default async function CollectionTemplate({
 
   return (
     <div dir={locale === "ar" ? "rtl" : "ltr"} className="flex flex-col small:flex-row small:items-start py-6 content-container">
-      <RefinementList sortBy={sort} locale={locale} />
+      <div className={`${locale === "ar" ? "ml-10" : "mr-10"}`}>
+        <RefinementList locale={locale} sortBy={sort} />
+      </div>
       <div className="w-full">
         <div className="mb-8 text-2xl-semi text-[#043364]">
           <h1>{collection.title}</h1>

@@ -8,6 +8,7 @@ import CategoryCarousel from "@modules/home/components/categoryCarousel"
 import PromotionBanner from "@modules/home/components/promotionBanner"
 import FeaturedProducts from "@modules/home/components/featured-products"
 import StoreFeatures from "@modules/home/components/storeFeatures"
+import ProductGrid from "@modules/home/components/productGrid"
 
 export const metadata: Metadata = {
   title: "LA CASA",
@@ -42,6 +43,7 @@ export default async function Home({
         <div className="" dir={dir}>
           <CategoryCarousel locale={locale} />
         </div>
+          <ProductGrid  />
         <PromotionBanner locale={locale} />
         <ul className="flex flex-col gap-y-12 py-5">
           <FeaturedProducts collections={collections} region={region} locale={locale}  />

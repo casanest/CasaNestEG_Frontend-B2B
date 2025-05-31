@@ -5,6 +5,7 @@ import { Text } from "@medusajs/ui"
 import k from "@lib/i18n/translations/keys";
 import InteractiveLink from "@modules/common/components/interactive-link"
 import ProductPreview from "@modules/products/components/product-preview"
+import { Heading } from "@modules/common/components/heading";
 // import { useSafeTranslations } from "@lib/i18n/use-safe-translations"
 
 export default async function ProductRail({
@@ -40,9 +41,11 @@ export default async function ProductRail({
         className={`flex justify-between mb-8 `}
         dir={dir}
       >
-        <Text className="txt-xlarge">{collection.title}</Text>
+        <Heading className="text-2xl sm:text-3xl font-bold text-[#043364]">
+          {collection.title}
+        </Heading>
         <InteractiveLink href={`/collections/${collection.handle}`}>
-         {locale === "ar" ? "عرض الكل" : "View All"}
+          {locale === "ar" ? "عرض الكل" : "View All"}
         </InteractiveLink>
       </div>
       <ul className="grid grid-cols-2 small:grid-cols-4 medium:grid-cols-5 gap-x-6 gap-y-24 small:gap-y-36">

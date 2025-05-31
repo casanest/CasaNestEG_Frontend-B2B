@@ -102,10 +102,10 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
         </form>
 
         {promotions.length > 0 && (
-          <div className="w-full flex items-center">
+          <div dir={locale === "ar" ? "rtl" : "ltr"} className="w-full flex items-center">
             <div className="flex flex-col w-full">
               <Heading className="txt-medium mb-2">
-                Promotion(s) applied:
+                {locale === "ar" ? "رموز الترويج" : "Promotions"}
               </Heading>
 
               {promotions.map((promotion) => {
