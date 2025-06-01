@@ -105,7 +105,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
 
     return (
         <section
-            className="relative w-full h-[30vh] sm:h-[40vh] lg:h-[50vh]  overflow-hidden md:rounded-lg shadow-xl md:my-2"
+            className="relative w-full h-[30vh] sm:h-[40vh] lg:h-[50vh]  overflow-hidden md:rounded-lg shadow-md md:my-2"
             dir={isRTL ? 'rtl' : 'ltr'}
             // onMouseEnter={() => setIsHovering(true)}
             // onMouseLeave={() => setIsHovering(false)}
@@ -213,20 +213,16 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
                 {slides.map((_, index) => (
                     <motion.button
                         key={`indicator-${index}`}
-                        className={`rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white ${index === selectedIndex ? 'opacity-100' : 'opacity-70'}`}
-                        style={{
-                            width: index === selectedIndex ? '24px' : '12px',
-                            height: '12px',
-                            backgroundColor: index === selectedIndex ? "#043364" : "rgba(255, 255, 255, 0.7)"
-                        }}
+                        className={`rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white ${index === selectedIndex ? 'w-6 bg-gradient-to-tl from-emerald-500 to-[#022a55] opacity-100' : 'w-3 bg-white/70 opacity-70'
+                            } h-3`}
                         onClick={() => scrollTo(index)}
                         aria-label={`Go to slide ${index + 1}`}
                         whileHover={{
                             scale: 1.2,
-                            backgroundColor: index === selectedIndex ? "#06529c" : "rgba(255, 255, 255, 0.9)"
                         }}
                         transition={{ duration: 0.2 }}
                     />
+                 
                 ))}
             </div>
         </section>

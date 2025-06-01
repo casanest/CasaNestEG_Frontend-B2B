@@ -5,7 +5,6 @@ import { useCallback, useState, useEffect } from "react"
 import { ChevronDown, ChevronUp, X, Filter, Sliders } from "lucide-react"
 import { Button, Badge, Drawer } from "@medusajs/ui"
 import SortProducts, { SortOptions } from "./sort-products"
-import { XCircleIcon } from "@modules/common/icons/x-circle"
 
 type RefinementListProps = {
   sortBy: SortOptions
@@ -140,7 +139,7 @@ const RefinementList = ({ sortBy, 'data-testid': dataTestId, locale }: Refinemen
       <Sliders size={16} />
       <span>{isRTL ? "الفلاتر" : "Filters"}</span>
       {activeFilterCount > 0 && (
-        <Badge className="!text-xs" variant="blue">
+        <Badge className="!text-xs">
           {activeFilterCount}
         </Badge>
       )}

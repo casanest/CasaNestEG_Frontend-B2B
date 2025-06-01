@@ -1,6 +1,6 @@
 import { HttpTypes } from "@medusajs/types"
-import { Text } from "@medusajs/ui"
 import { useLocale } from "next-intl"
+import { cn } from "@lib/utils"
 
 type OrderDetailsProps = {
   order: HttpTypes.StoreOrder
@@ -9,56 +9,76 @@ type OrderDetailsProps = {
 
 const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
   const locale = useLocale()
+
   const formatStatus = (str: string) => {
     const formatted = str.split("_").join(" ")
-
-    return formatted.slice(0, 1).toUpperCase() + formatted.slice(1)
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1)
   }
 
   return (
-    <div dir={locale === "ar" ? "rtl" : "ltr"}>
-      <Text>
-        {locale === "ar" ? "لقد تم إرسال تفاصيل التأكيد للطلب" : "We have sent the order confirmation details to"}:{" "}
-        <span
-          className="text-ui-fg-medium-plus font-semibold"
-          data-testid="order-email"
-        >
-          {order.email}
-        </span>
-        .
-      </Text>
-      <Text className="mt-2">
-        {locale === "ar" ? "تاريخ الطلب" : "Order date"}:{" "}
-        <span data-testid="order-date">
-          {new Date(order.created_at).toDateString()}
-        </span>
-      </Text>
-      <Text className="mt-2 text-ui-fg-interactive">
-        {locale === "ar" ? "رقم الطلب" : "Order number"}: <span data-testid="order-id">{order.display_id}</span>
-      </Text>
+    <div
+      dir={locale === "ar" ? "rtl" : "ltr"}
+      className=" border border-gray-200 rounded-2xl p-6 shadow-sm space-y-4"
+    >
+      <h3 className="text-xl font-bold text-[#043364]">
+        {locale === "ar" ? "تفاصيل الطلب" : "Order Information"}
+      </h3>
 
-      <div className="flex items-center text-compact-small gap-x-4 mt-4">
-        {showStatus && (
-          <>
-            <Text>
-              {locale === "ar" ? "حالة الطلب" : "Order status"}:{" "}
-              <span className="text-ui-fg-subtle " data-testid="order-status">
-                {/* TODO: Check where the statuses should come from */}
-                {formatStatus(order.fulfillment_status)}
-              </span>
-            </Text>
-            <Text>
-              {locale === "ar" ? "حالة الدفع" : "Payment status"}:{" "}
-              <span
-                className="text-ui-fg-subtle "
-                sata-testid="order-payment-status"
-              >
-                {formatStatus(order.payment_status)}
-              </span>
-            </Text>
-          </>
-        )}
+      <div className="space-y-2 text-gray-700 text-sm">
+        <p>
+          {locale === "ar"
+            ? "تم إرسال تأكيد الطلب إلى"
+            : "Confirmation sent to"}:{" "}
+          <span
+            className="font-medium text-[#043364]"
+            data-testid="order-email"
+          >
+            {order.email}
+          </span>
+        </p>
+
+        <p>
+          {locale === "ar" ? "تاريخ الطلب" : "Order Date"}:{" "}
+          <span className="font-medium" data-testid="order-date">
+            {new Date(order.created_at).toLocaleDateString(locale)}
+          </span>
+        </p>
+
+        <p>
+          {locale === "ar" ? "رقم الطلب" : "Order Number"}:{" "}
+          <span className="font-medium text-[#043364]" data-testid="order-id">
+            {order.display_id}
+          </span>
+        </p>
       </div>
+
+      {showStatus && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-700 mt-4">
+          <div>
+            <p className="font-semibold">
+              {locale === "ar" ? "حالة الطلب" : "Order Status"}
+            </p>
+            <p
+              className="text-[#043364] font-medium"
+              data-testid="order-status"
+            >
+              {formatStatus(order.fulfillment_status)}
+            </p>
+          </div>
+
+          <div>
+            <p className="font-semibold">
+              {locale === "ar" ? "حالة الدفع" : "Payment Status"}
+            </p>
+            <p
+              className="text-[#043364] font-medium"
+              data-testid="order-payment-status"
+            >
+              {formatStatus(order.payment_status)}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -5,11 +5,15 @@ import LocalizedClientLink from '@modules/common/components/localized-client-lin
 import { Text } from '@modules/common/components/text'
 import { SearchIcon } from '@modules/common/icons/search'
 
+import { useLocale } from 'next-intl'
+
 export const RecentSearches = ({
   handleOpenDialogChange,
 }: {
   handleOpenDialogChange: (value: boolean) => void
 }) => {
+  const locale = useLocale()
+  const isRtl = locale === 'ar'
   const [searches, setSearches] = useState([])
   useEffect(() => {
     const fetchRecentSearches = () => {
@@ -43,7 +47,7 @@ export const RecentSearches = ({
           )
         })
       ) : (
-        <Text className="text-secondary">No search history</Text>
+        <Text className="text-secondary">{locale === 'ar' ? 'لم يتم العثور على نتائج' : 'No results found'}</Text>
       )}
     </>
   )

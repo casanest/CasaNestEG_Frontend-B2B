@@ -8,6 +8,7 @@ import NativeSelect from "@modules/common/components/native-select"
 import AccountInfo from "../account-info"
 import { HttpTypes } from "@medusajs/types"
 import { addCustomerAddress, updateCustomerAddress } from "@lib/data/customer"
+import {useLocale} from "next-intl"
 
 type MyInformationProps = {
   customer: HttpTypes.StoreCustomer
@@ -18,6 +19,8 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
   customer,
   regions,
 }) => {
+  const locale = useLocale()
+  const isRtl = locale === "ar"
   const regionOptions = useMemo(() => {
     return (
       regions
@@ -63,7 +66,7 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
 
   const currentInfo = useMemo(() => {
     if (!billingAddress) {
-      return "No billing address"
+      return isRtl ? "لا يوجد عنوان" : "No billing address"
     }
 
     const country =
@@ -93,7 +96,7 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
     <form action={formAction} onReset={() => clearState()} className="w-full">
       <input type="hidden" name="addressId" value={billingAddress?.id} />
       <AccountInfo
-        label="Billing address"
+        label={isRtl ? "عنوان الفاتورة" : "Billing address"}
         currentInfo={currentInfo}
         isSuccess={successState}
         isError={!!state.error}
@@ -103,14 +106,14 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
         <div className="grid grid-cols-1 gap-y-2">
           <div className="grid grid-cols-2 gap-x-2">
             <Input
-              label="First name"
+              label={isRtl ? "الاسم الاول" : "First name"}
               name="first_name"
               defaultValue={billingAddress?.first_name || undefined}
               required
               data-testid="billing-first-name-input"
             />
             <Input
-              label="Last name"
+              label={isRtl ? "الاسم الاخير" : "Last name"}
               name="last_name"
               defaultValue={billingAddress?.last_name || undefined}
               required
@@ -118,34 +121,34 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
             />
           </div>
           <Input
-            label="Company"
+            label={isRtl ? "الشركة" : "Company"}
             name="company"
             defaultValue={billingAddress?.company || undefined}
             data-testid="billing-company-input"
           />
           <Input
-            label="Address"
+            label={isRtl ? "العنوان" : "Address"}
             name="address_1"
             defaultValue={billingAddress?.address_1 || undefined}
             required
             data-testid="billing-address-1-input"
           />
           <Input
-            label="Apartment, suite, etc."
+            label={isRtl ? "المنطقة" : "Apartment, suite, etc."}
             name="address_2"
             defaultValue={billingAddress?.address_2 || undefined}
             data-testid="billing-address-2-input"
           />
           <div className="grid grid-cols-[144px_1fr] gap-x-2">
             <Input
-              label="Postal code"
+              label={isRtl ? "الرمز البريدي" : "Postal code"}
               name="postal_code"
               defaultValue={billingAddress?.postal_code || undefined}
               required
               data-testid="billing-postcal-code-input"
             />
             <Input
-              label="City"
+              label={isRtl ? "المدينة" : "City"}
               name="city"
               defaultValue={billingAddress?.city || undefined}
               required
@@ -153,7 +156,7 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
             />
           </div>
           <Input
-            label="Province"
+            label={isRtl ? "المحافظة" : "Province"}
             name="province"
             defaultValue={billingAddress?.province || undefined}
             data-testid="billing-province-input"

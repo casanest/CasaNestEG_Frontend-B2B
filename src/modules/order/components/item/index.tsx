@@ -18,63 +18,62 @@ const Item = ({ item, currencyCode }: ItemProps) => {
   return (
     <Table.Row
       dir={isRTL ? "rtl" : "ltr"}
-      className="w-full"
+      className="w-full px-2"
       data-testid="product-row"
     >
-      <Table.Cell className={clx("p-4 w-24", {
-        "!pr-0": isRTL,
-        "!pl-0": !isRTL
+      {/* صورة المنتج */}
+      <Table.Cell className={clx("p-4 align-middle w-24", {
+        // "!pr-0": isRTL,
+        // "!pl-0": !isRTL,
       })}>
-        <div className={clx("flex", {
-          "w-16": true,
+        <div className={clx("w-16 h-16 overflow-hidden rounded-lg border border-gray-200 ", {
           "ml-auto": isRTL,
-          "mr-auto": !isRTL
+          "mr-auto": !isRTL,
         })}>
           <Thumbnail thumbnail={item.thumbnail} size="square" />
         </div>
       </Table.Cell>
 
-      <Table.Cell className={clx({
+      {/* عنوان المنتج + الخيارات */}
+      <Table.Cell className={clx("align-middle", {
         "text-right": isRTL,
-        "text-left": !isRTL
+        "text-left": !isRTL,
       })}>
-        <Text
-          className="txt-medium-plus text-ui-fg-base"
-          data-testid="product-name"
-        >
+        <Text className="font-semibold text-base text-[#043364]" data-testid="product-name">
           {item.title}
         </Text>
         <LineItemOptions variant={item.variant} data-testid="product-variant" />
       </Table.Cell>
 
-      <Table.Cell className={clx({
-        "!pl-0": isRTL,
-        "!pr-0": !isRTL
+      {/* السعر + العدد */}
+      <Table.Cell className={clx("align-middle", {
+        // "!pl-0": isRTL,
+        // "!pr-0": !isRTL,
       })}>
-        <span className={clx("flex flex-col h-full justify-center", {
-          // "items-start": isRTL,
-          "items-end": !isRTL
+        <div className={clx("flex flex-col justify-center items-end gap-y-1", {
+          "items-start": isRTL,
         })}>
-          <span className={clx("flex", {
+          <div className={clx("flex items-center text-sm text-gray-500", {
             "flex-row-reverse": isRTL,
             "gap-x-1": !isRTL,
+            "gap-x-reverse": isRTL,
           })}>
-            <Text className="text-ui-fg-muted">
-              <span data-testid="product-quantity">{item.quantity}</span>x{" "}
-            </Text>
+            <span className="text-gray-600" data-testid="product-quantity">
+              {item.quantity}x
+            </span>
             <LineItemUnitPrice
               item={item}
               style="tight"
               currencyCode={currencyCode}
             />
-          </span>
+          </div>
 
           <LineItemPrice
             item={item}
             style="tight"
             currencyCode={currencyCode}
           />
-        </span>
+        </div>
       </Table.Cell>
     </Table.Row>
   )

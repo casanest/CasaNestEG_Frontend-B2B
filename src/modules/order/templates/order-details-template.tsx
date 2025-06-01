@@ -59,7 +59,7 @@ const OrderDetailsTemplate: React.FC<OrderDetailsTemplateProps> = ({
       </div>
       <div
         className={clx(
-          "flex flex-col gap-4 h-full bg-white w-full p-6 rounded-lg border border-ui-border-base",
+          "flex flex-col gap-4 h-full bg-white w-full rounded-lg ",
           {
             "text-right": isRTL,
             "text-left": !isRTL
@@ -68,9 +68,9 @@ const OrderDetailsTemplate: React.FC<OrderDetailsTemplateProps> = ({
         data-testid="order-details-container"
       >
         <OrderDetails order={order} showStatus />
-        <Items order={order} />
-        <ShippingDetails order={order} />
+        <Items locale={locale} order={order} />
         <OrderSummary order={order} />
+        <ShippingDetails order={order} />
         <Help />
       </div>
     </div>

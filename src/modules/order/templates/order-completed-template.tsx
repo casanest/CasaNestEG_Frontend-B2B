@@ -10,6 +10,8 @@ import ShippingDetails from "@modules/order/components/shipping-details"
 import PaymentDetails from "@modules/order/components/payment-details"
 import { HttpTypes } from "@medusajs/types"
 import { getLocale } from "next-intl/server"
+import PrintButton from "../components/print-button"
+
 
 type OrderCompletedTemplateProps = {
   order: HttpTypes.StoreOrder
@@ -21,32 +23,70 @@ export default async function OrderCompletedTemplate({
   const cookies = await nextCookies()
   const locale = await getLocale()
 
+  const isArabic = locale === "ar"
   const isOnboarding = cookies.get("_medusa_onboarding")?.value === "true"
 
+  const texts = {
+    thankYou: isArabic ? "شكراً" : "Thank you!",
+    orderReceived: isArabic ? "لقد تم استلام طلبك" : "Your order has been received",
+    printReceipt: isArabic ? "طباعة الفاتورة" : "Print Receipt",
+    orderDetails: isArabic ? "تفاصيل الطلب" : "Order Details",
+  }
+
+  const handlePrint = () => {
+    if (typeof window !== "undefined") {
+      window.print()
+    }
+  }
+
   return (
-    <div dir={locale === "ar" ? "rtl" : "ltr"} className="py-6 min-h-[calc(100vh-64px)] text-[#043364]">
-      <div className="content-container flex flex-col justify-center items-center gap-y-10 max-w-4xl h-full w-full">
+    <div
+      dir={isArabic ? "rtl" : "ltr"}
+      className="text-[#043364]"
+    >
+      <div className="md:content-container mx-auto max-w-4xl flex flex-col items-center gap-y-12 w-full">
         {isOnboarding && <OnboardingCta orderId={order.id} />}
+
         <div
-          className="flex flex-col gap-4 max-w-4xl h-full bg-white w-full py-10"
+          className="w-full bg-white px-8 py-10 flex flex-col gap-6"
           data-testid="order-complete-container"
         >
-          <Heading
-            level="h1"
-            className="flex flex-col gap-y-3 text-3xl mb-4"
-          >
-            <span>{locale === "ar" ? "شكرا" : "Thank you!"}</span>
-            <span>{locale === "ar" ? "لقد تم استلام طلبك" : "Your order has been received"}</span>
-          </Heading>
+          {/* رأس الصفحة */}
+          <div dir={isArabic ? "rtl" : "ltr"} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <Heading
+              level="h1"
+              className={`text-center sm:${isArabic ? "text-right" : "text-left"} text-4xl font-bold text-[#043364]`}
+            >
+              <span>{texts.thankYou}</span>
+              <span className="block text-lg font-medium text-gray-600">
+                {texts.orderReceived}
+              </span>
+            </Heading>
+
+            <PrintButton label={texts.printReceipt} />
+
+          </div>
+
+          {/* تفاصيل الطلب */}
           <OrderDetails showStatus={true} order={order} />
-          <Heading level="h2" className="flex flex-row text-3xl-regular">
-            <span>{locale === "ar" ? "تفاصيل الطلب" : "Order Details"}</span>
-          </Heading>
-          <Items order={order} />
+
+          {/* <Heading
+            level="h2"
+            className="text-2xl font-semibold mt-6 border-t border-gray-200 pt-4"
+          >
+            {texts.orderDetails}
+          </Heading> */}
+
+          {/* العناصر وتفاصيل الأسعار والشحن والدفع */}
+          <Items locale={locale} order={order} />
           <CartTotals totals={order} />
           <ShippingDetails order={order} />
           <PaymentDetails order={order} />
-          <Help />
+
+          {/* الدعم */}
+          <div className="mt-6">
+            <Help />
+          </div>
         </div>
       </div>
     </div>

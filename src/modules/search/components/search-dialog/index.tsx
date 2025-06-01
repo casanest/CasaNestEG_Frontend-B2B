@@ -24,6 +24,7 @@ import { ControlledSearchBox } from '../search-box'
 import { RecentSearches } from '../search-dropdown/recent-searches'
 import { RecommendedItem } from '../search-dropdown/recommended-item'
 import { ArrowLeftIcon } from '@modules/common/icons/arrow-left'
+import { useLocale } from 'next-intl'
 // import { Dialog } from '@modules/common/components/dialog'
 
 export const SearchDialog = ({
@@ -37,6 +38,8 @@ export const SearchDialog = ({
   handleOpenDialogChange: (value: boolean) => void
   recommendedProducts: StoreProduct[]
 }) => {
+  const locale = useLocale()
+  const isRtl = locale === 'ar'
   const [isLargeScreen, setIsLargeScreen] = useState(false)
   useEffect(() => {
     const handleResize = () => {
@@ -61,13 +64,19 @@ export const SearchDialog = ({
           className="!max-h-full !max-w-full !rounded-none bg-white z-50 !m-0 !p-0"
           aria-describedby={undefined}
         >
-          <DialogHeader className="flex bg-white items-center gap-4 !border-b-0 !p-4 text-xl text-basic-primary small:text-2xl">
+          <DialogHeader dir={isRtl ? 'rtl' : 'ltr'} className="flex bg-white items-center gap-4 !border-b-0 !p-4 text-xl text-basic-primary small:text-2xl">
             <Button
               withIcon
               variant="text"
               onClick={() => handleOpenDialogChange(false)}
             >
-              <ArrowLeftIcon />
+              {
+                isRtl ? (
+                  <ArrowLeftIcon className="h-6 w-6 rotate-180" />
+                ) : (
+                  <ArrowLeftIcon className="h-6 w-6" />
+                )
+              }
             </Button>
             <ControlledSearchBox
               countryCode={countryCode}
@@ -76,25 +85,26 @@ export const SearchDialog = ({
             />
           </DialogHeader>
           <VisuallyHidden.Root>
-            <DialogTitle>Search modal</DialogTitle>
+            <DialogTitle>{isRtl ? 'بحث' : 'Search modal'}</DialogTitle>
           </VisuallyHidden.Root>
-          <DialogBody className="overflow-y-auto bg-white">
+          <DialogBody dir={isRtl ? 'rtl' : 'ltr'} className="overflow-y-auto bg-white">
             <Tabs defaultValue="tab1">
-              <TabsList className="flex shrink-0 rounded-t-md bg-primary">
+              <TabsList dir={isRtl ? 'rtl' : 'ltr'} className="flex shrink-0 rounded-t-md bg-primary">
                 <TabsTrigger
                   value="tab1"
                   className="border-b border-basic-primary text-basic-primary data-[state=active]:border-action-primary"
                 >
-                  Search results
+                  {isRtl ? "البحث الأخير" : "Recent Searches"}
                 </TabsTrigger>
                 <TabsTrigger
                   value="tab2"
                   className="border-b border-basic-primary text-basic-primary data-[state=active]:border-action-primary"
                 >
-                  Recommended
+                  {isRtl ? "المنتجات الموصى بها" : 'Recommended'}
                 </TabsTrigger>
               </TabsList>
               <TabsContent
+                dir={isRtl ? 'rtl' : 'ltr'}
                 className="grow p-4 outline-none small:p-6"
                 value="tab1"
               >
@@ -103,6 +113,7 @@ export const SearchDialog = ({
                 />
               </TabsContent>
               <TabsContent
+                dir={isRtl ? 'rtl' : 'ltr'}
                 className="grow p-4 outline-none small:p-6"
                 value="tab2"
               >

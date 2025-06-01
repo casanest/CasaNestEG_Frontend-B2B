@@ -1,7 +1,7 @@
 import { Suspense } from "react"
 
 import SkeletonProductGrid from "@modules/skeletons/templates/skeleton-product-grid"
-import RefinementList from "@modules/store/components/refinement-list"
+import RefinementList from '@modules/store/components/refinement-list'
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import { getLocale } from "next-intl/server"
 import PaginatedProducts from "./paginated-products"
@@ -21,10 +21,10 @@ const StoreTemplate = async ({
   return (
     <div
       dir={locale === "ar" ? "rtl" : "ltr"}
-      className="flex flex-col small:flex-row small:items-start py-6 content-container"
+      className="flex flex-col small:flex-row small:items-start py-6 content-container gap-x-6"
       data-testid="category-container"
     >
-      <div className={`${locale === "ar" ? "ml-10" : "mr-10"}`}>
+      <div className={`hidden small:block w-full small:w-72`}>
         <RefinementList locale={locale} sortBy={sort} />
       </div>
       <div className="w-full">

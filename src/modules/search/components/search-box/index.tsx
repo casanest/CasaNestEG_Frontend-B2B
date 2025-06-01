@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { XMarkMini } from '@medusajs/icons'
 import { Box } from '@modules/common/components/box'
 import Input from '@modules/common/components/input'
+import { useLocale } from 'next-intl'
 
 export const ControlledSearchBox = ({
   countryCode,
@@ -16,6 +17,8 @@ export const ControlledSearchBox = ({
   open: boolean
   closeSearch: () => void
 }) => {
+  const locale = useLocale()
+  const isRtl = locale === 'ar'
   const [query, setQuery] = useState<string | undefined>('')
   const router = useRouter()
   const inputRef = useRef(null)
@@ -60,7 +63,7 @@ export const ControlledSearchBox = ({
   }
 
   return (
-    <div className="relative w-full bg-[#f5f8fc] md:mx-auto large:w-max md:align-center md:justify-center md:items-center md:rounded">
+    <div dir={isRtl ? 'rtl' : 'ltr'} className="relative w-full bg-[#f5f8fc] md:mx-auto large:w-max md:align-center md:justify-center md:items-center md:rounded">
       <form action="" noValidate onSubmit={handleSubmit} onReset={handleReset}>
         <Box className="flex w-full items-center justify-between border border-action-primary md:rounded-md large:relative large:w-[400px] xl:w-[600px] ">
           <Input
@@ -69,7 +72,7 @@ export const ControlledSearchBox = ({
             autoComplete="off"
             autoCorrect="off"
             autoCapitalize="off"
-            placeholder={'Search products...'}
+            placeholder={isRtl ? 'ابحث عن منتج...' : 'Search products...'}
             spellCheck={false}
             type="search"
             value={query}
@@ -80,7 +83,7 @@ export const ControlledSearchBox = ({
             <button
               onClick={handleReset}
               type="button"
-              className="absolute right-0 flex items-center justify-center gap-x-2 px-4 text-lg text-basic-primary focus:outline-none"
+              className={`absolute ${isRtl ? 'left-0' : 'right-0'} flex items-center justify-center gap-x-2 px-4 text-lg text-basic-primary focus:outline-none`}
             >
               <XMarkMini />
             </button>
