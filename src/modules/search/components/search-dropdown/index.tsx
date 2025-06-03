@@ -14,7 +14,8 @@ import { useLocale } from 'next-intl'
 type SearchDropdownProps = {
   isOpen: boolean
   setIsOpen: (value: boolean) => void
-  countryCode: string
+  setProducts: (products: StoreProduct[]) => void
+  countryCode: string,
   recommendedProducts: StoreProduct[]
 }
 
@@ -23,11 +24,11 @@ export default function SearchDropdown({
   setIsOpen,
   countryCode,
   recommendedProducts,
+  setProducts
 }: SearchDropdownProps) {
   const locale = useLocale()
   const isRtl = locale === 'ar'
   const [delayClose, setDelayClose] = useState<ReturnType<typeof setTimeout> | null>(null)
-
   const handleMouseEnter = useCallback(() => {
     if (delayClose) clearTimeout(delayClose)
     setIsOpen(true)
@@ -57,6 +58,7 @@ export default function SearchDropdown({
       <ControlledSearchBox
         countryCode={countryCode}
         open={isOpen}
+        setProducts={setProducts}
         closeSearch={() => setIsOpen(false)}
       />
 
@@ -83,15 +85,15 @@ export default function SearchDropdown({
 
           {/* Recommended Items */}
           <Box className="flex-1">
-            <Box className="flex items-center h-[62px]">
+            {/* <Box className="flex items-center h-[62px]">
               <Text as="h3" size="md" className="text-secondary text-[20px] font-medium">
                 {isRtl ? "المنتجات المقترحة" : "Recommended products"}
               </Text>
-            </Box>
+            </Box> */}
             <Box className="grid gap-3 xl:grid-cols-2">
               {recommendedProducts.map((item, index) => (
                 <Fragment key={item.id ?? index}>
-                  <RecommendedItem item={item} handleOpenDialogChange={setIsOpen} />
+                  <RecommendedItem item={item}  />
                 </Fragment>
               ))}
             </Box>

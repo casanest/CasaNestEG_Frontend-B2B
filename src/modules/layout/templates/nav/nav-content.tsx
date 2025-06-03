@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { use, useEffect, useState } from 'react'
 
 import { cn } from '@lib/util/cn'
 import { Box } from '@modules/common/components/box'
@@ -13,23 +13,33 @@ import SearchDropdown from '@modules/search/components/search-dropdown'
 import Navigation from './navigation'
 import { LaCasaLogo } from '@modules/common/icons/solace-logo'
 import { SearchIcon } from '@modules/common/icons/search'
+import { set } from 'lodash'
+import { StoreProduct } from '@medusajs/types'
 
 export default function NavContent(props: any) {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [suggestedProducts, setSuggestedProducts] = useState<StoreProduct[]>(props.products || [])
   console.log("props.products", props.products)
-
+// useEffect(() => {
+//   if (props.products) {
+//     setSuggestedProducts(props.products)
+//   }
+//   console.log("suggestedProducts", suggestedProducts)
+  
+// }, [props.products])
   return (
     <Box className="flex h-full w-full items-center justify-between  bg-white">
       {isSearchOpen && (
         <SearchDropdown
           setIsOpen={setIsSearchOpen}
-          recommendedProducts={props.products}
+          recommendedProducts={suggestedProducts}
+          setProducts={setSuggestedProducts}
           isOpen={isSearchOpen}
           countryCode={props.countryCode}
         />
       )}
       <SearchDialog
-        recommendedProducts={props.products}
+        recommendedProducts={suggestedProducts}
         countryCode={props.countryCode}
         isOpen={isSearchOpen}
         handleOpenDialogChange={setIsSearchOpen}

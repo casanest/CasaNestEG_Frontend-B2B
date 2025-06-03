@@ -2,6 +2,9 @@ import { safeDecodeURIComponent } from '@lib/util/safe-decode-uri'
 import { SearchedProducts } from 'types/global'
 
 export const BACKEND_URL = process.env.MEDUSA_BACKEND_URL
+export const SEARCH_URL = process.env.MILISEARCH_URL
+export const MEILISEARCH_API_KEY = process.env.MILISEARCH_API_KEY
+
 export const PUBLISHABLE_API_KEY =
   process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 
@@ -94,25 +97,28 @@ export async function search({
   }
 
   const response = await fetch(
-    `${BACKEND_URL}/store/search?${searchParams.toString()}`,
+    // `${SEARCH_URL}/indexes/products//search?${searchParams.toString()}`,
+    `${SEARCH_URL}/indexes/products/search?q=${searchParams.get('q')}`,
+
     {
       headers: {
-        'x-publishable-api-key': PUBLISHABLE_API_KEY!,
+        // 'x-publishable-api-key': PUBLISHABLE_API_KEY!,
+        'authorization': `Bearer ${MEILISEARCH_API_KEY}`,
       },
       cache: 'no-store',
     }
   )
-console.log(response)
-  if (!response.ok) {
-    throw new Error(`Response error. Status: ${response.status}`)
-  }
+// if (!response || !response.ok) {
+//   throw new Error(`Response error. Status: ${response ? response.status : 'No response'}`)
+// }
 
   const data = await response.json()
-  console.log('data:::::::::::::', data)
-  console.log('data.products:::::::::::::', data.products)
+
+  // console.log('data:::::::::::::', data)
+  // console.log('data.products:::::::::::::', data.products)
 
   return {
-    results: data.products,
+    results: data.hits,
     count: data.count,
   }
 }

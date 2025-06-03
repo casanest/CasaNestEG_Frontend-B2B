@@ -78,11 +78,11 @@ export const SearchDialog = ({
                 )
               }
             </Button>
-            <ControlledSearchBox
+            {/* <ControlledSearchBox
               countryCode={countryCode}
               open={isOpen}
               closeSearch={() => handleOpenDialogChange(false)}
-            />
+            /> */}
           </DialogHeader>
           <VisuallyHidden.Root>
             <DialogTitle>{isRtl ? 'بحث' : 'Search modal'}</DialogTitle>
@@ -123,7 +123,6 @@ export const SearchDialog = ({
                       <Fragment key={id}>
                         <RecommendedItem
                           item={item}
-                          handleOpenDialogChange={handleOpenDialogChange}
                         />
                       </Fragment>
                     )

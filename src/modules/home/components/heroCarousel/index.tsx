@@ -111,11 +111,11 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
             // onMouseLeave={() => setIsHovering(false)}
             onMouseEnter={() => {
                 setIsHovering(true);
-                stopAutoPlay();
+                // stopAutoPlay();
             }}
             onMouseLeave={() => {
                 setIsHovering(false);
-                startAutoPlay();
+                // startAutoPlay();
             }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
