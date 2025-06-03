@@ -1,9 +1,11 @@
 'use client';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import React from 'react';
+import React, { useState } from 'react';
 import { HttpTypes } from "@medusajs/types"
 import { getProductPrice } from '@lib/util/get-product-price';
 import PreviewPrice from '@modules/products/components/product-preview/price';
+import { addToCart } from '@lib/data/cart';
+import { useParams } from 'next/navigation';
 
 type Product = {
     id: number;
@@ -18,14 +20,48 @@ type ProductCardProps = {
 
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
-    const { cheapestPrice } = getProductPrice({ product })
-    const calcDiscount = (price: number, discount: number) => (price * (100 - discount)) / 100
+    const { cheapestPrice } = getProductPrice({ product });
 
+    // احسب الخصم إذا كان المنتج عليه تخفيض
+    const calcDiscount = (price: number, discount: number) =>
+        (price * (100 - discount)) / 100;
+
+    const [isAdding, setIsAdding] = useState(false);
+    const countryCode = useParams().countryCode as string;
     const isRTL = locale === "ar";
+
+    // نستخرج أول فاريانت إذا وجد، وإلا نبقي القيمة undefined
+    // (يمكنك لاحقًا استبدال 0 باختيار فاريانت محدّد إن أردت)
+    const defaultVariant = product.variants?.[0];
+    const defaultVariantId = defaultVariant?.id || "";
+
+    const handleAddToCart = async (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        event.preventDefault();
+
+        if (!defaultVariantId) return;
+
+        setIsAdding(true);
+
+        try {
+            await addToCart({
+                variantId: defaultVariantId,
+                quantity: 1,
+                countryCode,
+            });
+            // إشعار النجاح هنا إن أردت
+        } catch (error) {
+            console.error("Error adding to cart:", error);
+        } finally {
+            setIsAdding(false);
+        }
+    };
+
+
     return (
         <LocalizedClientLink
             href={`/products/${product.handle}`}
-            className="group block"
+            className="group block z-0"
             locale={locale}
         >
             <div className="h-full bg-white rounded-lg shadow-md p-3 md:p-4 relative hover:shadow-lg transition-all duration-300 flex flex-col group">
@@ -51,7 +87,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
                 {/* Product info */}
                 <div className="mt-auto">
                     <h3 className={`text-sm md:text-base font-medium text-gray-800 mb-2 ${isRTL ? 'text-right' : 'text-left'} leading-tight md:leading-5 line-clamp-2 min-h-[2.5rem]`}>
-                        {product.title}
+                        {locale === "ar" ? (product.metadata?.title_ar as string ?? product.title) : product.title}
                     </h3>
                     <div dir={isRTL ? 'rtl' : 'ltr'} className={`flex items-center gap-2 ${isRTL ? 'text-right ' : 'text-left'}`}>
                         <span className="text-base md:text-lg font-semibold text-gray-900">{product.price}</span>
@@ -71,7 +107,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
                     </div>
 
                     <button
-                        className={`absolute bottom-3 md:bottom-4 ${isRTL ? 'left-4' : 'right-4'} bg-gradient-to-tl from-emerald-500 to-[#022a55] text-white rounded-full w-8 h-8 md:w-9 md:h-9 flex items-center justify-center text-lg md:text-xl hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg`}
+                        onClick={(e) => handleAddToCart(e)}
+                        disabled={
+                            // !inStock ||
+                            // !selectedVariant ||
+                            // !!disabled ||
+                            isAdding
+                            // !isValidVariant
+                        }
+                        // variant="primary"
+                        className={`absolute bottom-3 md:bottom-4 ${isRTL ? 'left-4' : 'right-4'} bg-gradient-to-tl from-emerald-500 to-[#022a55] text-white rounded-full w-8 h-8 md:w-9 md:h-9 flex items-center justify-center text-lg md:text-xl hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg z-10 ${isAdding ? 'pointer-events-none' : ''}`}
                         aria-label={isRTL ? 'إضافة إلى السلة' : 'Add to cart'}
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

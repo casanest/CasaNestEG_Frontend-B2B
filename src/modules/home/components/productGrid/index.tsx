@@ -15,46 +15,55 @@ const Products = ({ isRTL }: { isRTL: boolean }) => {
             id: 1,
             title: isRTL ? "بيبي بريزا - جهاز تسخين رضاعات الأطفال الفوري - أبيض" : "Pebiby - Baby Skin Care Device - White",
             thumbnail: "/cat1.png",
+            price: "$59.9",
         },
         {
             id: 2,
             title: isRTL ? "فريدا موم - فوط ماكسي آيس بعد الولادة 2 في 1" : "Frida Mom - Baby Maxi Air Conditioner",
             thumbnail: "/cat2.png",
+            price: "$32.4",
         },
         {
             id: 3,
             title: isRTL ? "جيكل - مهد الأطفال الجانبي نوفا - رمادي" : "Gel - Baby Side Table - Grey",
             thumbnail: "/cat3.png",
+            price: "$107.55",
         },
         {
             id: 4,
             title: isRTL ? "جيكل - مستلزمات الاستحمام للطفل - مجموعة كاملة" : "Gel - Baby Care Essentials - Complete Set",
             thumbnail: "/cat4.png",
+            price: "$67.8",
         },
         {
             id: 5,
             title: isRTL ? "جيكل - كرسي سيارة للأطفال ساتورن زيب 360 أيزو فيكس - أسود" : "Gel - Baby Car Seat Satorn Zib 360 Azov Fix - Black",
             thumbnail: "/cat5.png",
+            price: "$216.47",
         },
         {
             id: 6,
             title: isRTL ? "حقيبة الأمومة الفاخرة مع عازل حراري" : "Frida Mom - Baby Maxi Air Conditioner",
             thumbnail: "/cat6.png",
+            price: "$89.99",
         },
         {
             id: 7,
             title: isRTL ? "مستلزمات الاستحمام للطفل - مجموعة كاملة" : "Gel - Baby Care Essentials - Complete Set",
             thumbnail: "/cat7.png",
+            price: "$45.50",
         },
         {
             id: 8,
             title: isRTL ? "جيكل - كرسي سيارة للأطفال ساتورن زيب 360 أيزو فيكس - أسود" : "Gel - Baby Car Seat Satorn Zib 360 Azov Fix - Black",
             thumbnail: "/cat3.png",
+            price: "$216.47",
         },
         {
             id: 9,
             title: isRTL ? "جيكل - كرسي سيارة للأطفال ساتورن زيب 360 أيزو فيكس - أسود" : "Gel - Baby Car Seat Satorn Zib 360 Azov Fix - Black",
             thumbnail: "/cat5.png",
+            price: "$216.47",
         },
     ];
 
