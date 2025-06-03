@@ -7,14 +7,17 @@ import { XMarkMini } from '@medusajs/icons'
 import { Box } from '@modules/common/components/box'
 import Input from '@modules/common/components/input'
 import { useLocale } from 'next-intl'
-
+const milisearchUrl = process.env.NEXT_PUBLIC_MILISEARCH_URL || "http://64.23.252.78:7700"
+const milisearchApiKey = process.env.MILISEARCH_API_KEY ||"d89b5c85bcf7bc59a07ede1604046d2548b5f581604a599b0b18b053ce4fc0df"
 export const ControlledSearchBox = ({
   countryCode,
   open,
+  setProducts,
   closeSearch,
 }: {
   countryCode: string
-  open: boolean
+  open: boolean,
+  setProducts: (products: any[]) => void
   closeSearch: () => void
 }) => {
   const locale = useLocale()
@@ -60,7 +63,50 @@ export const ControlledSearchBox = ({
 
   const handleChange = (e) => {
     setQuery(e.target.value)
+    setShowDropdown(true)
+    // Optionally, you can trigger fetch here if using API
   }
+
+  const [showDropdown, setShowDropdown] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (query && query.length > 1) {
+      setLoading(true)
+      // Replace this with your actual API call
+      fetch(`${milisearchUrl}/indexes/products/search?q=${encodeURIComponent(query)}`,{
+        headers: {
+          'authorization': `Bearer ${milisearchApiKey}`,
+      }})
+        .then((res) => res.json())
+        .then((data) => {
+          setProducts(data.hits || [])
+          setLoading(false)
+        })
+        .catch(() => setProducts([]))
+    } else {
+      setProducts([])
+    }
+  }, [query])
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (
+        inputRef.current &&
+        !(inputRef.current as any).contains(e.target)
+      ) {
+        setShowDropdown(false)
+      }
+    }
+    if (showDropdown) {
+      document.addEventListener('mousedown', handleClick)
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClick)
+    }
+  }, [showDropdown])
+
 
   return (
     <div dir={isRtl ? 'rtl' : 'ltr'} className="relative w-full bg-[#f5f8fc] md:mx-auto large:w-max md:align-center md:justify-center md:items-center md:rounded">
@@ -90,6 +136,8 @@ export const ControlledSearchBox = ({
           )}
         </Box>
       </form>
+      
+      
     </div>
   )
 }

@@ -5,18 +5,14 @@ import { Text } from '@modules/common/components/text'
 import Thumbnail from '@modules/products/components/thumbnail'
 
 export const RecommendedItem = ({
-  handleOpenDialogChange,
   item,
 }: {
   item: StoreProduct
-  handleOpenDialogChange: (value: boolean) => void
 }) => {
   return (
     <LocalizedClientLink
       href={`/products/${item.handle}`}
-      onClick={() => {
-        handleOpenDialogChange(false)
-      }}
+     
     >
       <Box
         className="flex w-full bg-primary transition-all duration-300 ease-in-out hover:bg-[#f5f8fc] rounded-large"
