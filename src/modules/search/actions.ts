@@ -2,8 +2,8 @@ import { safeDecodeURIComponent } from '@lib/util/safe-decode-uri'
 import { SearchedProducts } from 'types/global'
 
 export const BACKEND_URL = process.env.MEDUSA_BACKEND_URL
-export const SEARCH_URL = process.env.MILISEARCH_URL
-export const MEILISEARCH_API_KEY = process.env.MILISEARCH_API_KEY
+export const SEARCH_URL = process.env.MILISEARCH_URL ||"http://64.23.252.78:7700"
+export const MEILISEARCH_API_KEY = process.env.MILISEARCH_API_KEY ||"d89b5c85bcf7bc59a07ede1604046d2548b5f581604a599b0b18b053ce4fc0df"
 
 export const PUBLISHABLE_API_KEY =
   process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
