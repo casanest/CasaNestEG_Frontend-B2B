@@ -6,6 +6,7 @@ import k from "@lib/i18n/translations/keys";
 import InteractiveLink from "@modules/common/components/interactive-link"
 import ProductPreview from "@modules/products/components/product-preview"
 import { Heading } from "@modules/common/components/heading";
+import ProductCard from "../../productGrid/productCard";
 // import { useSafeTranslations } from "@lib/i18n/use-safe-translations"
 
 export default async function ProductRail({
@@ -51,7 +52,8 @@ export default async function ProductRail({
       <ul className="grid grid-cols-2 small:grid-cols-4 medium:grid-cols-5 gap-x-6 gap-y-24 small:gap-y-36">
         {pricedProducts.map((product) => (
           <li key={product.id}>
-            <ProductPreview product={product} region={region} isFeatured locale={locale} />
+            {/* <ProductPreview product={product} region={region} isFeatured locale={locale} /> */}
+            <ProductCard product={product} locale={locale} />
           </li>
         ))}
       </ul>

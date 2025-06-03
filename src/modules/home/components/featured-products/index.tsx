@@ -5,7 +5,7 @@ export default async function FeaturedProducts({
   collections,
   region,
   locale,
-}: {
+}: { 
   collections: HttpTypes.StoreCollection[]
   region: HttpTypes.StoreRegion
   locale: string // "en", "ar", ...
