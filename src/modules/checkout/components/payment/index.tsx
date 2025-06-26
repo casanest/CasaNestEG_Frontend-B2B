@@ -13,6 +13,8 @@ import Divider from "@modules/common/components/divider"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 import { useLocale } from "next-intl"
+import { PayMobContainer } from "../paymob-container"
+import FawryContainer from "../fawry-container"
 
 const Payment = ({
   cart,
@@ -34,6 +36,7 @@ const Payment = ({
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(
     activeSession?.provider_id ?? ""
   )
+  const [paymentComplete, setPaymentComplete] = useState(false)
 
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -85,8 +88,14 @@ const Payment = ({
         activeSession?.provider_id === selectedPaymentMethod
 
       if (!checkActiveSession) {
+        if(selectedPaymentMethod === "paymob" || selectedPaymentMethod === "fawry") {
+await initiatePaymentSession(cart, {
+          provider_id:  `pp_${selectedPaymentMethod}_${selectedPaymentMethod}`,
+        })
+        }
+        else
         await initiatePaymentSession(cart, {
-          provider_id: selectedPaymentMethod,
+          provider_id:  selectedPaymentMethod,
         })
       }
 
@@ -106,6 +115,7 @@ const Payment = ({
   }
 
   useEffect(() => {
+    console.log("Payment component mounted",availablePaymentMethods,"AVAILABLE PAYMENT METHODS")
     setError(null)
   }, [isOpen])
 
@@ -147,23 +157,43 @@ const Payment = ({
               >
                 {availablePaymentMethods.map((paymentMethod) => (
                   <div key={paymentMethod.id}>
-                    {isStripeFunc(paymentMethod.id) ? (
-                      <StripeCardContainer
-                        paymentProviderId={paymentMethod.id}
-                        selectedPaymentOptionId={selectedPaymentMethod}
-                        paymentInfoMap={paymentInfoMap}
-                        setCardBrand={setCardBrand}
-                        setError={setError}
-                        setCardComplete={setCardComplete}
-                      />
-                    ) : (
-                      <PaymentContainer
-                        paymentInfoMap={paymentInfoMap}
-                        paymentProviderId={paymentMethod.id}
-                        selectedPaymentOptionId={selectedPaymentMethod}
-                      />
-                    )}
-                  </div>
+            {isStripeFunc(paymentMethod.id) ? (
+              <StripeCardContainer
+                paymentProviderId={paymentMethod.id}
+                selectedPaymentOptionId={selectedPaymentMethod}
+                paymentInfoMap={paymentInfoMap}
+                setCardBrand={setCardBrand}
+                setError={setError}
+                setCardComplete={setCardComplete}
+              />
+            ) : paymentMethod.id === "paymob" ? (
+              <PayMobContainer
+                paymentProviderId={paymentMethod.id}
+                selectedPaymentOptionId={selectedPaymentMethod}
+                paymentInfoMap={paymentInfoMap}
+                setError={setError}
+                setPaymentComplete={setPaymentComplete}
+                cart={cart}
+                locale={locale}
+              />
+            ) : paymentMethod.id === "fawry" ? (
+              <FawryContainer
+                paymentProviderId={paymentMethod.id}
+                selectedPaymentOptionId={selectedPaymentMethod}
+                paymentInfoMap={paymentInfoMap}
+                setError={setError}
+                setPaymentComplete={setPaymentComplete}
+                cart={cart}
+                locale={locale}
+              />
+            ) : (
+              <PaymentContainer
+                paymentInfoMap={paymentInfoMap}
+                paymentProviderId={paymentMethod.id}
+                selectedPaymentOptionId={selectedPaymentMethod}
+              />
+            )}
+          </div>
                 ))}
               </RadioGroup>
             </>

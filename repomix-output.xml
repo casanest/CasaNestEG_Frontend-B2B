@@ -112,6 +112,19 @@ src/
           layout.tsx
           not-found.tsx
           page.tsx
+        api/
+          payments/
+            fawry/
+              generate-code/
+                route.ts
+            paymob/
+              initiate/
+                route.ts
+            webhooks/
+              fawry/
+                route.ts
+              paymob/
+                route.ts
     layout.tsx
     not-found.tsx
   lib/
@@ -250,6 +263,8 @@ src/
           index.tsx
         submit-button/
           index.tsx
+        fawry-container.tsx
+        paymob-container.tsx
       templates/
         checkout-form/
           index.tsx
@@ -538,6 +553,846 @@ tsconfig.json
 
 <files>
 This section contains the contents of the repository's files.
+
+<file path="src/app/[locale]/[countryCode]/api/payments/fawry/generate-code/route.ts">
+import { type NextRequest, NextResponse } from "next/server"
+import crypto from "crypto"
+
+// Fawry API configuration
+const FAWRY_MERCHANT_CODE = process.env.FAWRY_MERCHANT_CODE
+const FAWRY_SECURITY_KEY = process.env.FAWRY_SECURITY_KEY
+const FAWRY_BASE_URL = process.env.FAWRY_BASE_URL || "https://atfawry.fawrystaging.com"
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { cart_id, amount, currency } = body
+
+    // Validate required fields
+    if (!cart_id || !amount) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+    }
+
+    // Generate unique reference number
+    const referenceNumber = `REF${Date.now()}${Math.random().toString(36).substr(2, 5).toUpperCase()}`
+
+    // Convert amount to Egyptian Pounds if needed
+    const amountInEGP = currency === "EGP" ? amount : amount * 30 // Approximate conversion
+
+    // Prepare charge request
+    const chargeItems = [
+      {
+        itemId: cart_id,
+        description: `Order ${cart_id}`,
+        price: amountInEGP,
+        quantity: 1,
+      },
+    ]
+
+    // Generate signature for security
+    const signatureString = `${FAWRY_MERCHANT_CODE}${referenceNumber}${amountInEGP}${FAWRY_SECURITY_KEY}`
+    const signature = crypto.createHash("sha256").update(signatureString).digest("hex")
+
+    // Create charge request
+    const chargeRequest = {
+      merchantCode: FAWRY_MERCHANT_CODE,
+      merchantRefNum: referenceNumber,
+      customerProfileId: `CUST_${cart_id}`,
+      customerName: "Customer",
+      customerEmail: "customer@example.com",
+      customerMobile: "01000000000",
+      paymentMethod: "PAYATFAWRY",
+      amount: amountInEGP,
+      currencyCode: "EGP",
+      description: `Payment for order ${cart_id}`,
+      chargeItems: chargeItems,
+      signature: signature,
+    }
+
+    // Send request to Fawry
+    const fawryResponse = await fetch(`${FAWRY_BASE_URL}/ECommerceWeb/Fawry/payments/charge`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(chargeRequest),
+    })
+
+    if (!fawryResponse.ok) {
+      throw new Error("Failed to create Fawry charge request")
+    }
+
+    const fawryData = await fawryResponse.json()
+
+    if (fawryData.statusCode !== 200) {
+      throw new Error(fawryData.statusDescription || "Fawry charge request failed")
+    }
+
+    return NextResponse.json({
+      success: true,
+      reference_code: referenceNumber,
+      fawry_ref_number: fawryData.fawryRefNumber,
+      expiration_time: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
+    })
+  } catch (error: any) {
+    console.error("Fawry reference code generation error:", error)
+    return NextResponse.json({ error: error.message || "Failed to generate reference code" }, { status: 500 })
+  }
+}
+</file>
+
+<file path="src/app/[locale]/[countryCode]/api/payments/paymob/initiate/route.ts">
+import { type NextRequest, NextResponse } from "next/server"
+
+// PayMob API configuration
+const PAYMOB_API_KEY = process.env.PAYMOB_API_KEY
+const PAYMOB_INTEGRATION_ID = process.env.PAYMOB_INTEGRATION_ID
+const PAYMOB_HMAC_SECRET = process.env.PAYMOB_HMAC_SECRET
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { cart_id, payment_method, phone_number, amount, currency } = body
+
+    // Validate required fields
+    if (!cart_id || !payment_method || !amount) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+    }
+
+    // Step 1: Get authentication token
+    const authResponse = await fetch("https://accept.paymob.com/api/auth/tokens", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        api_key: PAYMOB_API_KEY,
+      }),
+    })
+
+    if (!authResponse.ok) {
+      throw new Error("Failed to authenticate with PayMob")
+    }
+
+    const authData = await authResponse.json()
+    const authToken = authData.token
+
+    // Step 2: Create order
+    const orderResponse = await fetch("https://accept.paymob.com/api/ecommerce/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        auth_token: authToken,
+        delivery_needed: false,
+        amount_cents: Math.round(amount * 100), // Convert to cents
+        currency: currency.toUpperCase(),
+        merchant_order_id: cart_id,
+        items: [],
+      }),
+    })
+
+    if (!orderResponse.ok) {
+      throw new Error("Failed to create PayMob order")
+    }
+
+    const orderData = await orderResponse.json()
+    const orderId = orderData.id
+
+    // Step 3: Generate payment key
+    const paymentKeyResponse = await fetch("https://accept.paymob.com/api/acceptance/payment_keys", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        auth_token: authToken,
+        amount_cents: Math.round(amount * 100),
+        expiration: 3600, // 1 hour
+        order_id: orderId,
+        billing_data: {
+          apartment: "NA",
+          email: "customer@example.com",
+          floor: "NA",
+          first_name: "Customer",
+          street: "NA",
+          building: "NA",
+          phone_number: phone_number || "+20100000000",
+          shipping_method: "NA",
+          postal_code: "NA",
+          city: "Cairo",
+          country: "EG",
+          last_name: "Name",
+          state: "Cairo",
+        },
+        currency: currency.toUpperCase(),
+        integration_id: PAYMOB_INTEGRATION_ID,
+      }),
+    })
+
+    if (!paymentKeyResponse.ok) {
+      throw new Error("Failed to generate PayMob payment key")
+    }
+
+    const paymentKeyData = await paymentKeyResponse.json()
+    const paymentToken = paymentKeyData.token
+
+    // Generate payment URL based on method
+    let paymentUrl = ""
+
+    switch (payment_method) {
+      case "card":
+        paymentUrl = `https://accept.paymob.com/api/acceptance/iframes/${process.env.PAYMOB_IFRAME_ID}?payment_token=${paymentToken}`
+        break
+      case "wallet":
+        paymentUrl = `https://accept.paymob.com/api/acceptance/payments/pay`
+        break
+      case "installments":
+        paymentUrl = `https://accept.paymob.com/api/acceptance/iframes/${process.env.PAYMOB_INSTALLMENTS_IFRAME_ID}?payment_token=${paymentToken}`
+        break
+      default:
+        throw new Error("Invalid payment method")
+    }
+
+    return NextResponse.json({
+      success: true,
+      payment_url: paymentUrl,
+      payment_token: paymentToken,
+      order_id: orderId,
+    })
+  } catch (error: any) {
+    console.error("PayMob payment initiation error:", error)
+    return NextResponse.json({ error: error.message || "Payment initiation failed" }, { status: 500 })
+  }
+}
+</file>
+
+<file path="src/app/[locale]/[countryCode]/api/payments/webhooks/fawry/route.ts">
+import { type NextRequest, NextResponse } from "next/server"
+import crypto from "crypto"
+
+const FAWRY_SECURITY_KEY = process.env.FAWRY_SECURITY_KEY
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const {
+      fawryRefNumber,
+      merchantRefNumber,
+      paymentAmount,
+      orderAmount,
+      fawryFees,
+      paymentMethod,
+      messageSignature,
+      orderStatus,
+    } = body
+
+    // Verify signature
+    if (FAWRY_SECURITY_KEY && messageSignature) {
+      const signatureString = `${fawryRefNumber}${merchantRefNumber}${paymentAmount}${orderAmount}${fawryFees}${orderStatus}${FAWRY_SECURITY_KEY}`
+      const expectedSignature = crypto.createHash("sha256").update(signatureString).digest("hex")
+
+      if (messageSignature !== expectedSignature) {
+        return NextResponse.json({ error: "Invalid signature" }, { status: 401 })
+      }
+    }
+
+    // Extract cart ID from merchant reference number
+    const cartId = merchantRefNumber.replace("REF", "").substring(13) // Remove timestamp part
+
+    // Handle different order statuses
+    switch (orderStatus) {
+      case "PAID":
+        console.log(`Fawry payment successful for cart ${cartId}, amount: ${paymentAmount} EGP`)
+
+        // Update order status to paid
+        // await updateOrderStatus(cartId, 'paid', fawryRefNumber)
+
+        // Send confirmation email, update inventory, etc.
+        break
+
+      case "CANCELED":
+        console.log(`Fawry payment canceled for cart ${cartId}`)
+
+        // Update order status to canceled
+        // await updateOrderStatus(cartId, 'canceled', fawryRefNumber)
+        break
+
+      case "DELIVERED":
+        console.log(`Fawry payment delivered for cart ${cartId}`)
+
+        // Update order status to delivered if applicable
+        // await updateOrderStatus(cartId, 'delivered', fawryRefNumber)
+        break
+
+      case "EXPIRED":
+        console.log(`Fawry payment expired for cart ${cartId}`)
+
+        // Update order status to expired
+        // await updateOrderStatus(cartId, 'expired', fawryRefNumber)
+        break
+
+      default:
+        console.log("Unhandled Fawry order status:", orderStatus)
+    }
+
+    return NextResponse.json({ success: true })
+  } catch (error: any) {
+    console.error("Fawry webhook error:", error)
+    return NextResponse.json({ error: "Webhook processing failed" }, { status: 500 })
+  }
+}
+</file>
+
+<file path="src/app/[locale]/[countryCode]/api/payments/webhooks/paymob/route.ts">
+import { type NextRequest, NextResponse } from "next/server"
+import crypto from "crypto"
+
+const PAYMOB_HMAC_SECRET = process.env.PAYMOB_HMAC_SECRET
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.text()
+    const signature = request.headers.get("x-paymob-signature")
+
+    // Verify webhook signature
+    if (PAYMOB_HMAC_SECRET && signature) {
+      const expectedSignature = crypto.createHmac("sha512", PAYMOB_HMAC_SECRET).update(body).digest("hex")
+
+      if (signature !== expectedSignature) {
+        return NextResponse.json({ error: "Invalid signature" }, { status: 401 })
+      }
+    }
+
+    const webhookData = JSON.parse(body)
+    const { type, obj } = webhookData
+
+    // Handle different webhook types
+    switch (type) {
+      case "TRANSACTION":
+        await handleTransactionWebhook(obj)
+        break
+      case "DELIVERY_STATUS":
+        await handleDeliveryStatusWebhook(obj)
+        break
+      default:
+        console.log("Unhandled PayMob webhook type:", type)
+    }
+
+    return NextResponse.json({ success: true })
+  } catch (error: any) {
+    console.error("PayMob webhook error:", error)
+    return NextResponse.json({ error: "Webhook processing failed" }, { status: 500 })
+  }
+}
+
+async function handleTransactionWebhook(transaction: any) {
+  const { success, pending, order, amount_cents, currency, source_data_type, source_data_sub_type } = transaction
+
+  const cartId = order?.merchant_order_id
+  const amount = amount_cents / 100
+
+  if (success && !pending) {
+    // Payment successful - update order status
+    console.log(`PayMob payment successful for cart ${cartId}, amount: ${amount} ${currency}`)
+
+    // Here you would update your order/cart status in your database
+    // await updateOrderStatus(cartId, 'paid', transaction.id)
+
+    // Send confirmation email, update inventory, etc.
+  } else if (!success && !pending) {
+    // Payment failed
+    console.log(`PayMob payment failed for cart ${cartId}`)
+
+    // Update order status to failed
+    // await updateOrderStatus(cartId, 'payment_failed', transaction.id)
+  }
+}
+
+async function handleDeliveryStatusWebhook(delivery: any) {
+  // Handle delivery status updates if applicable
+  console.log("PayMob delivery status update:", delivery)
+}
+</file>
+
+<file path="src/modules/checkout/components/fawry-container.tsx">
+"use client"
+
+import type React from "react"
+
+import { RadioGroup } from "@headlessui/react"
+import { Text, clx } from "@medusajs/ui"
+import { useState } from "react"
+import { Smartphone, MapPin, CreditCard } from "lucide-react"
+
+interface FawryContainerProps {
+  paymentProviderId: string
+  selectedPaymentOptionId: string
+  paymentInfoMap: any
+  setError: (error: string | null) => void
+  setPaymentComplete: (complete: boolean) => void
+  cart: any
+  locale: string
+}
+
+export const FawryContainer = ({
+  paymentProviderId,
+  selectedPaymentOptionId,
+  paymentInfoMap,
+  setError,
+  setPaymentComplete,
+  cart,
+  locale,
+}: FawryContainerProps) => {
+  const [selectedMethod, setSelectedMethod] = useState<string>("")
+  const [phoneNumber, setPhoneNumber] = useState<string>("")
+  const [referenceCode, setReferenceCode] = useState<string>("")
+
+  const isSelected = selectedPaymentOptionId === paymentProviderId
+  const isRTL = locale === "ar"
+
+  const fawryMethods = [
+    {
+      id: "retail",
+      title: locale === "ar" ? "نقاط البيع" : "Retail Locations",
+      description: locale === "ar" ? "ادفع في أي فرع فوري أو نقطة بيع" : "Pay at any Fawry location or retail point",
+      icon: <MapPin className="w-5 h-5" />,
+    },
+    {
+      id: "mobile",
+      title: locale === "ar" ? "فوري موبايل" : "Fawry Mobile",
+      description: locale === "ar" ? "ادفع باستخدام تطبيق فوري" : "Pay using Fawry mobile app",
+      icon: <Smartphone className="w-5 h-5" />,
+    },
+    {
+      id: "card",
+      title: locale === "ar" ? "بطاقة فوري" : "Fawry Card",
+      description: locale === "ar" ? "ادفع باستخدام بطاقة فوري المدفوعة مسبقاً" : "Pay with Fawry prepaid card",
+      icon: <CreditCard className="w-5 h-5" />,
+    },
+  ]
+
+  const validatePhoneNumber = (phone: string) => {
+    const egyptianPhoneRegex = /^(\+20|0)?1[0125]\d{8}$/
+    return egyptianPhoneRegex.test(phone.replace(/\s/g, ""))
+  }
+
+  const handleMethodSelect = (method: string) => {
+    setSelectedMethod(method)
+    setError(null)
+
+    if (method === "retail") {
+      generateReferenceCode()
+    } else {
+      setPaymentComplete(false)
+    }
+  }
+
+  const generateReferenceCode = async () => {
+    try {
+      const response = await fetch("/api/payments/fawry/generate-code", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cart_id: cart.id,
+          amount: cart.total,
+          currency: cart.region.currency_code,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to generate reference code")
+      }
+
+      const data = await response.json()
+      setReferenceCode(data.reference_code)
+      setPaymentComplete(true)
+    } catch (error: any) {
+      setError(error.message || (locale === "ar" ? "فشل في إنشاء رمز المرجع" : "Failed to generate reference code"))
+    }
+  }
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const phone = e.target.value
+    setPhoneNumber(phone)
+
+    if ((selectedMethod === "mobile" || selectedMethod === "card") && validatePhoneNumber(phone)) {
+      setPaymentComplete(true)
+      setError(null)
+    } else if (selectedMethod === "mobile" || selectedMethod === "card") {
+      setPaymentComplete(false)
+      if (phone.length > 0) {
+        setError(locale === "ar" ? "رقم الهاتف غير صحيح" : "Invalid phone number")
+      }
+    }
+  }
+
+  return (
+    <div
+      className={clx("flex flex-col gap-y-4 border-b border-gray-200 last:border-b-0", {
+        "pb-8": isSelected,
+        "pb-4": !isSelected,
+      })}
+    >
+      <RadioGroup.Option
+        value={paymentProviderId}
+        className={clx(
+          "flex items-center justify-between w-full p-4 border border-gray-200 rounded-lg cursor-pointer transition-all",
+          {
+            "border-[#043364] bg-blue-50": isSelected,
+            "hover:border-gray-300": !isSelected,
+          },
+        )}
+      >
+        <div className="flex items-center gap-x-4">
+          <RadioGroup.Label className="flex items-center gap-x-3 cursor-pointer">
+            <div
+              className={clx("w-4 h-4 rounded-full border-2 flex items-center justify-center", {
+                "border-[#043364]": isSelected,
+                "border-gray-300": !isSelected,
+              })}
+            >
+              {isSelected && <div className="w-2 h-2 rounded-full bg-[#043364]" />}
+            </div>
+            <div className="flex items-center gap-x-2">
+              {paymentInfoMap[paymentProviderId]?.icon}
+              <Text className="text-base-regular">{paymentInfoMap[paymentProviderId]?.title || "Fawry"}</Text>
+            </div>
+          </RadioGroup.Label>
+        </div>
+      </RadioGroup.Option>
+
+      {isSelected && (
+        <div className="px-4 pb-4">
+          <div className="space-y-4">
+            <Text className="text-sm text-gray-600 mb-4">
+              {locale === "ar" ? "اختر طريقة الدفع عبر فوري:" : "Choose your Fawry payment method:"}
+            </Text>
+
+            <div className="grid gap-3">
+              {fawryMethods.map((method) => (
+                <div
+                  key={method.id}
+                  className={clx("border rounded-lg p-3 cursor-pointer transition-all", {
+                    "border-[#043364] bg-blue-50": selectedMethod === method.id,
+                    "border-gray-200 hover:border-gray-300": selectedMethod !== method.id,
+                  })}
+                  onClick={() => handleMethodSelect(method.id)}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={clx("w-4 h-4 rounded-full border-2 flex items-center justify-center", {
+                        "border-[#043364]": selectedMethod === method.id,
+                        "border-gray-300": selectedMethod !== method.id,
+                      })}
+                    >
+                      {selectedMethod === method.id && <div className="w-2 h-2 rounded-full bg-[#043364]" />}
+                    </div>
+                    {method.icon}
+                    <div>
+                      <Text className="font-medium">{method.title}</Text>
+                      <Text className="text-sm text-gray-600">{method.description}</Text>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {selectedMethod === "retail" && referenceCode && (
+              <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                <Text className="font-medium text-orange-800 mb-2">
+                  {locale === "ar" ? "رمز المرجع الخاص بك:" : "Your Reference Code:"}
+                </Text>
+                <div className="bg-white p-3 rounded border text-center">
+                  <Text className="text-2xl font-bold text-orange-600 tracking-wider">{referenceCode}</Text>
+                </div>
+                <Text className="text-sm text-orange-700 mt-2">
+                  {locale === "ar"
+                    ? "اذهب إلى أي فرع فوري أو نقطة بيع واستخدم هذا الرمز لإتمام الدفع"
+                    : "Visit any Fawry location or retail point and use this code to complete payment"}
+                </Text>
+              </div>
+            )}
+
+            {(selectedMethod === "mobile" || selectedMethod === "card") && (
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {locale === "ar" ? "رقم الهاتف" : "Phone Number"}
+                </label>
+                <input
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={handlePhoneChange}
+                  placeholder={locale === "ar" ? "01xxxxxxxxx" : "01xxxxxxxxx"}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#043364] focus:border-transparent"
+                  dir={isRTL ? "rtl" : "ltr"}
+                />
+                <Text className="text-xs text-gray-500 mt-1">
+                  {locale === "ar" ? "أدخل رقم هاتفك المسجل في فوري" : "Enter your Fawry registered phone number"}
+                </Text>
+              </div>
+            )}
+
+            {selectedMethod && (selectedMethod !== "retail" || referenceCode) && (
+              <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <Text className="text-sm text-green-800">
+                  {locale === "ar"
+                    ? "✓ طريقة الدفع جاهزة. انقر على 'متابعة' لإكمال عملية الدفع."
+                    : "✓ Payment method ready. Click 'Continue' to complete payment."}
+                </Text>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+</file>
+
+<file path="src/modules/checkout/components/paymob-container.tsx">
+"use client"
+
+import type React from "react"
+
+import { RadioGroup } from "@headlessui/react"
+import { Text, clx } from "@medusajs/ui"
+import { useState, useEffect } from "react"
+import { Smartphone, CreditCard, Building2 } from "lucide-react"
+
+interface PayMobContainerProps {
+  paymentProviderId: string
+  selectedPaymentOptionId: string
+  paymentInfoMap: any
+  setError: (error: string | null) => void
+  setPaymentComplete: (complete: boolean) => void
+  cart: any
+  locale: string
+}
+
+export const PayMobContainer = ({
+  paymentProviderId,
+  selectedPaymentOptionId,
+  paymentInfoMap,
+  setError,
+  setPaymentComplete,
+  cart,
+  locale,
+}: PayMobContainerProps) => {
+  const [selectedMethod, setSelectedMethod] = useState<string>("")
+  const [phoneNumber, setPhoneNumber] = useState<string>("")
+  const [isProcessing, setIsProcessing] = useState(false)
+
+  const isSelected = selectedPaymentOptionId === paymentProviderId
+  const isRTL = locale === "ar"
+
+  const payMobMethods = [
+    {
+      id: "card",
+      title: locale === "ar" ? "بطاقة ائتمان/خصم" : "Credit/Debit Card",
+      description: locale === "ar" ? "ادفع باستخدام بطاقتك البنكية" : "Pay with your bank card",
+      icon: <CreditCard className="w-5 h-5" />,
+    },
+    {
+      id: "wallet",
+      title: locale === "ar" ? "محفظة موبايل" : "Mobile Wallet",
+      description:
+        locale === "ar" ? "فودافون كاش، اتصالات كاش، أورانج كاش" : "Vodafone Cash, Etisalat Cash, Orange Cash",
+      icon: <Smartphone className="w-5 h-5" />,
+    },
+    {
+      id: "installments",
+      title: locale === "ar" ? "أقساط" : "Installments",
+      description: locale === "ar" ? "اقسط مشترياتك على عدة شهور" : "Split your purchase into monthly payments",
+      icon: <Building2 className="w-5 h-5" />,
+    },
+  ]
+
+  const validatePhoneNumber = (phone: string) => {
+    const egyptianPhoneRegex = /^(\+20|0)?1[0125]\d{8}$/
+    return egyptianPhoneRegex.test(phone.replace(/\s/g, ""))
+  }
+
+  const handleMethodSelect = (method: string) => {
+    setSelectedMethod(method)
+    setError(null)
+
+    if (method === "card") {
+      setPaymentComplete(true)
+    } else {
+      setPaymentComplete(false)
+    }
+  }
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const phone = e.target.value
+    setPhoneNumber(phone)
+
+    if (selectedMethod === "wallet" && validatePhoneNumber(phone)) {
+      setPaymentComplete(true)
+      setError(null)
+    } else if (selectedMethod === "wallet") {
+      setPaymentComplete(false)
+      if (phone.length > 0) {
+        setError(locale === "ar" ? "رقم الهاتف غير صحيح" : "Invalid phone number")
+      }
+    }
+  }
+
+  const initiatePayMobPayment = async () => {
+    setIsProcessing(true)
+    setError(null)
+
+    try {
+      // This would integrate with PayMob's API
+      const response = await fetch("/api/payments/paymob/initiate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cart_id: cart.id,
+          payment_method: selectedMethod,
+          phone_number: selectedMethod === "wallet" ? phoneNumber : undefined,
+          amount: cart.total,
+          currency: cart.region.currency_code,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Payment initiation failed")
+      }
+
+      const data = await response.json()
+
+      if (data.payment_url) {
+        // Redirect to PayMob payment page
+        window.location.href = data.payment_url
+      }
+    } catch (error: any) {
+      setError(error.message || (locale === "ar" ? "فشل في بدء عملية الدفع" : "Failed to initiate payment"))
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  useEffect(() => {
+    if (selectedMethod === "installments") {
+      setPaymentComplete(true)
+    }
+  }, [selectedMethod])
+
+  return (
+    <div
+      className={clx("flex flex-col gap-y-4 border-b border-gray-200 last:border-b-0", {
+        "pb-8": isSelected,
+        "pb-4": !isSelected,
+      })}
+    >
+      <RadioGroup.Option
+        value={paymentProviderId}
+        className={clx(
+          "flex items-center justify-between w-full p-4 border border-gray-200 rounded-lg cursor-pointer transition-all",
+          {
+            "border-[#043364] bg-blue-50": isSelected,
+            "hover:border-gray-300": !isSelected,
+          },
+        )}
+      >
+        <div className="flex items-center gap-x-4">
+          <RadioGroup.Label className="flex items-center gap-x-3 cursor-pointer">
+            <div
+              className={clx("w-4 h-4 rounded-full border-2 flex items-center justify-center", {
+                "border-[#043364]": isSelected,
+                "border-gray-300": !isSelected,
+              })}
+            >
+              {isSelected && <div className="w-2 h-2 rounded-full bg-[#043364]" />}
+            </div>
+            <div className="flex items-center gap-x-2">
+              {paymentInfoMap[paymentProviderId]?.icon}
+              <Text className="text-base-regular">{paymentInfoMap[paymentProviderId]?.title || "PayMob"}</Text>
+            </div>
+          </RadioGroup.Label>
+        </div>
+      </RadioGroup.Option>
+
+      {isSelected && (
+        <div className="px-4 pb-4">
+          <div className="space-y-4">
+            <Text className="text-sm text-gray-600 mb-4">
+              {locale === "ar" ? "اختر طريقة الدفع المفضلة لديك:" : "Choose your preferred payment method:"}
+            </Text>
+
+            <div className="grid gap-3">
+              {payMobMethods.map((method) => (
+                <div
+                  key={method.id}
+                  className={clx("border rounded-lg p-3 cursor-pointer transition-all", {
+                    "border-[#043364] bg-blue-50": selectedMethod === method.id,
+                    "border-gray-200 hover:border-gray-300": selectedMethod !== method.id,
+                  })}
+                  onClick={() => handleMethodSelect(method.id)}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={clx("w-4 h-4 rounded-full border-2 flex items-center justify-center", {
+                        "border-[#043364]": selectedMethod === method.id,
+                        "border-gray-300": selectedMethod !== method.id,
+                      })}
+                    >
+                      {selectedMethod === method.id && <div className="w-2 h-2 rounded-full bg-[#043364]" />}
+                    </div>
+                    {method.icon}
+                    <div>
+                      <Text className="font-medium">{method.title}</Text>
+                      <Text className="text-sm text-gray-600">{method.description}</Text>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {selectedMethod === "wallet" && (
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {locale === "ar" ? "رقم الهاتف" : "Phone Number"}
+                </label>
+                <input
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={handlePhoneChange}
+                  placeholder={locale === "ar" ? "01xxxxxxxxx" : "01xxxxxxxxx"}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#043364] focus:border-transparent"
+                  dir={isRTL ? "rtl" : "ltr"}
+                />
+                <Text className="text-xs text-gray-500 mt-1">
+                  {locale === "ar"
+                    ? "أدخل رقم هاتفك المسجل في المحفظة الإلكترونية"
+                    : "Enter your mobile wallet registered phone number"}
+                </Text>
+              </div>
+            )}
+
+            {selectedMethod && (
+              <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <Text className="text-sm text-green-800">
+                  {locale === "ar"
+                    ? "✓ طريقة الدفع جاهزة. انقر على 'متابعة' لإكمال عملية الدفع."
+                    : "✓ Payment method ready. Click 'Continue' to complete payment."}
+                </Text>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+</file>
 
 <file path=".github/ISSUE_TEMPLATE/bug-report.yml">
 name: Bug report for the Medusa Next.js Starter
@@ -8268,133 +9123,6 @@ export default async function ProductActionsWrapper({
 }
 </file>
 
-<file path="src/modules/search/actions.ts">
-import { safeDecodeURIComponent } from '@lib/util/safe-decode-uri'
-import { SearchedProducts } from 'types/global'
-
-export const BACKEND_URL = process.env.MEDUSA_BACKEND_URL
-export const SEARCH_URL = process.env.MILISEARCH_URL
-export const MEILISEARCH_API_KEY = process.env.MILISEARCH_API_KEY
-
-export const PUBLISHABLE_API_KEY =
-  process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
-
-export const PRODUCT_LIMIT = 12
-
-type SearchParams = {
-  currency_code: string
-  page?: number
-  order?: string
-  category_id?: string
-  collection?: string[]
-  type?: string[]
-  material?: string[]
-  price?: string[]
-  query?: string
-}
-
-export async function search({
-  currency_code,
-  page,
-  order = 'relevance',
-  category_id,
-  collection,
-  type,
-  material,
-  price,
-  query,
-}: SearchParams): Promise<SearchedProducts> {
-  const sortBy =
-    order === 'price_asc'
-      ? 'calculated_price'
-      : order === 'price_desc'
-        ? '-calculated_price'
-        : order === 'created_at'
-          ? '-created_at'
-          : order
-
-  const searchParams = new URLSearchParams({
-    currency_code,
-    order: sortBy,
-    offset: ((page - 1) * PRODUCT_LIMIT).toString(),
-    limit: PRODUCT_LIMIT.toString(),
-  })
-
-  if (category_id) {
-    searchParams.append('category_id[]', category_id)
-  }
-
-  if (collection && Array.isArray(collection)) {
-    collection.forEach((id) => {
-      searchParams.append('collection_id[]', id)
-    })
-  }
-
-  if (type && Array.isArray(type)) {
-    type.forEach((id) => {
-      searchParams.append('type_id[]', id)
-    })
-  }
-
-  if (material && Array.isArray(material)) {
-    material.forEach((id) => {
-      searchParams.append('materials[]', id)
-    })
-  }
-
-  if (price && Array.isArray(price)) {
-    price.forEach((range) => {
-      switch (range) {
-        case 'under-100':
-          searchParams.append('price_to', '100')
-          break
-        case '100-500':
-          searchParams.append('price_from', '100')
-          searchParams.append('price_to', '500')
-          break
-        case '501-1000':
-          searchParams.append('price_from', '501')
-          searchParams.append('price_to', '1000')
-          break
-        case 'more-than-1000':
-          searchParams.append('price_from', '1000')
-          break
-      }
-    })
-  }
-
-  if (query) {
-    searchParams.append('q', safeDecodeURIComponent(query))
-  }
-
-  const response = await fetch(
-    // `${SEARCH_URL}/indexes/products//search?${searchParams.toString()}`,
-    `${SEARCH_URL}/indexes/products/search?q=${searchParams.get('q')}`,
-
-    {
-      headers: {
-        // 'x-publishable-api-key': PUBLISHABLE_API_KEY!,
-        'authorization': `Bearer ${MEILISEARCH_API_KEY}`,
-      },
-      cache: 'no-store',
-    }
-  )
-// if (!response || !response.ok) {
-//   throw new Error(`Response error. Status: ${response ? response.status : 'No response'}`)
-// }
-
-  const data = await response.json()
-
-  // console.log('data:::::::::::::', data)
-  // console.log('data.products:::::::::::::', data.products)
-
-  return {
-    results: data.hits,
-    count: data.count,
-  }
-}
-</file>
-
 <file path="src/modules/search/const.ts">
 export const PRICING_OPTIONS = [
   { id: 'under-100', value: 'Under $100' },
@@ -10197,32 +10925,7 @@ import Bancontact from "@modules/common/icons/bancontact"
 import PayPal from "@modules/common/icons/paypal"
 
 /* Map of payment provider_id to their title and icon. Add in any payment providers you want to use. */
-export const paymentInfoMap: Record<
-  string,
-  { title: string; icon: React.JSX.Element }
-> = {
-  pp_stripe_stripe: {
-    title: "Credit card",
-    icon: <CreditCard />,
-  },
-  "pp_stripe-ideal_stripe": {
-    title: "iDeal",
-    icon: <Ideal />,
-  },
-  "pp_stripe-bancontact_stripe": {
-    title: "Bancontact",
-    icon: <Bancontact />,
-  },
-  pp_paypal_paypal: {
-    title: "PayPal",
-    icon: <PayPal />,
-  },
-  pp_system_default: {
-    title: "Manual Payment",
-    icon: <CreditCard />,
-  },
-  // Add more payment providers here
-}
+// paymentInfoMap is defined later in the file, so this duplicate is removed to avoid redeclaration errors.
 
 // This only checks if it is native stripe for card payments, it ignores the other stripe-based providers
 export const isStripe = (providerId?: string) => {
@@ -10298,6 +11001,67 @@ export const createNavigation = (
       category_children: null,
     },
   ]
+
+
+// PayMob Icon Component
+const PayMobIcon = () => (
+  <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded flex items-center justify-center">
+    <span className="text-white text-xs font-bold">PM</span>
+  </div>
+)
+
+// Fawry Icon Component
+const FawryIcon = () => (
+  <div className="w-6 h-6 bg-gradient-to-r from-orange-500 to-red-500 rounded flex items-center justify-center">
+    <span className="text-white text-xs font-bold">F</span>
+  </div>
+)
+
+
+
+export const paymentInfoMap: Record<string, { title: string; icon: React.JSX.Element }> = {
+  stripe: {
+    title: "Credit card",
+    icon: <CreditCard />,
+  },
+  "stripe-ideal": {
+    title: "iDEAL",
+    icon: <CreditCard />,
+  },
+  "stripe-bancontact": {
+    title: "Bancontact",
+    icon: <CreditCard />,
+  },
+  "stripe-blik": {
+    title: "BLIK",
+    icon: <CreditCard />,
+  },
+  "stripe-giropay": {
+    title: "Giropay",
+    icon: <CreditCard />,
+  },
+  "stripe-przelewy24": {
+    title: "Przelewy24",
+    icon: <CreditCard />,
+  },
+  paypal: {
+    title: "PayPal",
+    icon: <CreditCard />,
+  },
+  manual: {
+    title: "Test payment",
+    icon: <CreditCard />,
+  },
+  // New PayMob and Fawry entries
+  paymob: {
+    title: "PayMob",
+    icon: <PayMobIcon />,
+  },
+  fawry: {
+    title: "Fawry",
+    icon: <FawryIcon />,
+  },
+}
 </file>
 
 <file path="src/modules/account/components/account-info/index.tsx">
@@ -13104,71 +13868,6 @@ export default function ProductGrid() {
 }
 </file>
 
-<file path="src/modules/layout/templates/nav/nav-content.tsx">
-'use client'
-
-import { useState } from 'react'
-
-import { cn } from '@lib/util/cn'
-import { Box } from '@modules/common/components/box'
-import { Button } from '@modules/common/components/button'
-import LocalizedClientLink from '@modules/common/components/localized-client-link'
-import SideMenu from '@modules/layout/components/side-menu'
-import { SearchDialog } from '@modules/search/components/search-dialog'
-import SearchDropdown from '@modules/search/components/search-dropdown'
-
-import Navigation from './navigation'
-import { LaCasaLogo } from '@modules/common/icons/solace-logo'
-import { SearchIcon } from '@modules/common/icons/search'
-
-export default function NavContent(props: any) {
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
-  console.log("props.products", props.products)
-
-  return (
-    <Box className="flex h-full w-full items-center justify-between  bg-white">
-      {isSearchOpen && (
-        <SearchDropdown
-          setIsOpen={setIsSearchOpen}
-          recommendedProducts={props.products}
-          isOpen={isSearchOpen}
-          countryCode={props.countryCode}
-        />
-      )}
-      <SearchDialog
-        recommendedProducts={props.products}
-        countryCode={props.countryCode}
-        isOpen={isSearchOpen}
-        handleOpenDialogChange={setIsSearchOpen}
-      />
-      {/* <Box
-        className={cn('relative block', {
-          'medium:absolute medium:left-1/2 medium:top-1/2 medium:-translate-x-1/2 medium:-translate-y-1/2':
-            !isSearchOpen,
-          'right-0 z-40': isSearchOpen,
-        })}
-      > */}
-      {/* <LocalizedClientLink href="/">
-          <LaCasaLogo className="h-6 medium:h-7" />
-        </LocalizedClientLink> */}
-      {/* </Box> */}
-      {!isSearchOpen && (
-        <Button
-          variant="icon"
-          color={"#fff"}
-          withIcon
-          className="ml-auto h-auto !p-2 xsmall:!p-3.5 text-[#043364] text-2xl font-extrabold"
-          onClick={() => setIsSearchOpen(true)}
-          data-testid="search-button"
-        >
-          <SearchIcon />
-        </Button>
-      )}
-    </Box>
-  )
-}
-</file>
-
 <file path="src/modules/order/components/help/index.tsx">
 import { Heading, clx } from "@medusajs/ui"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
@@ -13963,148 +14662,6 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
 export default ProductTemplate
 </file>
 
-<file path="src/modules/search/components/search-dialog/index.tsx">
-import { Fragment, useEffect, useState } from 'react'
-
-import { StoreProduct } from '@medusajs/types'
-import { Button } from '@modules/common/components/button'
-import {
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogTitle,
-} from '@modules/common/components/dialog'
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@modules/common/components/tabs'
-// import { ArrowLeftIcon } from '@modules/common/icons'
-import * as VisuallyHidden from '@radix-ui/react-visually-hidden'
-
-import { ControlledSearchBox } from '../search-box'
-import { RecentSearches } from '../search-dropdown/recent-searches'
-import { RecommendedItem } from '../search-dropdown/recommended-item'
-import { ArrowLeftIcon } from '@modules/common/icons/arrow-left'
-import { useLocale } from 'next-intl'
-// import { Dialog } from '@modules/common/components/dialog'
-
-export const SearchDialog = ({
-  isOpen,
-  handleOpenDialogChange,
-  countryCode,
-  recommendedProducts,
-}: {
-  countryCode: string
-  isOpen: boolean
-  handleOpenDialogChange: (value: boolean) => void
-  recommendedProducts: StoreProduct[]
-}) => {
-  const locale = useLocale()
-  const isRtl = locale === 'ar'
-  const [isLargeScreen, setIsLargeScreen] = useState(false)
-  useEffect(() => {
-    const handleResize = () => {
-      setIsLargeScreen(window.innerWidth > 900)
-    }
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [])
-
-  if (isLargeScreen) {
-    return null
-  }
-
-  return (
-    <Dialog open={isOpen} onOpenChange={handleOpenDialogChange}>
-      <DialogPortal>
-        <DialogOverlay />
-        <DialogContent
-          className="!max-h-full !max-w-full !rounded-none bg-white z-50 !m-0 !p-0"
-          aria-describedby={undefined}
-        >
-          <DialogHeader dir={isRtl ? 'rtl' : 'ltr'} className="flex bg-white items-center gap-4 !border-b-0 !p-4 text-xl text-basic-primary small:text-2xl">
-            <Button
-              withIcon
-              variant="text"
-              onClick={() => handleOpenDialogChange(false)}
-            >
-              {
-                isRtl ? (
-                  <ArrowLeftIcon className="h-6 w-6 rotate-180" />
-                ) : (
-                  <ArrowLeftIcon className="h-6 w-6" />
-                )
-              }
-            </Button>
-            <ControlledSearchBox
-              countryCode={countryCode}
-              open={isOpen}
-              closeSearch={() => handleOpenDialogChange(false)}
-            />
-          </DialogHeader>
-          <VisuallyHidden.Root>
-            <DialogTitle>{isRtl ? 'بحث' : 'Search modal'}</DialogTitle>
-          </VisuallyHidden.Root>
-          <DialogBody dir={isRtl ? 'rtl' : 'ltr'} className="overflow-y-auto bg-white">
-            <Tabs defaultValue="tab1">
-              <TabsList dir={isRtl ? 'rtl' : 'ltr'} className="flex shrink-0 rounded-t-md bg-primary">
-                <TabsTrigger
-                  value="tab1"
-                  className="border-b border-basic-primary text-basic-primary data-[state=active]:border-action-primary"
-                >
-                  {isRtl ? "البحث الأخير" : "Recent Searches"}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="tab2"
-                  className="border-b border-basic-primary text-basic-primary data-[state=active]:border-action-primary"
-                >
-                  {isRtl ? "المنتجات الموصى بها" : 'Recommended'}
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent
-                dir={isRtl ? 'rtl' : 'ltr'}
-                className="grow p-4 outline-none small:p-6"
-                value="tab1"
-              >
-                <RecentSearches
-                  handleOpenDialogChange={handleOpenDialogChange}
-                />
-              </TabsContent>
-              <TabsContent
-                dir={isRtl ? 'rtl' : 'ltr'}
-                className="grow p-4 outline-none small:p-6"
-                value="tab2"
-              >
-                <div className="grid gap-3">
-                  {recommendedProducts.map((item, id) => {
-                    return (
-                      <Fragment key={id}>
-                        <RecommendedItem
-                          item={item}
-                          handleOpenDialogChange={handleOpenDialogChange}
-                        />
-                      </Fragment>
-                    )
-                  })}
-                </div>
-              </TabsContent>
-            </Tabs>
-          </DialogBody>
-        </DialogContent>
-      </DialogPortal>
-    </Dialog>
-  )
-}
-</file>
-
 <file path="src/modules/search/components/search-dropdown/recent-searches.tsx">
 import { useEffect, useState } from 'react'
 
@@ -14158,50 +14715,6 @@ export const RecentSearches = ({
         <Text className="text-secondary">{locale === 'ar' ? 'لم يتم العثور على نتائج' : 'No results found'}</Text>
       )}
     </>
-  )
-}
-</file>
-
-<file path="src/modules/search/components/search-dropdown/recommended-item.tsx">
-import { StoreProduct } from '@medusajs/types'
-import { Box } from '@modules/common/components/box'
-import LocalizedClientLink from '@modules/common/components/localized-client-link'
-import { Text } from '@modules/common/components/text'
-import Thumbnail from '@modules/products/components/thumbnail'
-
-export const RecommendedItem = ({
-  handleOpenDialogChange,
-  item,
-}: {
-  item: StoreProduct
-  handleOpenDialogChange: (value: boolean) => void
-}) => {
-  return (
-    <LocalizedClientLink
-      href={`/products/${item.handle}`}
-      onClick={() => {
-        handleOpenDialogChange(false)
-      }}
-    >
-      <Box
-        className="flex w-full bg-primary transition-all duration-300 ease-in-out hover:bg-[#f5f8fc] rounded-large"
-        data-testid="product-row"
-      >
-        <div className="flex h-[90px] w-[90px]">
-          <Thumbnail thumbnail={item.thumbnail} size="square" />
-        </div>
-        <Box className="px-4 pt-3 medium:flex-grow">
-          <Text className="font-medium" data-testid="product-name">
-            {item.title}
-          </Text>
-          {item.variants && (
-            <Text size="md" className="text-secondary">
-              {item.variants[0]?.title}
-            </Text>
-          )}
-        </Box>
-      </Box>
-    </LocalizedClientLink>
   )
 }
 </file>
@@ -16849,9 +17362,9 @@ import { initiatePaymentSession } from "@lib/data/cart"
 import { CheckCircleSolid, CreditCard } from "@medusajs/icons"
 import { Button, Container, Heading, Text, clx } from "@medusajs/ui"
 import ErrorMessage from "@modules/checkout/components/error-message"
-import PaymentContainer, {
-  StripeCardContainer,
-} from "@modules/checkout/components/payment-container"
+import PaymentContainer, { StripeCardContainer } from "@modules/checkout/components/payment-container"
+import { PayMobContainer } from "@modules/checkout/components/paymob-container"
+import { FawryContainer } from "@modules/checkout/components/fawry-container"
 import Divider from "@modules/common/components/divider"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
@@ -16867,16 +17380,15 @@ const Payment = ({
   const locale = useLocale()
   const isRTL = locale === "ar"
   const activeSession = cart.payment_collection?.payment_sessions?.find(
-    (paymentSession: any) => paymentSession.status === "pending"
+    (paymentSession: any) => paymentSession.status === "pending",
   )
 
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [cardBrand, setCardBrand] = useState<string | null>(null)
   const [cardComplete, setCardComplete] = useState(false)
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(
-    activeSession?.provider_id ?? ""
-  )
+  const [paymentComplete, setPaymentComplete] = useState(false)
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(activeSession?.provider_id ?? "")
 
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -16885,22 +17397,29 @@ const Payment = ({
   const isOpen = searchParams.get("step") === "payment"
 
   const isStripe = isStripeFunc(selectedPaymentMethod)
+  const isPayMob = selectedPaymentMethod === "paymob"
+  const isFawry = selectedPaymentMethod === "fawry"
 
   const setPaymentMethod = async (method: string) => {
     setError(null)
     setSelectedPaymentMethod(method)
-    if (isStripeFunc(method)) {
-      await initiatePaymentSession(cart, {
-        provider_id: method,
-      })
+    setPaymentComplete(false)
+    setCardComplete(false)
+
+    try {
+      if (isStripeFunc(method) || method === "paymob" || method === "fawry") {
+        await initiatePaymentSession(cart, {
+          provider_id: method,
+        })
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to initialize payment method")
     }
   }
 
-  const paidByGiftcard =
-    cart?.gift_cards && cart?.gift_cards?.length > 0 && cart?.total === 0
+  const paidByGiftcard = cart?.gift_cards && cart?.gift_cards?.length > 0 && cart?.total === 0
 
-  const paymentReady =
-    (activeSession && cart?.shipping_methods.length !== 0) || paidByGiftcard
+  const paymentReady = (activeSession && cart?.shipping_methods.length !== 0) || paidByGiftcard
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -16909,7 +17428,7 @@ const Payment = ({
 
       return params.toString()
     },
-    [searchParams]
+    [searchParams],
   )
 
   const handleEdit = () => {
@@ -16920,12 +17439,15 @@ const Payment = ({
 
   const handleSubmit = async () => {
     setIsLoading(true)
-    try {
-      const shouldInputCard =
-        isStripeFunc(selectedPaymentMethod) && !activeSession
+    setError(null)
 
-      const checkActiveSession =
-        activeSession?.provider_id === selectedPaymentMethod
+    try {
+      const shouldInputCard = isStripeFunc(selectedPaymentMethod) && !activeSession
+
+      const shouldCompletePayMob = isPayMob && !paymentComplete
+      const shouldCompleteFawry = isFawry && !paymentComplete
+
+      const checkActiveSession = activeSession?.provider_id === selectedPaymentMethod
 
       if (!checkActiveSession) {
         await initiatePaymentSession(cart, {
@@ -16933,16 +17455,13 @@ const Payment = ({
         })
       }
 
-      if (!shouldInputCard) {
-        return router.push(
-          pathname + "?" + createQueryString("step", "review"),
-          {
-            scroll: false,
-          }
-        )
+      if (!shouldInputCard && !shouldCompletePayMob && !shouldCompleteFawry) {
+        return router.push(pathname + "?" + createQueryString("step", "review"), {
+          scroll: false,
+        })
       }
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message || "Payment processing failed")
     } finally {
       setIsLoading(false)
     }
@@ -16952,18 +17471,34 @@ const Payment = ({
     setError(null)
   }, [isOpen])
 
+  const getButtonText = () => {
+    if (!activeSession && isStripeFunc(selectedPaymentMethod)) {
+      return locale === "ar" ? "ادخال بطاقة الدفع" : "Enter card details"
+    }
+    if (isPayMob && !paymentComplete) {
+      return locale === "ar" ? "إكمال الدفع عبر PayMob" : "Complete PayMob Payment"
+    }
+    if (isFawry && !paymentComplete) {
+      return locale === "ar" ? "إكمال الدفع عبر فوري" : "Complete Fawry Payment"
+    }
+    return locale === "ar" ? "متابعة المراجعة" : "Continue to review"
+  }
+
+  const isButtonDisabled = () => {
+    if (isStripe && !cardComplete) return true
+    if ((isPayMob || isFawry) && !paymentComplete) return true
+    if (!selectedPaymentMethod && !paidByGiftcard) return true
+    return false
+  }
+
   return (
     <div className="bg-white">
       <div className="text-[#043364] flex flex-row items-center justify-between mb-6">
         <Heading
           level="h2"
-          className={clx(
-            "flex flex-row text-3xl-regular gap-x-2 items-baseline",
-            {
-              "opacity-50 pointer-events-none select-none":
-                !isOpen && !paymentReady,
-            }
-          )}
+          className={clx("flex flex-row text-3xl-regular gap-x-2 items-baseline", {
+            "opacity-50 pointer-events-none select-none": !isOpen && !paymentReady,
+          })}
         >
           {locale === "ar" ? "طريقة الدفع" : "Payment"}
           {!isOpen && paymentReady && <CheckCircleSolid />}
@@ -16984,10 +17519,7 @@ const Payment = ({
         <div className={isOpen ? "block" : "hidden"}>
           {!paidByGiftcard && availablePaymentMethods?.length && (
             <>
-              <RadioGroup
-                value={selectedPaymentMethod}
-                onChange={(value: string) => setPaymentMethod(value)}
-              >
+              <RadioGroup value={selectedPaymentMethod} onChange={(value: string) => setPaymentMethod(value)}>
                 {availablePaymentMethods.map((paymentMethod) => (
                   <div key={paymentMethod.id}>
                     {isStripeFunc(paymentMethod.id) ? (
@@ -16998,6 +17530,26 @@ const Payment = ({
                         setCardBrand={setCardBrand}
                         setError={setError}
                         setCardComplete={setCardComplete}
+                      />
+                    ) : paymentMethod.id === "paymob" ? (
+                      <PayMobContainer
+                        paymentProviderId={paymentMethod.id}
+                        selectedPaymentOptionId={selectedPaymentMethod}
+                        paymentInfoMap={paymentInfoMap}
+                        setError={setError}
+                        setPaymentComplete={setPaymentComplete}
+                        cart={cart}
+                        locale={locale}
+                      />
+                    ) : paymentMethod.id === "fawry" ? (
+                      <FawryContainer
+                        paymentProviderId={paymentMethod.id}
+                        selectedPaymentOptionId={selectedPaymentMethod}
+                        paymentInfoMap={paymentInfoMap}
+                        setError={setError}
+                        setPaymentComplete={setPaymentComplete}
+                        cart={cart}
+                        locale={locale}
                       />
                     ) : (
                       <PaymentContainer
@@ -17017,38 +17569,23 @@ const Payment = ({
               <Text className="txt-medium-plus text-ui-fg-base mb-1">
                 {locale === "ar" ? "طريقة الدفع" : "Payment method"}
               </Text>
-              <Text
-                className="txt-medium text-ui-fg-subtle"
-                data-testid="payment-method-summary"
-              >
-                {locale === "ar" ? "بطاقة النقاط" : " Gift card"}
+              <Text className="txt-medium text-ui-fg-subtle" data-testid="payment-method-summary">
+                {locale === "ar" ? "بطاقة النقاط" : "Gift card"}
               </Text>
             </div>
           )}
 
-          <ErrorMessage
-            error={error}
-            data-testid="payment-method-error-message"
-          />
+          <ErrorMessage error={error} data-testid="payment-method-error-message" />
 
           <Button
             size="large"
             className="mt-6 bg-[#043364] hover:bg-blue-900 text-white"
             onClick={handleSubmit}
             isLoading={isLoading}
-            disabled={
-              (isStripe && !cardComplete) ||
-              (!selectedPaymentMethod && !paidByGiftcard)
-            }
+            disabled={isButtonDisabled()}
             data-testid="submit-payment-button"
           >
-            {!activeSession && isStripeFunc(selectedPaymentMethod)
-              ? locale === "ar"
-                ? "ادخال بطاقة الدفع"
-                : "Enter card details"
-              : locale === "ar"
-                ? "متابعة المراجعة"
-                : "Continue to review"}
+            {getButtonText()}
           </Button>
         </div>
 
@@ -17057,33 +17594,29 @@ const Payment = ({
             <div className="flex items-start gap-x-1 w-full">
               <div className="flex flex-col w-1/3">
                 <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                  Payment method
+                  {locale === "ar" ? "طريقة الدفع" : "Payment method"}
                 </Text>
-                <Text
-                  className="txt-medium text-ui-fg-subtle"
-                  data-testid="payment-method-summary"
-                >
-                  {paymentInfoMap[activeSession?.provider_id]?.title ||
-                    activeSession?.provider_id}
+                <Text className="txt-medium text-ui-fg-subtle" data-testid="payment-method-summary">
+                  {paymentInfoMap[activeSession?.provider_id]?.title || activeSession?.provider_id}
                 </Text>
               </div>
               <div className="flex flex-col w-1/3">
                 <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                  Payment details
+                  {locale === "ar" ? "تفاصيل الدفع" : "Payment details"}
                 </Text>
                 <div
                   className="flex gap-2 txt-medium text-ui-fg-subtle items-center"
                   data-testid="payment-details-summary"
                 >
                   <Container className="flex items-center h-7 w-fit p-2 bg-ui-button-neutral-hover">
-                    {paymentInfoMap[selectedPaymentMethod]?.icon || (
-                      <CreditCard />
-                    )}
+                    {paymentInfoMap[selectedPaymentMethod]?.icon || <CreditCard />}
                   </Container>
                   <Text>
                     {isStripeFunc(selectedPaymentMethod) && cardBrand
                       ? cardBrand
-                      : "Another step will appear"}
+                      : locale === "ar"
+                        ? "ستظهر خطوة أخرى"
+                        : "Another step will appear"}
                   </Text>
                 </div>
               </div>
@@ -17091,13 +17624,10 @@ const Payment = ({
           ) : paidByGiftcard ? (
             <div className="flex flex-col w-1/3">
               <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                Payment method
+                {locale === "ar" ? "طريقة الدفع" : "Payment method"}
               </Text>
-              <Text
-                className="txt-medium text-ui-fg-subtle"
-                data-testid="payment-method-summary"
-              >
-                Gift card
+              <Text className="txt-medium text-ui-fg-subtle" data-testid="payment-method-summary">
+                {locale === "ar" ? "بطاقة النقاط" : "Gift card"}
               </Text>
             </div>
           ) : null}
@@ -17109,6 +17639,277 @@ const Payment = ({
 }
 
 export default Payment
+
+
+
+// "use client"
+
+// import { RadioGroup } from "@headlessui/react"
+// import { isStripe as isStripeFunc, paymentInfoMap } from "@lib/constants"
+// import { initiatePaymentSession } from "@lib/data/cart"
+// import { CheckCircleSolid, CreditCard } from "@medusajs/icons"
+// import { Button, Container, Heading, Text, clx } from "@medusajs/ui"
+// import ErrorMessage from "@modules/checkout/components/error-message"
+// import PaymentContainer, {
+//   StripeCardContainer,
+// } from "@modules/checkout/components/payment-container"
+// import Divider from "@modules/common/components/divider"
+// import { usePathname, useRouter, useSearchParams } from "next/navigation"
+// import { useCallback, useEffect, useState } from "react"
+// import { useLocale } from "next-intl"
+
+// const Payment = ({
+//   cart,
+//   availablePaymentMethods,
+// }: {
+//   cart: any
+//   availablePaymentMethods: any[]
+// }) => {
+//   const locale = useLocale()
+//   const isRTL = locale === "ar"
+//   const activeSession = cart.payment_collection?.payment_sessions?.find(
+//     (paymentSession: any) => paymentSession.status === "pending"
+//   )
+
+//   const [isLoading, setIsLoading] = useState(false)
+//   const [error, setError] = useState<string | null>(null)
+//   const [cardBrand, setCardBrand] = useState<string | null>(null)
+//   const [cardComplete, setCardComplete] = useState(false)
+//   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(
+//     activeSession?.provider_id ?? ""
+//   )
+
+//   const searchParams = useSearchParams()
+//   const router = useRouter()
+//   const pathname = usePathname()
+
+//   const isOpen = searchParams.get("step") === "payment"
+
+//   const isStripe = isStripeFunc(selectedPaymentMethod)
+
+//   const setPaymentMethod = async (method: string) => {
+//     setError(null)
+//     setSelectedPaymentMethod(method)
+//     if (isStripeFunc(method)) {
+//       await initiatePaymentSession(cart, {
+//         provider_id: method,
+//       })
+//     }
+//   }
+
+//   const paidByGiftcard =
+//     cart?.gift_cards && cart?.gift_cards?.length > 0 && cart?.total === 0
+
+//   const paymentReady =
+//     (activeSession && cart?.shipping_methods.length !== 0) || paidByGiftcard
+
+//   const createQueryString = useCallback(
+//     (name: string, value: string) => {
+//       const params = new URLSearchParams(searchParams)
+//       params.set(name, value)
+
+//       return params.toString()
+//     },
+//     [searchParams]
+//   )
+
+//   const handleEdit = () => {
+//     router.push(pathname + "?" + createQueryString("step", "payment"), {
+//       scroll: false,
+//     })
+//   }
+
+//   const handleSubmit = async () => {
+//     setIsLoading(true)
+//     try {
+//       const shouldInputCard =
+//         isStripeFunc(selectedPaymentMethod) && !activeSession
+
+//       const checkActiveSession =
+//         activeSession?.provider_id === selectedPaymentMethod
+
+//       if (!checkActiveSession) {
+//         await initiatePaymentSession(cart, {
+//           provider_id: selectedPaymentMethod,
+//         })
+//       }
+
+//       if (!shouldInputCard) {
+//         return router.push(
+//           pathname + "?" + createQueryString("step", "review"),
+//           {
+//             scroll: false,
+//           }
+//         )
+//       }
+//     } catch (err: any) {
+//       setError(err.message)
+//     } finally {
+//       setIsLoading(false)
+//     }
+//   }
+
+//   useEffect(() => {
+//     setError(null)
+//   }, [isOpen])
+
+//   return (
+//     <div className="bg-white">
+//       <div className="text-[#043364] flex flex-row items-center justify-between mb-6">
+//         <Heading
+//           level="h2"
+//           className={clx(
+//             "flex flex-row text-3xl-regular gap-x-2 items-baseline",
+//             {
+//               "opacity-50 pointer-events-none select-none":
+//                 !isOpen && !paymentReady,
+//             }
+//           )}
+//         >
+//           {locale === "ar" ? "طريقة الدفع" : "Payment"}
+//           {!isOpen && paymentReady && <CheckCircleSolid />}
+//         </Heading>
+//         {!isOpen && paymentReady && (
+//           <Text>
+//             <button
+//               onClick={handleEdit}
+//               className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
+//               data-testid="edit-payment-button"
+//             >
+//               {locale === "ar" ? "تعديل" : "Edit"}
+//             </button>
+//           </Text>
+//         )}
+//       </div>
+//       <div>
+//         <div className={isOpen ? "block" : "hidden"}>
+//           {!paidByGiftcard && availablePaymentMethods?.length && (
+//             <>
+//               <RadioGroup
+//                 value={selectedPaymentMethod}
+//                 onChange={(value: string) => setPaymentMethod(value)}
+//               >
+//                 {availablePaymentMethods.map((paymentMethod) => (
+//                   <div key={paymentMethod.id}>
+//                     {isStripeFunc(paymentMethod.id) ? (
+//                       <StripeCardContainer
+//                         paymentProviderId={paymentMethod.id}
+//                         selectedPaymentOptionId={selectedPaymentMethod}
+//                         paymentInfoMap={paymentInfoMap}
+//                         setCardBrand={setCardBrand}
+//                         setError={setError}
+//                         setCardComplete={setCardComplete}
+//                       />
+//                     ) : (
+//                       <PaymentContainer
+//                         paymentInfoMap={paymentInfoMap}
+//                         paymentProviderId={paymentMethod.id}
+//                         selectedPaymentOptionId={selectedPaymentMethod}
+//                       />
+//                     )}
+//                   </div>
+//                 ))}
+//               </RadioGroup>
+//             </>
+//           )}
+
+//           {paidByGiftcard && (
+//             <div className="flex flex-col w-1/3">
+//               <Text className="txt-medium-plus text-ui-fg-base mb-1">
+//                 {locale === "ar" ? "طريقة الدفع" : "Payment method"}
+//               </Text>
+//               <Text
+//                 className="txt-medium text-ui-fg-subtle"
+//                 data-testid="payment-method-summary"
+//               >
+//                 {locale === "ar" ? "بطاقة النقاط" : " Gift card"}
+//               </Text>
+//             </div>
+//           )}
+
+//           <ErrorMessage
+//             error={error}
+//             data-testid="payment-method-error-message"
+//           />
+
+//           <Button
+//             size="large"
+//             className="mt-6 bg-[#043364] hover:bg-blue-900 text-white"
+//             onClick={handleSubmit}
+//             isLoading={isLoading}
+//             disabled={
+//               (isStripe && !cardComplete) ||
+//               (!selectedPaymentMethod && !paidByGiftcard)
+//             }
+//             data-testid="submit-payment-button"
+//           >
+//             {!activeSession && isStripeFunc(selectedPaymentMethod)
+//               ? locale === "ar"
+//                 ? "ادخال بطاقة الدفع"
+//                 : "Enter card details"
+//               : locale === "ar"
+//                 ? "متابعة المراجعة"
+//                 : "Continue to review"}
+//           </Button>
+//         </div>
+
+//         <div className={isOpen ? "hidden" : "block"}>
+//           {cart && paymentReady && activeSession ? (
+//             <div className="flex items-start gap-x-1 w-full">
+//               <div className="flex flex-col w-1/3">
+//                 <Text className="txt-medium-plus text-ui-fg-base mb-1">
+//                   Payment method
+//                 </Text>
+//                 <Text
+//                   className="txt-medium text-ui-fg-subtle"
+//                   data-testid="payment-method-summary"
+//                 >
+//                   {paymentInfoMap[activeSession?.provider_id]?.title ||
+//                     activeSession?.provider_id}
+//                 </Text>
+//               </div>
+//               <div className="flex flex-col w-1/3">
+//                 <Text className="txt-medium-plus text-ui-fg-base mb-1">
+//                   Payment details
+//                 </Text>
+//                 <div
+//                   className="flex gap-2 txt-medium text-ui-fg-subtle items-center"
+//                   data-testid="payment-details-summary"
+//                 >
+//                   <Container className="flex items-center h-7 w-fit p-2 bg-ui-button-neutral-hover">
+//                     {paymentInfoMap[selectedPaymentMethod]?.icon || (
+//                       <CreditCard />
+//                     )}
+//                   </Container>
+//                   <Text>
+//                     {isStripeFunc(selectedPaymentMethod) && cardBrand
+//                       ? cardBrand
+//                       : "Another step will appear"}
+//                   </Text>
+//                 </div>
+//               </div>
+//             </div>
+//           ) : paidByGiftcard ? (
+//             <div className="flex flex-col w-1/3">
+//               <Text className="txt-medium-plus text-ui-fg-base mb-1">
+//                 Payment method
+//               </Text>
+//               <Text
+//                 className="txt-medium text-ui-fg-subtle"
+//                 data-testid="payment-method-summary"
+//               >
+//                 Gift card
+//               </Text>
+//             </div>
+//           ) : null}
+//         </div>
+//       </div>
+//       <Divider className="mt-8" />
+//     </div>
+//   )
+// }
+
+// export default Payment
 </file>
 
 <file path="src/modules/checkout/components/review/index.tsx">
@@ -18100,6 +18901,81 @@ const StoreFeatures = ({ locale }: { locale: string }) => {
 export default StoreFeatures;
 </file>
 
+<file path="src/modules/layout/templates/nav/nav-content.tsx">
+'use client'
+
+import { use, useEffect, useState } from 'react'
+
+import { cn } from '@lib/util/cn'
+import { Box } from '@modules/common/components/box'
+import { Button } from '@modules/common/components/button'
+import LocalizedClientLink from '@modules/common/components/localized-client-link'
+import SideMenu from '@modules/layout/components/side-menu'
+import { SearchDialog } from '@modules/search/components/search-dialog'
+import SearchDropdown from '@modules/search/components/search-dropdown'
+
+import Navigation from './navigation'
+import { LaCasaLogo } from '@modules/common/icons/solace-logo'
+import { SearchIcon } from '@modules/common/icons/search'
+import { set } from 'lodash'
+import { StoreProduct } from '@medusajs/types'
+
+export default function NavContent(props: any) {
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [suggestedProducts, setSuggestedProducts] = useState<StoreProduct[]>(props.products || [])
+  console.log("props.products", props.products)
+// useEffect(() => {
+//   if (props.products) {
+//     setSuggestedProducts(props.products)
+//   }
+//   console.log("suggestedProducts", suggestedProducts)
+  
+// }, [props.products])
+  return (
+    <Box className="flex h-full w-full items-center justify-between  bg-white">
+      {isSearchOpen && (
+        <SearchDropdown
+          setIsOpen={setIsSearchOpen}
+          recommendedProducts={suggestedProducts}
+          setProducts={setSuggestedProducts}
+          isOpen={isSearchOpen}
+          countryCode={props.countryCode}
+        />
+      )}
+      <SearchDialog
+        recommendedProducts={suggestedProducts}
+        countryCode={props.countryCode}
+        isOpen={isSearchOpen}
+        handleOpenDialogChange={setIsSearchOpen}
+      />
+      {/* <Box
+        className={cn('relative block', {
+          'medium:absolute medium:left-1/2 medium:top-1/2 medium:-translate-x-1/2 medium:-translate-y-1/2':
+            !isSearchOpen,
+          'right-0 z-40': isSearchOpen,
+        })}
+      > */}
+      {/* <LocalizedClientLink href="/">
+          <LaCasaLogo className="h-6 medium:h-7" />
+        </LocalizedClientLink> */}
+      {/* </Box> */}
+      {!isSearchOpen && (
+        <Button
+          variant="icon"
+          color={"#fff"}
+          withIcon
+          className="ml-auto h-auto !p-2 xsmall:!p-3.5 text-[#043364] text-2xl font-extrabold"
+          onClick={() => setIsSearchOpen(true)}
+          data-testid="search-button"
+        >
+          <SearchIcon />
+        </Button>
+      )}
+    </Box>
+  )
+}
+</file>
+
 <file path="src/modules/order/components/item/index.tsx">
 import { HttpTypes } from "@medusajs/types"
 import { Table, Text, clx } from "@medusajs/ui"
@@ -18282,6 +19158,7 @@ import Divider from "@modules/common/components/divider"
 import { convertToLocale } from "@lib/util/money"
 import { HttpTypes } from "@medusajs/types"
 import { useLocale } from "next-intl"
+import { clx } from "@medusajs/ui"
 
 type PaymentDetailsProps = {
   order: HttpTypes.StoreOrder
@@ -18307,6 +19184,18 @@ const PaymentDetails = ({ order }: PaymentDetailsProps) => {
       minute: "2-digit",
     })
     : ""
+
+  let paymentDetails = ""
+
+  if (payment?.provider_id === "paymob") {
+    paymentDetails = locale === "ar" ? "تم الدفع عبر PayMob" : "Paid via PayMob"
+  } else if (payment?.provider_id === "fawry") {
+    paymentDetails = locale === "ar" ? "تم الدفع عبر Fawry" : "Paid via Fawry"
+  } else if (isStripe(payment?.provider_id) && payment?.data?.card_last4) {
+    paymentDetails = `**** **** **** ${payment.data.card_last4}`
+  } else {
+    paymentDetails = locale === "ar" ? "ستظهر خطوة أخرى" : "Another step will appear"
+  }
 
   return (
     <div dir={isRTL ? "rtl" : "ltr"} className="border border-ui-border-base rounded-lg p-6">
@@ -18336,29 +19225,13 @@ const PaymentDetails = ({ order }: PaymentDetailsProps) => {
               {isRTL ? "تفاصيل الدفع" : "Payment details"}
             </Text>
             <div className="flex items-center gap-4 text-ui-fg-subtle txt-medium" id="payment-details" aria-live="polite">
-              <Container
-                className="flex items-center justify-center h-10 w-10 p-2 bg-ui-button-neutral-hover rounded-md"
-                aria-hidden="true"
-              >
+              <Container className="flex items-center justify-center h-10 w-10 p-2 bg-ui-button-neutral-hover rounded-md" aria-hidden="true">
                 {paymentInfoMap[payment.provider_id]?.icon}
               </Container>
 
-              {isStripe(payment.provider_id) && payment.data?.card_last4 ? (
-                <Text data-testid="payment-amount" className="whitespace-nowrap font-semibold tracking-widest">
-                  **** **** **** {payment.data.card_last4}
-                </Text>
-              ) : (
-                <Text data-testid="payment-amount" className="whitespace-pre-wrap">
-                  {isRTL ? "قيمة الدفع" : "Payment amount"}{" "}
-                  <span className="font-semibold">
-                    {convertToLocale({
-                      amount: payment.amount,
-                      currency_code: order.currency_code,
-                    })}
-                  </span>{" "}
-                  {isRTL ? "بتاريخ" : "on"} <time dateTime={payment.created_at ?? ""}>{formattedDate}</time>
-                </Text>
-              )}
+              <Text data-testid="payment-amount" className="whitespace-pre-wrap">
+                {paymentDetails}
+              </Text>
             </div>
           </div>
         </div>
@@ -18374,6 +19247,110 @@ const PaymentDetails = ({ order }: PaymentDetailsProps) => {
 }
 
 export default PaymentDetails
+
+
+
+
+
+// import { Container, Heading, Text } from "@medusajs/ui"
+
+// import { isStripe, paymentInfoMap } from "@lib/constants"
+// import Divider from "@modules/common/components/divider"
+// import { convertToLocale } from "@lib/util/money"
+// import { HttpTypes } from "@medusajs/types"
+// import { useLocale } from "next-intl"
+
+// type PaymentDetailsProps = {
+//   order: HttpTypes.StoreOrder
+// }
+
+// /**
+//  * @component
+//  * @description
+//  * Displays payment method, amount, and payment date for an order.
+//  */
+// const PaymentDetails = ({ order }: PaymentDetailsProps) => {
+//   const locale = useLocale()
+//   const isRTL = locale === "ar"
+//   const payment = order.payment_collections?.[0]?.payments?.[0]
+
+//   // Format date localized to user's locale and options for clarity
+//   const formattedDate = payment?.created_at
+//     ? new Date(payment.created_at).toLocaleString(locale, {
+//       year: "numeric",
+//       month: "short",
+//       day: "numeric",
+//       hour: "2-digit",
+//       minute: "2-digit",
+//     })
+//     : ""
+
+//   return (
+//     <div dir={isRTL ? "rtl" : "ltr"} className="border border-ui-border-base rounded-lg p-6">
+//       <Heading level="h2" className="text-3xl font-semibold my-6" aria-label={isRTL ? "الدفع" : "Payment"}>
+//         {isRTL ? "الدفع" : "Payment"}
+//       </Heading>
+
+//       {payment ? (
+//         <div className="flex flex-col md:flex-row gap-8">
+//           {/* Payment Method */}
+//           <div className="flex flex-col md:w-1/3">
+//             <Text className="txt-medium-plus text-ui-fg-base mb-2" as="label" htmlFor="payment-method">
+//               {isRTL ? "طريقة الدفع" : "Payment method"}
+//             </Text>
+//             <Text
+//               id="payment-method"
+//               className="txt-medium text-ui-fg-subtle"
+//               data-testid="payment-method"
+//             >
+//               {paymentInfoMap[payment.provider_id]?.title || payment.provider_id}
+//             </Text>
+//           </div>
+
+//           {/* Payment Details */}
+//           <div className="flex flex-col md:w-2/3">
+//             <Text className="txt-medium-plus text-ui-fg-base mb-2" as="label" htmlFor="payment-details">
+//               {isRTL ? "تفاصيل الدفع" : "Payment details"}
+//             </Text>
+//             <div className="flex items-center gap-4 text-ui-fg-subtle txt-medium" id="payment-details" aria-live="polite">
+//               <Container
+//                 className="flex items-center justify-center h-10 w-10 p-2 bg-ui-button-neutral-hover rounded-md"
+//                 aria-hidden="true"
+//               >
+//                 {paymentInfoMap[payment.provider_id]?.icon}
+//               </Container>
+
+//               {isStripe(payment.provider_id) && payment.data?.card_last4 ? (
+//                 <Text data-testid="payment-amount" className="whitespace-nowrap font-semibold tracking-widest">
+//                   **** **** **** {payment.data.card_last4}
+//                 </Text>
+//               ) : (
+//                 <Text data-testid="payment-amount" className="whitespace-pre-wrap">
+//                   {isRTL ? "قيمة الدفع" : "Payment amount"}{" "}
+//                   <span className="font-semibold">
+//                     {convertToLocale({
+//                       amount: payment.amount,
+//                       currency_code: order.currency_code,
+//                     })}
+//                   </span>{" "}
+//                   {isRTL ? "بتاريخ" : "on"} <time dateTime={payment.created_at ?? ""}>{formattedDate}</time>
+//                 </Text>
+//               )}
+//             </div>
+//           </div>
+//         </div>
+//       ) : (
+//         <Text className="text-ui-fg-subtle mt-4" role="alert" aria-live="assertive">
+//           {isRTL ? "لا توجد معلومات دفع متاحة." : "No payment information available."}
+//         </Text>
+//       )}
+
+//       {/* <Divider className="mt-8" /> */}
+//     </div>
+//   )
+// }
+
+// export default PaymentDetails
 </file>
 
 <file path="src/modules/order/templates/order-details-template.tsx">
@@ -18459,275 +19436,311 @@ const OrderDetailsTemplate: React.FC<OrderDetailsTemplateProps> = ({
 export default OrderDetailsTemplate
 </file>
 
-<file path="src/modules/search/components/search-box/index.tsx">
-'use client'
+<file path="src/modules/search/components/search-dialog/index.tsx">
+import { Fragment, useEffect, useState } from 'react'
 
-import React, { FormEvent, useEffect, useRef, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { StoreProduct } from '@medusajs/types'
+import { Button } from '@modules/common/components/button'
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+} from '@modules/common/components/dialog'
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@modules/common/components/tabs'
+// import { ArrowLeftIcon } from '@modules/common/icons'
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden'
 
-import { XMarkMini } from '@medusajs/icons'
-import { Box } from '@modules/common/components/box'
-import Input from '@modules/common/components/input'
+import { ControlledSearchBox } from '../search-box'
+import { RecentSearches } from '../search-dropdown/recent-searches'
+import { RecommendedItem } from '../search-dropdown/recommended-item'
+import { ArrowLeftIcon } from '@modules/common/icons/arrow-left'
 import { useLocale } from 'next-intl'
-const milisearchUrl = process.env.NEXT_PUBLIC_MILISEARCH_URL || 'http://localhost:7700'
-const milisearchApiKey = process.env.MILISEARCH_API_KEY ||'f91cf0081492ffa10b6919b9314357d194641f94331b41e4540d0efe499a6ddb'
-export const ControlledSearchBox = ({
+// import { Dialog } from '@modules/common/components/dialog'
+
+export const SearchDialog = ({
+  isOpen,
+  handleOpenDialogChange,
   countryCode,
-  open,
-  closeSearch,
+  recommendedProducts,
 }: {
   countryCode: string
-  open: boolean
-  closeSearch: () => void
+  isOpen: boolean
+  handleOpenDialogChange: (value: boolean) => void
+  recommendedProducts: StoreProduct[]
 }) => {
   const locale = useLocale()
   const isRtl = locale === 'ar'
-  const [query, setQuery] = useState<string | undefined>('')
-  const router = useRouter()
-  const inputRef = useRef(null)
-
-  const handleSubmit = (event: FormEvent) => {
-    event.preventDefault()
-    event.stopPropagation()
-    if (query) {
-      const localSearches =
-        JSON.parse(localStorage.getItem('recentSearches')) || []
-
-      const updatedSearches = new Set([query, ...localSearches])
-
-      localStorage.setItem(
-        'recentSearches',
-        JSON.stringify(Array.from(updatedSearches).slice(0, 5))
-      )
-      router.push(`/results/${query}`)
-    }
-    inputRef.current.blur()
-    setQuery('')
-    closeSearch()
-  }
-
-  const handleReset = (event: FormEvent) => {
-    event.preventDefault()
-    event.stopPropagation()
-    setQuery('')
-    if (inputRef.current) {
-      inputRef.current.focus()
-    }
-  }
-
+  const [isLargeScreen, setIsLargeScreen] = useState(false)
   useEffect(() => {
-    if (inputRef.current && open) {
-      inputRef.current.focus()
+    const handleResize = () => {
+      setIsLargeScreen(window.innerWidth > 900)
     }
-  }, [open])
-
-  const handleChange = (e) => {
-    setQuery(e.target.value)
-    setShowDropdown(true)
-    // Optionally, you can trigger fetch here if using API
-  }
-
-  const [products, setProducts] = useState<any[]>([])
-  const [showDropdown, setShowDropdown] = useState(false)
-  const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    if (query && query.length > 1) {
-      setLoading(true)
-      // Replace this with your actual API call
-      fetch(`${milisearchUrl}/indexes/products/search?q=${encodeURIComponent(query)}`,{
-        headers: {
-          'authorization': `Bearer ${milisearchApiKey}`,
-      }})
-        .then((res) => res.json())
-        .then((data) => {
-          setProducts(data.hits || [])
-          setLoading(false)
-        })
-        .catch(() => setProducts([]))
-    } else {
-      setProducts([])
-    }
-  }, [query])
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (
-        inputRef.current &&
-        !(inputRef.current as any).contains(e.target)
-      ) {
-        setShowDropdown(false)
-      }
-    }
-    if (showDropdown) {
-      document.addEventListener('mousedown', handleClick)
-    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
     return () => {
-      document.removeEventListener('mousedown', handleClick)
+      window.removeEventListener('resize', handleResize)
     }
-  }, [showDropdown])
+  }, [])
 
+  if (isLargeScreen) {
+    return null
+  }
 
   return (
-    <div dir={isRtl ? 'rtl' : 'ltr'} className="relative w-full bg-[#f5f8fc] md:mx-auto large:w-max md:align-center md:justify-center md:items-center md:rounded">
-      <form action="" noValidate onSubmit={handleSubmit} onReset={handleReset}>
-        <Box className="flex w-full items-center justify-between border border-action-primary md:rounded-md large:relative large:w-[400px] xl:w-[600px] ">
-          <Input
-            ref={inputRef}
-            data-testid="search-input"
-            autoComplete="off"
-            autoCorrect="off"
-            autoCapitalize="off"
-            placeholder={isRtl ? 'ابحث عن منتج...' : 'Search products...'}
-            spellCheck={false}
-            type="search"
-            value={query}
-            onChange={handleChange}
-            className="w-full !border-none bg-transparent pr-5 text-lg placeholder:text-basic-primary focus:outline-none py-2 px-5 md:rounded"
-          />
-          {query && (
-            <button
-              onClick={handleReset}
-              type="button"
-              className={`absolute ${isRtl ? 'left-0' : 'right-0'} flex items-center justify-center gap-x-2 px-4 text-lg text-basic-primary focus:outline-none`}
+    <Dialog open={isOpen} onOpenChange={handleOpenDialogChange}>
+      <DialogPortal>
+        <DialogOverlay />
+        <DialogContent
+          className="!max-h-full !max-w-full !rounded-none bg-white z-50 !m-0 !p-0"
+          aria-describedby={undefined}
+        >
+          <DialogHeader dir={isRtl ? 'rtl' : 'ltr'} className="flex bg-white items-center gap-4 !border-b-0 !p-4 text-xl text-basic-primary small:text-2xl">
+            <Button
+              withIcon
+              variant="text"
+              onClick={() => handleOpenDialogChange(false)}
             >
-              <XMarkMini />
-            </button>
-          )}
-        </Box>
-      </form>
-      {showDropdown && (
-        <div className="absolute z-10 w-full max-h-[400px] overflow-y-auto bg-white border border-gray-200 rounded-md shadow-lg mt-2">
-          {loading ? (
-            <div className="p-4 text-center">Loading...</div>
-          ) : products.length > 0 ? (
-            products.map((product) => (
-              <div
-                key={product.id}
-                className="p-4 hover:bg-gray-100 cursor-pointer"
-                onClick={() => {
-                  router.push(`/products/${product.handle}`)
-                  setQuery('')
-                  closeSearch()
-                }}
+              {
+                isRtl ? (
+                  <ArrowLeftIcon className="h-6 w-6 rotate-180" />
+                ) : (
+                  <ArrowLeftIcon className="h-6 w-6" />
+                )
+              }
+            </Button>
+            {/* <ControlledSearchBox
+              countryCode={countryCode}
+              open={isOpen}
+              closeSearch={() => handleOpenDialogChange(false)}
+            /> */}
+          </DialogHeader>
+          <VisuallyHidden.Root>
+            <DialogTitle>{isRtl ? 'بحث' : 'Search modal'}</DialogTitle>
+          </VisuallyHidden.Root>
+          <DialogBody dir={isRtl ? 'rtl' : 'ltr'} className="overflow-y-auto bg-white">
+            <Tabs defaultValue="tab1">
+              <TabsList dir={isRtl ? 'rtl' : 'ltr'} className="flex shrink-0 rounded-t-md bg-primary">
+                <TabsTrigger
+                  value="tab1"
+                  className="border-b border-basic-primary text-basic-primary data-[state=active]:border-action-primary"
+                >
+                  {isRtl ? "البحث الأخير" : "Recent Searches"}
+                </TabsTrigger>
+                <TabsTrigger
+                  value="tab2"
+                  className="border-b border-basic-primary text-basic-primary data-[state=active]:border-action-primary"
+                >
+                  {isRtl ? "المنتجات الموصى بها" : 'Recommended'}
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent
+                dir={isRtl ? 'rtl' : 'ltr'}
+                className="grow p-4 outline-none small:p-6"
+                value="tab1"
               >
-                {product.title}
-              </div>
-            ))
-          ) : (
-            <div className="p-4 text-center">No results found</div>
-          )}
-        </div>
-      )}
-    </div>
+                <RecentSearches
+                  handleOpenDialogChange={handleOpenDialogChange}
+                />
+              </TabsContent>
+              <TabsContent
+                dir={isRtl ? 'rtl' : 'ltr'}
+                className="grow p-4 outline-none small:p-6"
+                value="tab2"
+              >
+                <div className="grid gap-3">
+                  {recommendedProducts.map((item, id) => {
+                    return (
+                      <Fragment key={id}>
+                        <RecommendedItem
+                          item={item}
+                        />
+                      </Fragment>
+                    )
+                  })}
+                </div>
+              </TabsContent>
+            </Tabs>
+          </DialogBody>
+        </DialogContent>
+      </DialogPortal>
+    </Dialog>
   )
 }
 </file>
 
-<file path="src/modules/search/components/search-dropdown/index.tsx">
-import React, { Fragment, useCallback, useEffect, useState } from "react"
+<file path="src/modules/search/components/search-dropdown/recommended-item.tsx">
+import { StoreProduct } from '@medusajs/types'
+import { Box } from '@modules/common/components/box'
+import LocalizedClientLink from '@modules/common/components/localized-client-link'
+import { Text } from '@modules/common/components/text'
+import Thumbnail from '@modules/products/components/thumbnail'
 
-import { cn } from "@lib/util/cn"
-import { StoreProduct } from "@medusajs/types"
-import { Box } from "@modules/common/components/box"
-import { Container } from "@modules/common/components/container"
-import { Text } from "@modules/common/components/text"
+export const RecommendedItem = ({
+  item,
+}: {
+  item: StoreProduct
+}) => {
+  return (
+    <LocalizedClientLink
+      href={`/products/${item.handle}`}
+     
+    >
+      <Box
+        className="flex w-full bg-primary transition-all duration-300 ease-in-out hover:bg-[#f5f8fc] rounded-large"
+        data-testid="product-row"
+      >
+        <div className="flex h-[90px] w-[90px]">
+          <Thumbnail thumbnail={item.thumbnail} size="square" />
+        </div>
+        <Box className="px-4 pt-3 medium:flex-grow">
+          <Text className="font-medium" data-testid="product-name">
+            {item.title}
+          </Text>
+          {item.variants && (
+            <Text size="md" className="text-secondary">
+              {item.variants[0]?.title}
+            </Text>
+          )}
+        </Box>
+      </Box>
+    </LocalizedClientLink>
+  )
+}
+</file>
 
-import { ControlledSearchBox } from "../search-box"
-import { RecentSearches } from "./recent-searches"
-import { RecommendedItem } from "./recommended-item"
-import { useLocale } from 'next-intl'
+<file path="src/modules/search/actions.ts">
+import { safeDecodeURIComponent } from '@lib/util/safe-decode-uri'
+import { SearchedProducts } from 'types/global'
 
-type SearchDropdownProps = {
-  isOpen: boolean
-  setIsOpen: (value: boolean) => void
-  countryCode: string
-  recommendedProducts: StoreProduct[]
+export const BACKEND_URL = process.env.MEDUSA_BACKEND_URL
+export const SEARCH_URL = process.env.MILISEARCH_URL ||"http://64.23.252.78:7700"
+export const MEILISEARCH_API_KEY = process.env.MILISEARCH_API_KEY ||"d89b5c85bcf7bc59a07ede1604046d2548b5f581604a599b0b18b053ce4fc0df"
+
+export const PUBLISHABLE_API_KEY =
+  process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
+
+export const PRODUCT_LIMIT = 12
+
+type SearchParams = {
+  currency_code: string
+  page?: number
+  order?: string
+  category_id?: string
+  collection?: string[]
+  type?: string[]
+  material?: string[]
+  price?: string[]
+  query?: string
 }
 
-export default function SearchDropdown({
-  isOpen,
-  setIsOpen,
-  countryCode,
-  recommendedProducts,
-}: SearchDropdownProps) {
-  const locale = useLocale()
-  const isRtl = locale === 'ar'
-  const [delayClose, setDelayClose] = useState<ReturnType<typeof setTimeout> | null>(null)
+export async function search({
+  currency_code,
+  page,
+  order = 'relevance',
+  category_id,
+  collection,
+  type,
+  material,
+  price,
+  query,
+}: SearchParams): Promise<SearchedProducts> {
+  const sortBy =
+    order === 'price_asc'
+      ? 'calculated_price'
+      : order === 'price_desc'
+        ? '-calculated_price'
+        : order === 'created_at'
+          ? '-created_at'
+          : order
 
-  const handleMouseEnter = useCallback(() => {
-    if (delayClose) clearTimeout(delayClose)
-    setIsOpen(true)
-  }, [delayClose, setIsOpen])
+  const searchParams = new URLSearchParams({
+    currency_code,
+    order: sortBy,
+    offset: ((page - 1) * PRODUCT_LIMIT).toString(),
+    limit: PRODUCT_LIMIT.toString(),
+  })
 
-  const handleMouseLeave = useCallback(() => {
-    const timeout = setTimeout(() => setIsOpen(false), 500)
-    setDelayClose(timeout)
-  }, [setIsOpen])
+  if (category_id) {
+    searchParams.append('category_id[]', category_id)
+  }
 
-  useEffect(() => {
-    return () => {
-      if (delayClose) clearTimeout(delayClose)
+  if (collection && Array.isArray(collection)) {
+    collection.forEach((id) => {
+      searchParams.append('collection_id[]', id)
+    })
+  }
+
+  if (type && Array.isArray(type)) {
+    type.forEach((id) => {
+      searchParams.append('type_id[]', id)
+    })
+  }
+
+  if (material && Array.isArray(material)) {
+    material.forEach((id) => {
+      searchParams.append('materials[]', id)
+    })
+  }
+
+  if (price && Array.isArray(price)) {
+    price.forEach((range) => {
+      switch (range) {
+        case 'under-100':
+          searchParams.append('price_to', '100')
+          break
+        case '100-500':
+          searchParams.append('price_from', '100')
+          searchParams.append('price_to', '500')
+          break
+        case '501-1000':
+          searchParams.append('price_from', '501')
+          searchParams.append('price_to', '1000')
+          break
+        case 'more-than-1000':
+          searchParams.append('price_from', '1000')
+          break
+      }
+    })
+  }
+
+  if (query) {
+    searchParams.append('q', safeDecodeURIComponent(query))
+  }
+
+  const response = await fetch(
+    // `${SEARCH_URL}/indexes/products//search?${searchParams.toString()}`,
+    `${SEARCH_URL}/indexes/products/search?q=${searchParams.get('q')}`,
+
+    {
+      headers: {
+        // 'x-publishable-api-key': PUBLISHABLE_API_KEY!,
+        'authorization': `Bearer ${MEILISEARCH_API_KEY}`,
+      },
+      cache: 'no-store',
     }
-  }, [delayClose])
-
-  return (
-    <div
-      dir={isRtl ? 'rtl' : 'ltr'}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className={cn(
-        "bg-white w-full h-full pt-2 z-1000",
-        "large:absolute large:left-1/2 large:top-4 large:z-30 large:-translate-x-1/2"
-      )}
-    >
-      <ControlledSearchBox
-        countryCode={countryCode}
-        open={isOpen}
-        closeSearch={() => setIsOpen(false)}
-      />
-
-      <Box
-        dir={isRtl ? 'rtl' : 'ltr'}
-        aria-hidden={!isOpen}
-        className={cn(
-          "absolute left-0 top-full z-50 w-full bg-white shadow-lg transition-all duration-300",
-          isOpen
-            ? "opacity-100 pointer-events-auto visible translate-y-0"
-            : "opacity-0 pointer-events-none invisible"
-        )}
-      >
-        <Container className="flex gap-4 px-14 pt-5 pb-8">
-          {/* Recent Searches */}
-          <Box className="flex flex-col w-[326px]">
-            <Box className="flex items-center h-[62px]">
-              <Text as="h3" size="md" className="text-secondary text-[20px] font-medium">
-                {isRtl ? "البحث الأخير" : "Recent Searches"}
-              </Text>
-            </Box>
-            <RecentSearches handleOpenDialogChange={setIsOpen} />
-          </Box>
-
-          {/* Recommended Items */}
-          <Box className="flex-1">
-            <Box className="flex items-center h-[62px]">
-              <Text as="h3" size="md" className="text-secondary text-[20px] font-medium">
-                {isRtl ? "المنتجات المقترحة" : "Recommended products"}
-              </Text>
-            </Box>
-            <Box className="grid gap-3 xl:grid-cols-2">
-              {recommendedProducts.map((item, index) => (
-                <Fragment key={item.id ?? index}>
-                  <RecommendedItem item={item} handleOpenDialogChange={setIsOpen} />
-                </Fragment>
-              ))}
-            </Box>
-          </Box>
-        </Container>
-      </Box>
-    </div>
   )
+// if (!response || !response.ok) {
+//   throw new Error(`Response error. Status: ${response ? response.status : 'No response'}`)
+// }
+
+  const data = await response.json()
+
+  // console.log('data:::::::::::::', data)
+  // console.log('data.products:::::::::::::', data.products)
+
+  return {
+    results: data.hits,
+    count: data.count,
+  }
 }
 </file>
 
@@ -19269,12 +20282,15 @@ import ErrorMessage from "../error-message"
 import confetti from "canvas-confetti"
 import { useLocale } from "next-intl"
 
+
 type PaymentButtonProps = {
   cart: HttpTypes.StoreCart
   "data-testid": string
 }
 
-const PaymentButton: React.FC<PaymentButtonProps> = ({
+
+
+export const PaymentButton: React.FC<PaymentButtonProps> = ({
   cart,
   "data-testid": dataTestId,
 }) => {
@@ -19289,25 +20305,31 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
 
   const paymentSession = cart.payment_collection?.payment_sessions?.[0]
 
-  switch (true) {
-    case isStripe(paymentSession?.provider_id):
-      return (
-        <StripePaymentButton
-          notReady={notReady}
-          cart={cart}
-          data-testid={dataTestId}
-        />
-      )
-    case isManual(paymentSession?.provider_id):
-      return (
-        <ManualTestPaymentButton notReady={notReady} data-testid={dataTestId} />
-      )
-    default:
-      return <Button disabled>Select a payment method</Button>
+  const handlePayment = async () => {
+    await placeOrder()
   }
+
+  return (
+    <>
+      <Button
+        disabled={notReady}
+        onClick={handlePayment}
+        size="large"
+        data-testid={dataTestId}
+        className="bg-[#043364] hover:bg-blue-900 text-white"
+      >
+        {locale === "en" ? "Place order" : "إتمام الطلب"}
+      </Button>
+      <ErrorMessage
+        error={""}
+        data-testid="stripe-payment-error-message"
+      />
+    </>
+  )
 }
 
-const StripePaymentButton = ({
+ 
+export const StripePaymentButton = ({
   cart,
   notReady,
   "data-testid": dataTestId,
@@ -19416,7 +20438,7 @@ const StripePaymentButton = ({
   )
 }
 
-const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
+export const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
@@ -19793,6 +20815,114 @@ export default async function OrderCompletedTemplate({
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+</file>
+
+<file path="src/modules/search/components/search-dropdown/index.tsx">
+import React, { Fragment, useCallback, useEffect, useState } from "react"
+
+import { cn } from "@lib/util/cn"
+import { StoreProduct } from "@medusajs/types"
+import { Box } from "@modules/common/components/box"
+import { Container } from "@modules/common/components/container"
+import { Text } from "@modules/common/components/text"
+
+import { ControlledSearchBox } from "../search-box"
+import { RecentSearches } from "./recent-searches"
+import { RecommendedItem } from "./recommended-item"
+import { useLocale } from 'next-intl'
+
+type SearchDropdownProps = {
+  isOpen: boolean
+  setIsOpen: (value: boolean) => void
+  setProducts: (products: StoreProduct[]) => void
+  countryCode: string,
+  recommendedProducts: StoreProduct[]
+}
+
+export default function SearchDropdown({
+  isOpen,
+  setIsOpen,
+  countryCode,
+  recommendedProducts,
+  setProducts
+}: SearchDropdownProps) {
+  const locale = useLocale()
+  const isRtl = locale === 'ar'
+  const [delayClose, setDelayClose] = useState<ReturnType<typeof setTimeout> | null>(null)
+  const handleMouseEnter = useCallback(() => {
+    if (delayClose) clearTimeout(delayClose)
+    setIsOpen(true)
+  }, [delayClose, setIsOpen])
+
+  const handleMouseLeave = useCallback(() => {
+    const timeout = setTimeout(() => setIsOpen(false), 500)
+    setDelayClose(timeout)
+  }, [setIsOpen])
+
+  useEffect(() => {
+    return () => {
+      if (delayClose) clearTimeout(delayClose)
+    }
+  }, [delayClose])
+
+  return (
+    <div
+      dir={isRtl ? 'rtl' : 'ltr'}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={cn(
+        "bg-white w-full h-full pt-2 z-1000",
+        "large:absolute large:left-1/2 large:top-4 large:z-30 large:-translate-x-1/2"
+      )}
+    >
+      <ControlledSearchBox
+        countryCode={countryCode}
+        open={isOpen}
+        setProducts={setProducts}
+        closeSearch={() => setIsOpen(false)}
+      />
+
+      <Box
+        dir={isRtl ? 'rtl' : 'ltr'}
+        aria-hidden={!isOpen}
+        className={cn(
+          "absolute left-0 top-full z-50 w-full bg-white shadow-lg transition-all duration-300",
+          isOpen
+            ? "opacity-100 pointer-events-auto visible translate-y-0"
+            : "opacity-0 pointer-events-none invisible"
+        )}
+      >
+        <Container className="flex gap-4 px-14 pt-5 pb-8">
+          {/* Recent Searches */}
+          <Box className="flex flex-col w-[326px]">
+            <Box className="flex items-center h-[62px]">
+              <Text as="h3" size="md" className="text-secondary text-[20px] font-medium">
+                {isRtl ? "البحث الأخير" : "Recent Searches"}
+              </Text>
+            </Box>
+            <RecentSearches handleOpenDialogChange={setIsOpen} />
+          </Box>
+
+          {/* Recommended Items */}
+          <Box className="flex-1">
+            {/* <Box className="flex items-center h-[62px]">
+              <Text as="h3" size="md" className="text-secondary text-[20px] font-medium">
+                {isRtl ? "المنتجات المقترحة" : "Recommended products"}
+              </Text>
+            </Box> */}
+            <Box className="grid gap-3 xl:grid-cols-2">
+              {recommendedProducts.map((item, index) => (
+                <Fragment key={item.id ?? index}>
+                  <RecommendedItem item={item}  />
+                </Fragment>
+              ))}
+            </Box>
+          </Box>
+        </Container>
+      </Box>
     </div>
   )
 }
@@ -20910,6 +22040,152 @@ export default ImageGallery
 // }
 
 // export default ImageGallery
+</file>
+
+<file path="src/modules/search/components/search-box/index.tsx">
+'use client'
+
+import React, { FormEvent, useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
+
+import { XMarkMini } from '@medusajs/icons'
+import { Box } from '@modules/common/components/box'
+import Input from '@modules/common/components/input'
+import { useLocale } from 'next-intl'
+const milisearchUrl = process.env.NEXT_PUBLIC_MILISEARCH_URL || "http://64.23.252.78:7700"
+const milisearchApiKey = process.env.MILISEARCH_API_KEY ||"d89b5c85bcf7bc59a07ede1604046d2548b5f581604a599b0b18b053ce4fc0df"
+export const ControlledSearchBox = ({
+  countryCode,
+  open,
+  setProducts,
+  closeSearch,
+}: {
+  countryCode: string
+  open: boolean,
+  setProducts: (products: any[]) => void
+  closeSearch: () => void
+}) => {
+  const locale = useLocale()
+  const isRtl = locale === 'ar'
+  const [query, setQuery] = useState<string | undefined>('')
+  const router = useRouter()
+  const inputRef = useRef(null)
+
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault()
+    event.stopPropagation()
+    if (query) {
+      const localSearches =
+        JSON.parse(localStorage.getItem('recentSearches')) || []
+
+      const updatedSearches = new Set([query, ...localSearches])
+
+      localStorage.setItem(
+        'recentSearches',
+        JSON.stringify(Array.from(updatedSearches).slice(0, 5))
+      )
+      router.push(`/results/${query}`)
+    }
+    inputRef.current.blur()
+    setQuery('')
+    closeSearch()
+  }
+
+  const handleReset = (event: FormEvent) => {
+    event.preventDefault()
+    event.stopPropagation()
+    setQuery('')
+    if (inputRef.current) {
+      inputRef.current.focus()
+    }
+  }
+
+  useEffect(() => {
+    if (inputRef.current && open) {
+      inputRef.current.focus()
+    }
+  }, [open])
+
+  const handleChange = (e) => {
+    setQuery(e.target.value)
+    setShowDropdown(true)
+    // Optionally, you can trigger fetch here if using API
+  }
+
+  const [showDropdown, setShowDropdown] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (query && query.length > 1) {
+      setLoading(true)
+      // Replace this with your actual API call
+      fetch(`${milisearchUrl}/indexes/products/search?q=${encodeURIComponent(query)}`,{
+        headers: {
+          'authorization': `Bearer ${milisearchApiKey}`,
+      }})
+        .then((res) => res.json())
+        .then((data) => {
+          setProducts(data.hits || [])
+          setLoading(false)
+        })
+        .catch(() => setProducts([]))
+    } else {
+      setProducts([])
+    }
+  }, [query])
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (
+        inputRef.current &&
+        !(inputRef.current as any).contains(e.target)
+      ) {
+        setShowDropdown(false)
+      }
+    }
+    if (showDropdown) {
+      document.addEventListener('mousedown', handleClick)
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClick)
+    }
+  }, [showDropdown])
+
+
+  return (
+    <div dir={isRtl ? 'rtl' : 'ltr'} className="relative w-full bg-[#f5f8fc] md:mx-auto large:w-max md:align-center md:justify-center md:items-center md:rounded">
+      <form action="" noValidate onSubmit={handleSubmit} onReset={handleReset}>
+        <Box className="flex w-full items-center justify-between border border-action-primary md:rounded-md large:relative large:w-[400px] xl:w-[600px] ">
+          <Input
+            ref={inputRef}
+            data-testid="search-input"
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            placeholder={isRtl ? 'ابحث عن منتج...' : 'Search products...'}
+            spellCheck={false}
+            type="search"
+            value={query}
+            onChange={handleChange}
+            className="w-full !border-none bg-transparent pr-5 text-lg placeholder:text-basic-primary focus:outline-none py-2 px-5 md:rounded"
+          />
+          {query && (
+            <button
+              onClick={handleReset}
+              type="button"
+              className={`absolute ${isRtl ? 'left-0' : 'right-0'} flex items-center justify-center gap-x-2 px-4 text-lg text-basic-primary focus:outline-none`}
+            >
+              <XMarkMini />
+            </button>
+          )}
+        </Box>
+      </form>
+      
+      
+    </div>
+  )
+}
 </file>
 
 <file path="src/modules/search/templates/search-results-template/index.tsx">
@@ -23221,11 +24497,11 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
             // onMouseLeave={() => setIsHovering(false)}
             onMouseEnter={() => {
                 setIsHovering(true);
-                stopAutoPlay();
+                // stopAutoPlay();
             }}
             onMouseLeave={() => {
                 setIsHovering(false);
-                startAutoPlay();
+                // startAutoPlay();
             }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
@@ -23340,90 +24616,6 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
 };
 
 export default HeroCarousel;
-</file>
-
-<file path="package.json">
-{
-  "name": "medusa-next",
-  "version": "1.0.3",
-  "private": true,
-  "author": "Kasper Fabricius Kristensen <kasper@medusajs.com> & Victor Gerbrands <victor@medusajs.com> (https://www.medusajs.com)",
-  "description": "Next.js Starter to be used with Medusa V2",
-  "keywords": [
-    "medusa-storefront"
-  ],
-  "scripts": {
-    "dev": "next dev --turbopack -p 8000",
-    "build": "next build",
-    "start": "next start -p 8000",
-    "lint": "next lint",
-    "analyze": "ANALYZE=true next build"
-  },
-  "dependencies": {
-    "@headlessui/react": "^2.2.0",
-    "@medusajs/js-sdk": "latest",
-    "@medusajs/ui": "latest",
-    "@radix-ui/react-accordion": "^1.2.1",
-    "@radix-ui/react-dialog": "^1.1.13",
-    "@radix-ui/react-tabs": "^1.1.11",
-    "@radix-ui/react-visually-hidden": "^1.2.2",
-    "@stripe/react-stripe-js": "^1.7.2",
-    "@stripe/stripe-js": "^1.29.0",
-    "accept-language": "^3.0.20",
-    "algoliasearch": "^5.24.0",
-    "canvas-confetti": "^1.9.3",
-    "embla-carousel-react": "^8.6.0",
-    "framer-motion": "^12.11.3",
-    "lodash": "^4.17.21",
-    "lucide-react": "^0.487.0",
-    "next": "15.0.3",
-    "next-intl": "^3.26.3",
-    "pg": "^8.11.3",
-    "qs": "^6.12.1",
-    "react": "19.0.0-rc-66855b96-20241106",
-    "react-country-flag": "^3.1.0",
-    "react-dom": "19.0.0-rc-66855b96-20241106",
-    "react-icons": "^5.5.0",
-    "react-image-magnify": "^2.7.4",
-    "server-only": "^0.0.1",
-    "sonner": "^2.0.3",
-    "swiper": "^11.2.6",
-    "tailwindcss-radix": "^2.8.0",
-    "webpack": "^5",
-    "zustand": "^5.0.4"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.17.5",
-    "@medusajs/types": "latest",
-    "@medusajs/ui-preset": "latest",
-    "@types/canvas-confetti": "^1.9.0",
-    "@types/lodash": "^4.14.195",
-    "@types/node": "17.0.21",
-    "@types/pg": "^8.11.0",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "@types/react-image-magnify": "^2.7.4",
-    "@types/react-instantsearch-dom": "^6.12.3",
-    "ansi-colors": "^4.1.3",
-    "autoprefixer": "^10.4.2",
-    "babel-loader": "^8.2.3",
-    "eslint": "8.10.0",
-    "eslint-config-next": "15.0.3",
-    "postcss": "^8.4.8",
-    "prettier": "^2.8.8",
-    "tailwindcss": "^3.0.23",
-    "typescript": "^5.3.2"
-  },
-  "packageManager": "yarn@3.2.3",
-  "resolutions": {
-    "@types/react": "npm:types-react@19.0.0-rc.1",
-    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1"
-  },
-  "overrides": {
-    "react": "19.0.0-rc-66855b96-20241106",
-    "react-dom": "19.0.0-rc-66855b96-20241106"
-  }
-}
 </file>
 
 <file path="src/modules/layout/templates/nav/index.tsx">
@@ -23601,6 +24793,90 @@ export default async function Nav() {
       </div>
     </>
   )
+}
+</file>
+
+<file path="package.json">
+{
+  "name": "medusa-next",
+  "version": "1.0.3",
+  "private": true,
+  "author": "Kasper Fabricius Kristensen <kasper@medusajs.com> & Victor Gerbrands <victor@medusajs.com> (https://www.medusajs.com)",
+  "description": "Next.js Starter to be used with Medusa V2",
+  "keywords": [
+    "medusa-storefront"
+  ],
+  "scripts": {
+    "dev": "next dev --turbopack -p 8000",
+    "build": "next build",
+    "start": "next start -p 8000",
+    "lint": "next lint",
+    "analyze": "ANALYZE=true next build"
+  },
+  "dependencies": {
+    "@headlessui/react": "^2.2.0",
+    "@medusajs/js-sdk": "latest",
+    "@medusajs/ui": "latest",
+    "@radix-ui/react-accordion": "^1.2.1",
+    "@radix-ui/react-dialog": "^1.1.13",
+    "@radix-ui/react-tabs": "^1.1.11",
+    "@radix-ui/react-visually-hidden": "^1.2.2",
+    "@stripe/react-stripe-js": "^1.7.2",
+    "@stripe/stripe-js": "^1.29.0",
+    "accept-language": "^3.0.20",
+    "algoliasearch": "^5.24.0",
+    "canvas-confetti": "^1.9.3",
+    "embla-carousel-react": "^8.6.0",
+    "framer-motion": "^12.11.3",
+    "lodash": "^4.17.21",
+    "lucide-react": "^0.487.0",
+    "next": "15.0.3",
+    "next-intl": "^3.26.3",
+    "pg": "^8.11.3",
+    "qs": "^6.12.1",
+    "react": "19.0.0-rc-66855b96-20241106",
+    "react-country-flag": "^3.1.0",
+    "react-dom": "19.0.0-rc-66855b96-20241106",
+    "react-icons": "^5.5.0",
+    "react-image-magnify": "^2.7.4",
+    "server-only": "^0.0.1",
+    "sonner": "^2.0.3",
+    "swiper": "^11.2.6",
+    "tailwindcss-radix": "^2.8.0",
+    "webpack": "^5",
+    "zustand": "^5.0.4"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.5",
+    "@medusajs/types": "latest",
+    "@medusajs/ui-preset": "latest",
+    "@types/canvas-confetti": "^1.9.0",
+    "@types/lodash": "^4.14.195",
+    "@types/node": "17.0.21",
+    "@types/pg": "^8.11.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@types/react-image-magnify": "^2.7.4",
+    "@types/react-instantsearch-dom": "^6.12.3",
+    "ansi-colors": "^4.1.3",
+    "autoprefixer": "^10.4.2",
+    "babel-loader": "^8.2.3",
+    "eslint": "8.10.0",
+    "eslint-config-next": "15.0.3",
+    "postcss": "^8.4.8",
+    "prettier": "^2.8.8",
+    "tailwindcss": "^3.0.23",
+    "typescript": "^5.3.2"
+  },
+  "packageManager": "yarn@3.2.3",
+  "resolutions": {
+    "@types/react": "npm:types-react@19.0.0-rc.1",
+    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1"
+  },
+  "overrides": {
+    "react": "19.0.0-rc-66855b96-20241106",
+    "react-dom": "19.0.0-rc-66855b96-20241106"
+  }
 }
 </file>
 
