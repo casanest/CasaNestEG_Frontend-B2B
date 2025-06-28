@@ -79,10 +79,17 @@ export const SearchDialog = ({
               }
             </Button>
             {/* <ControlledSearchBox
+                    countryCode={countryCode}
+                    open={isOpen}
+                    setProducts={setProducts}
+                    closeSearch={() => setIsOpen(false)}
+                  /> */}
+            <ControlledSearchBox
+              setProducts={() => {}}
               countryCode={countryCode}
               open={isOpen}
               closeSearch={() => handleOpenDialogChange(false)}
-            /> */}
+            />
           </DialogHeader>
           <VisuallyHidden.Root>
             <DialogTitle>{isRtl ? 'بحث' : 'Search modal'}</DialogTitle>
