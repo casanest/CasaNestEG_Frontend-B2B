@@ -7,32 +7,7 @@ import Bancontact from "@modules/common/icons/bancontact"
 import PayPal from "@modules/common/icons/paypal"
 
 /* Map of payment provider_id to their title and icon. Add in any payment providers you want to use. */
-export const paymentInfoMap: Record<
-  string,
-  { title: string; icon: React.JSX.Element }
-> = {
-  pp_stripe_stripe: {
-    title: "Credit card",
-    icon: <CreditCard />,
-  },
-  "pp_stripe-ideal_stripe": {
-    title: "iDeal",
-    icon: <Ideal />,
-  },
-  "pp_stripe-bancontact_stripe": {
-    title: "Bancontact",
-    icon: <Bancontact />,
-  },
-  pp_paypal_paypal: {
-    title: "PayPal",
-    icon: <PayPal />,
-  },
-  pp_system_default: {
-    title: "Manual Payment",
-    icon: <CreditCard />,
-  },
-  // Add more payment providers here
-}
+// paymentInfoMap is defined later in the file, so this duplicate is removed to avoid redeclaration errors.
 
 // This only checks if it is native stripe for card payments, it ignores the other stripe-based providers
 export const isStripe = (providerId?: string) => {
@@ -108,3 +83,64 @@ export const createNavigation = (
       category_children: null,
     },
   ]
+
+
+// PayMob Icon Component
+const PayMobIcon = () => (
+  <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded flex items-center justify-center">
+    <span className="text-white text-xs font-bold">PM</span>
+  </div>
+)
+
+// Fawry Icon Component
+const FawryIcon = () => (
+  <div className="w-6 h-6 bg-gradient-to-r from-orange-500 to-red-500 rounded flex items-center justify-center">
+    <span className="text-white text-xs font-bold">F</span>
+  </div>
+)
+
+
+
+export const paymentInfoMap: Record<string, { title: string; icon: React.JSX.Element }> = {
+  stripe: {
+    title: "Credit card",
+    icon: <CreditCard />,
+  },
+  "stripe-ideal": {
+    title: "iDEAL",
+    icon: <CreditCard />,
+  },
+  "stripe-bancontact": {
+    title: "Bancontact",
+    icon: <CreditCard />,
+  },
+  "stripe-blik": {
+    title: "BLIK",
+    icon: <CreditCard />,
+  },
+  "stripe-giropay": {
+    title: "Giropay",
+    icon: <CreditCard />,
+  },
+  "stripe-przelewy24": {
+    title: "Przelewy24",
+    icon: <CreditCard />,
+  },
+  paypal: {
+    title: "PayPal",
+    icon: <CreditCard />,
+  },
+  manual: {
+    title: "Test payment",
+    icon: <CreditCard />,
+  },
+  // New PayMob and Fawry entries
+  paymob: {
+    title: "PayMob",
+    icon: <PayMobIcon />,
+  },
+  fawry: {
+    title: "Fawry",
+    icon: <FawryIcon />,
+  },
+}

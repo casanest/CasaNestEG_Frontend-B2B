@@ -18,16 +18,19 @@ export const listCartPaymentMethods = async (regionId: string) => {
       `/store/payment-providers`,
       {
         method: "GET",
-        query: { region_id: regionId },
+        query: { region_id: regionId, },
         headers,
         next,
-        cache: "force-cache",
+        cache: "no-store", // Disable caching for this request to ensure we always get the latest payment providers
       }
     )
     .then(({ payment_providers }) =>
       payment_providers.sort((a, b) => {
+              console.log("payment_providers", payment_providers)
         return a.id > b.id ? 1 : -1
+        
       })
+      
     )
     .catch(() => {
       return null

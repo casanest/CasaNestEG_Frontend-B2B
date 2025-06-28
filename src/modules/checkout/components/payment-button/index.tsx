@@ -10,12 +10,15 @@ import ErrorMessage from "../error-message"
 import confetti from "canvas-confetti"
 import { useLocale } from "next-intl"
 
+
 type PaymentButtonProps = {
   cart: HttpTypes.StoreCart
   "data-testid": string
 }
 
-const PaymentButton: React.FC<PaymentButtonProps> = ({
+
+
+export const PaymentButton: React.FC<PaymentButtonProps> = ({
   cart,
   "data-testid": dataTestId,
 }) => {
@@ -30,25 +33,31 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
 
   const paymentSession = cart.payment_collection?.payment_sessions?.[0]
 
-  switch (true) {
-    case isStripe(paymentSession?.provider_id):
-      return (
-        <StripePaymentButton
-          notReady={notReady}
-          cart={cart}
-          data-testid={dataTestId}
-        />
-      )
-    case isManual(paymentSession?.provider_id):
-      return (
-        <ManualTestPaymentButton notReady={notReady} data-testid={dataTestId} />
-      )
-    default:
-      return <Button disabled>Select a payment method</Button>
+  const handlePayment = async () => {
+    await placeOrder()
   }
+
+  return (
+    <>
+      <Button
+        disabled={notReady}
+        onClick={handlePayment}
+        size="large"
+        data-testid={dataTestId}
+        className="bg-[#043364] hover:bg-blue-900 text-white"
+      >
+        {locale === "en" ? "Place order" : "إتمام الطلب"}
+      </Button>
+      <ErrorMessage
+        error={""}
+        data-testid="stripe-payment-error-message"
+      />
+    </>
+  )
 }
 
-const StripePaymentButton = ({
+ 
+export const StripePaymentButton = ({
   cart,
   notReady,
   "data-testid": dataTestId,
@@ -157,7 +166,7 @@ const StripePaymentButton = ({
   )
 }
 
-const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
+export const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
