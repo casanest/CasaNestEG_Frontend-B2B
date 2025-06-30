@@ -1006,7 +1006,6 @@ export const PayMobContainer = ({
                     <iframe
                       ref={iframeRef}
                       src={iframeUrl}
-                      
                       width="100%"
                       height="600"
                       frameBorder="0"

@@ -9,6 +9,7 @@ import PromotionBanner from "@modules/home/components/promotionBanner"
 import FeaturedProducts from "@modules/home/components/featured-products"
 import StoreFeatures from "@modules/home/components/storeFeatures"
 import ProductGrid from "@modules/home/components/productGrid"
+import { listCategories } from "@lib/data/categories"
 
 export const metadata: Metadata = {
   title: "LA CASA",
@@ -27,6 +28,8 @@ export default async function Home({
   const { collections } = await listCollections({
     fields: "id, handle, title",
   })
+  const productCategories = await listCategories()
+
 
   if (!collections || !region) {
     return null
@@ -41,7 +44,7 @@ export default async function Home({
           <HeroCarousel locale={locale} />
         </div>
         <div className="" dir={dir}>
-          <CategoryCarousel locale={locale} />
+          <CategoryCarousel locale={locale} productCategories={productCategories} />
         </div>
         <ProductGrid />
         <PromotionBanner locale={locale} />

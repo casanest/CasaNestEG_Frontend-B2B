@@ -7,7 +7,7 @@ import { useLocale } from 'next-intl';
 
 // أنواع البيانات
 type SubCategory = { label: string; href: string };
-type Category = {
+type Category = { 
     title: string;
     subCategories: SubCategory[];
 };

@@ -7,7 +7,7 @@ import "swiper/css/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
-const CategoryCarousel = ({ locale }: { locale: string }) => {
+const CategoryCarousel = ({ locale, productCategories }: { locale: string, productCategories: any }) => {
     const isRTL = locale === "ar";
     const slideX = `
         @keyframes slideX {
