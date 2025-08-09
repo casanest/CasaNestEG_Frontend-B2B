@@ -2,525 +2,416 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useState, useEffect } from "react"
-import { ChevronDown, ChevronUp, X, Filter, Sliders } from "lucide-react"
-import { Button, Badge, Drawer } from "@medusajs/ui"
+import { ChevronDown, Filter, X, SlidersHorizontal } from "lucide-react"
+import { Button, Badge, Drawer, Checkbox, Label, RadioGroup } from "@medusajs/ui"
+import { clx } from "@medusajs/ui"
 import SortProducts, { SortOptions } from "./sort-products"
+import { getProductFilterOptions } from "@lib/data/products"
 
 type RefinementListProps = {
   sortBy: SortOptions
-  'data-testid'?: string
+  countryCode: string
   locale: string
+  'data-testid'?: string
+  inline?: boolean
 }
 
-const RefinementList = ({ sortBy, 'data-testid': dataTestId, locale }: RefinementListProps) => {
+type FilterOptions = {
+  collections: Array<{id: string, title: string, handle: string}>
+  types: Array<{id: string, value: string}>
+  colors: string[]
+  materials: string[]
+  sizes: string[]
+  priceRange: {min: number, max: number}
+  totalProducts: number
+}
+
+const RefinementList = ({ 
+  sortBy, 
+  countryCode,
+  locale,
+  'data-testid': dataTestId,
+  inline = false,
+}: RefinementListProps) => {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const isRTL = locale === "ar"
-  const [isMobile, setIsMobile] = useState(false)
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
 
-  // Check mobile viewport on mount and resize
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768)
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
-
-  // State for filter sections
-  const [openFilters, setOpenFilters] = useState({
-    sort: true,
-    price: false,
-    color: false,
-    size: false,
-    availability: false,
-    rating: false,
-    brand: false
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
+    collections: [],
+    types: [],
+    colors: [],
+    materials: [],
+    sizes: [],
+    priceRange: { min: 0, max: 1000 },
+    totalProducts: 0
   })
 
-  // Current filter values
-  const priceRange = searchParams.get('price') || ''
-  const colors = searchParams.get('colors')?.split(',') || []
-  const sizes = searchParams.get('sizes')?.split(',') || []
-  const brands = searchParams.get('brands')?.split(',') || []
-  const minRating = searchParams.get('rating') || ''
-  const inStock = searchParams.get('inStock') === 'true'
-  const onSale = searchParams.get('onSale') === 'true'
+  const [filters, setFilters] = useState({
+    inStock: searchParams.get('inStock') === 'true',
+    onSale: searchParams.get('onSale') === 'true',
+    price: searchParams.get('price') || '',
+    collection_id: searchParams.get('collection_id')?.split(',') || [],
+    type_id: searchParams.get('type_id')?.split(',') || [],
+    colors: searchParams.get('colors')?.split(',') || [],
+    materials: searchParams.get('materials')?.split(',') || [],
+    sizes: searchParams.get('sizes')?.split(',') || [],
+  })
 
-  const activeFilterCount = [
-    priceRange,
-    colors.length,
-    sizes.length,
-    brands.length,
-    minRating,
-    inStock,
-    onSale
-  ].filter(Boolean).length
+  // Load filter options on component mount
+  useEffect(() => {
+    const loadFilterOptions = async () => {
+      const options = await getProductFilterOptions(countryCode)
+      setFilterOptions(options)
+    }
+    loadFilterOptions()
+  }, [countryCode])
 
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams)
-      params.set(name, value)
-      return params.toString()
-    },
-    [searchParams]
-  )
+  const updateURL = useCallback((newFilters: typeof filters) => {
+    const params = new URLSearchParams(searchParams.toString())
+    
+    // Update filter parameters
+    Object.entries(newFilters).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        if (value.length > 0) {
+          params.set(key, value.join(','))
+        } else {
+          params.delete(key)
+        }
+      } else if (typeof value === 'boolean') {
+        if (value) {
+          params.set(key, 'true')
+        } else {
+          params.delete(key)
+        }
+      } else if (value && value !== '') {
+        params.set(key, value.toString())
+      } else {
+        params.delete(key)
+      }
+    })
 
-  const setQueryParams = (name: string, value: string) => {
-    const query = createQueryString(name, value)
-    router.push(`${pathname}?${query}`)
-  }
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
+  }, [pathname, router, searchParams])
 
-  const toggleFilterSection = (section: keyof typeof openFilters) => {
-    setOpenFilters(prev => ({ ...prev, [section]: !prev[section] }))
-  }
+  const handleFilterChange = useCallback((key: string, value: any) => {
+    const newFilters = { ...filters, [key]: value }
+    setFilters(newFilters)
+    updateURL(newFilters)
+  }, [filters, updateURL])
 
-  const handleMultiSelectToggle = (type: 'colors' | 'sizes' | 'brands', value: string) => {
-    const currentValues = searchParams.get(type)?.split(',') || []
-    const newValues = currentValues.includes(value)
-      ? currentValues.filter(v => v !== value)
-      : [...currentValues, value]
-    setQueryParams(type, newValues.join(','))
-  }
+  const handleArrayFilterChange = useCallback((key: string, value: string, checked: boolean) => {
+    const currentArray = filters[key as keyof typeof filters] as string[]
+    let newArray: string[]
+    
+    if (checked) {
+      newArray = [...currentArray, value]
+    } else {
+      newArray = currentArray.filter(item => item !== value)
+    }
+    
+    const newFilters = { ...filters, [key]: newArray }
+    setFilters(newFilters)
+    updateURL(newFilters)
+  }, [filters, updateURL])
 
-  const clearFilters = () => {
-    const params = new URLSearchParams(searchParams)
-      ;['price', 'colors', 'sizes', 'brands', 'rating', 'inStock', 'onSale'].forEach(param => params.delete(param))
-    router.push(`${pathname}?${params.toString()}`)
-    if (isMobile) setMobileFiltersOpen(false)
-  }
+  const handleSortChange = useCallback((name: string, value: SortOptions) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('sortBy', value)
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
+  }, [pathname, router, searchParams])
 
-  // Filter options data
-  const filterOptions = {
-    priceRanges: [
-      { id: '0-50', label: isRTL ? 'حتى 50' : 'Under $50' },
-      { id: '50-100', label: isRTL ? '50 إلى 100' : '$50 to $100' },
-      { id: '100-200', label: isRTL ? '100 إلى 200' : '$100 to $200' },
-      { id: '200-500', label: isRTL ? '200 إلى 500' : '$200 to $500' },
-      { id: '500', label: isRTL ? 'أكثر من 500' : 'Over $500' }
-    ],
-    colors: [
-      { id: 'black', label: isRTL ? 'أسود' : 'Black', hex: '#000000' },
-      { id: 'white', label: isRTL ? 'أبيض' : 'White', hex: '#FFFFFF' },
-      { id: 'blue', label: isRTL ? 'أزرق' : 'Blue', hex: '#3B82F6' },
-      { id: 'green', label: isRTL ? 'أخضر' : 'Green', hex: '#10B981' },
-      { id: 'red', label: isRTL ? 'أحمر' : 'Red', hex: '#EF4444' },
-      { id: 'yellow', label: isRTL ? 'أصفر' : 'Yellow', hex: '#F59E0B' },
-      { id: 'gray', label: isRTL ? 'رمادي' : 'Gray', hex: '#6B7280' }
-    ],
-    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(size => ({
-      id: size,
-      label: size
-    })),
-    brands: [
-      { id: 'nike', label: 'Nike' },
-      { id: 'adidas', label: 'Adidas' },
-      { id: 'puma', label: 'Puma' },
-      { id: 'reebok', label: 'Reebok' },
-      { id: 'underarmour', label: 'Under Armour' }
-    ].map(brand => ({
-      ...brand,
-      label: isRTL ? brand.label.split('').reverse().join('') : brand.label
-    })),
-    ratings: [4, 3, 2, 1].map(rating => ({
-      id: rating.toString(),
-      label: isRTL ? `${rating}+ ★` : `★ ${rating}+`
-    }))
-  }
+  const clearFilters = useCallback(() => {
+    const newFilters = { 
+      inStock: false, 
+      onSale: false, 
+      price: '', 
+      collection_id: [],
+      type_id: [],
+      colors: [],
+      materials: [],
+      sizes: []
+    }
+    setFilters(newFilters)
+    updateURL(newFilters)
+  }, [updateURL])
 
-  // Mobile filters toggle button
-  const MobileFiltersButton = () => (
-    <Button
-      variant="transparent"
-      onClick={() => setMobileFiltersOpen(true)}
-      className="md:hidden flex items-center gap-2 border border-ui-border-base p-2 rounded-lg"
-    >
-      <Sliders size={16} />
-      <span>{isRTL ? "الفلاتر" : "Filters"}</span>
-      {activeFilterCount > 0 && (
-        <Badge className="!text-xs">
-          {activeFilterCount}
-        </Badge>
-      )}
-    </Button>
-  )
+  const hasActiveFilters = filters.inStock || filters.onSale || filters.price ||
+    filters.collection_id.length > 0 || filters.type_id.length > 0 ||
+    filters.colors.length > 0 || filters.materials.length > 0 || filters.sizes.length > 0
 
-  // Filters content component (reused in drawer and desktop)
-  const FiltersContent = () => (
-    <div className="flex flex-col gap-6 h-full p-10 md:p-0">
-      {/* Header with filter count */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Filter size={18} className="text-ui-fg-muted" />
-          <h2 className="font-medium text-ui-fg-base">
-            {isRTL ? "الفلاتر" : "Filters"}
-          </h2>
-          {activeFilterCount > 0 && (
-            <Badge className="!text-xs" variant="blue">
-              {activeFilterCount}
-            </Badge>
-          )}
-        </div>
-        {activeFilterCount > 0 && (
-          <button
-            onClick={clearFilters}
-            className="text-xs text-ui-fg-subtle hover:text-ui-fg-interactive transition-colors"
-          >
-            {isRTL ? "مسح الكل" : "Clear all"}
-          </button>
-        )}
+  const FilterContent = () => (
+    <div className="space-y-6">
+      {/* Sort Section */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-medium text-ui-fg-base">
+          {isRTL ? "ترتيب حسب" : "Sort by"}
+          </h3>
+          <SortProducts
+          sortBy={sortBy} 
+          setQueryParams={handleSortChange}
+            locale={locale}
+          />
       </div>
 
-      {/* Sort Options */}
-      <div className="border-b border-ui-border-base pb-6">
-        <button
-          className="flex items-center justify-between w-full mb-4"
-          onClick={() => toggleFilterSection('sort')}
-        >
-          <h3 className="font-medium text-ui-fg-base">
-            {isRTL ? "ترتيب حسب" : "Sort By"}
+      {/* Collections Filter */}
+      {filterOptions.collections.length > 0 && (
+        <div className="space-y-3">
+          <h3 className="text-sm font-medium text-ui-fg-base">
+            {isRTL ? "المجموعات" : "Collections"}
           </h3>
-          {openFilters.sort ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </button>
-
-        {openFilters.sort && (
-          <SortProducts
-            locale={locale}
-            sortBy={sortBy}
-            setQueryParams={setQueryParams}
-            className={isRTL ? 'text-right' : 'text-left'}
-          />
+          <div className="space-y-2 max-h-40 overflow-y-auto">
+            {filterOptions.collections.map((collection) => (
+              <div key={collection.id} className="flex items-center space-x-2 rtl:space-x-reverse">
+                <Checkbox
+                  id={`collection-${collection.id}`}
+                  checked={filters.collection_id.includes(collection.id)}
+                  onCheckedChange={(checked) => 
+                    handleArrayFilterChange('collection_id', collection.id, Boolean(checked))
+                  }
+                />
+                <Label htmlFor={`collection-${collection.id}`} className="text-sm text-ui-fg-subtle">
+                  {collection.title}
+                </Label>
+              </div>
+            ))}
+          </div>
+          </div>
         )}
+
+      {/* Product Types Filter */}
+      {filterOptions.types.length > 0 && (
+        <div className="space-y-3">
+          <h3 className="text-sm font-medium text-ui-fg-base">
+            {isRTL ? "الأنواع" : "Categories"}
+          </h3>
+          <div className="space-y-2">
+            {filterOptions.types.map((type) => (
+              <div key={type.id} className="flex items-center space-x-2 rtl:space-x-reverse">
+                <Checkbox
+                  id={`type-${type.id}`}
+                  checked={filters.type_id.includes(type.id)}
+                  onCheckedChange={(checked) => 
+                    handleArrayFilterChange('type_id', type.id, Boolean(checked))
+                  }
+                />
+                <Label htmlFor={`type-${type.id}`} className="text-sm text-ui-fg-subtle">
+                  {type.value}
+                </Label>
+              </div>
+            ))}
+          </div>
+          </div>
+        )}
+
+      {/* Colors Filter */}
+      {filterOptions.colors.length > 0 && (
+        <div className="space-y-3">
+          <h3 className="text-sm font-medium text-ui-fg-base">
+            {isRTL ? "الألوان" : "Colors"}
+          </h3>
+          <div className="space-y-2 max-h-40 overflow-y-auto">
+            {filterOptions.colors.map((color) => (
+              <div key={color} className="flex items-center space-x-2 rtl:space-x-reverse">
+                <Checkbox
+                  id={`color-${color}`}
+                  checked={filters.colors.includes(color)}
+                  onCheckedChange={(checked) => 
+                    handleArrayFilterChange('colors', color, Boolean(checked))
+                  }
+                />
+                <Label htmlFor={`color-${color}`} className="text-sm text-ui-fg-subtle">
+                  {color}
+                </Label>
+              </div>
+            ))}
+          </div>
+          </div>
+        )}
+
+      {/* Materials Filter */}
+      {filterOptions.materials.length > 0 && (
+        <div className="space-y-3">
+          <h3 className="text-sm font-medium text-ui-fg-base">
+            {isRTL ? "المواد" : "Materials"}
+          </h3>
+          <div className="space-y-2 max-h-40 overflow-y-auto">
+            {filterOptions.materials.map((material) => (
+              <div key={material} className="flex items-center space-x-2 rtl:space-x-reverse">
+                <Checkbox
+                  id={`material-${material}`}
+                  checked={filters.materials.includes(material)}
+                  onCheckedChange={(checked) => 
+                    handleArrayFilterChange('materials', material, Boolean(checked))
+                  }
+                />
+                <Label htmlFor={`material-${material}`} className="text-sm text-ui-fg-subtle">
+                  {material}
+                </Label>
+              </div>
+            ))}
+          </div>
+          </div>
+        )}
+
+      {/* Sizes Filter */}
+      {filterOptions.sizes.length > 0 && (
+        <div className="space-y-3">
+          <h3 className="text-sm font-medium text-ui-fg-base">
+            {isRTL ? "الأحجام" : "Sizes"}
+          </h3>
+          <div className="space-y-2">
+            {filterOptions.sizes.map((size) => (
+              <div key={size} className="flex items-center space-x-2 rtl:space-x-reverse">
+                <Checkbox
+                  id={`size-${size}`}
+                  checked={filters.sizes.includes(size)}
+                  onCheckedChange={(checked) => 
+                    handleArrayFilterChange('sizes', size, Boolean(checked))
+                  }
+                />
+                <Label htmlFor={`size-${size}`} className="text-sm text-ui-fg-subtle">
+                  {size}
+                </Label>
+              </div>
+            ))}
+          </div>
+          </div>
+        )}
+
+      {/* Availability Filter */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-medium text-ui-fg-base">
+          {isRTL ? "التوفر" : "Availability"}
+        </h3>
+        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+          <Checkbox
+            id="inStock"
+            checked={filters.inStock}
+            onCheckedChange={(checked) => handleFilterChange('inStock', checked)}
+          />
+          <Label htmlFor="inStock" className="text-sm text-ui-fg-subtle">
+            {isRTL ? "متوفر في المخزن" : "In Stock Only"}
+          </Label>
+        </div>
       </div>
 
       {/* Price Range Filter */}
-      <div className="border-b border-ui-border-base pb-6">
-        <button
-          className="flex items-center justify-between w-full mb-4"
-          onClick={() => toggleFilterSection('price')}
-        >
-          <h3 className="font-medium text-ui-fg-base">
-            {isRTL ? "نطاق السعر" : "Price Range"}
-          </h3>
-          {openFilters.price ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </button>
-
-        {openFilters.price && (
-          <div className="space-y-3">
-            {filterOptions.priceRanges.map(range => (
-              <div key={range.id} className="flex items-center">
-                <input
-                  id={`price-${range.id}`}
-                  name="price-range"
-                  type="radio"
-                  checked={priceRange === range.id}
-                  onChange={() => setQueryParams('price', range.id)}
-                  className={`h-4 w-4 border-ui-border-base text-ui-fg-interactive focus:ring-ui-fg-interactive ${isRTL ? 'ml-3' : 'mr-3'
-                    }`}
-                />
-                <label
-                  htmlFor={`price-${range.id}`}
-                  className="text-sm text-ui-fg-subtle"
-                >
-                  {range.label}
-                </label>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Color Filter */}
-      <div className="border-b border-ui-border-base pb-6">
-        <button
-          className="flex items-center justify-between w-full mb-4"
-          onClick={() => toggleFilterSection('color')}
-        >
-          <h3 className="font-medium text-ui-fg-base">
-            {isRTL ? "اللون" : "Color"}
-          </h3>
-          {openFilters.color ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </button>
-
-        {openFilters.color && (
-          <div className="grid grid-cols-4 gap-2">
-            {filterOptions.colors.map(color => (
-              <button
-                key={color.id}
-                onClick={() => handleMultiSelectToggle('colors', color.id)}
-                className={`flex flex-col items-center p-2 rounded-md border ${colors.includes(color.id)
-                    ? 'border-ui-fg-interactive bg-ui-bg-highlight'
-                    : 'border-ui-border-base hover:bg-ui-bg-subtle-hover'
-                  }`}
-                aria-label={color.label}
-              >
-                <div
-                  className="w-6 h-6 rounded-full mb-1 border border-ui-border-base"
-                  style={{ backgroundColor: color.hex }}
-                />
-                <span className="text-xs text-ui-fg-base">{color.label}</span>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Size Filter */}
-      <div className="border-b border-ui-border-base pb-6">
-        <button
-          className="flex items-center justify-between w-full mb-4"
-          onClick={() => toggleFilterSection('size')}
-        >
-          <h3 className="font-medium text-ui-fg-base">
-            {isRTL ? "الحجم" : "Size"}
-          </h3>
-          {openFilters.size ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </button>
-
-        {openFilters.size && (
-          <div className="grid grid-cols-3 gap-2">
-            {filterOptions.sizes.map(size => (
-              <button
-                key={size.id}
-                onClick={() => handleMultiSelectToggle('sizes', size.id)}
-                className={`py-1 px-2 text-sm rounded-md border text-center ${sizes.includes(size.id)
-                    ? 'border-ui-fg-interactive bg-ui-bg-highlight text-ui-fg-interactive'
-                    : 'border-ui-border-base hover:bg-ui-bg-subtle-hover'
-                  }`}
-              >
-                {size.label}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Brand Filter */}
-      <div className="border-b border-ui-border-base pb-6">
-        <button
-          className="flex items-center justify-between w-full mb-4"
-          onClick={() => toggleFilterSection('brand')}
-        >
-          <h3 className="font-medium text-ui-fg-base">
-            {isRTL ? "العلامة التجارية" : "Brand"}
-          </h3>
-          {openFilters.brand ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </button>
-
-        {openFilters.brand && (
-          <div className="space-y-3">
-            {filterOptions.brands.map(brand => (
-              <div key={brand.id} className="flex items-center">
-                <input
-                  id={`brand-${brand.id}`}
-                  type="checkbox"
-                  checked={brands.includes(brand.id)}
-                  onChange={() => handleMultiSelectToggle('brands', brand.id)}
-                  className={`h-4 w-4 rounded border-ui-border-base text-ui-fg-interactive focus:ring-ui-fg-interactive ${isRTL ? 'ml-3' : 'mr-3'
-                    }`}
-                />
-                <label
-                  htmlFor={`brand-${brand.id}`}
-                  className="text-sm text-ui-fg-subtle"
-                >
-                  {brand.label}
-                </label>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Rating Filter */}
-      <div className="border-b border-ui-border-base pb-6">
-        <button
-          className="flex items-center justify-between w-full mb-4"
-          onClick={() => toggleFilterSection('rating')}
-        >
-          <h3 className="font-medium text-ui-fg-base">
-            {isRTL ? "التقييم" : "Rating"}
-          </h3>
-          {openFilters.rating ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </button>
-
-        {openFilters.rating && (
-          <div className="space-y-3">
-            {filterOptions.ratings.map(rating => (
-              <div key={rating.id} className="flex items-center">
-                <input
-                  id={`rating-${rating.id}`}
-                  name="rating"
-                  type="radio"
-                  checked={minRating === rating.id}
-                  onChange={() => setQueryParams('rating', rating.id)}
-                  className={`h-4 w-4 border-ui-border-base text-ui-fg-interactive focus:ring-ui-fg-interactive ${isRTL ? 'ml-3' : 'mr-3'
-                    }`}
-                />
-                <label
-                  htmlFor={`rating-${rating.id}`}
-                  className="text-sm text-ui-fg-subtle"
-                >
-                  {rating.label}
-                </label>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Availability Filters */}
-      <div className="space-y-4">
-        <div className="flex items-center">
+      <div className="space-y-3">
+        <h3 className="text-sm font-medium text-ui-fg-base">
+          {isRTL ? "نطاق السعر" : "Price Range"}
+        </h3>
+        <div className="space-y-2">
+          {[
+            { value: '', label: isRTL ? 'جميع الأسعار' : 'All Prices' },
+            { value: '0-50', label: isRTL ? 'أقل من 50€' : 'Under €50' },
+            { value: '50-100', label: isRTL ? '50€ - 100€' : '€50 - €100' },
+            { value: '100-200', label: isRTL ? '100€ - 200€' : '€100 - €200' },
+            { value: '200+', label: isRTL ? 'أكثر من 200€' : 'Over €200' }
+          ].map((range) => (
+            <div key={range.value} className="flex items-center space-x-2 rtl:space-x-reverse">
           <input
-            id="in-stock"
-            type="checkbox"
-            checked={inStock}
-            onChange={(e) => setQueryParams('inStock', e.target.checked.toString())}
-            className={`h-4 w-4 rounded border-ui-border-base text-ui-fg-interactive focus:ring-ui-fg-interactive ${isRTL ? 'ml-3' : 'mr-3'
-              }`}
-          />
-          <label
-            htmlFor="in-stock"
-            className="text-sm text-ui-fg-subtle"
-          >
-            {isRTL ? "متوفر بالمخزن" : "In Stock Only"}
-          </label>
-        </div>
-        <div className="flex items-center">
-          <input
-            id="on-sale"
-            type="checkbox"
-            checked={onSale}
-            onChange={(e) => setQueryParams('onSale', e.target.checked.toString())}
-            className={`h-4 w-4 rounded border-ui-border-base text-ui-fg-interactive focus:ring-ui-fg-interactive ${isRTL ? 'ml-3' : 'mr-3'
-              }`}
-          />
-          <label
-            htmlFor="on-sale"
-            className="text-sm text-ui-fg-subtle"
-          >
-            {isRTL ? "العروض الخاصة" : "On Sale"}
-          </label>
+                type="radio"
+                id={`price-${range.value || 'all'}`}
+                name="price"
+                value={range.value}
+                checked={filters.price === range.value}
+                onChange={() => handleFilterChange('price', range.value)}
+                className="w-4 h-4"
+              />
+              <Label htmlFor={`price-${range.value || 'all'}`} className="text-sm text-ui-fg-subtle">
+                {range.label}
+              </Label>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Apply/Clear buttons for mobile */}
-      {isMobile && (
-        <div className="flex gap-4 mt-auto pt-4 border-t border-ui-border-base">
-          <Button
-            variant="primary"
-            onClick={() => setMobileFiltersOpen(false)}
-            className="flex-1"
-          >
-            {isRTL ? "تطبيق الفلاتر" : "Apply Filters"}
-          </Button>
+      {/* Clear Filters */}
+      {hasActiveFilters && (
+        <div className="pt-4 border-t border-ui-border-base">
           <Button
             variant="secondary"
             onClick={clearFilters}
-            className="flex-1"
+            className="w-full"
           >
-            {isRTL ? "مسح" : "Clear"}
+            <X className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
+            {isRTL ? "مسح الفلاتر" : "Clear Filters"}
           </Button>
         </div>
       )}
     </div>
   )
 
+  const activeFilterCount = [
+    filters.inStock,
+    filters.onSale,
+    filters.price,
+    ...filters.collection_id,
+    ...filters.type_id,
+    ...filters.colors,
+    ...filters.materials,
+    ...filters.sizes
+  ].filter(Boolean).length
+
   return (
     <>
-      {/* Mobile filters button */}
-      <MobileFiltersButton />
-
-      {/* Mobile filters drawer */}
-      <Drawer
-        open={mobileFiltersOpen}
-        onOpenChange={setMobileFiltersOpen}
-        direction={isRTL ? 'right' : 'left'}
-        shouldScaleBackground={true}
-        dismissible={true}
-        className="z-[1000]"
-      >
-        <Drawer.Content className={`
-    h-[100%] w-full max-w-md 
-    bg-white dark:bg-gray-900
-    rounded-t-[10px] shadow-2xl
-    fixed bottom-0 ${isRTL ? 'right-0' : 'left-0'}
-    focus:outline-none
-    z-[1000]
-    
-  `}>
-
-          {/* Scrollable content area */}
-          <div className="h-[calc(95%)] overflow-y-auto p-6">
-            <FiltersContent />
-          </div>
-
-    
-        </Drawer.Content>
-
-        {/* Backdrop */}
-        {/* <Drawer.Overlay className={`
-    fixed inset-0 bg-black/50 
-    backdrop-blur-sm
-    z-[999]
-  `} /> */}
-      </Drawer>
-
-      {/* Desktop filters */}
-      <div
-        className="hidden md:flex flex-col gap-6 w-full small:w-70 max-w-70 p-4 bg-ui-bg-subtle rounded-lg shadow-sm "
-        data-testid={dataTestId}
-      >
-        <FiltersContent />
+      {/* Mobile Filter Button */}
+      <div className="flex items-center justify-between mb-4 small:hidden">
+        <Button
+          variant="secondary"
+          onClick={() => setIsDrawerOpen(true)}
+          className="flex items-center space-x-2 rtl:space-x-reverse"
+        >
+          <SlidersHorizontal className="w-4 h-4" />
+          <span>{isRTL ? "الفلاتر" : "Filters"}</span>
+          {activeFilterCount > 0 && (
+            <Badge className="ml-2 rtl:ml-0 rtl:mr-2">
+              {activeFilterCount}
+            </Badge>
+          )}
+        </Button>
       </div>
+
+      {/* Inline content for desktop containers (controlled by parent) */}
+      {inline && (
+        <div className="space-y-6 p-6 bg-ui-bg-subtle rounded-lg border border-ui-border-base">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-ui-fg-base">
+              {isRTL ? "الفلاتر" : "Filters"}
+            </h2>
+            {activeFilterCount > 0 && (
+              <Badge>
+                {activeFilterCount}
+              </Badge>
+            )}
+          </div>
+          <FilterContent />
+        </div>
+      )}
+
+      {/* Mobile Drawer */}
+      <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-semibold text-ui-fg-base">
+              {isRTL ? "الفلاتر" : "Filters"}
+            </h2>
+            <Button
+              variant="transparent"
+              onClick={() => setIsDrawerOpen(false)}
+              className="p-2"
+            >
+              <X className="w-5 h-5" />
+            </Button>
+          </div>
+          <FilterContent />
+        </div>
+      </Drawer>
     </>
   )
 }
 
 export default RefinementList
-
-
-
-// "use client"
-
-// import { usePathname, useRouter, useSearchParams } from "next/navigation"
-// import { useCallback } from "react"
-
-// import SortProducts, { SortOptions } from "./sort-products"
-
-// type RefinementListProps = {
-//   sortBy: SortOptions
-//   search?: boolean
-//   'data-testid'?: string
-//   locale: string
-// }
-
-// const RefinementList = ({ sortBy, 'data-testid': dataTestId, locale }: RefinementListProps) => {
-//   const router = useRouter()
-//   const pathname = usePathname()
-//   const searchParams = useSearchParams()
-
-//   const createQueryString = useCallback(
-//     (name: string, value: string) => {
-//       const params = new URLSearchParams(searchParams)
-//       params.set(name, value)
-
-//       return params.toString()
-//     },
-//     [searchParams]
-//   )
-
-//   const setQueryParams = (name: string, value: string) => {
-//     const query = createQueryString(name, value)
-//     router.push(`${pathname}?${query}`)
-//   }
-
-//   return (
-//     <div dir={locale === "ar" ? "rtl" : "ltr"} className="flex small:flex-col gap-12 py-4 mb-8 small:px-0 pl-6 small:min-w-[250px] small:ml-[1.675rem]">
-//       <SortProducts locale={locale} sortBy={sortBy} setQueryParams={setQueryParams} data-testid={dataTestId} />
-//     </div>
-//   )
-// }
-
-// export default RefinementList

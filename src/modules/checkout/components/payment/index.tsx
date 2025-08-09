@@ -14,6 +14,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 import { useLocale } from "next-intl"
 import { PayMobContainer } from "../paymob-container"
+import { TapContainer } from "../tap-container"
 import FawryContainer from "../fawry-container"
 
 const Payment = ({
@@ -93,10 +94,16 @@ await initiatePaymentSession(cart, {
           provider_id:  `pp_${selectedPaymentMethod}_${selectedPaymentMethod}`,
         })
         }
-        else
+        else if (selectedPaymentMethod === "tap") {
+          await initiatePaymentSession(cart, {
+            provider_id: "tap",
+          })
+        }
+        else {
         await initiatePaymentSession(cart, {
           provider_id:  selectedPaymentMethod,
         })
+        }
       }
 
       if (!shouldInputCard) {
@@ -165,6 +172,16 @@ await initiatePaymentSession(cart, {
                 setCardBrand={setCardBrand}
                 setError={setError}
                 setCardComplete={setCardComplete}
+              />
+            ) : paymentMethod.id === "tap" ? (
+              <TapContainer
+                paymentProviderId={paymentMethod.id}
+                selectedPaymentOptionId={selectedPaymentMethod}
+                paymentInfoMap={paymentInfoMap}
+                setError={setError}
+                setPaymentComplete={setPaymentComplete}
+                cart={cart}
+                locale={locale}
               />
             ) : paymentMethod.id === "paymob" ? (
               <PayMobContainer

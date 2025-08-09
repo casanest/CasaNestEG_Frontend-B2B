@@ -4,15 +4,26 @@ import ProductPreview from "@modules/products/components/product-preview"
 import { Pagination } from "@modules/store/components/pagination"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import { getLocale } from "next-intl/server"
+import { notFound } from "next/navigation"
 
 const PRODUCT_LIMIT = 12
 
 type PaginatedProductsParams = {
   limit: number
-  collection_id?: string[]
+  collection_id?: string[] | string
   category_id?: string[]
   id?: string[]
   order?: string
+  // Custom filter parameters
+  inStock?: string
+  onSale?: string
+  price?: string
+  q?: string
+  // Variant-based filters
+  colors?: string[]
+  materials?: string[]
+  sizes?: string[]
+  type_id?: string[]
 }
 
 export default async function PaginatedProducts({
@@ -22,6 +33,7 @@ export default async function PaginatedProducts({
   categoryId,
   productsIds,
   countryCode,
+  searchParams,
 }: {
   sortBy?: SortOptions
   page: number
@@ -29,13 +41,14 @@ export default async function PaginatedProducts({
   categoryId?: string
   productsIds?: string[]
   countryCode: string
+  searchParams?: { [key: string]: string | string[] | undefined }
 }) {
   const queryParams: PaginatedProductsParams = {
-    limit: 12,
+    limit: PRODUCT_LIMIT,
   }
 
   if (collectionId) {
-    queryParams["collection_id"] = [collectionId]
+    queryParams["collection_id"] = collectionId
   }
 
   if (categoryId) {
@@ -44,6 +57,48 @@ export default async function PaginatedProducts({
 
   if (productsIds) {
     queryParams["id"] = productsIds
+  }
+
+  // Handle search parameters from URL
+  if (searchParams) {
+    // Basic filters
+    if (searchParams.inStock === 'true') {
+      queryParams.inStock = 'true'
+    }
+    
+    if (searchParams.onSale === 'true') {
+      queryParams.onSale = 'true'
+    }
+    
+    if (searchParams.price && typeof searchParams.price === 'string') {
+      queryParams.price = searchParams.price
+    }
+    
+    if (searchParams.q && typeof searchParams.q === 'string') {
+      queryParams.q = searchParams.q
+    }
+
+    // API-supported filters
+    if (searchParams.collection_id && typeof searchParams.collection_id === 'string') {
+      queryParams.collection_id = searchParams.collection_id
+    }
+
+    if (searchParams.type_id && typeof searchParams.type_id === 'string') {
+      queryParams.type_id = searchParams.type_id.split(',')
+    }
+
+    // Variant-based filters (client-side)
+    if (searchParams.colors && typeof searchParams.colors === 'string') {
+      queryParams.colors = searchParams.colors.split(',')
+    }
+
+    if (searchParams.materials && typeof searchParams.materials === 'string') {
+      queryParams.materials = searchParams.materials.split(',')
+    }
+
+    if (searchParams.sizes && typeof searchParams.sizes === 'string') {
+      queryParams.sizes = searchParams.sizes.split(',')
+    }
   }
 
   if (sortBy === "created_at") {

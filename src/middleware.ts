@@ -133,7 +133,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.json(
         {
           error: "Internal server error",
-          message: process.env.NODE_ENV === "development" ? error.message : "Something went wrong",
+          message: process.env.NODE_ENV === "development" ? (error as Error).message : "Something went wrong",
         },
         {
           status: 500,
@@ -157,28 +157,11 @@ export async function middleware(request: NextRequest) {
  * Handle page requests with existing logic
  */
 async function handlePageRequest(request: NextRequest) {
-  let redirectUrl = request.nextUrl.href
-  let response = NextResponse.redirect(redirectUrl, 307)
-
   const pathnameArr = request.nextUrl.pathname.split("/")
   const urlHasKnownLocale = languages.includes(pathnameArr[1])
 
   const urlHasUnknownLocale =
-    !urlHasKnownLocale && pathnameArr[1].length == 2 && (pathnameArr?.[2] ? pathnameArr[2].length == 2 : true)
-
-  const redirectPath =
-    request.nextUrl.pathname === "/"
-      ? ""
-      : urlHasKnownLocale || urlHasUnknownLocale
-        ? pathnameArr.slice(2).join("/")
-        : request.nextUrl.pathname
-
-  const queryString = request.nextUrl.search ? request.nextUrl.search : ""
-
-  if (urlHasUnknownLocale) {
-    redirectUrl = `${request.nextUrl.origin}/${fallbackLng}/${redirectPath}${queryString}`
-    response = NextResponse.redirect(`${redirectUrl}`, 307)
-  }
+    !urlHasKnownLocale && pathnameArr[1]?.length === 2 && (pathnameArr?.[2] ? pathnameArr[2].length === 2 : true)
 
   const cacheIdCookie = request.cookies.get("_medusa_cache_id")
   const cacheId = cacheIdCookie?.value || crypto.randomUUID()
@@ -187,39 +170,66 @@ async function handlePageRequest(request: NextRequest) {
   const countryCodePathnameIndex = urlHasKnownLocale ? 2 : 1
   const countryCode = regionMap && (await getCountryCode(request, regionMap, countryCodePathnameIndex))
 
-  const urlHasCountryCode = countryCode && request.nextUrl.pathname.split("/")[countryCodePathnameIndex] == countryCode
+  const urlHasCountryCode = countryCode && request.nextUrl.pathname.split("/")[countryCodePathnameIndex] === countryCode
+  const queryString = request.nextUrl.search ? request.nextUrl.search : ""
+
+  // If we have unknown locale, redirect to fallback language
+  if (urlHasUnknownLocale) {
+    const remainingPath = pathnameArr.slice(1).join("/")
+    const redirectUrl = `${request.nextUrl.origin}/${fallbackLng}/${remainingPath}${queryString}`
+    const response = NextResponse.redirect(redirectUrl, 307)
+    
+    // Add security headers
+    const headers = createSecurityHeaders()
+    Object.entries(headers).forEach(([key, value]) => {
+      response.headers.set(key, value)
+    })
+    
+    return response
+  }
 
   // If country code is in URL and cache ID is set, continue with intl middleware
-  if (!urlHasUnknownLocale && urlHasCountryCode && cacheIdCookie) {
+  if (urlHasCountryCode && cacheIdCookie) {
     return intlMiddleware(request)
   }
 
   // Set cache ID if country code is in URL but cache ID is not set
   if (urlHasCountryCode && !cacheIdCookie) {
+    const response = NextResponse.next()
     response.cookies.set("_medusa_cache_id", cacheId, {
       maxAge: 60 * 60 * 24,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
     })
+    
+    // Add security headers
+    const headers = createSecurityHeaders()
+    Object.entries(headers).forEach(([key, value]) => {
+      response.headers.set(key, value)
+    })
+    
     return response
   }
 
   // Redirect to relevant region if no country code is set
   if (!urlHasCountryCode && countryCode) {
-    redirectUrl = `${request.nextUrl.origin}/${
-      urlHasKnownLocale ? pathnameArr[1] + "/" : ""
-    }${countryCode}/${redirectPath}${queryString}`
-    response = NextResponse.redirect(`${redirectUrl}`, 307)
-  }
+    const locale = urlHasKnownLocale ? pathnameArr[1] : fallbackLng
+    const pathAfterLocale = urlHasKnownLocale ? pathnameArr.slice(2).join("/") : pathnameArr.slice(1).join("/")
+    const redirectUrl = `${request.nextUrl.origin}/${locale}/${countryCode}/${pathAfterLocale}${queryString}`
+    const response = NextResponse.redirect(redirectUrl, 307)
 
-  // Add security headers to all page responses
+    // Add security headers
   const headers = createSecurityHeaders()
   Object.entries(headers).forEach(([key, value]) => {
     response.headers.set(key, value)
   })
 
   return response
+  }
+
+  // Default case - just continue with intl middleware
+  return intlMiddleware(request)
 }
 
 export const config = {

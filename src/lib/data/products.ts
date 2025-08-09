@@ -7,6 +7,22 @@ import { SortOptions } from "@modules/store/components/refinement-list/sort-prod
 import { getAuthHeaders, getCacheOptions } from "./cookies"
 import { getRegion, retrieveRegion } from "./regions"
 
+// Custom filter parameters interface
+interface ProductFilters {
+  inStock?: string
+  onSale?: string
+  price?: string
+  q?: string
+  handle?: string
+  // Collection and type filters
+  collection_id?: string[] | string
+  type_id?: string[]
+  // Variant-based filters
+  colors?: string[]
+  materials?: string[]
+  sizes?: string[]
+}
+
 export const listProducts = async ({
   pageParam = 1,
   queryParams,
@@ -14,75 +30,152 @@ export const listProducts = async ({
   regionId,
 }: {
   pageParam?: number
-  queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams
+  queryParams?: (HttpTypes.FindParams & HttpTypes.StoreProductParams) & ProductFilters
   countryCode?: string
   regionId?: string
 }): Promise<{
   response: { products: HttpTypes.StoreProduct[]; count: number }
   nextPage: number | null
-  queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams
+  queryParams?: (HttpTypes.FindParams & HttpTypes.StoreProductParams) & ProductFilters
 }> => {
-  if (!countryCode && !regionId) {
-    throw new Error("Country code or region ID is required")
-  }
+  try {
+    const region = regionId ? await retrieveRegion(regionId) : await getRegion(countryCode!)
 
-  const limit = queryParams?.limit || 12
-  const _pageParam = Math.max(pageParam, 1)
-  const offset = (_pageParam === 1) ? 0 : (_pageParam - 1) * limit;
+    if (!region) {
+      throw new Error("Region not found")
+    }
 
-  let region: HttpTypes.StoreRegion | undefined | null
+    const headers = await getAuthHeaders()
+    const next = await getCacheOptions("products")
 
-  if (countryCode) {
-    region = await getRegion(countryCode)
-  } else {
-    region = await retrieveRegion(regionId!)
-  }
+    // Separate API-supported parameters from client-side filters
+    const { inStock, onSale, price, colors, materials, sizes, ...apiParams } = queryParams || {}
+    
+    // Build API query with only supported parameters
+    const limit = Math.min(Math.max(apiParams.limit || 12, 1), 100)
+    const offset = Math.max((pageParam - 1) * limit, 0)
 
-  if (!region) {
+    const baseQuery: HttpTypes.FindParams & HttpTypes.StoreProductParams = {
+      limit,
+      offset,
+      region_id: region.id,
+      ...apiParams,
+    }
+
+    // Execute API request with only supported parameters
+    const response = await sdk.client.fetch<{ products: HttpTypes.StoreProduct[]; count: number }>(`/store/products`, {
+      method: "GET",
+      query: baseQuery,
+      headers,
+      next,
+      cache: "no-store",
+    })
+
+    if (!response || !response.products) {
+      return {
+        response: { products: [], count: 0 },
+        nextPage: null,
+        queryParams: baseQuery,
+      }
+    }
+
+    let { products, count } = response
+
+    // Apply client-side filtering for unsupported API parameters
+    if (inStock || onSale || price || colors?.length || materials?.length || sizes?.length) {
+      products = products.filter(product => {
+        // Stock filtering
+        if (inStock === 'true') {
+          const hasAvailableVariants = product.variants?.some(variant => {
+            if (!variant.manage_inventory) return true // Not managing inventory = always available
+            if (variant.allow_backorder) return true // Backorder allowed = always available
+            return (variant.inventory_quantity || 0) > 0 // Has stock
+          })
+          if (!hasAvailableVariants) return false
+    }
+
+        // Sale filtering (you can implement this based on your pricing logic)
+        if (onSale === 'true') {
+          // This is a placeholder - implement based on your sale/discount logic
+        }
+
+        // Price filtering
+        if (price && price !== '') {
+          const productPrice = product.variants?.[0]?.calculated_price?.calculated_amount
+          if (productPrice) {
+            const priceNum = productPrice / 100 // Convert from cents
+            switch (price) {
+              case '0-50':
+                if (priceNum >= 50) return false
+                break
+              case '50-100':
+                if (priceNum < 50 || priceNum >= 100) return false
+                break
+              case '100-200':
+                if (priceNum < 100 || priceNum >= 200) return false
+                break
+              case '200+':
+                if (priceNum < 200) return false
+                break
+            }
+          }
+        }
+
+        // Color filtering
+        if (colors && colors.length > 0) {
+          const hasMatchingColor = product.variants?.some(variant =>
+            variant.options?.some(option =>
+              option.option?.title?.toLowerCase() === 'color' &&
+              colors.includes(option.value)
+            )
+          )
+          if (!hasMatchingColor) return false
+        }
+
+        // Material filtering
+        if (materials && materials.length > 0) {
+          const hasMatchingMaterial = product.variants?.some(variant =>
+            variant.options?.some(option =>
+              option.option?.title?.toLowerCase() === 'material' &&
+              materials.includes(option.value)
+            )
+          )
+          if (!hasMatchingMaterial) return false
+        }
+
+        // Size filtering
+        if (sizes && sizes.length > 0) {
+          const hasMatchingSize = product.variants?.some(variant =>
+            variant.options?.some(option =>
+              option.option?.title?.toLowerCase() === 'size' &&
+              sizes.includes(option.value)
+            )
+          )
+          if (!hasMatchingSize) return false
+        }
+
+        return true
+      })
+
+      // Update count to reflect filtered results
+      count = products.length
+    }
+
+    const nextPage = count > offset + limit ? pageParam + 1 : null
+
+    return {
+      response: { products, count },
+      nextPage,
+      queryParams: queryParams,
+    }
+  } catch (error) {
+    console.error("Error fetching products:", error)
     return {
       response: { products: [], count: 0 },
       nextPage: null,
+      queryParams: queryParams,
     }
   }
-
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
-
-  const next = {
-    ...(await getCacheOptions("products")),
-  }
-
-  return sdk.client
-    .fetch<{ products: HttpTypes.StoreProduct[]; count: number }>(
-      `/store/products`,
-      {
-        method: "GET",
-        query: {
-          limit,
-          offset,
-          region_id: region?.id,
-          fields:
-            "*variants.calculated_price,+variants.inventory_quantity,+metadata,+tags",
-          ...queryParams,
-        },
-        headers,
-        next,
-        cache: "no-store",
-      }
-    )
-    .then(({ products, count }) => {
-      const nextPage = count > offset + limit ? pageParam + 1 : null
-
-      return {
-        response: {
-          products,
-          count,
-        },
-        nextPage: nextPage,
-        queryParams,
-      }
-    })
 }
 
 /**
@@ -96,41 +189,212 @@ export const listProductsWithSort = async ({
   countryCode,
 }: {
   page?: number
-  queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams
+  queryParams?: (HttpTypes.FindParams & HttpTypes.StoreProductParams) & ProductFilters
   sortBy?: SortOptions
   countryCode: string
 }): Promise<{
   response: { products: HttpTypes.StoreProduct[]; count: number }
   nextPage: number | null
-  queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams
+  queryParams?: (HttpTypes.FindParams & HttpTypes.StoreProductParams) & ProductFilters
 }> => {
   const limit = queryParams?.limit || 12
 
+  // Separate API-supported parameters from client-side filters
+  const { inStock, onSale, price, colors, materials, sizes, ...apiParams } = queryParams || {}
+
+  // Fetch products with a larger limit for sorting, using only API-supported parameters
   const {
-    response: { products, count },
+    response: { products },
   } = await listProducts({
-    pageParam: 0,
-    queryParams: {
-      ...queryParams,
-      limit: 100,
-    },
-    countryCode,
+      pageParam: 1,
+      queryParams: {
+      ...apiParams,
+      limit: 100, // Fetch more for sorting
+      },
+      countryCode,
   })
 
-  const sortedProducts = sortProducts(products, sortBy)
+  // Apply client-side filtering
+  let filteredProducts = products
+  if (inStock || onSale || price || colors?.length || materials?.length || sizes?.length) {
+    filteredProducts = products.filter(product => {
+      // Stock filtering
+      if (inStock === 'true') {
+        const hasAvailableVariants = product.variants?.some(variant => {
+          if (!variant.manage_inventory) return true
+          if (variant.allow_backorder) return true
+          return (variant.inventory_quantity || 0) > 0
+        })
+        if (!hasAvailableVariants) return false
+      }
 
-  const pageParam = (page - 1) * limit
+      // Sale filtering (placeholder)
+      if (onSale === 'true') {
+        // Implement based on your sale/discount logic
+      }
 
-  const nextPage = count > pageParam + limit ? pageParam + limit : null
+      // Price filtering
+      if (price && price !== '') {
+        const productPrice = product.variants?.[0]?.calculated_price?.calculated_amount
+        if (productPrice) {
+          const priceNum = productPrice / 100
+          switch (price) {
+            case '0-50':
+              if (priceNum >= 50) return false
+              break
+            case '50-100':
+              if (priceNum < 50 || priceNum >= 100) return false
+              break
+            case '100-200':
+              if (priceNum < 100 || priceNum >= 200) return false
+              break
+            case '200+':
+              if (priceNum < 200) return false
+              break
+          }
+        }
+      }
 
-  const paginatedProducts = sortedProducts.slice(pageParam, pageParam + limit)
+      // Color filtering
+      if (colors && colors.length > 0) {
+        const hasMatchingColor = product.variants?.some(variant =>
+          variant.options?.some(option =>
+            option.option?.title?.toLowerCase() === 'color' &&
+            colors.includes(option.value)
+          )
+        )
+        if (!hasMatchingColor) return false
+      }
 
-  return {
-    response: {
-      products: paginatedProducts,
-      count,
-    },
-    nextPage,
+      // Material filtering
+      if (materials && materials.length > 0) {
+        const hasMatchingMaterial = product.variants?.some(variant =>
+          variant.options?.some(option =>
+            option.option?.title?.toLowerCase() === 'material' &&
+            materials.includes(option.value)
+          )
+        )
+        if (!hasMatchingMaterial) return false
+      }
+
+      // Size filtering
+      if (sizes && sizes.length > 0) {
+        const hasMatchingSize = product.variants?.some(variant =>
+          variant.options?.some(option =>
+            option.option?.title?.toLowerCase() === 'size' &&
+            sizes.includes(option.value)
+          )
+        )
+        if (!hasMatchingSize) return false
+      }
+
+      return true
+    })
+  }
+
+  const sortedProducts = sortProducts(filteredProducts, sortBy)
+
+  const count = sortedProducts.length
+  const offset = (page - 1) * limit  // Convert 1-based page to 0-based offset
+  const paginatedProducts = sortedProducts.slice(offset, offset + limit)
+  const nextPage = count > offset + limit ? page + 1 : null
+
+    return {
+      response: {
+        products: paginatedProducts,
+        count,
+      },
+      nextPage,
     queryParams,
+  }
+}
+
+/**
+ * Extract all available filter options from products and their variants
+ */
+export const getProductFilterOptions = async (countryCode: string) => {
+  try {
+    // Fetch all products to analyze available options
+    const { response } = await listProducts({
+      pageParam: 1,
+      queryParams: { limit: 100 },
+      countryCode,
+    })
+
+    const { products } = response
+
+    // Extract unique filter options
+    const collectionsMap = new Map<string, {id: string, title: string, handle: string}>()
+    const typesMap = new Map<string, {id: string, value: string}>()
+    const colors = new Set<string>()
+    const materials = new Set<string>()
+    const sizes = new Set<string>()
+    const priceRanges = new Set<number>()
+
+    products.forEach(product => {
+      // Collections
+      if (product.collection) {
+        collectionsMap.set(product.collection.id, {
+          id: product.collection.id,
+          title: product.collection.title,
+          handle: product.collection.handle
+          })
+        }
+
+      // Product types
+      if (product.type) {
+        typesMap.set(product.type.id, {
+          id: product.type.id,
+          value: product.type.value
+        })
+      }
+      
+      // Variant options (colors, materials, sizes, etc.)
+      product.variants?.forEach(variant => {
+        // Add price for price range calculation
+        if (variant.calculated_price?.calculated_amount) {
+          priceRanges.add(variant.calculated_price.calculated_amount / 100)
+            }
+        
+        variant.options?.forEach(option => {
+          const optionTitle = option.option?.title?.toLowerCase()
+          const optionValue = option.value
+          
+          if (optionTitle === 'color') {
+            colors.add(optionValue)
+          } else if (optionTitle === 'material') {
+            materials.add(optionValue)
+          } else if (optionTitle === 'size') {
+            sizes.add(optionValue)
+          }
+          })
+      })
+    })
+    
+    // Calculate price ranges based on actual prices
+    const priceArray = Array.from(priceRanges).sort((a, b) => a - b)
+    const minPrice = priceArray[0] || 0
+    const maxPrice = priceArray[priceArray.length - 1] || 1000
+
+    return {
+      collections: Array.from(collectionsMap.values()),
+      types: Array.from(typesMap.values()),
+      colors: Array.from(colors).sort(),
+      materials: Array.from(materials).sort(),
+      sizes: Array.from(sizes).sort(),
+      priceRange: { min: minPrice, max: maxPrice },
+      totalProducts: products.length
+    }
+  } catch (error) {
+    console.error("Error fetching filter options:", error)
+    return {
+      collections: [],
+      types: [],
+      colors: [],
+      materials: [],
+      sizes: [],
+      priceRange: { min: 0, max: 1000 },
+      totalProducts: 0
+    }
   }
 }

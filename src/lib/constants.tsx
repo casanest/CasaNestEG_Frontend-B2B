@@ -99,6 +99,12 @@ const FawryIcon = () => (
   </div>
 )
 
+// Tap Icon Component
+const TapIcon = () => (
+  <div className="w-6 h-6 bg-gradient-to-r from-green-500 to-blue-500 rounded flex items-center justify-center">
+    <span className="text-white text-xs font-bold">T</span>
+  </div>
+)
 
 
 export const paymentInfoMap: Record<string, { title: string; icon: React.JSX.Element }> = {
@@ -142,5 +148,9 @@ export const paymentInfoMap: Record<string, { title: string; icon: React.JSX.Ele
   fawry: {
     title: "Fawry",
     icon: <FawryIcon />,
+  },
+  tap: {
+    title: "Tap",
+    icon: <TapIcon />,
   },
 }
