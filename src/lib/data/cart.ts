@@ -435,14 +435,51 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
         province: formData.get("billing_address.province"),
         phone: formData.get("billing_address.phone"),
       }
+    
     await updateCart(data)
+
+    // After setting addresses, automatically set a default shipping method
+    try {
+      // Get available shipping methods
+      const response = await fetch(`${process.env.MEDUSA_BACKEND_URL || "http://localhost:9000"}/store/shipping-options?cart_id=${cartId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (response.ok) {
+        const { shipping_options } = await response.json()
+        
+        // Find the first standard shipping method (non-pickup)
+        const standardShipping = shipping_options?.find((option: any) => 
+          option.service_zone?.fulfillment_set?.type !== "pickup"
+        )
+
+        if (standardShipping) {
+          // Set the shipping method automatically
+          await setShippingMethod({ 
+            cartId: cartId, 
+            shippingMethodId: standardShipping.id 
+          })
+        }
+      }
+    } catch (shippingError) {
+      console.warn("Could not automatically set shipping method:", shippingError)
+      // Continue anyway, user can set it manually if needed
+    }
+
   } catch (e: any) {
     return e.message
   }
 
-  redirect(
-    `/${formData.get("shipping_address.country_code")}/checkout?step=delivery`
-  )
+  // Redirect to payment step instead of delivery
+  const countryCode = formData.get("shipping_address.country_code")
+  if (countryCode) {
+    redirect(`/${countryCode}/checkout?step=payment`)
+  } else {
+    redirect("/checkout?step=payment")
+  }
 }
 
 /**

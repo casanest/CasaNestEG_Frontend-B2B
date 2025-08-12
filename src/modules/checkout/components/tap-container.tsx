@@ -1,19 +1,16 @@
 "use client"
 
 import type React from "react"
-import { RadioGroup } from "@headlessui/react"
-import { Text, clx } from "@medusajs/ui"
+import { Text, Button } from "@medusajs/ui"
 import { useState, useEffect, useRef, useCallback } from "react"
-import { CreditCard, Shield, Lock, CheckCircle, AlertCircle, ExternalLink } from "lucide-react"
+import { CreditCard, Shield, Lock, CheckCircle, AlertCircle, ExternalLink, Loader2 } from "lucide-react"
+import { useLocale } from "next-intl"
 
 interface TapContainerProps {
-  paymentProviderId: string
-  selectedPaymentOptionId: string
-  paymentInfoMap: any
-  setError: (error: string | null) => void
-  setPaymentComplete: (complete: boolean) => void
   cart: any
-  locale: string
+  onPaymentComplete: () => void
+  onPaymentFailure: (errorMessage: string) => void
+  onError: (error: string | null) => void
 }
 
 type PaymentStatus =
@@ -25,14 +22,13 @@ type PaymentStatus =
   | "failed"
 
 export const TapContainer = ({
-  paymentProviderId,
-  selectedPaymentOptionId,
-  paymentInfoMap,
-  setError,
-  setPaymentComplete,
   cart,
-  locale,
+  onPaymentComplete,
+  onPaymentFailure,
+  onError,
 }: TapContainerProps) => {
+  const locale = useLocale()
+  
   // State Management
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>("idle")
   const [paymentUrl, setPaymentUrl] = useState<string>("")
@@ -42,10 +38,6 @@ export const TapContainer = ({
   // Refs for cleanup
   const isComponentMounted = useRef(true)
 
-  // Computed values
-  const isSelected = selectedPaymentOptionId === paymentProviderId
-  const isRTL = locale === "ar"
-
   // Enhanced payment initialization
   const initializePayment = useCallback(
     async () => {
@@ -54,7 +46,7 @@ export const TapContainer = ({
       try {
         setIsProcessing(true)
         setPaymentStatus("initializing")
-        setError(null)
+        onError(null)
 
         // Validate cart data
         if (!cart?.id) {
@@ -105,109 +97,60 @@ export const TapContainer = ({
           throw new Error(data.error || data.message || `Request failed with status ${response.status}`)
         }
 
-        if (data.success && data.payment_url && data.charge_id) {
+        if (data.success && data.payment_url) {
           setPaymentUrl(data.payment_url)
-          setChargeId(data.charge_id)
+          setChargeId(data.charge_id || "")
           setPaymentStatus("redirecting")
           
-          // Redirect to Tap payment page in same window
+          // Redirect to Tap payment page
           window.location.href = data.payment_url
         } else {
-          throw new Error(data.error || "Failed to initialize payment")
+          throw new Error(data.error || "Failed to get payment URL")
         }
       } catch (error: any) {
-        setError(error.message || (locale === "ar" ? "فشل في بدء الدفع" : "Payment initialization failed"))
+        console.error("Payment initialization error:", error)
         setPaymentStatus("failed")
+        onError(error.message || "Failed to initialize payment")
+        onPaymentFailure(error.message || "Payment initialization failed")
       } finally {
         setIsProcessing(false)
       }
     },
-    [cart, locale, setError, isProcessing],
+    [cart, onError, onPaymentFailure]
   )
 
-  // Poll payment status (simplified version)
-  const pollPaymentStatus = useCallback(
-    async (charge_id: string) => {
-      let attempts = 0
-      const maxAttempts = 30 // Poll for 5 minutes (30 * 10 seconds)
-
-      const poll = async () => {
-        if (!isComponentMounted.current || attempts >= maxAttempts) {
-          if (attempts >= maxAttempts) {
-            setError(locale === "ar" ? "انتهت مهلة معالجة الدفع" : "Payment processing timeout")
-            setPaymentStatus("failed")
-          }
-          return
-        }
-
-        try {
-          // In a real implementation, you would poll your backend for the payment status
-          // For now, we'll simulate the polling
-          setPaymentStatus("processing")
-          
-          // TODO: Replace with actual status check
-          // const statusResponse = await fetch(`/api/store/tap/status/${charge_id}`)
-          // const statusData = await statusResponse.json()
-          
-          attempts++
-          setTimeout(poll, 10000) // Poll every 10 seconds
-        } catch (error) {
-          console.error("Error polling payment status:", error)
-          setTimeout(poll, 10000)
-        }
-      }
-
-      poll()
-    },
-    [locale, setError],
-  )
-
-  // Handle payment completion (would be called from webhook or status check)
-  const handlePaymentSuccess = useCallback(() => {
-    if (!isComponentMounted.current) return
-    
-    setPaymentStatus("success")
-    setPaymentComplete(true)
-    setError(null)
-  }, [setPaymentComplete, setError])
-
-  // Cleanup on unmount or when not selected
-  useEffect(() => {
-    if (!isSelected && isComponentMounted.current) {
-      setPaymentStatus("idle")
-      setPaymentUrl("")
-      setChargeId("")
-      setError(null)
-    }
-  }, [isSelected, setError])
-
-  // Component unmount cleanup
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
       isComponentMounted.current = false
     }
   }, [])
 
-  // Status and UI helpers
   const getStatusIcon = () => {
     switch (paymentStatus) {
-      case "success":
-        return <CheckCircle className="w-5 h-5 text-green-500" />
-      case "failed":
-        return <AlertCircle className="w-5 h-5 text-red-500" />
+      case "idle":
+        return <CreditCard className="w-6 h-6 text-gray-400" />
       case "initializing":
+        return <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
       case "redirecting":
+        return <ExternalLink className="w-6 h-6 text-blue-600" />
       case "processing":
-        return <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+        return <Loader2 className="w-6 h-6 text-yellow-600 animate-spin" />
+      case "success":
+        return <CheckCircle className="w-6 h-6 text-green-600" />
+      case "failed":
+        return <AlertCircle className="w-6 h-6 text-red-600" />
       default:
-        return <Shield className="w-5 h-5 text-blue-500" />
+        return <CreditCard className="w-6 h-6 text-gray-400" />
     }
   }
 
   const getStatusMessage = () => {
     switch (paymentStatus) {
+      case "idle":
+        return locale === "ar" ? "جاهز للدفع" : "Ready to pay"
       case "initializing":
-        return locale === "ar" ? "جاري التهيئة..." : "Initializing..."
+        return locale === "ar" ? "جاري تهيئة الدفع..." : "Initializing payment..."
       case "redirecting":
         return locale === "ar" ? "جاري التوجيه إلى صفحة الدفع..." : "Redirecting to payment page..."
       case "processing":
@@ -217,192 +160,110 @@ export const TapContainer = ({
       case "failed":
         return locale === "ar" ? "فشل في الدفع" : "Payment failed"
       default:
-        return locale === "ar" ? "آمن ومحمي" : "Secure & Protected"
+        return locale === "ar" ? "جاهز للدفع" : "Ready to pay"
     }
   }
 
-  // Render component
+  const getButtonText = () => {
+    switch (paymentStatus) {
+      case "idle":
+        return locale === "ar" ? "ادفع الآن" : "Pay Now"
+      case "initializing":
+        return locale === "ar" ? "جاري التهيئة..." : "Initializing..."
+      case "redirecting":
+        return locale === "ar" ? "جاري التوجيه..." : "Redirecting..."
+      case "processing":
+        return locale === "ar" ? "جاري المعالجة..." : "Processing..."
+      case "success":
+        return locale === "ar" ? "تم الدفع" : "Paid"
+      case "failed":
+        return locale === "ar" ? "حاول مرة أخرى" : "Try Again"
+      default:
+        return locale === "ar" ? "ادفع الآن" : "Pay Now"
+    }
+  }
+
+  const isButtonDisabled = () => {
+    return isProcessing || paymentStatus === "redirecting" || paymentStatus === "processing"
+  }
+
   return (
-    <div
-      className={clx("flex flex-col gap-y-4 border-b border-gray-200 last:border-b-0", {
-        "pb-8": isSelected,
-        "pb-4": !isSelected,
-      })}
-    >
-      <RadioGroup.Option
-        value={paymentProviderId}
-        className={clx(
-          "flex items-center justify-between w-full p-4 border border-gray-200 rounded-lg cursor-pointer transition-all",
-          {
-            "border-[#043364] bg-blue-50": isSelected,
-            "hover:border-gray-300": !isSelected,
-          },
-        )}
-      >
-        <div className="flex items-center gap-x-4">
-          <RadioGroup.Label className="flex items-center gap-x-3 cursor-pointer">
-            <div
-              className={clx("w-4 h-4 rounded-full border-2 flex items-center justify-center", {
-                "border-[#043364]": isSelected,
-                "border-gray-300": !isSelected,
-              })}
-            >
-              {isSelected && <div className="w-2 h-2 rounded-full bg-[#043364]" />}
-            </div>
-            <div className="flex items-center gap-x-2">
-              {paymentInfoMap[paymentProviderId]?.icon}
-              <Text className="text-base-regular">{paymentInfoMap[paymentProviderId]?.title || "Tap Payments"}</Text>
-            </div>
-          </RadioGroup.Label>
-        </div>
-        <div className="flex items-center gap-2">
+    <div className="w-full">
+      {/* Payment Status Display */}
+      <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+        <div className="flex items-center gap-3">
           {getStatusIcon()}
-          <Text className="text-sm text-gray-600">{getStatusMessage()}</Text>
-        </div>
-      </RadioGroup.Option>
-
-      {isSelected && (
-        <div className="px-4 pb-4">
-          <div className="space-y-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Lock className="w-4 h-4 text-green-600" />
-              <Text className="text-sm text-green-700">
-                {locale === "ar" ? "محمي بتشفير SSL وPCI DSS" : "Protected by SSL encryption & PCI DSS"}
-              </Text>
-            </div>
-
-            <div className="border rounded-lg p-4 bg-blue-50 border-blue-200">
-              <div className="flex items-start gap-3">
-                <CreditCard className="w-5 h-5 text-blue-600 mt-1" />
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Text className="font-medium text-blue-900">
-                      {locale === "ar" ? "دفع آمن بواسطة Tap" : "Secure Payment by Tap"}
-                    </Text>
-                  </div>
-                  <Text className="text-sm text-blue-800 mb-3">
-                    {locale === "ar" 
-                      ? "ادفع بأمان باستخدام بطاقتك الائتمانية أو بطاقة الخصم" 
-                      : "Pay securely with your credit or debit card"}
-                  </Text>
-                  <div className="space-y-1 mb-3">
-                    <Text className="text-xs text-blue-700 flex items-center gap-1">
-                      <span className="w-1 h-1 bg-green-500 rounded-full"></span>
-                      {locale === "ar" ? "حماية ثلاثية الأبعاد" : "3D Secure protection"}
-                    </Text>
-                    <Text className="text-xs text-blue-700 flex items-center gap-1">
-                      <span className="w-1 h-1 bg-green-500 rounded-full"></span>
-                      {locale === "ar" ? "تشفير SSL" : "SSL encryption"}
-                    </Text>
-                    <Text className="text-xs text-blue-700 flex items-center gap-1">
-                      <span className="w-1 h-1 bg-green-500 rounded-full"></span>
-                      {locale === "ar" ? "جميع البطاقات مقبولة" : "All major cards accepted"}
-                    </Text>
-                  </div>
-                  <div className="flex items-center gap-1 text-xs text-green-600">
-                    <Shield className="w-3 h-3" />
-                    {locale === "ar" ? "بياناتك محمية بأعلى معايير الأمان" : "Your data is protected with highest security standards"}
-                  </div>
-                </div>
-              </div>
-            </div>
-
+          <div>
+            <Text className="txt-compact-medium text-ui-fg-base font-medium">
+              {getStatusMessage()}
+            </Text>
             {paymentStatus === "idle" && (
-              <button
-                onClick={initializePayment}
-                disabled={isProcessing}
-                className="w-full bg-[#043364] text-white py-3 px-4 rounded-md hover:bg-blue-900 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors"
-              >
-                {isProcessing && (
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                )}
-                <CreditCard className="w-4 h-4" />
-                {isProcessing
-                  ? locale === "ar"
-                    ? "جاري التحضير..."
-                    : "Preparing..."
-                  : locale === "ar"
-                    ? "الدفع بواسطة Tap"
-                    : "Pay with Tap"}
-              </button>
+              <Text className="txt-compact-small text-ui-fg-subtle">
+                {locale === "ar" 
+                  ? "اضغط على زر الدفع للمتابعة"
+                  : "Click the pay button to continue"
+                }
+              </Text>
             )}
-
-            {paymentStatus === "redirecting" && (
-              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <ExternalLink className="w-4 h-4 text-yellow-600" />
-                  <Text className="text-sm text-yellow-800 font-medium">
-                    {locale === "ar" ? "تم فتح صفحة الدفع" : "Payment page opened"}
-                  </Text>
-                </div>
-                <Text className="text-xs text-yellow-700 mb-3">
-                  {locale === "ar" 
-                    ? "يرجى إكمال عملية الدفع في النافذة الجديدة" 
-                    : "Please complete your payment in the new window"}
-                </Text>
-                {paymentUrl && (
-                  <button
-                    onClick={() => window.open(paymentUrl, "_blank")}
-                    className="text-xs text-blue-600 hover:text-blue-800 underline flex items-center gap-1"
-                  >
-                    <ExternalLink className="w-3 h-3" />
-                    {locale === "ar" ? "إعادة فتح صفحة الدفع" : "Reopen payment page"}
-                  </button>
-                )}
-              </div>
-            )}
-
-            {paymentStatus === "processing" && (
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                  <Text className="text-sm text-blue-800 font-medium">
-                    {locale === "ar" ? "جاري معالجة الدفع" : "Processing Payment"}
-                  </Text>
-                </div>
-                <Text className="text-xs text-blue-700">
-                  {locale === "ar" 
-                    ? "يرجى الانتظار، سنقوم بتأكيد عملية الدفع قريباً" 
-                    : "Please wait, we'll confirm your payment shortly"}
-                </Text>
-              </div>
-            )}
-
-            {paymentStatus === "success" && (
-              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <Text className="text-sm text-green-800 font-medium">
-                    {locale === "ar" ? "تم الدفع بنجاح!" : "Payment Successful!"}
-                  </Text>
-                </div>
-                <Text className="text-xs text-green-700">
-                  {locale === "ar" 
-                    ? "تم تأكيد عملية الدفع بنجاح" 
-                    : "Your payment has been confirmed"}
-                </Text>
-                {chargeId && (
-                  <Text className="text-xs text-green-600 mt-1">
-                    {locale === "ar" ? "رقم المعاملة:" : "Transaction ID:"} {chargeId}
-                  </Text>
-                )}
-              </div>
-            )}
-
-            <div className="flex items-start gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
-              <Shield className="w-4 h-4 text-green-600 mt-0.5" />
-              <div>
-                <Text className="text-sm text-green-800 font-medium">
-                  {locale === "ar" ? "دفع آمن" : "Secure Payment"}
-                </Text>
-                <Text className="text-xs text-green-700">
-                  {locale === "ar"
-                    ? "بياناتك محمية بتشفير SSL ومعايير PCI DSS. لن نحتفظ ببيانات بطاقتك."
-                    : "Your data is protected by SSL encryption and PCI DSS standards. We don't store your card details."}
-                </Text>
-              </div>
-            </div>
           </div>
+        </div>
+      </div>
+
+      {/* Security Features */}
+      <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
+        <div className="flex items-center gap-2 mb-3">
+          <Shield className="w-5 h-5 text-green-600" />
+          <Text className="txt-compact-medium text-green-800 font-medium">
+            {locale === "ar" ? "دفع آمن" : "Secure Payment"}
+          </Text>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="flex items-center gap-2">
+            <Lock className="w-4 h-4 text-green-600" />
+            <Text className="txt-compact-small text-green-700">
+              {locale === "ar" ? "تشفير SSL" : "SSL Encryption"}
+            </Text>
+          </div>
+          <div className="flex items-center gap-2">
+            <CheckCircle className="w-4 h-4 text-green-600" />
+            <Text className="txt-compact-small text-green-700">
+              {locale === "ar" ? "حماية ثلاثية الأبعاد" : "3D Secure"}
+            </Text>
+          </div>
+        </div>
+      </div>
+
+      {/* Payment Button */}
+      <div className="text-center">
+        <Button
+          size="large"
+          className="w-full bg-[#043364] hover:bg-blue-900 text-white"
+          onClick={initializePayment}
+          disabled={isButtonDisabled()}
+          isLoading={isProcessing}
+        >
+          {getButtonText()}
+        </Button>
+        
+        {paymentStatus === "idle" && (
+          <Text className="txt-compact-small text-ui-fg-subtle mt-3">
+            {locale === "ar" 
+              ? "سيتم توجيهك إلى صفحة دفع آمنة"
+              : "You will be redirected to a secure payment page"
+            }
+          </Text>
+        )}
+      </div>
+
+      {/* Error Display */}
+      {paymentStatus === "failed" && (
+        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <Text className="txt-compact-small text-red-600 text-center">
+            {locale === "ar" 
+              ? "حدث خطأ أثناء تهيئة الدفع. يرجى المحاولة مرة أخرى."
+              : "An error occurred while initializing payment. Please try again."
+            }
+          </Text>
         </div>
       )}
     </div>

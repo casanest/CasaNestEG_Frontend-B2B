@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from "next/server"
 
 interface CompletePaymentRequest {
   cart_id: string
@@ -34,9 +34,34 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Step 1: Check if an order already exists for this cart
+    // Step 1: Check payment status from backend webhook cache
+    console.log(`[Tap Complete] Checking payment status from webhook for cart: ${cart_id}`)
+    
+    let paymentStatus = null
+    try {
+      const statusResponse = await fetch(`${backendUrl}/store/tap/status?cart_id=${cart_id}`, {
+        method: "GET",
+        headers: {
+          "x-publishable-api-key": publishableKey,
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (statusResponse.ok) {
+        const statusResult = await statusResponse.json()
+        paymentStatus = statusResult
+        console.log(`[Tap Complete] Payment status: ${statusResult.payment_status}, successful: ${statusResult.is_successful}`)
+      } else {
+        console.warn(`[Tap Complete] Could not get payment status: ${statusResponse.status}`)
+      }
+    } catch (statusError: any) {
+      console.warn(`[Tap Complete] Could not check payment status: ${statusError.message}`)
+    }
+
+    // Step 2: Check if an order already exists for this cart
     console.log(`[Tap Complete] Checking for existing order for cart: ${cart_id}`)
     
+    let existingOrder = null
     try {
       const ordersResponse = await fetch(`${backendUrl}/store/orders?cart_id=${cart_id}`, {
         method: "GET",
@@ -49,24 +74,17 @@ export async function POST(request: NextRequest) {
       if (ordersResponse.ok) {
         const ordersResult = await ordersResponse.json()
         if (ordersResult.orders && ordersResult.orders.length > 0) {
-          const existingOrder = ordersResult.orders[0]
+          existingOrder = ordersResult.orders[0]
           console.log(`[Tap Complete] Found existing order: ${existingOrder.id}`)
-          
-          return NextResponse.json({
-            success: true,
-            order: existingOrder,
-            payment_status: "COMPLETED",
-            tap_id: tap_id,
-            message: "Order already exists",
-          })
         }
       }
     } catch (orderCheckError: any) {
       console.warn(`[Tap Complete] Could not check for existing orders: ${orderCheckError.message}`)
     }
 
-    // Step 2: Try to complete the cart to create an order
-    console.log(`[Tap Complete] Attempting to complete cart: ${cart_id}`)
+    // Step 3: If payment is successful and no order exists, try to complete the cart
+    if (paymentStatus?.is_successful && !existingOrder) {
+      console.log(`[Tap Complete] Payment successful, attempting to complete cart: ${cart_id}`)
     
     try {
       const orderResponse = await fetch(`${backendUrl}/store/carts/${cart_id}/complete`, {
@@ -80,20 +98,68 @@ export async function POST(request: NextRequest) {
       if (orderResponse.ok) {
         const orderResult = await orderResponse.json()
         console.log(`[Tap Complete] Order completed successfully: id=${orderResult.order?.id}`)
-
-        return NextResponse.json({
-          success: true,
-          order: orderResult.order,
-          payment_status: "COMPLETED",
-          tap_id: tap_id,
-          message: "Order completed successfully",
-        })
+          existingOrder = orderResult.order
       } else {
         const orderError = await orderResponse.text()
         console.error(`[Tap Complete] Failed to complete order: ${orderResponse.status}`)
         console.error(`[Tap Complete] Order error details: ${orderError}`)
-        
-        // If we can't complete the order, try to get cart details to show something useful
+        }
+      } catch (completeError: any) {
+        console.error(`[Tap Complete] Error completing cart: ${completeError.message}`)
+      }
+    }
+
+    // Step 4: Return appropriate response based on what we found
+    if (existingOrder) {
+      console.log(`[Tap Complete] Returning existing/completed order: ${existingOrder.id}`)
+      
+      return NextResponse.json({
+        success: true,
+        order: existingOrder,
+        payment_status: paymentStatus?.payment_status || "COMPLETED",
+        tap_id: tap_id,
+        message: existingOrder.status === "completed" ? "Order completed successfully" : "Order already exists",
+        payment_details: paymentStatus ? {
+          status: paymentStatus.payment_status,
+          amount: paymentStatus.amount,
+          currency: paymentStatus.currency,
+          charge_id: paymentStatus.charge_id,
+          timestamp: paymentStatus.timestamp,
+        } : undefined,
+      })
+    }
+
+    // Step 5: If we have payment status but no order, return payment info
+    if (paymentStatus) {
+      console.log(`[Tap Complete] Payment processed but no order yet, returning payment status`)
+      
+      return NextResponse.json({
+        success: true,
+        order: {
+          id: `pending_${cart_id}`,
+          display_id: `PENDING-${cart_id.slice(-6)}`,
+          status: "pending",
+          payment_status: paymentStatus.payment_status === "CAPTURED" || paymentStatus.payment_status === "AUTHORIZED" ? "paid" : "pending",
+          total: paymentStatus.amount,
+          currency_code: paymentStatus.currency,
+          created_at: paymentStatus.timestamp,
+        },
+        payment_status: paymentStatus.payment_status === "CAPTURED" || paymentStatus.payment_status === "AUTHORIZED" ? "COMPLETED" : "PENDING",
+        tap_id: tap_id,
+        message: "Payment received, order processing",
+        payment_details: {
+          status: paymentStatus.payment_status,
+          amount: paymentStatus.amount,
+          currency: paymentStatus.currency,
+          charge_id: paymentStatus.charge_id,
+          timestamp: paymentStatus.timestamp,
+        },
+      })
+    }
+
+    // Step 6: Fallback - try to get cart details
+    console.log(`[Tap Complete] No payment status found, getting cart details`)
+    
         try {
           const cartResponse = await fetch(`${backendUrl}/store/carts/${cart_id}`, {
             method: "GET",
@@ -104,25 +170,16 @@ export async function POST(request: NextRequest) {
           })
 
           if (cartResponse.ok) {
-            const { cart } = await cartResponse.json()
-            console.log(`[Tap Complete] Cart found: total=${cart.total}, status=${cart.payment_status}`)
-            
-            // Return cart information as a fallback
+        const cartResult = await cartResponse.json()
+        const cart = cartResult.cart
+        
+        console.log(`[Tap Complete] Cart found: ${cart.id}, status: ${cart.status}`)
+        
             return NextResponse.json({
-              success: true,
-              order: {
-                id: `temp_${cart_id}`,
-                display_id: cart_id.slice(-8),
-                email: cart.email || "customer@example.com",
-                total: cart.total,
-                currency_code: cart.region?.currency_code || "USD",
-                status: "pending",
-                payment_status: "awaiting",
-                created_at: new Date().toISOString(),
-              },
-              payment_status: "PENDING",
-              tap_id: tap_id,
-              message: "Payment received, order processing",
+          success: false,
+          error: "Payment verification pending",
+          cart: cart,
+          message: "Payment is being processed. Please wait a moment and try again.",
             })
           }
         } catch (cartError: any) {
@@ -130,23 +187,13 @@ export async function POST(request: NextRequest) {
         }
         
         return NextResponse.json(
-          { error: `Failed to complete order: ${orderResponse.status}. ${orderError}` },
+      { error: "Could not verify payment or retrieve order information" },
           { status: 400 }
         )
-      }
-    } catch (orderError: any) {
-      console.error(`[Tap Complete] Order completion exception: ${orderError.message}`)
-      return NextResponse.json(
-        { error: `Order completion failed: ${orderError.message}` },
-        { status: 500 }
-      )
-    }
-
   } catch (error: any) {
-    console.error(`[Tap Complete] General error: ${error.message}`)
-    console.error(`[Tap Complete] Error stack: ${error.stack}`)
+    console.error(`[Tap Complete] Unexpected error: ${error.message}`)
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { error: `Payment completion failed: ${error.message}` },
       { status: 500 }
     )
   }

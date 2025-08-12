@@ -87,7 +87,7 @@ const Addresses = ({
               </div>
             )}
             <SubmitButton className="mt-6 bg-[#043364] hover:bg-blue-900 text-white" data-testid="submit-address-button ">
-              {isRTL ? "متابعة للتوصيل" : " Continue to delivery"}
+              {isRTL ? "متابعة للدفع" : "Continue to Payment"}
             </SubmitButton>
             <ErrorMessage error={message} data-testid="address-error-message" />
           </div>
