@@ -494,6 +494,20 @@ export async function placeOrder(cartId?: string) {
     throw new Error("No existing cart found when placing an order")
   }
 
+  // Force set default shipping method before placing order (no user interaction required)
+  try {
+    const { forceSetDefaultShippingMethod } = await import("@lib/util/shipping")
+    const shippingMethodSet = await forceSetDefaultShippingMethod(id)
+    if (shippingMethodSet) {
+      console.log(`[Cart] Successfully set default shipping method for cart: ${id} before order placement`)
+    } else {
+      console.warn(`[Cart] Could not set default shipping method for cart: ${id}, proceeding anyway`)
+    }
+  } catch (shippingError) {
+    console.warn("Could not set default shipping method before order placement:", shippingError)
+    // Continue anyway, as the cart completion might still work
+  }
+
   const headers = {
     ...(await getAuthHeaders()),
   }

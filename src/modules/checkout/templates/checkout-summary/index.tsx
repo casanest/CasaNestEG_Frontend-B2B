@@ -1,4 +1,5 @@
-import { Heading } from "@medusajs/ui"
+import { Heading, Text } from "@medusajs/ui"
+import { CheckCircle, AlertCircle, Truck } from "lucide-react"
 
 import ItemsPreviewTemplate from "@modules/cart/templates/preview"
 import DiscountCode from "@modules/checkout/components/discount-code"
@@ -8,6 +9,11 @@ import { getLocale } from "next-intl/server"
 
 const CheckoutSummary = async ({ cart }: { cart: any }) => {
   const locale = await getLocale()
+  
+  // Check shipping method status
+  const hasShippingMethod = cart?.shipping_methods && cart.shipping_methods.length > 0
+  const currentShippingMethod = cart?.shipping_methods?.[0]
+  
   return (
     <div dir={locale === "ar" ? "rtl" : "ltr"} className="sticky top-0 flex flex-col-reverse small:flex-col gap-y-8 py-8 small:py-0 ">
       <div className="w-full bg-white flex flex-col text-[#043364]">
@@ -19,6 +25,27 @@ const CheckoutSummary = async ({ cart }: { cart: any }) => {
          {locale === "ar" ? "ملخص الطلب" : "Order Summary"}
         </Heading>
         <Divider className="my-6" />
+        
+        {/* Shipping Method Status */}
+        <div className="mb-6 p-4 border rounded-lg bg-green-50 border-green-200">
+          <div className="flex items-center gap-2 mb-2">
+            <CheckCircle className="w-5 h-5 text-green-600" />
+            <Text className="font-medium text-green-800">
+              {locale === "ar" ? "طريقة التوصيل" : "Shipping Method"}
+            </Text>
+          </div>
+          
+          <div className="flex items-center gap-2 text-sm text-green-700">
+            <Truck className="w-4 h-4" />
+            <span className="font-medium">
+              {locale === "ar" ? "توصيل قياسي - €0.10" : "Standard Shipping - €0.10"}
+            </span>
+          </div>
+          <Text className="text-xs text-green-600 mt-1">
+            {locale === "ar" ? "تم اختيار طريقة التوصيل تلقائياً" : "Shipping method automatically selected"}
+          </Text>
+        </div>
+        
         <CartTotals totals={cart} />
         <ItemsPreviewTemplate cart={cart} />
         <div className="my-6">

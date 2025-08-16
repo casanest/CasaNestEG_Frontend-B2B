@@ -255,7 +255,7 @@ export default function PaymentSuccessContent({ cartId, tapId, data, locale, cou
 
   const handleViewOrder = () => {
     if (orderDetails) {
-      router.push(`/${locale}/${countryCode}/account/orders/${orderDetails.id}`)
+      router.push(`/${locale}/${countryCode}/orders/${orderDetails.id}`)
     }
   }
 
@@ -334,7 +334,7 @@ export default function PaymentSuccessContent({ cartId, tapId, data, locale, cou
                   {paymentStatus && new Intl.NumberFormat('en-US', {
                     style: 'currency',
                     currency: paymentStatus.currency?.toUpperCase() || 'EUR',
-                  }).format(paymentStatus.amount / 100)}
+                  }).format(paymentStatus.amount )}
                 </span>
               </div>
               <div className="flex justify-between">

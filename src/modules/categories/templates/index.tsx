@@ -79,26 +79,37 @@ export default async function CategoryTemplate({
         </div>
         {/* Sidebar Filters */}
         <div className={`hidden small:block w-full small:w-72 `}>
-          <RefinementList locale={locale} sortBy={sort} />
+          <RefinementList locale={locale} sortBy={sort} countryCode={countryCode} />
         </div>
       </div>
 
       {/* Main Content */}
       <div className="flex-1 w-full">
         {/* Category Header - Desktop */}
-        <div className="hidden small:block ">
+        <div className="hidden small:block mb-8">
           <h1
-            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white "
+            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4"
             data-testid="category-page-title"
           >
             {category.name}
           </h1>
 
-          {/* {category.description && (
+          {category.description && (
             <div className="prose dark:prose-invert max-w-3xl text-gray-600 dark:text-gray-300 mb-6 text-base lg:text-lg">
               <p>{category.description}</p>
             </div>
-          )} */}
+          )}
+
+          {/* Category Image if available */}
+          {category.metadata?.image_url && (
+            <div className="mb-6">
+              <img 
+                src={category.metadata.image_url} 
+                alt={category.metadata.image_alt || `${category.name} category`}
+                className="w-full max-w-2xl h-48 object-cover rounded-lg shadow-md"
+              />
+            </div>
+          )}
         </div>
 
         {/* Mobile Breadcrumb Navigation */}
@@ -168,6 +179,7 @@ export default async function CategoryTemplate({
             <RefinementList
               locale={locale}
               sortBy={sort}
+              countryCode={countryCode}
               data-testid="sort-by-container"
             />
           </div>

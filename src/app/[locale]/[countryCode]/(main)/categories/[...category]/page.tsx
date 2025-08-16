@@ -45,17 +45,22 @@ export async function generateStaticParams() {
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
   try {
-    const productCategory = await getCategoryByHandle(params.category)
+    // Handle URL encoding - decode the category handle
+    const decodedCategory = params.category.map(segment => decodeURIComponent(segment))
+    const productCategory = await getCategoryByHandle(decodedCategory)
+
+    if (!productCategory) {
+      notFound()
+    }
 
     const title = productCategory.name + " | Medusa Store"
-
     const description = productCategory.description ?? `${title} category.`
 
     return {
       title: `${title} | Medusa Store`,
       description,
       alternates: {
-        canonical: `${params.category.join("/")}`,
+        canonical: `${decodedCategory.join("/")}`,
       },
     }
   } catch (error) {
@@ -68,7 +73,11 @@ export default async function CategoryPage(props: Props) {
   const params = await props.params
   const { sortBy, page } = searchParams
 
-  const productCategory = await getCategoryByHandle(params.category)
+  // Handle URL encoding - decode the category handle
+  const decodedCategory = params.category.map(segment => decodeURIComponent(segment))
+  
+  // Get category by handle (with fallback to name search)
+  const productCategory = await getCategoryByHandle(decodedCategory)
 
   if (!productCategory) {
     notFound()

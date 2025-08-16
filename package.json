@@ -27,6 +27,7 @@
     "accept-language": "^3.0.20",
     "algoliasearch": "^5.24.0",
     "canvas-confetti": "^1.9.3",
+    "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.11.3",
     "lodash": "^4.17.21",

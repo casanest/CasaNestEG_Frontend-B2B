@@ -16,7 +16,7 @@ export const getI18NConfigCallback = async ({
 
   return {
     locale: resolvedLocale, // Add the resolved locale
-    messages: (await import(`@locales/${resolvedLocale}.json`)).default, // Load messages dynamically
+    messages: (await import(`../../../locales/${resolvedLocale}.json`)).default, // Load messages dynamically
   };
 };
 
