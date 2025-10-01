@@ -2,7 +2,7 @@ import { notFound } from "next/navigation"
 import { Suspense } from "react"
 import InteractiveLink from "@modules/common/components/interactive-link"
 import SkeletonProductGrid from "@modules/skeletons/templates/skeleton-product-grid"
-import RefinementList from "@modules/store/components/refinement-list"
+import CategoryFilters from "@modules/categories/components/category-filters"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import PaginatedProducts from "@modules/store/templates/paginated-products"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
@@ -15,11 +15,13 @@ export default async function CategoryTemplate({
   sortBy,
   page,
   countryCode,
+  searchParams,
 }: {
   category: HttpTypes.StoreProductCategory
   sortBy?: SortOptions
   page?: string
   countryCode: string
+  searchParams?: { [key: string]: string | string[] | undefined }
 }) {
   const pageNumber = page ? parseInt(page) : 1
   const sort = sortBy || "created_at"
@@ -79,7 +81,12 @@ export default async function CategoryTemplate({
         </div>
         {/* Sidebar Filters */}
         <div className={`hidden small:block w-full small:w-72 `}>
-          <RefinementList locale={locale} sortBy={sort} countryCode={countryCode} />
+          <CategoryFilters 
+            locale={locale} 
+            sortBy={sort} 
+            countryCode={countryCode}
+            categoryId={category.id}
+          />
         </div>
       </div>
 
@@ -176,10 +183,11 @@ export default async function CategoryTemplate({
             </p>
           )} */}
           <div className={` md:hidden `}>
-            <RefinementList
+            <CategoryFilters
               locale={locale}
               sortBy={sort}
               countryCode={countryCode}
+              categoryId={category.id}
               data-testid="sort-by-container"
             />
           </div>
@@ -200,6 +208,7 @@ export default async function CategoryTemplate({
             page={pageNumber}
             categoryId={category.id}
             countryCode={countryCode}
+            searchParams={searchParams}
           />
         </Suspense>
       </div>

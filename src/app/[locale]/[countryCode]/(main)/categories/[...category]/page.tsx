@@ -12,6 +12,7 @@ type Props = {
   searchParams: Promise<{
     sortBy?: SortOptions
     page?: string
+    [key: string]: string | string[] | undefined
   }>
 }
 
@@ -71,7 +72,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 export default async function CategoryPage(props: Props) {
   const searchParams = await props.searchParams
   const params = await props.params
-  const { sortBy, page } = searchParams
+  const { sortBy, page, ...filterParams } = searchParams
 
   // Handle URL encoding - decode the category handle
   const decodedCategory = params.category.map(segment => decodeURIComponent(segment))
@@ -89,6 +90,7 @@ export default async function CategoryPage(props: Props) {
       sortBy={sortBy}
       page={page}
       countryCode={params.countryCode}
+      searchParams={filterParams}
     />
   )
 }

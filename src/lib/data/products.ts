@@ -312,12 +312,18 @@ export const listProductsWithSort = async ({
 /**
  * Extract all available filter options from products and their variants
  */
-export const getProductFilterOptions = async (countryCode: string) => {
+export const getProductFilterOptions = async (countryCode: string, categoryId?: string) => {
   try {
-    // Fetch all products to analyze available options
+    // Fetch products - either all products or category-specific
+    // Use a higher limit to ensure we get all available filter options
+    const queryParams = { limit: 1000 }
+    if (categoryId) {
+      queryParams.category_id = [categoryId]
+    }
+
     const { response } = await listProducts({
       pageParam: 1,
-      queryParams: { limit: 100 },
+      queryParams,
       countryCode,
     })
 
