@@ -85,6 +85,20 @@ export default async function Nav() {
               <div className="flex items-center h-full  md:hidden">
                 <LocalizedClientLink
                   href="/"
+                  className="inline-block"
+                  data-testid="nav-store-link"
+                  aria-label="Homepage"
+                >
+                  <Image
+                    src="/lacasaLogo.png"
+                    alt="La Casa Logo"
+                    width={200}
+                    height={200}
+                    priority
+                  />
+                </LocalizedClientLink>
+                {/* <LocalizedClientLink
+                  href="/"
                   className="text-4xl font-extrabold tracking-widest uppercase text-transparent bg-clip-text hover:from-blue-600 hover:to-blue-800 transition-all duration-300 ease-in-out leading-none"
                   data-testid="nav-store-link"
                 >
@@ -94,7 +108,7 @@ export default async function Nav() {
                     width={170}
                     height={150}
                   />
-                </LocalizedClientLink>
+                </LocalizedClientLink> */}
               </div>
             </div>
             <div className="hidden md:flex flex-1 basis-0 h-full flex items-center">
@@ -106,7 +120,7 @@ export default async function Nav() {
                 data-testid="nav-store-link"
               >
                 <Image
-                  src="/lacasaLogo.jpg"
+                  src="/lacasaLogo.png"
                   alt="Logo"
                   width={170}
                   height={150}
@@ -136,7 +150,7 @@ export default async function Nav() {
                     className="hover:text-ui-fg-base flex gap-2"
                     href="/cart"
                     data-testid="nav-cart-link"
-                    
+
                   >
 
                     <span className="w-6 h-6">
