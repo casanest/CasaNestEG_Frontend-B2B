@@ -42,7 +42,12 @@ export const listProducts = async ({
     const region = regionId ? await retrieveRegion(regionId) : await getRegion(countryCode!)
 
     if (!region) {
-      throw new Error("Region not found")
+      console.warn(`Region not found for ${regionId ? `regionId: ${regionId}` : `countryCode: ${countryCode}`}`)
+      return {
+        response: { products: [], count: 0 },
+        nextPage: null,
+        queryParams: queryParams,
+      }
     }
 
     const headers = await getAuthHeaders()

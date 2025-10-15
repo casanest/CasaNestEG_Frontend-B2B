@@ -10,18 +10,35 @@ type Props = {
 
 export async function generateStaticParams() {
   try {
-    const countryCodes = await listRegions().then((regions) =>
-      regions?.map((r) => r.countries?.map((c) => c.iso_2)).flat()
-    )
-
-    if (!countryCodes) {
+    const regions = await listRegions()
+    
+    if (!regions || regions.length === 0) {
+      console.warn("No regions found during static generation")
       return []
     }
 
+    const countryCodes = regions
+      .map((r) => r.countries?.map((c) => c.iso_2))
+      .flat()
+      .filter(Boolean) as string[]
+
+    if (!countryCodes || countryCodes.length === 0) {
+      console.warn("No country codes found in regions")
+      return []
+    }
+
+    // Use the first available country code instead of hardcoded "US"
+    const firstCountryCode = countryCodes[0]
+    
     const products = await listProducts({
-      countryCode: "US",
+      countryCode: firstCountryCode,
       queryParams: { fields: "handle" },
     }).then(({ response }) => response.products)
+
+    if (!products || products.length === 0) {
+      console.warn("No products found during static generation")
+      return []
+    }
 
     return countryCodes
       .map((countryCode) =>
