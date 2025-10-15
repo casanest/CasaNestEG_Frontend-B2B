@@ -13,10 +13,14 @@ export const getAuthHeaders = async (): Promise<
     }
 
     return { authorization: `Bearer ${token}` }
-  } catch (error) {
-    // During build time (generateStaticParams), cookies are not available
-    // Return empty headers to allow the function to continue
-    return {}
+  } catch (error: any) {
+    // Only handle build-time errors, not runtime errors
+    if (error?.message?.includes('cookies') && error?.message?.includes('request scope')) {
+      // During build time (generateStaticParams), cookies are not available
+      return {}
+    }
+    // Re-throw other errors as they might be legitimate runtime issues
+    throw error
   }
 }
 
@@ -50,10 +54,14 @@ export const getCacheOptions = async (
     }
 
     return { tags: [`${cacheTag}`] }
-  } catch (error) {
-    // During build time (generateStaticParams), cookies are not available
-    // Return empty cache options to allow the function to continue
-    return {}
+  } catch (error: any) {
+    // Only handle build-time errors, not runtime errors
+    if (error?.message?.includes('cookies') && error?.message?.includes('request scope')) {
+      // During build time (generateStaticParams), cookies are not available
+      return {}
+    }
+    // Re-throw other errors as they might be legitimate runtime issues
+    throw error
   }
 }
 
@@ -78,9 +86,14 @@ export const getCartId = async () => {
   try {
     const cookies = await nextCookies()
     return cookies.get("_medusa_cart_id")?.value
-  } catch (error) {
-    // During build time (generateStaticParams), cookies are not available
-    return undefined
+  } catch (error: any) {
+    // Only handle build-time errors, not runtime errors
+    if (error?.message?.includes('cookies') && error?.message?.includes('request scope')) {
+      // During build time (generateStaticParams), cookies are not available
+      return undefined
+    }
+    // Re-throw other errors as they might be legitimate runtime issues
+    throw error
   }
 }
 
