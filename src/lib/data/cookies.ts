@@ -4,14 +4,20 @@ import { cookies as nextCookies } from "next/headers"
 export const getAuthHeaders = async (): Promise<
   { authorization: string } | {}
 > => {
-  const cookies = await nextCookies()
-  const token = cookies.get("_medusa_jwt")?.value
+  try {
+    const cookies = await nextCookies()
+    const token = cookies.get("_medusa_jwt")?.value
 
-  if (!token) {
+    if (!token) {
+      return {}
+    }
+
+    return { authorization: `Bearer ${token}` }
+  } catch (error) {
+    // During build time (generateStaticParams), cookies are not available
+    // Return empty headers to allow the function to continue
     return {}
   }
-
-  return { authorization: `Bearer ${token}` }
 }
 
 export const getCacheTag = async (tag: string): Promise<string> => {
@@ -36,13 +42,19 @@ export const getCacheOptions = async (
     return {}
   }
 
-  const cacheTag = await getCacheTag(tag)
+  try {
+    const cacheTag = await getCacheTag(tag)
 
-  if (!cacheTag) {
+    if (!cacheTag) {
+      return {}
+    }
+
+    return { tags: [`${cacheTag}`] }
+  } catch (error) {
+    // During build time (generateStaticParams), cookies are not available
+    // Return empty cache options to allow the function to continue
     return {}
   }
-
-  return { tags: [`${cacheTag}`] }
 }
 
 export const setAuthToken = async (token: string) => {
@@ -63,8 +75,13 @@ export const removeAuthToken = async () => {
 }
 
 export const getCartId = async () => {
-  const cookies = await nextCookies()
-  return cookies.get("_medusa_cart_id")?.value
+  try {
+    const cookies = await nextCookies()
+    return cookies.get("_medusa_cart_id")?.value
+  } catch (error) {
+    // During build time (generateStaticParams), cookies are not available
+    return undefined
+  }
 }
 
 export const setCartId = async (cartId: string) => {
