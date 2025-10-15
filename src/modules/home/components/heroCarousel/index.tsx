@@ -179,6 +179,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
             </div>
 
             {/* Navigation Arrows */}
+
             <motion.div
                 className="hidden sm:flex sm:absolute top-1/2 -translate-y-1/2 w-full justify-between px-4 z-10"
                 initial={{ opacity: 0 }}
@@ -188,23 +189,23 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
             >
                 <motion.button
                     onClick={isRTL ? scrollNext : scrollPrev}
-                    className="bg-white/90 hover:bg-white text-gray-900 p-2 sm:p-3 rounded-full shadow-xl focus:outline-none focus:ring-2 focus:ring-white/50"
+                    className="bg-white/90 hover:!bg-gradient-to-br hover:!from-[#043364] hover:!to-emerald-500 hover:text-white p-2 sm:p-3 rounded-full shadow-xl focus:outline-none focus:ring-2 focus:ring-white/50"
                     aria-label={isRTL ? "التالي" : "Previous slide"}
                     whileHover={{ scale: 1.1, backgroundColor: "#043364", color: "white" }}
                     whileTap={{ scale: 0.95 }}
                     transition={{ duration: 0.2 }}
                 >
-                    <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-gray-900 hover:text-white" />
                 </motion.button>
                 <motion.button
                     onClick={isRTL ? scrollPrev : scrollNext}
-                    className="bg-white/90 hover:bg-white text-gray-900 p-2 sm:p-3 rounded-full shadow-xl focus:outline-none focus:ring-2 focus:ring-white/50"
+                    className="bg-white/90  hover:!bg-gradient-to-br hover:!from-[#043364] hover:!to-emerald-500 hover:text-white p-2 sm:p-3 rounded-full shadow-xl focus:outline-none focus:ring-2 focus:ring-white/50"
                     aria-label={isRTL ? "السابق" : "Next slide"}
                     whileHover={{ scale: 1.1, backgroundColor: "#043364", color: "white" }}
                     whileTap={{ scale: 0.95 }}
                     transition={{ duration: 0.2 }}
                 >
-                    <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-gray-900 hover:text-white" />
                 </motion.button>
             </motion.div>
 
@@ -222,7 +223,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
                         }}
                         transition={{ duration: 0.2 }}
                     />
-                 
+
                 ))}
             </div>
         </section>

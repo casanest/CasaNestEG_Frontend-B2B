@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     }
 
     const backendUrl = process.env.MEDUSA_BACKEND_URL || "http://localhost:9000"
-    const publishableKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
+    const publishableKey = "pk_6b368322399f551bf23070377ad45e8479c302fe001fb2555dd6b168816da864"
 
     if (!publishableKey) {
       return NextResponse.json(

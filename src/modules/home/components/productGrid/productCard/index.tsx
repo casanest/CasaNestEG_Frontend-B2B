@@ -1,132 +1,169 @@
-'use client';
-import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import React, { useState } from 'react';
-import { HttpTypes } from "@medusajs/types"
-import { getProductPrice } from '@lib/util/get-product-price';
-import PreviewPrice from '@modules/products/components/product-preview/price';
-import { addToCart } from '@lib/data/cart';
-import { useParams } from 'next/navigation';
+"use client"
 
-type Product = {
-    id: number;
-    title: string;
-    thumbnail: string;
-};
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import React, { useState } from "react"
+import { HttpTypes } from "@medusajs/types"
+import { getProductPrice } from "@lib/util/get-product-price"
+import PreviewPrice from "@modules/products/components/product-preview/price"
+import { addToCart } from "@lib/data/cart"
+import { useParams } from "next/navigation"
 
 type ProductCardProps = {
-    product: HttpTypes.StoreProduct;
-    locale: string;
-};
-
+    product: HttpTypes.StoreProduct
+    locale: string
+}
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
-    const { cheapestPrice } = getProductPrice({ product });
+    const { cheapestPrice } = getProductPrice({ product })
+    const [isAdding, setIsAdding] = useState(false)
+    const countryCode = useParams().countryCode as string
+    const isRTL = locale === "ar"
 
-    // احسب الخصم إذا كان المنتج عليه تخفيض
-    const calcDiscount = (price: number, discount: number) =>
-        (price * (100 - discount)) / 100;
-
-    const [isAdding, setIsAdding] = useState(false);
-    const countryCode = useParams().countryCode as string;
-    const isRTL = locale === "ar";
-
-    // نستخرج أول فاريانت إذا وجد، وإلا نبقي القيمة undefined
-    // (يمكنك لاحقًا استبدال 0 باختيار فاريانت محدّد إن أردت)
-    const defaultVariant = product.variants?.[0];
-    const defaultVariantId = defaultVariant?.id || "";
+    const defaultVariant = product.variants?.[0]
+    const defaultVariantId = defaultVariant?.id || ""
 
     const handleAddToCart = async (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.stopPropagation();
-        event.preventDefault();
+        event.stopPropagation()
+        event.preventDefault()
 
-        if (!defaultVariantId) return;
-
-        setIsAdding(true);
+        if (!defaultVariantId) return
+        setIsAdding(true)
 
         try {
             await addToCart({
                 variantId: defaultVariantId,
                 quantity: 1,
                 countryCode,
-            });
-            // إشعار النجاح هنا إن أردت
+            })
+            // TODO: Add toast notification for success
         } catch (error) {
-            console.error("Error adding to cart:", error);
+            console.error("Error adding to cart:", error)
         } finally {
-            setIsAdding(false);
+            setIsAdding(false)
         }
-    };
-
+    }
 
     return (
         <LocalizedClientLink
             href={`/products/${product.handle}`}
-            className="group block z-0"
+            className="group block z-0 h-full"
             locale={locale}
         >
-            <div className="h-full bg-white rounded-lg shadow-md p-3 md:p-4 relative hover:shadow-lg transition-all duration-300 flex flex-col group">
+            <div
+                className="
+          h-full bg-white rounded-2xl shadow-sm 
+          p-3 md:p-5 relative 
+          flex flex-col transition-all duration-300 
+          hover:shadow-lg hover:-translate-y-1
+          overflow-hidden
+        "
+            >
                 {/* Discount badge */}
-                {cheapestPrice?.price_type === "sale" && typeof cheapestPrice.original_price === "number" && typeof cheapestPrice.percentage_diff === "number" && (
-                    <span className={`absolute top-2 ${isRTL ? 'right-2' : 'left-2'} z-10 bg-pink-600 text-white text-xs font-bold px-2 py-0.5 rounded-full`}>
-                        {calcDiscount(cheapestPrice.original_price, cheapestPrice.percentage_diff).toFixed(2)}
+                {cheapestPrice?.price_type === "sale" && cheapestPrice.percentage_diff && (
+                    <span
+                        className={`absolute top-3 ${isRTL ? "right-3" : "left-3"
+                            } bg-rose-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow-sm`}
+                    >
+                        -{cheapestPrice.percentage_diff}%
                     </span>
                 )}
 
                 {/* Product image */}
-                <div className="flex-1 flex items-center justify-center p-4">
+                <div className="relative flex-1 flex items-center justify-center p-4">
                     <img
                         src={product.thumbnail}
                         alt={product.title}
-                        className="mx-auto mb-3 md:mb-4 h-32 md:h-40 object-contain transition-transform duration-300 group-hover:scale-105"
+                        className="
+              mx-auto h-36 sm:h-44 object-contain
+              transition-transform duration-300 
+              group-hover:scale-105
+            "
                         loading="lazy"
-                        width={160}
-                        height={160}
+                        width={180}
+                        height={180}
                     />
                 </div>
 
-                {/* Product info */}
-                <div className="mt-auto">
-                    <h3 className={`text-sm md:text-base font-medium text-gray-800 mb-2 ${isRTL ? 'text-right' : 'text-left'} leading-tight md:leading-5 line-clamp-2 min-h-[2.5rem]`}>
-                        {locale === "ar" ? (product.metadata?.title_ar as string ?? product.title) : product.title}
+                {/* Info */}
+                <div className="mt-3 sm:mt-4 flex flex-col justify-between">
+                    <h3
+                        className={`text-sm sm:text-base font-semibold text-gray-800 leading-snug line-clamp-2 mb-2 ${isRTL ? "text-right" : "text-left"
+                            }`}
+                    >
+                        {locale === "ar"
+                            ? (product.metadata?.title_ar as string) ?? product.title
+                            : product.title}
                     </h3>
-                    <div dir={isRTL ? 'rtl' : 'ltr'} className={`flex items-center gap-2 ${isRTL ? 'text-right ' : 'text-left'}`}>
-                        <span className="text-base md:text-lg font-semibold text-gray-900">{product.price}</span>
-                        {/* {product.original_price && (
-                            <span className="text-xs md:text-sm text-gray-400 line-through">
-                                {product.original_price}
-                            </span>
-                        )} */}
+
+                    <div
+                        dir={isRTL ? "rtl" : "ltr"}
+                        className={`flex items-center gap-2 ${isRTL ? "justify-start" : "justify-start"
+                            }`}
+                    >
                         {cheapestPrice ? (
-                            <PreviewPrice
-                                price={cheapestPrice}
-                            // className="text-lg font-bold text-gray-900 dark:text-white"
-                            />
+                            <PreviewPrice price={cheapestPrice} />
                         ) : (
-                            <div className="h-6"></div>
+                            <div className="h-6" />
                         )}
                     </div>
-
-                    <button
-                        onClick={(e) => handleAddToCart(e)}
-                        disabled={
-                            // !inStock ||
-                            // !selectedVariant ||
-                            // !!disabled ||
-                            isAdding
-                            // !isValidVariant
-                        }
-                        // variant="primary"
-                        className={`absolute bottom-3 md:bottom-4 ${isRTL ? 'left-4' : 'right-4'} bg-gradient-to-tl from-emerald-500 to-[#022a55] text-white rounded-full w-8 h-8 md:w-9 md:h-9 flex items-center justify-center text-lg md:text-xl hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg z-10 ${isAdding ? 'pointer-events-none' : ''}`}
-                        aria-label={isRTL ? 'إضافة إلى السلة' : 'Add to cart'}
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
-                    </button>
                 </div>
+
+                {/* Add to Cart Button */}
+                <button
+                    onClick={handleAddToCart}
+                    disabled={isAdding}
+                    className={`
+            absolute bottom-4 ${isRTL ? "left-4" : "right-4"
+                        } 
+            bg-gradient-to-br from-[#043364] to-emerald-500
+            text-white rounded-full w-9 h-9 flex items-center justify-center 
+            text-lg hover:scale-110 
+            transition-transform duration-300 shadow-md hover:shadow-lg 
+            disabled:opacity-50
+          `}
+                    aria-label={isRTL ? "إضافة إلى السلة" : "Add to cart"}
+                >
+                    {isAdding ? (
+                        <svg
+                            className="animate-spin h-5 w-5 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                            ></circle>
+                            <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"
+                            ></path>
+                        </svg>
+                    ) : (
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                            />
+                        </svg>
+                    )}
+                </button>
             </div>
         </LocalizedClientLink>
-    );
-};
+    )
+}
 
-export default ProductCard;
+export default ProductCard
