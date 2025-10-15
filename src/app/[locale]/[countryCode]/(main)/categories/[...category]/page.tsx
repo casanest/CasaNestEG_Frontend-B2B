@@ -1,9 +1,7 @@
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
 
-import { getCategoryByHandle, listCategories } from "@lib/data/categories"
-import { listRegions } from "@lib/data/regions"
-import { StoreRegion } from "@medusajs/types"
+import { getCategoryByHandle } from "@lib/data/categories"
 import CategoryTemplate from "@modules/categories/templates"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 
@@ -16,55 +14,9 @@ type Props = {
   }>
 }
 
-export async function generateStaticParams() {
-  try {
-    const product_categories = await listCategories()
-
-    if (!product_categories || product_categories.length === 0) {
-      console.warn("No categories found during static generation")
-      return []
-    }
-
-    const regions = await listRegions()
-    
-    if (!regions || regions.length === 0) {
-      console.warn("No regions found during static generation")
-      return []
-    }
-
-    const countryCodes = regions
-      .map((r) => r.countries?.map((c) => c.iso_2))
-      .flat()
-      .filter(Boolean) as string[]
-
-    if (!countryCodes || countryCodes.length === 0) {
-      console.warn("No country codes found in regions")
-      return []
-    }
-
-    const categoryHandles = product_categories.map(
-      (category: any) => category.handle
-    ).filter(Boolean)
-
-    const staticParams = countryCodes
-      .map((countryCode: string) =>
-        categoryHandles.map((handle: string) => ({
-          countryCode,
-          category: [handle],
-        }))
-      )
-      .flat()
-
-    return staticParams
-  } catch (error) {
-    console.error(
-      `Failed to generate static paths for category pages: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }.`
-    )
-    return []
-  }
-}
+// Removed generateStaticParams to make this a dynamic route
+// This prevents conflicts with no-store cache directives in data fetching
+// Categories will be rendered on-demand instead of being pre-generated
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
