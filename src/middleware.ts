@@ -12,7 +12,7 @@ const intlMiddleware = createIntlMiddleware({
 
 const BACKEND_URL = process.env.MEDUSA_BACKEND_URL
 const PUBLISHABLE_API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
-const DEFAULT_REGION = process.env.NEXT_PUBLIC_DEFAULT_REGION || "us"
+const DEFAULT_REGION = process.env.NEXT_PUBLIC_DEFAULT_REGION || "fr"
 
 const regionMapCache = {
   regionMap: new Map<string, HttpTypes.StoreRegion>(),
@@ -28,26 +28,32 @@ async function getRegionMap(cacheId: string) {
     )
   }
 
+  if (!PUBLISHABLE_API_KEY) {
+    throw new Error(
+      "Middleware.ts: NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY environment variable is required",
+    )
+  }
+
   if (!regionMap.keys().next().value || regionMapUpdated < Date.now() - 3600 * 1000) {
     try {
-      const { regions } = await fetch(`${BACKEND_URL}/store/regions`, {
+      const response = await fetch(`${BACKEND_URL}/store/regions`, {
         headers: {
-          "x-publishable-api-key": PUBLISHABLE_API_KEY!,
+          "x-publishable-api-key": PUBLISHABLE_API_KEY,
         },
         next: {
           revalidate: 3600,
           tags: [`regions-${cacheId}`],
         },
         cache: "force-cache",
-      }).then(async (response) => {
-        const json = await response.json()
-
-        if (!response.ok) {
-          throw new Error(json.message)
-        }
-
-        return json
       })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`Failed to fetch regions: ${response.status} ${response.statusText} - ${errorText}`)
+      }
+
+      const json = await response.json()
+      const { regions } = json
 
       if (!regions?.length) {
         throw new Error("No regions found. Please set up regions in your Medusa Admin.")

@@ -3,19 +3,21 @@ import { notFound } from "next/navigation"
 import PaymentFailureContent from "./payment-failure-content"
 
 type Props = {
-  params: {
+  params: Promise<{
     locale: string
     countryCode: string
-  }
-  searchParams: {
+  }>
+  searchParams: Promise<{
     cart_id?: string
     tap_id?: string
     data?: string
     reason?: string
-  }
+  }>
 }
 
-export default function PaymentFailurePage({ params, searchParams }: Props) {
+export default async function PaymentFailurePage(props: Props) {
+  const params = await props.params
+  const searchParams = await props.searchParams
   const { cart_id, tap_id, reason } = searchParams
 
   if (!cart_id || !tap_id) {

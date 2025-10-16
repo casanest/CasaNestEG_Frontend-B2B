@@ -12,7 +12,7 @@ type Props = {
   }>
 }
 
-export default function PaymentReturnPage(props: Props) {
+export default function ImprovedPaymentReturnPage(props: Props) {
   const [params, setParams] = useState<{ locale: string; countryCode: string } | null>(null)
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -29,7 +29,7 @@ export default function PaymentReturnPage(props: Props) {
     initParams()
   }, [props.params])
 
-  // Use the payment status hook with enhanced retry logic
+  // Use the payment status hook
   const {
     data,
     loading,

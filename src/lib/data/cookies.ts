@@ -4,24 +4,14 @@ import { cookies as nextCookies } from "next/headers"
 export const getAuthHeaders = async (): Promise<
   { authorization: string } | {}
 > => {
-  try {
-    const cookies = await nextCookies()
-    const token = cookies.get("_medusa_jwt")?.value
+  const cookies = await nextCookies()
+  const token = cookies.get("_medusa_jwt")?.value
 
-    if (!token) {
-      return {}
-    }
-
-    return { authorization: `Bearer ${token}` }
-  } catch (error: any) {
-    // Only handle build-time errors, not runtime errors
-    if (error?.message?.includes('cookies') && error?.message?.includes('request scope')) {
-      // During build time (generateStaticParams), cookies are not available
-      return {}
-    }
-    // Re-throw other errors as they might be legitimate runtime issues
-    throw error
+  if (!token) {
+    return {}
   }
+
+  return { authorization: `Bearer ${token}` }
 }
 
 export const getCacheTag = async (tag: string): Promise<string> => {
@@ -46,23 +36,13 @@ export const getCacheOptions = async (
     return {}
   }
 
-  try {
-    const cacheTag = await getCacheTag(tag)
+  const cacheTag = await getCacheTag(tag)
 
-    if (!cacheTag) {
-      return {}
-    }
-
-    return { tags: [`${cacheTag}`] }
-  } catch (error: any) {
-    // Only handle build-time errors, not runtime errors
-    if (error?.message?.includes('cookies') && error?.message?.includes('request scope')) {
-      // During build time (generateStaticParams), cookies are not available
-      return {}
-    }
-    // Re-throw other errors as they might be legitimate runtime issues
-    throw error
+  if (!cacheTag) {
+    return {}
   }
+
+  return { tags: [`${cacheTag}`] }
 }
 
 export const setAuthToken = async (token: string) => {
@@ -83,18 +63,8 @@ export const removeAuthToken = async () => {
 }
 
 export const getCartId = async () => {
-  try {
-    const cookies = await nextCookies()
-    return cookies.get("_medusa_cart_id")?.value
-  } catch (error: any) {
-    // Only handle build-time errors, not runtime errors
-    if (error?.message?.includes('cookies') && error?.message?.includes('request scope')) {
-      // During build time (generateStaticParams), cookies are not available
-      return undefined
-    }
-    // Re-throw other errors as they might be legitimate runtime issues
-    throw error
-  }
+  const cookies = await nextCookies()
+  return cookies.get("_medusa_cart_id")?.value
 }
 
 export const setCartId = async (cartId: string) => {
