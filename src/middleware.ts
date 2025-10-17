@@ -36,6 +36,9 @@ async function getRegionMap(cacheId: string) {
 
   if (!regionMap.keys().next().value || regionMapUpdated < Date.now() - 3600 * 1000) {
     try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
+      
       const response = await fetch(`${BACKEND_URL}/store/regions`, {
         headers: {
           "x-publishable-api-key": PUBLISHABLE_API_KEY,
@@ -45,7 +48,10 @@ async function getRegionMap(cacheId: string) {
           tags: [`regions-${cacheId}`],
         },
         cache: "force-cache",
+        signal: controller.signal,
       })
+
+      clearTimeout(timeoutId)
 
       if (!response.ok) {
         const errorText = await response.text()
@@ -68,9 +74,25 @@ async function getRegionMap(cacheId: string) {
       regionMapCache.regionMapUpdated = Date.now()
     } catch (error) {
       console.error("Error fetching regions:", error)
-      // Return cached data if available, otherwise throw
+      
+      // If no cached data and backend is unavailable, create fallback regions
       if (!regionMap.size) {
-        throw error
+        console.warn("Backend unavailable, using fallback regions for middleware")
+        
+        // Create fallback regions based on common country codes
+        const fallbackRegions = [
+          { id: 'fallback-1', countries: [{ iso_2: 'us' }, { iso_2: 'eg' }, { iso_2: 'ar' }] },
+          { id: 'fallback-2', countries: [{ iso_2: 'fr' }, { iso_2: 'de' }, { iso_2: 'gb' }] },
+        ]
+        
+        fallbackRegions.forEach((region: any) => {
+          region.countries?.forEach((c: any) => {
+            regionMapCache.regionMap.set(c.iso_2, region)
+          })
+        })
+        
+        regionMapCache.regionMapUpdated = Date.now()
+        console.log("Fallback regions created:", Array.from(regionMapCache.regionMap.keys()))
       }
     }
   }
