@@ -344,3 +344,4 @@ export function usePaymentStatus({
     elapsedTime: startTimeRef.current ? Date.now() - startTimeRef.current : 0
   }
 }
+

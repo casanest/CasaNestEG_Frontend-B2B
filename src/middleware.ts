@@ -202,11 +202,15 @@ async function handlePageRequest(request: NextRequest) {
   // Set cache ID if country code is in URL but cache ID is not set
   if (urlHasCountryCode && !cacheIdCookie) {
     const response = NextResponse.next()
+    
+    // Allow disabling secure cookies for testing on IP addresses
+    const isSecure = process.env.NODE_ENV === "production" && process.env.DISABLE_SECURE_COOKIES !== "true"
+    
     response.cookies.set("_medusa_cache_id", cacheId, {
       maxAge: 60 * 60 * 24,
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: isSecure,
+      sameSite: "lax", // Already using lax which is good for testing
     })
     
     // Add security headers

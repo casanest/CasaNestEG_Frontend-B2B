@@ -425,3 +425,4 @@ export default function EnhancedPaymentReturnPage(props: Props) {
 
   return renderContent()
 }
+

@@ -47,11 +47,15 @@ export const getCacheOptions = async (
 
 export const setAuthToken = async (token: string) => {
   const cookies = await nextCookies()
+  
+  // Allow disabling secure cookies for testing on IP addresses
+  const isSecure = process.env.NODE_ENV === "production" && process.env.DISABLE_SECURE_COOKIES !== "true"
+  
   cookies.set("_medusa_jwt", token, {
     maxAge: 60 * 60 * 24 * 7,
     httpOnly: true,
-    sameSite: "strict",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: isSecure ? "strict" : "lax", // Use lax for non-secure testing
+    secure: isSecure,
   })
 }
 
@@ -69,11 +73,15 @@ export const getCartId = async () => {
 
 export const setCartId = async (cartId: string) => {
   const cookies = await nextCookies()
+  
+  // Allow disabling secure cookies for testing on IP addresses
+  const isSecure = process.env.NODE_ENV === "production" && process.env.DISABLE_SECURE_COOKIES !== "true"
+  
   cookies.set("_medusa_cart_id", cartId, {
     maxAge: 60 * 60 * 24 * 7,
     httpOnly: true,
-    sameSite: "strict",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: isSecure ? "strict" : "lax", // Use lax for non-secure testing
+    secure: isSecure,
   })
 }
 
