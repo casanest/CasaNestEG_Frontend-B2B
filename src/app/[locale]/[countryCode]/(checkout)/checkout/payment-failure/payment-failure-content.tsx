@@ -74,9 +74,21 @@ export default function PaymentFailureContent({ cartId, tapId, reason, locale, c
   }
 
   const getFailureReason = () => {
-    if (reason) return reason
+    if (reason) {
+      // Handle specific error messages
+      if (reason.toLowerCase().includes('amount is invalid')) {
+        return 'The payment amount is invalid. This could be due to currency conversion issues, minimum amount requirements, or payment processor limitations. Please try again or contact support.'
+      }
+      if (reason.toLowerCase().includes('failed')) {
+        return `Payment failed: ${reason}. Please try a different payment method.`
+      }
+      return reason
+    }
+    
     if (paymentDetails?.status) {
       switch (paymentDetails.status.toLowerCase()) {
+        case 'failed':
+          return 'Payment failed. This could be due to insufficient funds, card issues, or payment processor problems. Please try a different payment method.'
         case 'declined':
           return 'Your card was declined. Please try a different payment method.'
         case 'insufficient_funds':
@@ -195,10 +207,25 @@ export default function PaymentFailureContent({ cartId, tapId, reason, locale, c
           </Button>
         </div>
 
+        {reason && reason.toLowerCase().includes('amount is invalid') && (
+          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h3 className="font-semibold text-blue-900 mb-2">Possible Solutions:</h3>
+            <ul className="text-sm text-blue-800 space-y-1">
+              <li>• Check if your payment method supports the currency (EUR)</li>
+              <li>• Verify the amount meets minimum payment requirements</li>
+              <li>• Try a different payment method or card</li>
+              <li>• Contact your bank to ensure international payments are enabled</li>
+            </ul>
+          </div>
+        )}
+
         <div className="mt-6 p-4 bg-gray-50 rounded-lg">
           <p className="text-sm text-gray-600">
             <strong>Need Help?</strong><br />
             If you continue to experience issues, please contact our support team with payment ID: <code className="bg-white px-1 rounded">{tapId}</code>
+            {reason && reason.toLowerCase().includes('amount is invalid') && (
+              <><br />Error: Amount validation failed - please mention this when contacting support.</>
+            )}
           </p>
         </div>
       </div>
