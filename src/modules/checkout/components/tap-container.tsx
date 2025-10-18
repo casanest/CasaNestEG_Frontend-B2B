@@ -5,6 +5,7 @@ import { Text, Button } from "@medusajs/ui"
 import { useState, useEffect, useRef, useCallback } from "react"
 import { CreditCard, Shield, Lock, CheckCircle, AlertCircle, ExternalLink, Loader2 } from "lucide-react"
 import { useLocale } from "next-intl"
+import { useRouter } from "next/navigation"
 
 interface TapContainerProps {
   cart: any
@@ -28,6 +29,7 @@ export const TapContainer = ({
   onError,
 }: TapContainerProps) => {
   const locale = useLocale()
+  const router = useRouter()
   
   // State Management
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>("idle")
@@ -101,6 +103,13 @@ export const TapContainer = ({
           setPaymentUrl(data.payment_url)
           setChargeId(data.charge_id || "")
           setPaymentStatus("redirecting")
+          
+          // Store payment data for return handling
+          localStorage.setItem(`tap_payment_${cart.id}`, JSON.stringify({
+            charge_id: data.charge_id,
+            cart_id: cart.id,
+            timestamp: Date.now()
+          }))
           
           // Redirect to Tap payment page
           window.location.href = data.payment_url

@@ -255,7 +255,15 @@ export default function PaymentSuccessContent({ cartId, tapId, data, locale, cou
 
   const handleViewOrder = () => {
     if (orderDetails) {
-      router.push(`/${locale}/${countryCode}/orders/${orderDetails.id}`)
+      // For Tap payments, redirect to the confirmed order page
+      // For manual payments, redirect to the general order details page
+      const isTapPayment = tapId && tapId !== "success" && tapId !== "manual"
+      
+      if (isTapPayment) {
+        router.push(`/${locale}/${countryCode}/order/${orderDetails.id}/confirmed`)
+      } else {
+        router.push(`/${locale}/${countryCode}/orders/${orderDetails.id}`)
+      }
     }
   }
 

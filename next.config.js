@@ -41,6 +41,12 @@ const configOpts = {
       {
         protocol: "http",
         hostname: "localhost",
+        port: "9090",
+        pathname: "/medusa/**",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
       },
       {
         protocol: "https",

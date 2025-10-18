@@ -23,7 +23,7 @@ type Props = {
   }>
 }
 
-export default function FixedPaymentReturnPage(props: Props) {
+export default function PaymentReturnPage(props: Props) {
   const [params, setParams] = useState<{ locale: string; countryCode: string } | null>(null)
   const [state, setState] = useState<PaymentState>({
     status: "checking",
@@ -53,36 +53,7 @@ export default function FixedPaymentReturnPage(props: Props) {
 
   console.log('[Payment Return] URL params:', { cartId, tapId, tapData: tapData ? 'present' : 'missing' })
 
-  // Clean URL path to prevent redirection loops
-  const cleanUrlPath = useCallback(() => {
-    if (typeof window !== 'undefined') {
-      const currentPath = window.location.pathname
-      console.log('[Payment Return] Current path:', currentPath)
-      
-      // Check if we have multiple country codes in the path (like /en/eg/ar/)
-      const pathParts = currentPath.split('/').filter(Boolean)
-      console.log('[Payment Return] Path parts:', pathParts)
-      
-      // Expected structure: [locale, countryCode, checkout, payment-return]
-      if (pathParts.length > 4 && pathParts[2] !== 'checkout') {
-        console.warn('[Payment Return] Detected malformed URL, attempting to clean')
-        
-        // Try to reconstruct the correct path
-        const locale = pathParts[0] || 'en'
-        const countryCode = pathParts[1] || 'ar' // Default to ar since it's in your regions
-        const correctPath = `/${locale}/${countryCode}/checkout/payment-return`
-        const queryString = window.location.search
-        
-        console.log('[Payment Return] Redirecting to clean path:', correctPath + queryString)
-        window.history.replaceState({}, '', correctPath + queryString)
-        
-        return { locale, countryCode }
-      }
-    }
-    return null
-  }, [])
-
-  // Enhanced payment verification
+  // Enhanced payment verification for Tap payments
   const verifyPayment = useCallback(async (attempt: number = 1) => {
     try {
       setState(prev => ({
@@ -99,7 +70,7 @@ export default function FixedPaymentReturnPage(props: Props) {
         throw new Error("Missing cart_id parameter")
       }
 
-      // Try multiple verification methods
+      // Try multiple verification methods for Tap payments
       const verificationMethods = [
         // Method 1: Enhanced status API
         () => fetch(`/api/store/tap/status-enhanced?cart_id=${cartId}${tapId ? `&charge_id=${tapId}` : ''}&include_details=true`),
@@ -145,10 +116,11 @@ export default function FixedPaymentReturnPage(props: Props) {
                   message: "Payment verified successfully! Redirecting..."
                 }))
 
-                // Clear cart and redirect
+                // Clear cart and redirect to success page (same as manual payment)
                 setTimeout(() => {
                   try {
                     localStorage.removeItem(`cart_${cartId}`)
+                    localStorage.removeItem(`tap_payment_${cartId}`)
                     sessionStorage.removeItem(`cart_${cartId}`)
                     document.cookie = `cart_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
                   } catch (e) {
@@ -222,12 +194,6 @@ export default function FixedPaymentReturnPage(props: Props) {
   useEffect(() => {
     if (!cartId || !params) return
 
-    // Clean URL first
-    const cleanedParams = cleanUrlPath()
-    if (cleanedParams) {
-      setParams(cleanedParams)
-    }
-
     const runVerification = async () => {
       console.log('[Payment Return] Starting verification process')
       
@@ -264,17 +230,18 @@ export default function FixedPaymentReturnPage(props: Props) {
         progress: 100
       }))
 
-      // Fallback redirect
+      // Fallback redirect to failure page
       setTimeout(() => {
         if (params) {
-          console.log('[Payment Return] Fallback redirect to checkout')
-          router.push(`/${params.locale}/${params.countryCode}/checkout`)
+          console.log('[Payment Return] Fallback redirect to failure page')
+          const failureUrl = `/${params.locale}/${params.countryCode}/checkout/payment-failure?cart_id=${cartId}&tap_id=${tapId}&reason=${encodeURIComponent('Verification timeout')}`
+          router.push(failureUrl)
         }
       }, 5000)
     }
 
     runVerification()
-  }, [cartId, params, verifyPayment, state.maxAttempts, cleanUrlPath, router])
+  }, [cartId, params, verifyPayment, state.maxAttempts, router])
 
   // Handle missing cart ID
   if (!cartId) {
