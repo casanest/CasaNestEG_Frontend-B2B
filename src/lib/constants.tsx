@@ -20,6 +20,10 @@ export const isManual = (providerId?: string) => {
   return providerId?.startsWith("pp_system_default")
 }
 
+export const isSystemDefault = (providerId?: string) => {
+  return providerId === "pp_system_default"
+}
+
 // Add currencies that don't need to be divided by 100
 export const noDivisionCurrencies = [
   "krw",
@@ -152,5 +156,9 @@ export const paymentInfoMap: Record<string, { title: string; icon: React.JSX.Ele
   tap: {
     title: "Tap",
     icon: <TapIcon />,
+  },
+  pp_system_default: {
+    title: "Pay on Delivery",
+    icon: <CreditCard />,
   },
 }

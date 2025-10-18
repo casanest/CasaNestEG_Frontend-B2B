@@ -73,8 +73,6 @@ const def: TranslationDef = {
   [k.SECONDARY]: `secondary`,
   [k.APPLY]: `Apply`,
   [k.ATTENTION]: `Attention:`,
-  [k.FOR_TESTING_PURPOSES_ONL]: `For testing purposes
-      only.`,
   [k.REVIEW]: `Review`,
   [k.BY_CLICKING_THE_PLACE_ORDER_BU]: `By clicking the Place Order button, you confirm that you have
                 read, understand and accept our Terms of Use, Terms of Sale and

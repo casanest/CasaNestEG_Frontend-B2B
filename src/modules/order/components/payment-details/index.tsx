@@ -39,6 +39,8 @@ const PaymentDetails = ({ order }: PaymentDetailsProps) => {
     paymentDetails = locale === "ar" ? "تم الدفع عبر PayMob" : "Paid via PayMob"
   } else if (payment?.provider_id === "fawry") {
     paymentDetails = locale === "ar" ? "تم الدفع عبر Fawry" : "Paid via Fawry"
+  } else if (payment?.provider_id === "pp_system_default") {
+    paymentDetails = locale === "ar" ? "دفع عند التسليم - سيتم إرسال التعليمات" : "Pay on Delivery - Instructions will be sent"
   } else if (isStripe(payment?.provider_id) && payment?.data?.card_last4) {
     paymentDetails = `**** **** **** ${payment.data.card_last4}`
   } else {

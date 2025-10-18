@@ -66,7 +66,6 @@ const def: TranslationDef = {
   [k.SECONDARY]: `ثانوي`,
   [k.APPLY]: `تطبيق`,
   [k.ATTENTION]: `تنبيه:`,
-  [k.FOR_TESTING_PURPOSES_ONL]: `لأغراض الاختبار فقط.`,
   [k.REVIEW]: `مراجعة`,
   [k.BY_CLICKING_THE_PLACE_ORDER_BU]: `بالضغط على زر تقديم الطلب، فإنك تؤكد أنك قرأت وفهمت ووافقت على شروط الاستخدام، شروط البيع وسياسة الإرجاع، وتقر بأنك اطلعت على سياسة الخصوصية لمتجر ميدوسا.`,
   [k.IN_YOUR_CART]: `في سلتك`,

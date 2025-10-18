@@ -125,65 +125,13 @@ export default function FixedPaymentReturnPage(props: Props) {
           
           if (response.ok) {
             const result = await response.json()
-            console.log(`[Payment Return] Method ${methodIndex + 1} success:`, JSON.stringify(result, null, 2))
+            console.log(`[Payment Return] Method ${methodIndex + 1} success:`, result)
             
             setState(prev => ({
               ...prev,
               progress: 90,
               paymentData: result
             }))
-
-            // Check for failed payment first (regardless of success flag)
-            const isFailed = result.is_failed === true || 
-                            result.payment_status === 'FAILED' || 
-                            (result.tap_data && result.tap_data.status === 'FAILED') ||
-                            (result.tap_data && result.tap_data.is_failed === true) ||
-                            (result.success && result.payment_status === 'FAILED') // Handle case where API returns success:true but status:FAILED
-
-            console.log('[Payment Return] Payment status check:', {
-              is_failed: result.is_failed,
-              payment_status: result.payment_status,
-              tap_data_status: result.tap_data?.status,
-              tap_data_is_failed: result.tap_data?.is_failed,
-              success: result.success,
-              isFailed: isFailed,
-              full_result: result
-            })
-
-            if (isFailed) {
-              // Handle failed payment - extract the most specific error message
-              const failureReason = result.tap_data?.gateway?.response?.message || // "Amount is invalid"
-                                  result.tap_data?.response?.message ||           // "Failed"  
-                                  result.tap_data?.gateway?.message ||
-                                  result.error ||
-                                  result.payment_status || 
-                                  'Payment failed'
-              
-              console.log('[Payment Return] Payment failed detected:', { 
-                payment_status: result.payment_status,
-                tap_data_status: result.tap_data?.status,
-                gateway_message: result.tap_data?.gateway?.response?.message,
-                failureReason 
-              })
-              
-              setState(prev => ({
-                ...prev,
-                status: "failed",
-                message: `Payment failed: ${failureReason}`,
-                progress: 100,
-                error: failureReason
-              }))
-
-              setTimeout(() => {
-                if (params) {
-                  const failureUrl = `/${params.locale}/${params.countryCode}/checkout/payment-failure?cart_id=${cartId}&tap_id=${tapId}&reason=${encodeURIComponent(failureReason)}`
-                  console.log('[Payment Return] Redirecting to failure:', failureUrl)
-                  router.push(failureUrl)
-                }
-              }, 3000)
-
-              return true
-            }
 
             // Handle successful response
             if (result.success || result.order || result.is_successful) {
@@ -448,26 +396,8 @@ export default function FixedPaymentReturnPage(props: Props) {
             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
               <p className="text-red-800 text-sm">
                 <strong>Payment Failed</strong><br />
-                {state.error === 'Amount is invalid' && (
-                  <>
-                    The payment amount is invalid. This could be due to currency conversion issues or minimum amount requirements.
-                  </>
-                )}
-                {state.error !== 'Amount is invalid' && (
-                  <>
-                    {state.error || 'Your payment could not be processed.'}
-                  </>
-                )}
-                <br /><br />
-                You will be redirected to try again with a different payment method.
+                Your payment could not be processed. You will be redirected to try again.
               </p>
-              <button
-                onClick={() => params && router.push(`/${params.locale}/${params.countryCode}/checkout`)}
-                className="mt-3 bg-red-600 text-white px-4 py-2 rounded text-sm hover:bg-red-700 transition-colors flex items-center justify-center gap-2 mx-auto"
-              >
-                <ArrowRight className="h-4 w-4" />
-                Try Different Payment Method
-              </button>
             </div>
           )}
 

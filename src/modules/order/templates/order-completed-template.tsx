@@ -1,4 +1,4 @@
-import { Heading } from "@medusajs/ui"
+import { Heading, Button } from "@medusajs/ui"
 import { cookies as nextCookies } from "next/headers"
 
 import CartTotals from "@modules/common/components/cart-totals"
@@ -8,6 +8,7 @@ import OnboardingCta from "@modules/order/components/onboarding-cta"
 import OrderDetails from "@modules/order/components/order-details"
 import ShippingDetails from "@modules/order/components/shipping-details"
 import PaymentDetails from "@modules/order/components/payment-details"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { HttpTypes } from "@medusajs/types"
 import { getLocale } from "next-intl/server"
 import PrintButton from "../components/print-button"
@@ -82,6 +83,20 @@ export default async function OrderCompletedTemplate({
           <CartTotals totals={order} />
           <ShippingDetails order={order} />
           <PaymentDetails order={order} />
+
+          {/* Navigation Buttons */}
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+            <LocalizedClientLink href="/account/orders">
+              <Button size="large" variant="secondary" className="w-full sm:w-auto">
+                {isArabic ? "طلباتي" : "My Orders"}
+              </Button>
+            </LocalizedClientLink>
+            <LocalizedClientLink href="/store">
+              <Button size="large" className="w-full sm:w-auto">
+                {isArabic ? "متابعة التسوق" : "Continue Shopping"}
+              </Button>
+            </LocalizedClientLink>
+          </div>
 
           {/* الدعم */}
           <div className="mt-6">

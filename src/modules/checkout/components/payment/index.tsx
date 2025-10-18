@@ -5,7 +5,10 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { useLocale } from "next-intl"
 import { Button, Heading, Text } from "@medusajs/ui"
 import { CheckCircleSolid, CreditCard } from "@medusajs/icons"
+import { RadioGroup } from "@headlessui/react"
 import { TapContainer } from "../tap-container"
+import SystemDefaultContainer from "../payment-container/system-default-container"
+import { paymentInfoMap, isSystemDefault } from "@lib/constants"
 
 const Payment = ({
   cart,
@@ -19,6 +22,7 @@ const Payment = ({
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [paymentComplete, setPaymentComplete] = useState(false)
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>("tap")
 
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -26,8 +30,9 @@ const Payment = ({
 
   const isOpen = searchParams.get("step") === "payment"
 
-  // Only show Tap payment method
+  // Get available payment methods
   const tapPaymentMethod = availablePaymentMethods.find(method => method.id === "tap")
+  const systemDefaultMethod = availablePaymentMethods.find(method => method.id === "pp_system_default")
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -49,7 +54,56 @@ const Payment = ({
     // Redirect to success page after successful payment
     const countryCode = cart?.shipping_address?.country_code || "us"
     router.push(`/${countryCode}/checkout/payment-success?cart_id=${cart.id}&tap_id=success`)
-        }
+  }
+
+  const handleSystemDefaultPayment = async () => {
+    // Prevent multiple simultaneous payment attempts
+    if (isLoading) {
+      return
+    }
+    
+    setIsLoading(true)
+    setError(null)
+    
+    try {
+      // Validate cart data before proceeding
+      if (!cart?.id) {
+        throw new Error("Cart ID is missing")
+      }
+      
+      if (!cart?.email) {
+        throw new Error("Email is required for order completion")
+      }
+      
+      if (!cart?.shipping_address) {
+        throw new Error("Shipping address is required for order completion")
+      }
+      
+      if (!cart?.items || cart.items.length === 0) {
+        throw new Error("Cart is empty")
+      }
+      
+      // First, initiate a payment session for the system default provider
+      const { initiatePaymentSession } = await import("@lib/data/cart")
+      
+      // Initiate payment session with system default provider
+      await initiatePaymentSession(cart, {
+        provider_id: "pp_system_default"
+      })
+      
+      // Then place the order using Medusa's standard flow
+      const { placeOrder } = await import("@lib/data/cart")
+      await placeOrder(cart.id)
+      
+      // If we reach here, the order was successful and user was redirected
+      // The placeOrder function handles the redirect to the success page
+    } catch (err: any) {
+      console.error("Failed to place order:", err)
+      setError(err.message || "Failed to complete order. Please try again.")
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handlePaymentFailure = (errorMessage: string) => {
     setError(errorMessage)
@@ -63,53 +117,16 @@ const Payment = ({
   }, [isOpen])
 
   if (isOpen) {
-  return (
+    return (
       <div className="w-full">
         <div className="mb-8">
           <Heading level="h2" className="txt-compact-large text-ui-fg-base">
             {locale === "ar" ? "طريقة الدفع" : "Payment Method"}
-        </Heading>
+          </Heading>
           <Text className="txt-compact-medium text-ui-fg-subtle">
             {locale === "ar" ? "اختر طريقة الدفع الآمنة" : "Choose your secure payment method"}
           </Text>
         </div>
-
-        {tapPaymentMethod && (
-          <div className="bg-ui-bg-base p-6 rounded-lg border mb-6">
-            <div className="flex items-center gap-3 mb-4">
-              <CreditCard className="w-6 h-6 text-blue-600" />
-              <div>
-                <Text className="txt-compact-medium text-ui-fg-base font-medium">
-                  {tapPaymentMethod.title}
-                </Text>
-                <Text className="txt-compact-small text-ui-fg-subtle">
-                  {tapPaymentMethod.description}
-                </Text>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              {tapPaymentMethod.features?.slice(0, 4).map((feature: string, index: number) => (
-                <div key={index} className="flex items-center gap-2">
-                  <CheckCircleSolid className="w-4 h-4 text-green-600" />
-                  <Text className="txt-compact-small text-ui-fg-subtle">
-                    {feature}
-                  </Text>
-                </div>
-              ))}
-            </div>
-
-            <div className="bg-blue-50 p-3 rounded-lg">
-              <Text className="txt-compact-small text-blue-700">
-                <strong>{locale === "ar" ? "معلومات مهمة:" : "Important:"}</strong>{" "}
-                {locale === "ar" 
-                  ? "سيتم توجيهك إلى صفحة دفع آمنة من Tap لاستكمال عملية الدفع"
-                  : "You will be redirected to a secure Tap payment page to complete your payment"
-                }
-              </Text>
-            </div>
-          </div>
-        )}
 
         {error && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
@@ -119,13 +136,55 @@ const Payment = ({
           </div>
         )}
 
-        <div className="bg-ui-bg-base p-6 rounded-lg border">
-          <TapContainer 
-            cart={cart} 
-            onPaymentComplete={handlePaymentComplete}
-            onPaymentFailure={handlePaymentFailure}
-            onError={setError}
-          />
+        <div className="space-y-4">
+          <RadioGroup value={selectedPaymentMethod} onChange={setSelectedPaymentMethod}>
+            {tapPaymentMethod && (
+              <SystemDefaultContainer
+                paymentProviderId="tap"
+                selectedPaymentOptionId={selectedPaymentMethod}
+                paymentInfoMap={paymentInfoMap}
+              />
+            )}
+            
+            {systemDefaultMethod && (
+              <SystemDefaultContainer
+                paymentProviderId="pp_system_default"
+                selectedPaymentOptionId={selectedPaymentMethod}
+                paymentInfoMap={paymentInfoMap}
+              />
+            )}
+          </RadioGroup>
+
+          {/* Payment Processing Area */}
+          <div className="bg-ui-bg-base p-6 rounded-lg border">
+            {selectedPaymentMethod === "tap" && tapPaymentMethod && (
+              <TapContainer 
+                cart={cart} 
+                onPaymentComplete={handlePaymentComplete}
+                onPaymentFailure={handlePaymentFailure}
+                onError={setError}
+              />
+            )}
+            
+            {selectedPaymentMethod === "pp_system_default" && systemDefaultMethod && (
+              <div className="text-center">
+                <Button
+                  size="large"
+                  onClick={handleSystemDefaultPayment}
+                  isLoading={isLoading}
+                  className="w-full"
+                >
+                  {locale === "ar" ? "إتمام الطلب" : "Complete Order"}
+                </Button>
+                <Text className="txt-compact-small text-ui-fg-subtle mt-2">
+                  {locale === "ar" 
+                    ? "سيتم إرسال تعليمات التسليم إلى بريدك الإلكتروني"
+                    : "Delivery instructions will be sent to your email"
+                  }
+                </Text>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     )
@@ -140,7 +199,10 @@ const Payment = ({
             {locale === "ar" ? "طريقة الدفع" : "Payment Method"}
           </Heading>
           <Text className="txt-compact-medium text-ui-fg-subtle">
-            {tapPaymentMethod?.title || "Tap Payments"}
+            {selectedPaymentMethod === "tap" 
+              ? tapPaymentMethod?.title || "Tap Payments"
+              : systemDefaultMethod?.title || "Pay on Delivery"
+            }
           </Text>
         </div>
         <Button

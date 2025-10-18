@@ -5,7 +5,7 @@ import { getAuthHeaders, getCacheOptions } from "./cookies"
 import { HttpTypes } from "@medusajs/types"
 
 export const listCartPaymentMethods = async (regionId: string) => {
-  // Only return Tap as the payment provider
+  // Return both Tap and System Default payment providers
   const tapProvider = {
     id: "tap",
     title: "Tap Payments",
@@ -31,6 +31,31 @@ export const listCartPaymentMethods = async (regionId: string) => {
       }
     ]
   }
+
+  const systemDefaultProvider = {
+    id: "pp_system_default",
+    title: "Pay on Delivery",
+    description: "Complete your order and pay when delivered",
+    icon: "credit-card",
+    features: [
+      "Pay when your order arrives",
+      "Order confirmation required",
+      "Delivery instructions provided",
+      "Secure order handling"
+    ],
+    supported_currencies: ["USD", "EUR", "EGP", "KWD", "SAR", "AED"],
+    processing_time: "Manual",
+    fees: "No additional fees",
+    methods: [
+      {
+        id: "delivery",
+        title: "Pay on Delivery",
+        description: "Complete order and pay when delivered",
+        icon: "credit-card",
+        requirements: ["Order completion", "Delivery confirmation"]
+      }
+    ]
+  }
   
-  return [tapProvider]
+  return [tapProvider, systemDefaultProvider]
 }
