@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback, useEffect } from "react"
-import { useSearchParams, useRouter, usePathname } from "next/navigation"
+import { useSearchParams, useRouter, usePathname, useParams } from "next/navigation"
 import { useLocale } from "next-intl"
 import { Button, Heading, Text } from "@medusajs/ui"
 import { CheckCircleSolid, CreditCard } from "@medusajs/icons"
@@ -19,6 +19,8 @@ const Payment = ({
 }) => {
   const locale = useLocale()
   const isRTL = locale === "ar"
+  const params = useParams()
+  const countryCode = (params?.countryCode as string) || cart?.shipping_address?.country_code || "us"
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [paymentComplete, setPaymentComplete] = useState(false)
@@ -52,8 +54,7 @@ const Payment = ({
   const handlePaymentComplete = () => {
     setPaymentComplete(true)
     // Redirect to success page after successful payment
-    const countryCode = cart?.shipping_address?.country_code || "us"
-    router.push(`/${countryCode}/checkout/payment-success?cart_id=${cart.id}&tap_id=success`)
+    router.push(`/${locale}/${countryCode}/checkout/payment-success?cart_id=${cart.id}&tap_id=success`)
   }
 
   const handleSystemDefaultPayment = async () => {
@@ -108,8 +109,7 @@ const Payment = ({
   const handlePaymentFailure = (errorMessage: string) => {
     setError(errorMessage)
     // Redirect to failure page after failed payment
-    const countryCode = cart?.shipping_address?.country_code || "us"
-    router.push(`/${countryCode}/checkout/payment-failure?cart_id=${cart.id}&tap_id=failed&reason=${encodeURIComponent(errorMessage)}`)
+    router.push(`/${locale}/${countryCode}/checkout/payment-failure?cart_id=${cart.id}&tap_id=failed&reason=${encodeURIComponent(errorMessage)}`)
   }
 
   useEffect(() => {

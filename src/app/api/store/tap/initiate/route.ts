@@ -5,6 +5,8 @@ interface InitiateTapPaymentRequest {
   amount: number
   currency: string
   customer_email: string
+  locale?: string
+  countryCode?: string
   billing_address: {
     first_name: string
     last_name: string
@@ -22,6 +24,8 @@ export async function POST(request: NextRequest) {
       amount,
       currency,
       customer_email,
+      locale,
+      countryCode,
       billing_address,
     } = body
 
@@ -55,6 +59,8 @@ export async function POST(request: NextRequest) {
         amount,
         currency,
         customer_email,
+        locale,
+        country_code: countryCode,
         billing_address,
       }),
     })

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
 import { sdk } from "@lib/config"
-import { ensureShippingMethod } from "@lib/util/shipping"
 
 export async function POST(request: NextRequest) {
   try {
@@ -69,22 +68,6 @@ export async function POST(request: NextRequest) {
         error: "Cart has no shipping address",
         details: "Cannot create order without shipping address"
       }, { status: 400 })
-    }
-
-    // Step 2.5: Force set default shipping method (no user interaction required)
-    console.log(`[Create Order Direct] Step 2.5: Force setting default shipping method...`)
-    try {
-      const { forceSetDefaultShippingMethod } = await import("@lib/util/shipping")
-      const shippingMethodSet = await forceSetDefaultShippingMethod(cart_id)
-      if (shippingMethodSet) {
-        console.log(`[Create Order Direct] Successfully set default shipping method for cart: ${cart_id}`)
-      } else {
-        console.warn(`[Create Order Direct] Could not set default shipping method for cart: ${cart_id}`)
-        // Continue anyway, as the cart completion might still work
-      }
-    } catch (shippingError: any) {
-      console.warn(`[Create Order Direct] Shipping method setup failed: ${shippingError.message}`)
-      // Continue anyway, as the cart completion might still work
     }
 
     // Step 3: Get or create payment collection

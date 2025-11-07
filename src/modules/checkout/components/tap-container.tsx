@@ -5,7 +5,7 @@ import { Text, Button } from "@medusajs/ui"
 import { useState, useEffect, useRef, useCallback } from "react"
 import { CreditCard, Shield, Lock, CheckCircle, AlertCircle, ExternalLink, Loader2 } from "lucide-react"
 import { useLocale } from "next-intl"
-import { useRouter } from "next/navigation"
+import { useRouter, useParams } from "next/navigation"
 
 interface TapContainerProps {
   cart: any
@@ -30,6 +30,8 @@ export const TapContainer = ({
 }: TapContainerProps) => {
   const locale = useLocale()
   const router = useRouter()
+  const params = useParams()
+  const countryCode = params?.countryCode as string
   
   // State Management
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>("idle")
@@ -64,6 +66,8 @@ export const TapContainer = ({
           amount: cart.total,
           currency: cart.region?.currency_code || "USD",
           customer_email: cart.email || "customer@example.com",
+          locale: locale,
+          countryCode: countryCode,
           billing_address: {
             first_name: cart.billing_address?.first_name || "Customer",
             last_name: cart.billing_address?.last_name || "Name",
@@ -125,7 +129,7 @@ export const TapContainer = ({
         setIsProcessing(false)
       }
     },
-    [cart, onError, onPaymentFailure]
+    [cart, onError, onPaymentFailure, locale, countryCode]
   )
 
   // Cleanup on unmount

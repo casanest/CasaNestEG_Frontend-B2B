@@ -5,6 +5,7 @@ import ItemsPreviewTemplate from "@modules/cart/templates/preview"
 import DiscountCode from "@modules/checkout/components/discount-code"
 import CartTotals from "@modules/common/components/cart-totals"
 import Divider from "@modules/common/components/divider"
+import { convertToLocale } from "@lib/util/money"
 import { getLocale } from "next-intl/server"
 
 const CheckoutSummary = async ({ cart }: { cart: any }) => {
@@ -27,24 +28,43 @@ const CheckoutSummary = async ({ cart }: { cart: any }) => {
         <Divider className="my-6" />
         
         {/* Shipping Method Status */}
-        <div className="mb-6 p-4 border rounded-lg bg-green-50 border-green-200">
-          <div className="flex items-center gap-2 mb-2">
-            <CheckCircle className="w-5 h-5 text-green-600" />
-            <Text className="font-medium text-green-800">
-              {locale === "ar" ? "طريقة التوصيل" : "Shipping Method"}
+        {hasShippingMethod && currentShippingMethod ? (
+          <div className="mb-6 p-4 border rounded-lg bg-green-50 border-green-200">
+            <div className="flex items-center gap-2 mb-2">
+              <CheckCircle className="w-5 h-5 text-green-600" />
+              <Text className="font-medium text-green-800">
+                {locale === "ar" ? "طريقة التوصيل" : "Shipping Method"}
+              </Text>
+            </div>
+            
+            <div className="flex items-center gap-2 text-sm text-green-700">
+              <Truck className="w-4 h-4" />
+              <span className="font-medium">
+                {currentShippingMethod.name}
+                {currentShippingMethod.amount && ` - ${convertToLocale({
+                  amount: currentShippingMethod.amount / 100,
+                  currency_code: cart?.currency_code || 'EUR',
+                  locale: locale === 'ar' ? 'ar-EG' : 'en-US'
+                })}`}
+              </span>
+            </div>
+            <Text className="text-xs text-green-600 mt-1">
+              {locale === "ar" ? "تم اختيار طريقة التوصيل تلقائياً" : "Shipping method automatically selected"}
             </Text>
           </div>
-          
-          <div className="flex items-center gap-2 text-sm text-green-700">
-            <Truck className="w-4 h-4" />
-            <span className="font-medium">
-              {locale === "ar" ? "توصيل قياسي - €0.10" : "Standard Shipping - €0.10"}
-            </span>
+        ) : (
+          <div className="mb-6 p-4 border rounded-lg bg-yellow-50 border-yellow-200">
+            <div className="flex items-center gap-2 mb-2">
+              <AlertCircle className="w-5 h-5 text-yellow-600" />
+              <Text className="font-medium text-yellow-800">
+                {locale === "ar" ? "طريقة التوصيل" : "Shipping Method"}
+              </Text>
+            </div>
+            <Text className="text-sm text-yellow-700">
+              {locale === "ar" ? "لم يتم اختيار طريقة التوصيل" : "Shipping method not selected"}
+            </Text>
           </div>
-          <Text className="text-xs text-green-600 mt-1">
-            {locale === "ar" ? "تم اختيار طريقة التوصيل تلقائياً" : "Shipping method automatically selected"}
-          </Text>
-        </div>
+        )}
         
         <CartTotals totals={cart} />
         <ItemsPreviewTemplate cart={cart} />

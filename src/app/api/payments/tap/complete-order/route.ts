@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
 import { sdk } from "@lib/config"
-import { ensureShippingMethod } from "@lib/util/shipping"
 
 export async function POST(request: NextRequest) {
   try {
@@ -189,22 +188,6 @@ export async function POST(request: NextRequest) {
           cart_structure: Object.keys(cartData)
         }
       }, { status: 400 })
-    }
-
-    // Step 4.5: Force set default shipping method (no user interaction required)
-    console.log(`[Complete Order] Step 4.5: Force setting default shipping method...`)
-    try {
-      const { forceSetDefaultShippingMethod } = await import("@lib/util/shipping")
-      const shippingMethodSet = await forceSetDefaultShippingMethod(cart_id)
-      if (shippingMethodSet) {
-        console.log(`[Complete Order] Successfully set default shipping method for cart: ${cart_id}`)
-      } else {
-        console.warn(`[Complete Order] Could not set default shipping method for cart: ${cart_id}`)
-        // Continue anyway, as the cart completion might still work
-      }
-    } catch (shippingError: any) {
-      console.warn(`[Complete Order] Shipping method setup failed: ${shippingError.message}`)
-      // Continue anyway, as the cart completion might still work
     }
 
     // Step 5: Get or create payment collection and session
