@@ -58,7 +58,7 @@ export default async function Home({
   return (
     <div className="min-h-screen " dir={dir}>
       {/* Hero Carousel */}
-      <section className="py-8 pb-0">
+      <section className="md:py-8 pb-0 bt-0 ">
         <div className="md:content-container md:mx-auto">
           <HeroCarousel locale={locale} />
         </div>

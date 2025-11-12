@@ -121,8 +121,8 @@ const CategoryCarousel = ({ locale, productCategories }: CategoryCarouselProps) 
                         spaceBetween={16}
                         centeredSlides={shouldCenter}
                         navigation={{
-                            nextEl: '.category-swiper-button-next',
-                            prevEl: '.category-swiper-button-prev',
+                            nextEl: '.category-swiper-button-prev',
+                            prevEl: '.category-swiper-button-next',
                         }}
                         breakpoints={{
                             480: {
@@ -211,7 +211,7 @@ const CategoryCarousel = ({ locale, productCategories }: CategoryCarouselProps) 
                             className="category-swiper-button-prev absolute top-[35%] -translate-y-1/2 -left-3 z-50 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-white hover:shadow-xl hover:scale-110 transition-all duration-300 cursor-pointer group"
                         >
                             <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isRTL ? "M9 5l7 7-7 7" : "M15 19l-7-7 7-7"} />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={!isRTL ? "M9 5l7 7-7 7" : "M15 19l-7-7 7-7"} />
                             </svg>
                         </motion.div>
 
@@ -228,7 +228,7 @@ const CategoryCarousel = ({ locale, productCategories }: CategoryCarouselProps) 
                             className="category-swiper-button-next absolute top-[35%] -translate-y-1/2 -right-3 z-50 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-white hover:shadow-xl hover:scale-110 transition-all duration-300 cursor-pointer group"
                         >
                             <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isRTL ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7"} />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={!isRTL ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7"} />
                             </svg>
                         </motion.div>
                     </Swiper>

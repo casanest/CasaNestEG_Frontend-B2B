@@ -60,7 +60,7 @@ export default async function ProductRail({
             gap-4 sm:gap-5 lg:gap-6
           "
         >
-          {pricedProducts.slice(0, 8).map((product, index) => (
+          {pricedProducts.slice(0, 4).map((product, index) => (
             <motion.li
               key={product.id}
               variants={{

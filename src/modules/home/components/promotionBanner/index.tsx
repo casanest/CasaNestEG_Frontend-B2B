@@ -52,7 +52,7 @@ const PromotionBanner = ({ locale }: { locale: string }) => {
                     <div className="flex flex-col gap-6 sm:gap-8 md:flex-row md:items-center md:justify-between">
                         <div className="flex items-center gap-4 text-center md:text-left justify-center md:justify-start">
                             <div className="p-3 bg-white/20 rounded-full">
-                                <Zap size={24} className="text-yellow-300" />
+                                <Zap size={24} className="text-white-300" />
                             </div>
                             <div className={`flex flex-col gap-1 ${isRTL ? 'text-right' : 'text-left'}`}>
                                 <h2 className="text-lg sm:text-xl md:text-2xl font-bold">
@@ -103,9 +103,9 @@ const PromotionBanner = ({ locale }: { locale: string }) => {
                                 repeat: Infinity,
                                 repeatDelay: 1
                             }}
-                            className="p-3 bg-yellow-400/30 rounded-full backdrop-blur-sm shadow-lg"
+                            className="p-3 bg-white/30 rounded-full backdrop-blur-sm shadow-lg"
                         >
-                            <Zap size={28} className="text-yellow-300" fill="currentColor" />
+                            <Zap size={28} className="text-white-300" fill="currentColor" />
                         </motion.div>
                         <div className={`flex flex-col gap-1 ${isRTL ? 'text-right' : 'text-left'}`}>
                             <motion.h2
@@ -124,7 +124,7 @@ const PromotionBanner = ({ locale }: { locale: string }) => {
                     {/* Countdown */}
                     <div className="flex flex-wrap justify-center gap-3 sm:gap-4 flex-1">
                         <div className="flex items-center gap-2 sm:gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 shadow-lg">
-                            <Clock size={22} className="text-yellow-300" />
+                            <Clock size={22} className="text-white-300" />
                             <div className={`flex gap-2 sm:gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                                 {countdownItems.map((item, index) => (
                                     <motion.div
@@ -159,19 +159,19 @@ const PromotionBanner = ({ locale }: { locale: string }) => {
                         <motion.button
                             whileHover={{ scale: 1.05, boxShadow: "0 10px 40px rgba(255,255,255,0.3)" }}
                             whileTap={{ scale: 0.95 }}
-                            className="relative px-6 sm:px-8 py-3 sm:py-3.5 bg-gradient-to-r from-yellow-400 to-yellow-500 text-[#043364] font-bold rounded-full shadow-xl hover:shadow-2xl transition-all text-sm sm:text-base overflow-hidden group"
+                            className="relative px-6 sm:px-8 py-3 sm:py-3.5 bg-gradient-to-r from-white to-gray-400 text-[#043364] font-bold rounded-full shadow-xl hover:shadow-2xl transition-all text-sm sm:text-base overflow-hidden group"
                             onClick={() => window.location.href = `/${locale}/store`}
                             aria-label={isRTL ? "تسوق الآن" : "Shop Now"}
                         >
                             <span className="relative z-10 flex items-center gap-2">
                                 {isRTL ? "تسوق الآن 🛍️" : "🛍️ Shop Now"}
                             </span>
-                            <motion.div
-                                className="absolute inset-0 bg-gradient-to-r from-yellow-300 to-yellow-400"
+                            {/* <motion.div
+                                className="absolute inset-0 bg-gradient-to-r from-white to-gray-400"
                                 initial={{ x: '-100%' }}
                                 whileHover={{ x: 0 }}
                                 transition={{ duration: 0.3 }}
-                            />
+                            /> */}
                         </motion.button>
                     </div>
                 </motion.div>
@@ -184,7 +184,7 @@ const PromotionBanner = ({ locale }: { locale: string }) => {
                     className="mt-6 h-1 bg-white/20 rounded-full overflow-hidden"
                 >
                     <motion.div
-                        className="h-full bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400"
+                        className="h-full bg-gradient-to-r from-white via-gray-300 to-white"
                         animate={{ x: ['-100%', '100%'] }}
                         transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                         style={{ width: '50%' }}
