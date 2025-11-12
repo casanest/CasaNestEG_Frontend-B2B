@@ -7,6 +7,7 @@ import { getProductPrice } from "@lib/util/get-product-price"
 import PreviewPrice from "@modules/products/components/product-preview/price"
 import { addToCart } from "@lib/data/cart"
 import { useParams } from "next/navigation"
+import PlaceholderImage from "@modules/common/icons/placeholder-image"
 
 type ProductCardProps = {
     product: HttpTypes.StoreProduct
@@ -43,6 +44,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
         }
     }
 
+    const imageSrc =
+        product.thumbnail ??
+        product.images?.find((img) => Boolean(img?.url))?.url ??
+        null
+
     return (
         <LocalizedClientLink
             href={`/products/${product.handle}`}
@@ -70,18 +76,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
 
                 {/* Product image */}
                 <div className="relative flex-1 flex items-center justify-center p-4">
-                    <img
-                        src={product.thumbnail}
-                        alt={product.title}
-                        className="
-              mx-auto h-36 sm:h-44 object-contain
-              transition-transform duration-300 
-              group-hover:scale-105
-            "
-                        loading="lazy"
-                        width={180}
-                        height={180}
-                    />
+                    {imageSrc ? (
+                        <img
+                            src={imageSrc}
+                            alt={product.title}
+                            className="
+                  mx-auto h-36 sm:h-44 object-contain
+                  transition-transform duration-300 
+                  group-hover:scale-105
+                "
+                            loading="lazy"
+                            width={180}
+                            height={180}
+                        />
+                    ) : (
+                        <div className="flex items-center justify-center mx-auto h-36 sm:h-44 text-ui-fg-muted">
+                            <PlaceholderImage size={24} />
+                        </div>
+                    )}
                 </div>
 
                 {/* Info */}

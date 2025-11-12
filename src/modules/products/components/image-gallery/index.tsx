@@ -2,17 +2,35 @@
 
 import { useState, useCallback, useEffect } from "react"
 import useEmblaCarousel from "embla-carousel-react"
-import { HttpTypes } from "@medusajs/types"
 import ReactImageMagnify from "react-image-magnify"
 import Image from "next/image"
 import clsx from "clsx"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import { HttpTypes } from "@medusajs/types"
+import PlaceholderImage from "@modules/common/icons/placeholder-image"
+
+type GalleryImage = Pick<HttpTypes.StoreProductImage, "id" | "url">
 
 type ImageGalleryProps = {
-    images: HttpTypes.StoreProductImage[]
+    images?: GalleryImage[] | null
+    fallbackImage?: string | null
 }
 
-const ImageGallery = ({ images }: ImageGalleryProps) => {
+const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
+    const normalizedImages: GalleryImage[] = (images ?? [])
+        .filter((img): img is GalleryImage => Boolean(img?.url))
+        .map((img, index) => ({
+            id: img.id ?? `image-${index}`,
+            url: img.url,
+        }))
+
+    const displayImages: GalleryImage[] =
+        normalizedImages.length > 0
+            ? normalizedImages
+            : fallbackImage
+            ? [{ id: "fallback-thumbnail", url: fallbackImage }]
+            : []
+
     const [selectedIndex, setSelectedIndex] = useState(0)
     const [emblaRef, emblaApi] = useEmblaCarousel({ containScroll: "trimSnaps", dragFree: true })
 
@@ -29,7 +47,13 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
     const scrollPrev = () => emblaApi?.scrollPrev()
     const scrollNext = () => emblaApi?.scrollNext()
 
-    const selectedImage = images[selectedIndex]
+    useEffect(() => {
+        if (selectedIndex >= displayImages.length && displayImages.length > 0) {
+            setSelectedIndex(0)
+        }
+    }, [displayImages.length, selectedIndex])
+
+    const selectedImage = displayImages[selectedIndex]
 
     useEffect(() => {
         if (!emblaApi) return
@@ -37,6 +61,14 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
         emblaApi.on("select", onSelect)
         onSelect()
     }, [emblaApi])
+
+    if (displayImages.length === 0) {
+        return (
+            <div className="flex items-center justify-center w-full max-w-5xl mx-auto px-4 aspect-[4/5] border rounded-lg bg-ui-bg-subtle">
+                <PlaceholderImage size={32} />
+            </div>
+        )
+    }
 
     return (
         <div className="flex flex-col items-center gap-6 w-full max-w-5xl mx-auto px-4 relative">
@@ -69,7 +101,7 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
             <div className="relative w-50 px-4">
                 <div className="overflow-hidden" ref={emblaRef}>
                     <div className="flex gap-3 py-2 px-12">
-                        {images.map((img, index) => (
+                        {displayImages.map((img, index) => (
                             <button
                                 key={img.id}
                                 onClick={() => scrollTo(index)}
