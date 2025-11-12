@@ -29,14 +29,14 @@ const StoreTemplate = async ({
     >
       {/* Desktop Sidebar - Hidden on mobile */}
       <div className="hidden small:block w-full small:w-72 small:sticky small:top-6">
-      <RefinementList
-        locale={locale}
-          sortBy={sort} 
+        <RefinementList
+          locale={locale}
+          sortBy={sort}
           countryCode={countryCode}
           inline
-      />
+        />
       </div>
-      
+
       <div className="w-full">
         {/* Page Title */}
         <div className="mb-8 text-2xl-semi text-[#043364]">
@@ -47,9 +47,9 @@ const StoreTemplate = async ({
 
         {/* Mobile Filters - Visible only on mobile */}
         <div className="small:hidden mb-6">
-          <RefinementList 
-            locale={locale} 
-            sortBy={sort} 
+          <RefinementList
+            locale={locale}
+            sortBy={sort}
             countryCode={countryCode}
           />
         </div>

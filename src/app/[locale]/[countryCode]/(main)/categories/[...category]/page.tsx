@@ -6,6 +6,7 @@ import { listRegions } from "@lib/data/regions"
 import { StoreRegion } from "@medusajs/types"
 import CategoryTemplate from "@modules/categories/templates"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
+import { getLocale } from "next-intl/server"
 
 type Props = {
   params: Promise<{ category: string[]; countryCode: string }>
@@ -68,6 +69,8 @@ export async function generateStaticParams() {
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
+  const locale = await getLocale()
+  const isRTL = locale === "ar"
   try {
     // Handle URL encoding - decode the category handle
     const decodedCategory = params.category.map(segment => decodeURIComponent(segment))
@@ -77,11 +80,13 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
       notFound()
     }
 
-    const title = productCategory.name + " | Medusa Store"
-    const description = productCategory.description ?? `${title} category.`
+    const title = isRTL
+      ? (productCategory.name_ar || productCategory.name_en) + " - متجر LA CASA"
+      : productCategory.name_en || productCategory.name_ar + " - LA CASA Store"
+    const description = productCategory.description_en ?? `${title} category.`
 
     return {
-      title: `${title} | Medusa Store`,
+      title: `${title} `,
       description,
       alternates: {
         canonical: `${decodedCategory.join("/")}`,
