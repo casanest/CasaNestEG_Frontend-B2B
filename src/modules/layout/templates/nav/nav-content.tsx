@@ -20,13 +20,13 @@ export default function NavContent(props: any) {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [suggestedProducts, setSuggestedProducts] = useState<StoreProduct[]>(props.products || [])
   console.log("props.products", props.products)
-// useEffect(() => {
-//   if (props.products) {
-//     setSuggestedProducts(props.products)
-//   }
-//   console.log("suggestedProducts", suggestedProducts)
+useEffect(() => {
+  if (props.products) {
+    setSuggestedProducts(props.products)
+  }
+  console.log("suggestedProducts", suggestedProducts)
   
-// }, [props.products])
+}, [props.products])
   return (
     <Box className="flex h-full w-full items-center justify-between  bg-white">
       {isSearchOpen && (

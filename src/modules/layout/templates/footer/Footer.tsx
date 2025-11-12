@@ -80,9 +80,9 @@ export default function Footer({ productCategories, collections, locale }: Foote
   const isRTL = locale === "ar";
 
   const quickLinks = [
-    { href: "/store", label: isRTL ? "متجرنا" : "Store" },
-    { href: "/account", label: isRTL ? "حسايك" : "Your Account" },
-    { href: "/orders", label: isRTL ? "طلباتك" : "Your Orders" },
+    { href: "/store", label: isRTL ? "المنتجات" : "Store" },
+    { href: "/account", label: isRTL ? "الحساب" : "Account" },
+    { href: "/account/orders", label: isRTL ? "الطلبات" : "Orders" },
     { href: "/returns", label: isRTL ? "سياسة الإرجاع" : "Return Policy" },
   ];
 

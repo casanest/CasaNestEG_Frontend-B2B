@@ -9,25 +9,21 @@ import { formatNameForTestId } from '@lib/util/formatNameForTestId'
 import { StoreCollection, StoreProductCategory } from '@medusajs/types'
 import { Box } from '@modules/common/components/box'
 import { NavigationItem } from '@modules/common/components/navigation-item'
-// import { CollectionsData } from 'types/strapi'
-
-// import CollectionsMenu from './collections-menu'
 import DropdownMenu from './dropdown-menu'
+
+type NavigationProps = {
+  countryCode: string
+  productCategories: StoreProductCategory[]
+  collections: StoreCollection[]
+}
 
 export default function Navigation({
   countryCode,
   productCategories,
   collections,
-}: {
-  countryCode: string
-  productCategories: StoreProductCategory[]
-  collections: StoreCollection[]
-}) {
+}: NavigationProps) {
   const pathname = usePathname()
-  const [openDropdown, setOpenDropdown] = useState<{
-    name: string
-    handle: string
-  } | null>(null)
+  const [openDropdown, setOpenDropdown] = useState<{ name: string; handle: string } | null>(null)
 
   const navigation = useMemo(
     () => createNavigation(productCategories, collections),
@@ -37,10 +33,12 @@ export default function Navigation({
   return (
     <Box className="hidden gap-4 self-stretch large:flex">
       {navigation.map((item: any, index: number) => {
-        const handle = item.name.toLowerCase().replace(' ', '-')
-        const isCategories =
-          handle === 'shop' && pathname.includes(`/${countryCode}/categories`)
-        const active = pathname.includes(`/${countryCode}/${handle}`)
+        const handle = item.handle || item.name.toLowerCase().replace(/\s+/g, '-')
+        const fullPath = `/${countryCode}${item.handle}`
+        const isActive =
+          pathname === fullPath ||
+          pathname.startsWith(`${fullPath}/`) ||
+          pathname.includes(`${countryCode}/categories`) && handle === 'shop'
 
         return (
           <DropdownMenu
@@ -49,27 +47,17 @@ export default function Navigation({
             activeItem={openDropdown}
             isOpen={openDropdown?.name === item.name}
             onOpenChange={(open) => {
-              setOpenDropdown(
-                open ? { name: item.name, handle: item.handle } : null
-              )
+              setOpenDropdown(open ? { name: item.name, handle } : null)
             }}
-            // customContent={
-            //   item.name === 'Collections' ? (
-            //     <CollectionsMenu
-            //       cmsCollections={strapiCollections}
-            //       medusaCollections={collections}
-            //     />
-            //   ) : undefined
-            // }
           >
             <div
               className="flex h-full items-center"
               data-testid={formatNameForTestId(`${item.name}-dropdown`)}
             >
               <NavigationItem
-                href={`/${countryCode}${item.handle}`}
+                href={fullPath}
                 className={cn('!py-2 px-2', {
-                  'border-b border-action-primary': active || isCategories,
+                  'border-b-2 border-action-primary font-medium text-action-primary': isActive,
                 })}
               >
                 {item.name}
