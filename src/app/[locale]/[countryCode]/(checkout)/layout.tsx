@@ -29,7 +29,7 @@ export default async function CheckoutLayout({
                 Back to shopping cart
               </span>
               <span className="mt-px block small:hidden txt-compact-plus text-ui-fg-subtle hover:text-ui-fg-base">
-                Back
+                Back 
               </span>
             </LocalizedClientLink>
           </div> */}
@@ -64,7 +64,7 @@ export default async function CheckoutLayout({
               data-testid="nav-store-link"
             >
               <Image
-                src="/lacasaLogo.jpg"
+                src="/lacasaLogo.png"
                 alt="Logo"
                 width={100}
                 height={100}
@@ -80,7 +80,7 @@ export default async function CheckoutLayout({
               data-testid="nav-store-link"
             >
               <Image
-                src="/lacasaLogo.jpg"
+                src="/lacasaLogo.png"
                 alt="Logo"
                 width={150}
                 height={150}

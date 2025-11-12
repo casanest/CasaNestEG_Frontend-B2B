@@ -10,7 +10,6 @@ import Image from "next/image"
 import { User } from "lucide-react"
 import MegaMenu from "@modules/layout/components/mega-menu"
 import NavContent from "./nav-content"
-import { Container } from "@modules/common/components/container"
 import { listCategories } from "@lib/data/categories"
 import { listCollections } from "@lib/data/collections"
 import { createNavigation } from "@lib/constants"
@@ -21,6 +20,8 @@ export default async function Nav() {
   const isRTL = locale === "ar";
   const regions = await listRegions().then((regions: StoreRegion[]) => regions)
   const productCategories = await listCategories()
+  console.log("productCategories", productCategories)
+    
   const products = await listProducts({
     queryParams: {
       limit: 4,
@@ -36,38 +37,8 @@ export default async function Nav() {
   const { collections } = await listCollections()
   console.log("collections", collections)
   const navigation = createNavigation(productCategories, collections)
+  console.log("navigation", navigation)
 
-  const LaCasaLogo = ({ width = '200', height = '100', color = '#000' }) => (
-    <svg
-      width={width}
-      height={height}
-      viewBox="0 0 200 100"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      {/* Main "LA CASA" text */}
-      <text
-        x="20"
-        y="50"
-        fontFamily="Arial, sans-serif"
-        fontSize="36"  // Slightly smaller to fit the extra letters
-        fontWeight="bold"
-        fill={color}
-      >
-        LA CASA
-      </text>
-
-      {/* Subtitle "ideas aa for life" */}
-      <text
-        x="20"
-        y="80"
-        fontFamily="Arial, sans-serif"
-        fontSize="14"
-        fill={color}
-      >
-        ideas aa for life
-      </text>
-    </svg>
-  );
 
   return (
     <>
@@ -97,18 +68,6 @@ export default async function Nav() {
                     priority
                   />
                 </LocalizedClientLink>
-                {/* <LocalizedClientLink
-                  href="/"
-                  className="text-4xl font-extrabold tracking-widest uppercase text-transparent bg-clip-text hover:from-blue-600 hover:to-blue-800 transition-all duration-300 ease-in-out leading-none"
-                  data-testid="nav-store-link"
-                >
-                  <Image
-                    src="/lacasaLogo.jpg"
-                    alt="Logo"
-                    width={170}
-                    height={150}
-                  />
-                </LocalizedClientLink> */}
               </div>
             </div>
             <div className="hidden md:flex flex-1 basis-0 h-full flex items-center">

@@ -51,18 +51,40 @@ export const createNavigation = (
   productCategories: StoreProductCategory[],
   collections?: StoreCollection[]
 ) => [
+    // {
+    //   name: 'Shop',
+    //   handle: '/store',
+    //   category_children: productCategories
+    //     .filter((category) => !category.parent_category)
+    //     .map((category) => ({
+    //       name: category.name,
+    //       type: 'parent_category',
+    //       handle: `/categories/${category.handle}`,
+    //       category_children: category.category_children.map((subCategory) => ({
+    //         name: subCategory.name,
+    //         handle: `/categories/${subCategory.handle}`,
+    //         icon: null,
+    //         category_children: null,
+    //       })),
+    //     })),
+    // },
     {
       name: 'Shop',
       handle: '/store',
       category_children: productCategories
         .filter((category) => !category.parent_category)
         .map((category) => ({
-          name: category.name,
+          // 🟢 خليك واضح في اللغتين (لو عندك لغة محددة، استعملها هنا)
+          name_en: category.name_en || category.name,
+          name_ar: category.name_ar || category.name,
           type: 'parent_category',
-          handle: `/categories/${category.handle}`,
-          category_children: category.category_children.map((subCategory) => ({
-            name: subCategory.name,
-            handle: `/categories/${subCategory.handle}`,
+          handle_en: `/categories/${category.handle_en || category.handle}`,
+          handle_ar: `/categories/${category.handle_ar || category.handle}`,
+          category_children: (category.category_children || []).map((subCategory) => ({
+            name_en: subCategory.name_en || subCategory.name,
+            name_ar: subCategory.name_ar || subCategory.name,
+            handle_en: `/categories/${subCategory.handle_en || subCategory.handle}`,
+            handle_ar: `/categories/${subCategory.handle_ar || subCategory.handle}`,
             icon: null,
             category_children: null,
           })),

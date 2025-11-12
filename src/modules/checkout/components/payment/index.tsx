@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from "react"
 import { useSearchParams, useRouter, usePathname, useParams } from "next/navigation"
 import { useLocale } from "next-intl"
-import { Button, Heading, Text } from "@medusajs/ui"
+import { Button, clx, Heading, Text } from "@medusajs/ui"
 import { CheckCircleSolid, CreditCard } from "@medusajs/icons"
 import { RadioGroup } from "@headlessui/react"
 import { TapContainer } from "../tap-container"
@@ -62,40 +62,40 @@ const Payment = ({
     if (isLoading) {
       return
     }
-    
+
     setIsLoading(true)
     setError(null)
-    
+
     try {
       // Validate cart data before proceeding
       if (!cart?.id) {
         throw new Error("Cart ID is missing")
       }
-      
+
       if (!cart?.email) {
         throw new Error("Email is required for order completion")
       }
-      
+
       if (!cart?.shipping_address) {
         throw new Error("Shipping address is required for order completion")
       }
-      
+
       if (!cart?.items || cart.items.length === 0) {
         throw new Error("Cart is empty")
       }
-      
+
       // First, initiate a payment session for the system default provider
       const { initiatePaymentSession } = await import("@lib/data/cart")
-      
+
       // Initiate payment session with system default provider
       await initiatePaymentSession(cart, {
         provider_id: "pp_system_default"
       })
-      
+
       // Then place the order using Medusa's standard flow
       const { placeOrder } = await import("@lib/data/cart")
       await placeOrder(cart.id)
-      
+
       // If we reach here, the order was successful and user was redirected
       // The placeOrder function handles the redirect to the success page
     } catch (err: any) {
@@ -119,6 +119,21 @@ const Payment = ({
   if (isOpen) {
     return (
       <div className="w-full">
+        <Heading
+          level="h2"
+          className={clx(
+            "flex flex-row text-3xl-regular gap-x-2 items-baseline mb-8",
+            {
+              "opacity-50 pointer-events-none select-none":
+                !isOpen && (cart.payment_sessions?.length === 0 || !cart.payment_sessions),
+            }
+          )}
+        >
+          {locale === "en" ? "Payment" : "الدفع"}
+          {!isOpen && (cart.payment_sessions?.length ?? 0) > 0 && (
+            <CheckCircleSolid />
+          )}
+        </Heading>
         <div className="mb-8">
           <Heading level="h2" className="txt-compact-large text-ui-fg-base">
             {locale === "ar" ? "طريقة الدفع" : "Payment Method"}
@@ -145,7 +160,7 @@ const Payment = ({
                 paymentInfoMap={paymentInfoMap}
               />
             )}
-            
+
             {systemDefaultMethod && (
               <SystemDefaultContainer
                 paymentProviderId="pp_system_default"
@@ -158,14 +173,14 @@ const Payment = ({
           {/* Payment Processing Area */}
           <div className="bg-ui-bg-base p-6 rounded-lg border">
             {selectedPaymentMethod === "tap" && tapPaymentMethod && (
-              <TapContainer 
-                cart={cart} 
+              <TapContainer
+                cart={cart}
                 onPaymentComplete={handlePaymentComplete}
                 onPaymentFailure={handlePaymentFailure}
                 onError={setError}
               />
             )}
-            
+
             {selectedPaymentMethod === "pp_system_default" && systemDefaultMethod && (
               <div className="text-center">
                 <Button
@@ -177,7 +192,7 @@ const Payment = ({
                   {locale === "ar" ? "إتمام الطلب" : "Complete Order"}
                 </Button>
                 <Text className="txt-compact-small text-ui-fg-subtle mt-2">
-                  {locale === "ar" 
+                  {locale === "ar"
                     ? "سيتم إرسال تعليمات التسليم إلى بريدك الإلكتروني"
                     : "Delivery instructions will be sent to your email"
                   }
@@ -199,7 +214,7 @@ const Payment = ({
             {locale === "ar" ? "طريقة الدفع" : "Payment Method"}
           </Heading>
           <Text className="txt-compact-medium text-ui-fg-subtle">
-            {selectedPaymentMethod === "tap" 
+            {selectedPaymentMethod === "tap"
               ? tapPaymentMethod?.title || "Tap Payments"
               : systemDefaultMethod?.title || "Pay on Delivery"
             }

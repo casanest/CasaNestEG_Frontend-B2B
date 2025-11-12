@@ -1,8 +1,8 @@
-export const fallbackLng = "en"
+export const fallbackLng = "ar"
 export const languages = [
   fallbackLng,
-  "fr",
-  "ar"
+  "en",
+  "fr"
   // "de",
   // "it",
 ]

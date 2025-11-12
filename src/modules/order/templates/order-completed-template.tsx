@@ -70,14 +70,6 @@ export default async function OrderCompletedTemplate({
 
           {/* تفاصيل الطلب */}
           <OrderDetails showStatus={true} order={order} />
-
-          {/* <Heading
-            level="h2"
-            className="text-2xl font-semibold mt-6 border-t border-gray-200 pt-4"
-          >
-            {texts.orderDetails}
-          </Heading> */}
-
           {/* العناصر وتفاصيل الأسعار والشحن والدفع */}
           <Items locale={locale} order={order} />
           <CartTotals totals={order} />
@@ -92,7 +84,7 @@ export default async function OrderCompletedTemplate({
               </Button>
             </LocalizedClientLink>
             <LocalizedClientLink href="/store">
-              <Button size="large" className="w-full sm:w-auto">
+              <Button size="large" className="w-full sm:w-auto  bg-[#043364] hover:bg-blue-900 text-white">
                 {isArabic ? "متابعة التسوق" : "Continue Shopping"}
               </Button>
             </LocalizedClientLink>

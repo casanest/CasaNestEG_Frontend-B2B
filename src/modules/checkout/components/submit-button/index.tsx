@@ -20,11 +20,11 @@ export function SubmitButton({
   return (
     <Button
       size="large"
-      className={className}
       type="submit"
       isLoading={pending}
       variant={variant || "primary"}
       data-testid={dataTestId}
+      className={`${className} bg-[#043364] hover:bg-blue-900 text-white`}
     >
       {children}
     </Button>

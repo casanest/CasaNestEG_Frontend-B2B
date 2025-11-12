@@ -1,8 +1,7 @@
 import React from "react"
 
-import Footer from "@modules/layout/templates/footer"
 import Nav from "@modules/layout/templates/nav"
-import TopNav from "../components/top-nav"
+import FooterServer from "./footer/FooterServer"
 
 const Layout: React.FC<{
   children: React.ReactNode
@@ -13,7 +12,7 @@ const Layout: React.FC<{
     <div>
       <Nav />
       <main className="relative">{children}</main>
-      <Footer />
+      <FooterServer />
     </div>
   )
 }

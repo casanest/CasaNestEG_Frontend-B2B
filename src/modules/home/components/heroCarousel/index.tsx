@@ -30,7 +30,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
         {
             image: '/home1.jpg',
             alt: 'Refrigerator filled with fresh fruits and juices',
-            link: '/categories/refrigerators',
+            link: 'categories/refrigerators',
             title: isRTL ? 'ثلاجات مميزة' : 'Premium Refrigerators',
             subtitle: isRTL ? 'استمتع بأفضل تجربة تبريد' : 'Experience the best cooling',
             cta: isRTL ? 'استكشف الآن' : 'Explore Now'
@@ -38,7 +38,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
         {
             image: '/home2.jpg',
             alt: 'Modern kitchen with built-in appliances',
-            link: '/categories/kitchen',
+            link: 'categories/kitchen',
             title: isRTL ? 'مطبخ عصري' : 'Modern Kitchen',
             subtitle: isRTL ? 'كل ما تحتاجه لمطبخك' : 'Everything you need for your kitchen',
             cta: isRTL ? 'استكشف الآن' : 'Explore Now'
@@ -46,7 +46,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
         {
             image: '/home3.jpg',
             alt: 'Elegant kitchen with modern appliances',
-            link: '/categories/kitchen',
+            link: 'categories/kitchen',
             title: isRTL ? 'أجهزة مطبخ أنيقة' : 'Elegant Kitchen Appliances',
             subtitle: isRTL ? 'أضف لمسة من الأناقة' : 'Add a touch of elegance',
             cta: isRTL ? 'استكشف الآن' : 'Explore Now'
@@ -125,7 +125,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
                     <AnimatePresence initial={false} custom={isRTL}>
                         {slides.map((slide, idx) => (
                             <div key={`slide-${idx}`} className="embla__slide min-w-full relative flex">
-                                <Link href={slide.link} className="w-full h-full block">
+                                <Link href={`/${locale}/${slide.link}`} className="w-full h-full block">
                                     <Image
                                         src={slide.image}
                                         alt={slide.alt}
@@ -160,7 +160,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
                                                 {slide.subtitle}
                                             </motion.p>
                                             <motion.button
-                                                className="px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base lg:text-lg font-medium bg-gradient-to-tl from-emerald-500 to-[#022a55] text-white rounded-lg transition-colors duration-300 shadow-lg"
+                                                className="px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base lg:text-lg font-medium bg-gradient-to-tl from-gray-500 to-[#022a55] text-white rounded-lg transition-colors duration-300 shadow-lg"
                                                 initial={{ opacity: 0, y: 20 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 transition={{ duration: 0.5, delay: 0.6 }}

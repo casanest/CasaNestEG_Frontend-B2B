@@ -2,7 +2,7 @@ import { Metadata } from "next"
 
 import { listCollections } from "@lib/data/collections"
 import { getRegion } from "@lib/data/regions"
-import { listCategories } from "@lib/data/categories"
+import { getParentCategories, listCategories } from "@lib/data/categories"
 import { listProducts } from "@lib/data/products"
 import CallToActionBanner from "@modules/home/components/call-to-action-banner"
 import HeroCarousel from "@modules/home/components/heroCarousel"
@@ -40,7 +40,7 @@ export default async function Home({
   const { collections } = await listCollections({
     fields: "id, handle, title, metadata",
   })
-  const productCategories = await listCategories()
+  const productCategories = await getParentCategories(await listCategories())
 
   // Fetch featured products for the product grid
   const { response: { products: featuredProducts } } = await listProducts({
@@ -65,20 +65,20 @@ export default async function Home({
       </section>
 
       {/* Categories Section */}
-      <section className="py-12 bg-gradient-to-b from-white to-gray-50">
+      <section className="py-12 bg-gradient-to-b from-white to-gray-50 overflow-hidden">
         <div className="content-container mx-auto">
           <CategoryCarousel locale={locale} productCategories={productCategories} />
         </div>
       </section>
 
 
-      {/* Featured Products Section */}
+      {/* Featured Products Section
       <FeaturedProductsSection
         title={locale === "ar" ? "المنتجات المميزة" : "Featured Products"}
         locale={locale}
         region={region}
         products={featuredProducts}
-      />
+      /> */}
 
 
       {/* Promotion Banner */}
@@ -96,18 +96,18 @@ export default async function Home({
       </section>
 
       {/* Call to Action */}
-      <section className="py-12 bg-gray-50">
+      {/* <section className="py-12 bg-gray-50">
         <div className="md:content-container">
           <CallToActionBanner locale={locale} />
         </div>
-      </section>
+      </section> */}
 
       {/* Store Features */}
-      <section className="py-12 bg-white">
+      {/* <section className="py-12 bg-white">
         <div className="content-container mx-auto">
           <StoreFeatures locale={locale} />
         </div>
-      </section>
+      </section> */}
     </div>
   )
 }
