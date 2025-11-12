@@ -66,7 +66,7 @@ export default async function Home({
 
       {/* Categories Section */}
       <section className="py-12 bg-gradient-to-b from-white to-gray-50 overflow-hidden">
-        <div className="content-container mx-auto">
+        <div className="content-container overflow-hidden mx-auto">
           <CategoryCarousel locale={locale} productCategories={productCategories} />
         </div>
       </section>

@@ -55,7 +55,7 @@ export default async function FeaturedProducts({
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
             viewport={{ once: true }}
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4"
+            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4"
           >
             {isRTL ? (
               <>
@@ -73,7 +73,7 @@ export default async function FeaturedProducts({
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.4 }}
             viewport={{ once: true }}
-            className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto"
+            className="text-gray-600  text-sm sm:text-base max-w-2xl mx-auto"
           >
             {isRTL
               ? "استكشف مجموعتنا المختارة بعناية من المنتجات عالية الجودة"

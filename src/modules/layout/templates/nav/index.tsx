@@ -15,6 +15,7 @@ import { listCollections } from "@lib/data/collections"
 import { createNavigation } from "@lib/constants"
 import { listProducts } from "@lib/data/products"
 import { getLocale } from "next-intl/server"
+import ReloadLogo from "@modules/layout/components/reload-logo"
 export default async function Nav() {
   const locale = await getLocale()
   const isRTL = locale === "ar";
@@ -54,7 +55,7 @@ export default async function Nav() {
                 <SideMenu productCategories={productCategories} collections={collections} />
               </div>
               <div className="flex items-center h-full  md:hidden">
-                <LocalizedClientLink
+                {/* <LocalizedClientLink
                   href="/"
                   className="inline-block"
                   data-testid="nav-store-link"
@@ -67,13 +68,15 @@ export default async function Nav() {
                     height={200}
                     priority
                   />
-                </LocalizedClientLink>
+                </LocalizedClientLink> */}
+                <ReloadLogo href={`/${locale}`} w={200} h={200} />
+
               </div>
             </div>
             <div className="hidden md:flex flex-1 basis-0 h-full flex items-center">
               {/* <LaCasaLogo width="300" height="70" color="#ff5722" /> */}
 
-              <LocalizedClientLink
+              {/* <LocalizedClientLink
                 href="/"
                 className="text-3xl font-extrabold tracking-widest uppercase text-transparent bg-clip-text hover:from-blue-600 hover:to-blue-800 transition-all duration-300 ease-in-out leading-none"
                 data-testid="nav-store-link"
@@ -84,7 +87,10 @@ export default async function Nav() {
                   width={170}
                   height={150}
                 />
-              </LocalizedClientLink>
+              </LocalizedClientLink> */}
+              <ReloadLogo href={`/${locale}`} w={170} h={150} />
+
+
             </div>
             <div className=" flex-1 basis-0 h-full flex items-center">
             </div>

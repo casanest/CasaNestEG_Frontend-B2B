@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Autoplay } from "swiper/modules";
+import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import Link from "next/link";
@@ -24,100 +24,171 @@ interface CategoryCarouselProps {
 
 const CategoryCarousel = ({ locale, productCategories }: CategoryCarouselProps) => {
     const isRTL = locale === "ar";
-
-    const parentCategories = productCategories.filter(cat => !cat.parent_category_id);
+    const parentCategories = productCategories.filter((cat) => !cat.parent_category_id);
 
     if (!parentCategories || parentCategories.length === 0) {
         return (
-            <div className="text-center py-20 bg-gray-50 rounded-2xl">
-                <h3 className="text-2xl font-semibold text-gray-700 mb-3">
+            <div className="text-center py-16 sm:py-20 bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl mx-4">
+                <h3 className="text-xl sm:text-2xl font-semibold text-gray-700 mb-2">
                     {isRTL ? "لا توجد فئات متاحة حالياً" : "No categories available at the moment"}
                 </h3>
-                <p className="text-gray-500">{isRTL ? "يرجى التحقق لاحقاً" : "Please check back later"}</p>
+                <p className="text-sm sm:text-base text-gray-500">{isRTL ? "يرجى التحقق لاحقاً" : "Please check back later"}</p>
             </div>
         );
     }
 
+    const shouldCenter = parentCategories.length <= 4;
+
     return (
-        <section className="relative" dir={isRTL ? "rtl" : "ltr"}>
-            <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <section className="relative " dir={isRTL ? "rtl" : "ltr"}>
+            <div className="mx-auto ">
                 {/* Header */}
+                {/* Section Header */}
                 <motion.div
-                    initial={{ opacity: 0, y: 25 }}
+                    initial={{ opacity: 0, y: -20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
+                    transition={{ duration: 0.7 }}
                     viewport={{ once: true }}
-                    className="text-center mb-12"
+                    className="text-center mb-12 sm:mb-16"
                 >
-                    <div className="flex items-center gap-3 sm:mx-auto justify-center">
-                        <h2 className="text-2xl md:text-4xl font-extrabold text-[#043364] tracking-tight select-none">
-                            {isRTL ? "✨ استكشف الفئات" : "✨ Explore Categories"}
-                        </h2>
-                        <div className="hidden md:block flex-1 h-[2px] bg-gradient-to-r from-transparent via-[#043364] to-transparent"></div>
-                    </div>
+                    {/* <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        whileInView={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                        viewport={{ once: true }}
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#043364]/10 to-gray-500/10 rounded-full mb-4"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 text-[#043364]"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                        </svg>
+                        <span className="text-sm font-semibold text-[#043364]">
+                            {isRTL ? "منتجاتنا المميزة" : "Featured Collections"}
+                        </span>
+                    </motion.div> */}
+
+                    {/* <motion.h2
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.3 }}
+                        viewport={{ once: true }}
+                        className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#043364] mb-4"
+                    >
+                        {isRTL ? (
+                            <>
+                                اكتشف <span className="text-transparent bg-clip-text bg-gradient-to-r  from-gray-600 to-[#043364]">الفئات</span>
+                            </>
+                        ) : (
+                            <>
+                                Discover Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#043364] to-gray-600">Amazing</span> Collections
+                            </>
+                        )}
+                    </motion.h2> */}
+
+                    <motion.p
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ duration: 0.6, delay: 0.4 }}
+                        viewport={{ once: true }}
+                        className="text-gray-600  text-sm sm:text-base max-w-2xl mx-auto"
+                    >
+                        {isRTL
+                            ? "اكتشف مجموعة واسعة من المنتجات المصنفة خصيصاً لك"
+                            : "Explore a wide range of products categorized just for you"
+                        }
+                    </motion.p>
+
+                    {/* Decorative line */}
+                    <motion.div
+                        initial={{ scaleX: 0 }}
+                        whileInView={{ scaleX: 1 }}
+                        transition={{ duration: 0.8, delay: 0.5 }}
+                        viewport={{ once: true }}
+                        className="h-1 w-24 bg-gradient-to-r from-[#043364] to-gray-500 mx-auto mt-6 rounded-full"
+                    />
                 </motion.div>
 
                 {/* Carousel */}
-                <div className="relative group w-full">
+                <div className="relative w-full ">
                     <Swiper
-                        modules={[Navigation, Autoplay]}
-                        loop
-                        spaceBetween={20}
-                        slidesPerView={2}
-                        breakpoints={{
-                            480: { slidesPerView: 2 },
-                            640: { slidesPerView: 3 },
-                            768: { slidesPerView: 4 },
-                            1024: { slidesPerView: 5 },
-                            1280: { slidesPerView: 6 },
-                        }}
-                        autoplay={{
-                            delay: 2500,
-                            disableOnInteraction: false,
-                        }}
+                        modules={[Navigation]}
+                        slidesPerView={3}
+                        spaceBetween={16}
+                        centeredSlides={shouldCenter}
                         navigation={{
-                            nextEl: ".swiper-button-next",
-                            prevEl: ".swiper-button-prev",
+                            nextEl: '.category-swiper-button-next',
+                            prevEl: '.category-swiper-button-prev',
                         }}
-                        className="!overflow-visible"
-                        dir={isRTL?"rtl": "ltr"}
+                        breakpoints={{
+                            480: {
+                                slidesPerView: Math.min(3, parentCategories.length),
+                                spaceBetween: 10
+                            },
+                            640: {
+                                slidesPerView: Math.min(3, parentCategories.length),
+                                spaceBetween: 15
+                            },
+                            768: {
+                                slidesPerView: Math.min(4, parentCategories.length),
+                                spaceBetween: 20
+                            },
+                            1024: {
+                                slidesPerView: Math.min(5, parentCategories.length),
+                                spaceBetween: 28
+                            },
+                            1280: {
+                                slidesPerView: Math.min(7, parentCategories.length),
+                                spaceBetween: 32
+                            },
+                        }}
+                        dir={isRTL ? "rtl" : "ltr"}
+                        className="!overflow-visible !pb-4"
                     >
-                        {parentCategories.slice(0, 10).map(category => (
-                            <SwiperSlide key={category.id} className="!h-auto">
+                        {parentCategories.slice(0, 12).map((category, index) => (
+                            <SwiperSlide key={category.id} className="flex justify-center">
                                 <Link
-                                    href={`/categories/${isRTL ? category.handle_ar : category.handle_en}`}
-                                    className="block"
+                                    href={`/${locale}/categories/${isRTL ? category.handle_ar : category.handle_en}`}
                                     aria-label={isRTL ? category.name_ar : category.name_en}
-                                    tabIndex={0}
+                                    className="w-full"
                                 >
                                     <motion.div
-                                        whileHover={{ scale: 1.07 }}
-                                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                        className="h-full flex flex-col items-center justify-center text-center relative group/card cursor-pointer"
+                                        initial={{ opacity: 0, y: 20 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.5, delay: index * 0.05 }}
+                                        viewport={{ once: true }}
+                                        whileHover={{ y: -8 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        className="flex flex-col items-center text-center cursor-pointer group"
                                     >
-                                        {/* Circular background with gradient and shadow */}
-                                        <div
-                                            className="w-44 h-44 mb-4 rounded-full bg-gradient-to-tl from-gray-500 to-[#022a55] flex items-center justify-center shadow-xl group-hover/card:shadow-[0_0_20px_4px_rgba(0,0,0,0.2)] transition-shadow duration-300 relative overflow-hidden"
-                                            aria-hidden="true"
-                                        >
-                                            {/* Inner circle for image/icon */}
-                                            <div className="w-40 h-40 rounded-full bg-white flex items-center justify-center overflow-hidden border-2 border-transparent group-hover/card:border-[#043364] transition-colors duration-300">
+                                        {/* Circle Container */}
+                                        <div className="relative w-20 h-20 sm:w-28 sm:h-28 lg:w-36 lg:h-36 rounded-full bg-gradient-to-tr from-[#043364] via-[#065a9e] to-emerald-500 p-[3px] shadow-lg group-hover:shadow-2xl transition-all duration-300">
+                                            <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden relative">
+                                                {/* Hover overlay */}
+                                                <div className="absolute inset-0 bg-gradient-to-br from-[#043364]/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
                                                 {category.image_url ? (
                                                     <img
                                                         src={category.image_url}
                                                         alt={isRTL ? category.name_ar : category.name_en}
-                                                        className="w-full h-full object-contain"
+                                                        className="w-[70%] h-[70%] object-contain relative z-10 group-hover:scale-110 transition-transform duration-300"
                                                         loading="lazy"
                                                     />
                                                 ) : (
-                                                    <span className="text-5xl select-none">🏷️</span>
+                                                    <span className="text-3xl sm:text-4xl lg:text-5xl select-none group-hover:scale-110 transition-transform duration-300">
+                                                        🏷️
+                                                    </span>
                                                 )}
                                             </div>
                                         </div>
 
-                                        {/* Category name with subtle text shadow */}
+                                        {/* Category Name */}
                                         <h3
-                                            className="text-base font-semibold text-[#043364] mb-1 line-clamp-2 px-2 select-none"
+                                            className="text-xs sm:text-sm lg:text-base font-semibold text-[#043364] mt-2 sm:mt-3 lg:mt-4 line-clamp-2 px-1 select-none group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-br group-hover:from-[#043364] group-hover:via-[#065a9e] group-hover:to-emerald-500 transition-colors duration-300 min-h-[32px] sm:min-h-[40px] flex items-center"
                                             title={isRTL ? category.name_ar : category.name_en}
                                         >
                                             {isRTL ? category.name_ar : category.name_en}
@@ -126,87 +197,98 @@ const CategoryCarousel = ({ locale, productCategories }: CategoryCarouselProps) 
                                 </Link>
                             </SwiperSlide>
                         ))}
+                        {/* Enhanced Navigation Buttons */}
+                        <motion.div
+                            onClick={
+                                () => {
+                                    const prevButton = document.querySelector('.category-swiper-button-prev') as HTMLElement;
+                                    prevButton?.click();
+                                }
+                            }
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                            className="category-swiper-button-prev absolute top-[35%] -translate-y-1/2 -left-3 z-50 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-white hover:shadow-xl hover:scale-110 transition-all duration-300 cursor-pointer group"
+                        >
+                            <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isRTL ? "M9 5l7 7-7 7" : "M15 19l-7-7 7-7"} />
+                            </svg>
+                        </motion.div>
+
+                        <motion.div
+                            onClick={
+                                () => {
+                                    const nextButton = document.querySelector('.category-swiper-button-next') as HTMLElement;
+                                    nextButton?.click();
+                                }
+                            }
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                            className="category-swiper-button-next absolute top-[35%] -translate-y-1/2 -right-3 z-50 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-white hover:shadow-xl hover:scale-110 transition-all duration-300 cursor-pointer group"
+                        >
+                            <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isRTL ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7"} />
+                            </svg>
+                        </motion.div>
                     </Swiper>
 
-                    {/* Navigation Buttons */}
-                    <div className="absolute inset-y-0 right-0 flex items-center pointer-events-none">
-                        <button
-                            aria-label="Next Slide"
-                            className={`
-                swiper-button-next
-                !text-[#043364]
-                !bg-white/90
-                !rounded-full
-                !w-11 !h-11
-                !shadow-lg
-                !flex !items-center !justify-center
-                hover:!bg-gradient-to-br hover:!from-[#043364] hover:!to-emerald-500 hover:!text-white
-                transition-all duration-300
-                pointer-events-auto
-                opacity-0 group-hover:opacity-100
-                transform hover:scale-110
-                hover:shadow-2xl
-                backdrop-blur-sm
-                focus:outline-none focus:ring-2 focus:ring-emerald-500
-              `}
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-6 w-6"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                strokeWidth={2}
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
-                        <style jsx global>{`
-              .swiper-button-prev::after,
-              .swiper-button-next::after {
-                display: none !important;
-              }
-            `}</style>
-                    </div>
-                    <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none">
-                        <button
-                            aria-label="Previous Slide"
-                            className={`
-                swiper-button-prev
-                !text-[#043364]
-                !bg-white/90
-                !rounded-full
-                !w-11 !h-11
-                !shadow-lg
-                !flex !items-center !justify-center
-                hover:!bg-gradient-to-br hover:!from-[#043364] hover:!to-emerald-500 hover:!text-white
-                transition-all duration-300
-                pointer-events-auto
-                opacity-0 group-hover:opacity-100
-                transform hover:scale-110
-                hover:shadow-2xl
-                backdrop-blur-sm
-                focus:outline-none focus:ring-2 focus:ring-emerald-500
-              `}
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-6 w-6"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                strokeWidth={2}
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                            </svg>
-                        </button>
-                        <style jsx global>{`
-              .swiper-button-prev::after,
-              .swiper-button-next::after {
-                display: none !important;
-              }
-            `}</style>
-                    </div>
+                    {/* Custom Navigation Buttons */}
+                    <style jsx global>{`
+                        .swiper-button-next,
+                        .swiper-button-prev {
+                            width: 36px !important;
+                            height: 36px !important;
+                            background: white !important;
+                            border-radius: 50% !important;
+                            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+                            transition: all 0.3s ease !important;
+                        }
+
+                        .swiper-button-next:hover,
+                        .swiper-button-prev:hover {
+                            background: #043364 !important;
+                            box-shadow: 0 6px 16px rgba(4, 51, 100, 0.3) !important;
+                            transform: scale(1.1);
+                        }
+
+                        .swiper-button-next::after,
+                        .swiper-button-prev::after {
+                            font-size: 14px !important;
+                            font-weight: bold !important;
+                            color: #043364 !important;
+                        }
+
+                        .swiper-button-next:hover::after,
+                        .swiper-button-prev:hover::after {
+                            color: white !important;
+                        }
+
+                        @media (min-width: 640px) {
+                            .swiper-button-next,
+                            .swiper-button-prev {
+                                width: 44px !important;
+                                height: 44px !important;
+                            }
+
+                            .swiper-button-next::after,
+                            .swiper-button-prev::after {
+                                font-size: 16px !important;
+                            }
+                        }
+
+                        @media (max-width: 639px) {
+                            .swiper-button-next,
+                            .swiper-button-prev {
+                                display: none !important;
+                            }
+                        }
+
+                        .swiper-button-disabled {
+                            opacity: 0.3 !important;
+                            cursor: not-allowed !important;
+                        }
+                    `}</style>
                 </div>
             </div>
         </section>
