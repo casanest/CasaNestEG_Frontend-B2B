@@ -19,8 +19,8 @@ export default async function FeaturedProducts({
   }
 
   return (
-    <section className="w-full bg-gradient-to-b from-gray-50 via-white to-gray-50 py-12 sm:py-20">
-      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="w-full  py-12 sm:py-20">
+      <div className="max-w-screen-2xl mx-auto  sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -34,7 +34,7 @@ export default async function FeaturedProducts({
             whileInView={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#043364]/10 to-teal-500/10 rounded-full mb-4"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#043364]/10 to-gray-500/10 rounded-full mb-4"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -59,11 +59,11 @@ export default async function FeaturedProducts({
           >
             {isRTL ? (
               <>
-                اكتشف <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#043364] to-teal-600">مجموعاتنا</span> الرائعة
+                اكتشف <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#043364] to-gray-600">مجموعاتنا</span> الرائعة
               </>
             ) : (
               <>
-                Discover Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#043364] to-teal-600">Amazing</span> Collections
+                Discover Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#043364] to-gray-600">Amazing</span> Collections
               </>
             )}
           </motion.h2>
@@ -87,7 +87,7 @@ export default async function FeaturedProducts({
             whileInView={{ scaleX: 1 }}
             transition={{ duration: 0.8, delay: 0.5 }}
             viewport={{ once: true }}
-            className="h-1 w-24 bg-gradient-to-r from-[#043364] to-teal-500 mx-auto mt-6 rounded-full"
+            className="h-1 w-24 bg-gradient-to-r from-[#043364] to-gray-500 mx-auto mt-6 rounded-full"
           />
         </motion.div>
 
@@ -106,8 +106,8 @@ export default async function FeaturedProducts({
               },
             },
           }}
-          viewport={{ once: true, margin: "-100px" }}
-          className="flex flex-col gap-16 sm:gap-20"
+          // viewport={{ once: true, margin: "-100px" }}
+          className="flex flex-col  "
         >
           {collections.map((collection, index) => (
             <motion.li
@@ -126,9 +126,9 @@ export default async function FeaturedProducts({
               className="relative"
             >
               {/* Background decoration for odd items */}
-              {index % 2 === 0 && (
+              {/* {index % 2 === 0 && (
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-50/30 to-transparent rounded-3xl -z-10 transform -translate-x-4 translate-y-4" />
-              )}
+              )} */}
 
               <ProductRail
                 collection={collection}
@@ -136,7 +136,7 @@ export default async function FeaturedProducts({
                 locale={locale}
               />
 
-              {/* Divider (except for last item) */}
+              {/* Divider (except for last item)
               {index < collections.length - 1 && (
                 <motion.div
                   initial={{ scaleX: 0, opacity: 0 }}
@@ -145,7 +145,7 @@ export default async function FeaturedProducts({
                   viewport={{ once: true }}
                   className="h-px w-full bg-gradient-to-r from-transparent via-gray-200 to-transparent mt-16 sm:mt-20"
                 />
-              )}
+              )} */}
             </motion.li>
           ))}
         </motion.ul>

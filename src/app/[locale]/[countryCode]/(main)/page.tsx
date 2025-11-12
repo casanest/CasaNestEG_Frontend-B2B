@@ -87,7 +87,7 @@ export default async function Home({
       </section>
 
       {/* Collections Section */}
-      <section className="bg-white">
+      <section className=" bg-gradient-to-b from-gray-50 via-white to-gray-50">
         <div className="content-container mx-auto">
           <ul className="flex flex-col ">
             <FeaturedProducts collections={collections} region={region} locale={locale} />

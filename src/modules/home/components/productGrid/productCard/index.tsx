@@ -54,7 +54,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
     return (
         <LocalizedClientLink
             href={`/products/${product.handle}`}
-            className="group block h-full"
+            className="group block h-full bg-white mb-2 pb-5"
             locale={locale}
         >
             <div
