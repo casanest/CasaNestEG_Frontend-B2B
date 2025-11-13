@@ -30,7 +30,7 @@ export default function TopNav() {
   };
 
   return (
-    <div className={`hidden md:block w-full text-xs md:text-sm text-gray-500 shadow-md bg-gradient-to-r from-[#043364] via-[#043364] to-[#043364] top-0 z-[60] overflow-hidden`} dir={isRTL ? "rtl" : "ltr"}>
+    <div className={`hidden md:block w-full text-xs md:text-sm text-gray-500 shadow-md bg-gradient-to-r from-gray-600 via-[#021b3f] to-gray-600 top-0 z-[60] overflow-hidden`} dir={isRTL ? "rtl" : "ltr"}>
       <div className="flex flex-wrap items-center justify-between content-container mx-auto h-[36px]">
         {/* Left: Help + Social Icons */}
         <div className={`flex items-center gap-3 text-white font-medium `}>

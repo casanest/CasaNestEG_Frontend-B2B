@@ -84,7 +84,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
         if (!emblaApi) return;
         const interval = setInterval(() => {
             if (!isHovering && !isDragging) emblaApi.scrollNext();
-        }, 5000);
+        }, 6000);
         return () => clearInterval(interval);
     }, [emblaApi, isHovering, isDragging]);
 
@@ -160,7 +160,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
                                                 {slide.subtitle}
                                             </motion.p>
                                             <motion.button
-                                                className="px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base lg:text-lg font-medium bg-gradient-to-tl from-gray-500 to-[#022a55] text-white rounded-lg transition-colors duration-300 shadow-lg"
+                                                className="px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base lg:text-lg font-medium bg-gradient-to-tl from-gray-600 to-[#022a55] text-white rounded-lg transition-colors duration-300 shadow-lg"
                                                 initial={{ opacity: 0, y: 20 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 transition={{ duration: 0.5, delay: 0.6 }}
@@ -189,9 +189,9 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
             >
                 <motion.button
                     onClick={isRTL ? scrollNext : scrollPrev}
-                    className="bg-white/90 hover:!bg-gradient-to-br hover:!from-[#043364] hover:!to-emerald-500 hover:text-white p-2 sm:p-3 rounded-full shadow-xl focus:outline-none focus:ring-2 focus:ring-white/50"
+                    className="bg-white/90 hover:!bg-gradient-to-br hover:!from-[#021b3f] hover:!to-gray-600 hover:text-white p-2 sm:p-3 rounded-full shadow-xl focus:outline-none focus:ring-2 focus:ring-white/50"
                     aria-label={isRTL ? "التالي" : "Previous slide"}
-                    whileHover={{ scale: 1.1, backgroundColor: "#043364", color: "white" }}
+                    whileHover={{ scale: 1.1, backgroundColor: "#021b3f", color: "white" }}
                     whileTap={{ scale: 0.95 }}
                     transition={{ duration: 0.2 }}
                 >
@@ -199,9 +199,9 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
                 </motion.button>
                 <motion.button
                     onClick={isRTL ? scrollPrev : scrollNext}
-                    className="bg-white/90  hover:!bg-gradient-to-br hover:!from-[#043364] hover:!to-emerald-500 hover:text-white p-2 sm:p-3 rounded-full shadow-xl focus:outline-none focus:ring-2 focus:ring-white/50"
+                    className="bg-white/90  hover:!bg-gradient-to-br hover:!from-[#021b3f] hover:!to-gray-600 hover:text-white p-2 sm:p-3 rounded-full shadow-xl focus:outline-none focus:ring-2 focus:ring-white/50"
                     aria-label={isRTL ? "السابق" : "Next slide"}
-                    whileHover={{ scale: 1.1, backgroundColor: "#043364", color: "white" }}
+                    whileHover={{ scale: 1.1, backgroundColor: "#021b3f", color: "white" }}
                     whileTap={{ scale: 0.95 }}
                     transition={{ duration: 0.2 }}
                 >
@@ -214,7 +214,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
                 {slides.map((_, index) => (
                     <motion.button
                         key={`indicator-${index}`}
-                        className={`rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white ${index === selectedIndex ? 'w-6 bg-gradient-to-tl from-emerald-500 to-[#022a55] opacity-100' : 'w-3 bg-white/70 opacity-70'
+                        className={`rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white ${index === selectedIndex ? 'w-6 bg-gradient-to-tl from-gray-600 to-[#022a55] opacity-100' : 'w-3 bg-white/70 opacity-70'
                             } h-3`}
                         onClick={() => scrollTo(index)}
                         aria-label={`Go to slide ${index + 1}`}

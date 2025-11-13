@@ -6,11 +6,57 @@ import { NextIntlClientProvider } from "next-intl"
 import { unstable_setRequestLocale } from "next-intl/server"
 import { cookies } from "next/headers"
 import { Suspense } from "react"
-import "styles/globals.css"
+import "../styles/globals.css"
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
-}
+  title: {
+    default: "LA CASA | Ideas for Life",
+    template: "%s | LA CASA",
+  },
+  description:
+    "اكتشف عالم لاكازا — كل ما تحتاجه لمنزلك في مكان واحد! Discover La Casa — your one-stop shop for home essentials, appliances, and elegant designs.",
+  keywords: [
+    "لاكازا",
+    "LaCasa",
+    "متجر لاكازا",
+    "تسوق",
+    "منزلي",
+    "أجهزة كهربائية",
+    "أدوات منزلية",
+    "ديكور",
+    "العروض",
+    "Home store",
+    "La Casa Egypt",
+    "Home appliances",
+    "Furniture",
+    "Kitchenware",
+  ],
+  openGraph: {
+    title: "LA CASA | Ideas for Life",
+    description:
+      "كل ما تحتاجه لمنزلك من لاكازا — الجودة والأناقة والخدمة الممتازة في مكان واحد. Everything you need for your home in one place — style, quality, and comfort.",
+    url: "https://lacasa-eg.com/", // غيّرها للرابط الفعلي
+    siteName: "LA CASA",
+    images: [
+      {
+        url: "https://lacasa-eg.com/og-image.jpg", // غيّرها لصورة فعلية داخل public/
+        width: 1200,
+        height: 630,
+        alt: "LA CASA Store Preview",
+      },
+    ],
+    locale: "ar_EG",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "LA CASA | Ideas for Life",
+    description:
+      "اكتشف منتجات لاكازا — الجودة تبدأ من المنزل. Discover La Casa — ideas for a better home.",
+    images: ["https://lacasa-eg.com/og-image.jpg"],
+  },
+};
 
 export function generateStaticParams() {
   return languages.map((locale) => ({ locale }));
