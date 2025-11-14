@@ -3,6 +3,8 @@
 import { Clock, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
 const PromotionBanner = ({ locale }: { locale: string }) => {
     const isRTL = locale === "ar";
@@ -156,13 +158,20 @@ const PromotionBanner = ({ locale }: { locale: string }) => {
 
                     {/* CTA */}
                     <div className="flex justify-center md:justify-end flex-1">
-                        <motion.button
+                        <LocalizedClientLink
+                            href={`/store`}
+                            aria-label={isRTL ? "تسوق الآن" : "Shop Now"}
+                            // whileHover={{ scale: 1.05, boxShadow: "0 10px 40px rgba(255,255,255,0.3)" }}
+                            // whileTap={{ scale: 0.95 }}
+                            className="relative px-6 sm:px-8 py-3 sm:py-3.5 bg-gradient-to-r from-white to-gray-400 text-[#043364] font-bold rounded-full shadow-xl hover:shadow-2xl transition-all text-sm sm:text-base overflow-hidden group"
+                        >
+                            {/* <motion.button
                             whileHover={{ scale: 1.05, boxShadow: "0 10px 40px rgba(255,255,255,0.3)" }}
                             whileTap={{ scale: 0.95 }}
                             className="relative px-6 sm:px-8 py-3 sm:py-3.5 bg-gradient-to-r from-white to-gray-400 text-[#043364] font-bold rounded-full shadow-xl hover:shadow-2xl transition-all text-sm sm:text-base overflow-hidden group"
                             onClick={() => window.location.href = `/${locale}/store`}
                             aria-label={isRTL ? "تسوق الآن" : "Shop Now"}
-                        >
+                        > */}
                             <span className="relative z-10 flex items-center gap-2">
                                 {isRTL ? "تسوق الآن 🛍️" : "🛍️ Shop Now"}
                             </span>
@@ -172,7 +181,8 @@ const PromotionBanner = ({ locale }: { locale: string }) => {
                                 whileHover={{ x: 0 }}
                                 transition={{ duration: 0.3 }}
                             /> */}
-                        </motion.button>
+                            {/* </motion.button> */}
+                        </LocalizedClientLink>
                     </div>
                 </motion.div>
 
