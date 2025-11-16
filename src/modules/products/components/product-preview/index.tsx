@@ -7,7 +7,7 @@ import Thumbnail from "../thumbnail"
 import PreviewPrice from "./price"
 import { ChevronRight, Sparkles } from "lucide-react"
 
-export default async function ProductPreview({
+export default function ProductPreview({
   product,
   isFeatured,
   region,

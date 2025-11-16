@@ -17,6 +17,7 @@ interface ProductFilters {
   // Collection and type filters
   collection_id?: string[] | string
   type_id?: string[]
+  category_id?: string[] | string
   // Variant-based filters
   colors?: string[]
   materials?: string[]
@@ -99,9 +100,20 @@ export const listProducts = async ({
           if (!hasAvailableVariants) return false
     }
 
-        // Sale filtering (you can implement this based on your pricing logic)
+        // Sale filtering
         if (onSale === 'true') {
-          // This is a placeholder - implement based on your sale/discount logic
+          const hasDiscountedVariant = product.variants?.some((variant) => {
+            const calculated = variant.calculated_price?.calculated_amount
+            const original = variant.calculated_price?.original_amount
+            if (typeof calculated !== "number" || typeof original !== "number") {
+              return false
+            }
+            return original > calculated
+          })
+
+          if (!hasDiscountedVariant) {
+            return false
+          }
         }
 
         // Price filtering
@@ -233,9 +245,20 @@ export const listProductsWithSort = async ({
         if (!hasAvailableVariants) return false
       }
 
-      // Sale filtering (placeholder)
+      // Sale filtering
       if (onSale === 'true') {
-        // Implement based on your sale/discount logic
+        const hasDiscountedVariant = product.variants?.some((variant) => {
+          const calculated = variant.calculated_price?.calculated_amount
+          const original = variant.calculated_price?.original_amount
+          if (typeof calculated !== "number" || typeof original !== "number") {
+            return false
+          }
+          return original > calculated
+        })
+
+        if (!hasDiscountedVariant) {
+          return false
+        }
       }
 
       // Price filtering
@@ -321,7 +344,7 @@ export const getProductFilterOptions = async (countryCode: string, categoryId?: 
   try {
     // Fetch products - either all products or category-specific
     // Use a higher limit to ensure we get all available filter options
-    const queryParams = { limit: 1000 }
+    const queryParams: { limit: number; category_id?: string[] } = { limit: 1000 }
     if (categoryId) {
       queryParams.category_id = [categoryId]
     }

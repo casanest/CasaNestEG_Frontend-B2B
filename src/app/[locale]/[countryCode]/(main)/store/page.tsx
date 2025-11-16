@@ -20,6 +20,7 @@ type Params = {
     // Variant-based filters
     collection_id?: string
     type_id?: string
+    category_id?: string
     colors?: string
     materials?: string
     sizes?: string

@@ -53,6 +53,36 @@ export default async function Home({
     return null
   }
 
+  const collectionsWithProducts = await Promise.all(
+    collections.map(async (collection) => {
+      try {
+        const {
+          response: { products },
+        } = await listProducts({
+          regionId: region.id,
+          queryParams: {
+            collection_id: collection.id,
+            fields: "*variants.calculated_price",
+          },
+        })
+
+        return {
+          ...collection,
+          products,
+        }
+      } catch (error) {
+        console.error(
+          `Failed to load products for collection ${collection.id}:`,
+          error
+        )
+        return {
+          ...collection,
+          products: [],
+        }
+      }
+    })
+  )
+
   const dir = locale === "ar" ? "rtl" : "ltr"
 
   return (
@@ -90,7 +120,7 @@ export default async function Home({
       <section className=" bg-gradient-to-b from-gray-50 via-white to-gray-50">
         <div className="content-container mx-auto">
           <ul className="flex flex-col ">
-            <FeaturedProducts collections={collections} region={region} locale={locale} />
+            <FeaturedProducts collections={collectionsWithProducts} locale={locale} />
           </ul>
         </div>
       </section>

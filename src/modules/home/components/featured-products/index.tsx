@@ -3,15 +3,19 @@ import { HttpTypes } from "@medusajs/types"
 import ProductRail from "@modules/home/components/featured-products/product-rail"
 import { motion } from "framer-motion"
 
-export default async function FeaturedProducts({
-  collections,
-  region,
-  locale,
-}: {
-  collections: HttpTypes.StoreCollection[]
-  region: HttpTypes.StoreRegion
+type FeaturedCollection = HttpTypes.StoreCollection & {
+  products?: HttpTypes.StoreProduct[]
+}
+
+interface FeaturedProductsProps {
+  collections: FeaturedCollection[]
   locale: string
-}) {
+}
+
+export default function FeaturedProducts({
+  collections,
+  locale,
+}: FeaturedProductsProps) {
   const isRTL = locale === "ar"
 
   if (!collections || collections.length === 0) {
@@ -132,7 +136,7 @@ export default async function FeaturedProducts({
 
               <ProductRail
                 collection={collection}
-                region={region}
+                products={collection.products}
                 locale={locale}
               />
 

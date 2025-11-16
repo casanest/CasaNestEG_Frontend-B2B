@@ -5,6 +5,7 @@ import RefinementList from '@modules/store/components/refinement-list'
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import { getLocale } from "next-intl/server"
 import PaginatedProducts from "./paginated-products"
+import { getParentCategories, listCategories } from "@lib/data/categories"
 
 const StoreTemplate = async ({
   sortBy,
@@ -20,6 +21,12 @@ const StoreTemplate = async ({
   const pageNumber = page ? parseInt(page) : 1
   const sort = sortBy || "created_at"
   const locale = await getLocale()
+  const categoryTree = await listCategories()
+  const parentCategories = getParentCategories(categoryTree).map((category) => ({
+    id: category.id,
+    name_en: category.name_en,
+    name_ar: category.name_ar,
+  }))
 
   return (
     <div
@@ -33,6 +40,7 @@ const StoreTemplate = async ({
           locale={locale}
           sortBy={sort}
           countryCode={countryCode}
+          categories={parentCategories}
           inline
         />
       </div>
@@ -51,6 +59,7 @@ const StoreTemplate = async ({
             locale={locale}
             sortBy={sort}
             countryCode={countryCode}
+            categories={parentCategories}
           />
         </div>
 

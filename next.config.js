@@ -11,6 +11,9 @@ checkEnvVariables()
 const withNextIntl = nextIntl("./src/lib/i18n/request-config.js")
 
 const configOpts = {
+  httpAgentOptions: {
+    keepAlive: false,
+  },
   async headers() {
     return [
         {
@@ -59,6 +62,10 @@ const configOpts = {
       {
         protocol: "https",
         hostname: "medusa-server-testing.s3.us-east-1.amazonaws.com",
+      },
+      {
+        protocol: "https",
+        hostname: "admin.lacasa-eg.com",
       },
     ],
   },

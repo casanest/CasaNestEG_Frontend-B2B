@@ -103,6 +103,7 @@ export function getParentCategories(categories: Category[]) {
       handle_en: cat.handle_en,
       handle_ar: cat.handle_ar,
       image_url: cat.image_url,
+      parent_category_id: cat.parent_category_id ?? null,
     }));
 }
 

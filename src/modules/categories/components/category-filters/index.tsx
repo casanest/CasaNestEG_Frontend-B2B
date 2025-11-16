@@ -1,12 +1,20 @@
 "use client"
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useCallback, useState, useEffect } from "react"
-import { ChevronDown, Filter, X, SlidersHorizontal } from "lucide-react"
-import { Button, Badge, Drawer, Checkbox, Label, RadioGroup } from "@medusajs/ui"
-import { clx } from "@medusajs/ui"
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react"
+import { SlidersHorizontal, X } from "lucide-react"
+import { Badge, Button, Checkbox, Text, clx } from "@medusajs/ui"
 import SortProducts, { SortOptions } from "@modules/store/components/refinement-list/sort-products"
+import FilterRadioGroup from "@modules/common/components/filter-radio-group"
 import { getProductFilterOptions } from "@lib/data/products"
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@modules/common/components/ui/drawer"
 
 type CategoryFiltersProps = {
   sortBy: SortOptions
@@ -26,6 +34,14 @@ type FilterOptions = {
   priceRange: { min: number, max: number }
   totalProducts: number
 }
+
+const PRICE_PRESETS = [
+  { value: "", labelEn: "All price ranges", labelAr: "جميع الأسعار" },
+  { value: "0-50", labelEn: "Under €50", labelAr: "أقل من 50€" },
+  { value: "50-100", labelEn: "€50 - €100", labelAr: "50€ - 100€" },
+  { value: "100-200", labelEn: "€100 - €200", labelAr: "100€ - 200€" },
+  { value: "200+", labelEn: "Over €200", labelAr: "أكثر من 200€" },
+] as const
 
 const CategoryFilters = ({ 
   sortBy, 
@@ -102,55 +118,60 @@ const CategoryFilters = ({
   }, [pathname, router, searchParams])
 
   const handleFilterChange = useCallback((filterType: keyof typeof filters, value: any) => {
-    setFilters(prev => {
-      let newFilters = { ...prev }
-      
-      if (filterType === 'inStock' || filterType === 'onSale' || filterType === 'price') {
-        newFilters[filterType] = value
+    setFilters((prev) => {
+      let next = { ...prev }
+
+      if (filterType === "inStock" || filterType === "onSale" || filterType === "price") {
+        next[filterType] = value
       } else {
-        // Handle array filters (collection_id, type_id, colors, materials, sizes)
         const currentValues = prev[filterType] as string[]
         if (currentValues.includes(value)) {
-          newFilters[filterType] = currentValues.filter(v => v !== value)
+          next[filterType] = currentValues.filter((v) => v !== value)
         } else {
-          newFilters[filterType] = [...currentValues, value]
+          next[filterType] = [...currentValues, value]
         }
       }
-      
-      updateURL(newFilters)
-      return newFilters
+
+      return next
     })
-  }, [updateURL])
+  }, [])
 
   const handleArrayFilterChange = useCallback((key: string, value: string, checked: boolean) => {
-    const currentArray = filters[key as keyof typeof filters] as string[]
-    let newArray: string[]
-    
-    if (checked) {
-      newArray = [...currentArray, value]
-    } else {
-      newArray = currentArray.filter(item => item !== value)
-    }
-    
-    const newFilters = { ...filters, [key]: newArray }
-    setFilters(newFilters)
-    updateURL(newFilters)
-  }, [filters, updateURL])
+    setFilters((prev) => {
+      const currentArray = prev[key as keyof typeof filters] as string[]
+      const nextArray = checked
+        ? [...currentArray, value]
+        : currentArray.filter((item) => item !== value)
+
+      return {
+        ...prev,
+        [key]: nextArray,
+      }
+    })
+  }, [])
 
   const clearFilters = useCallback(() => {
-    const clearedFilters = {
+    setFilters({
       inStock: false,
       onSale: false,
-      price: '',
+      price: "",
       collection_id: [],
       type_id: [],
       colors: [],
       materials: [],
       sizes: [],
+    })
+  }, [])
+
+  const isFirstRender = useRef(true)
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
     }
-    setFilters(clearedFilters)
-    updateURL(clearedFilters)
-  }, [updateURL])
+
+    updateURL(filters)
+  }, [filters, updateURL])
 
   const hasActiveFilters = [
     filters.inStock,
@@ -172,221 +193,257 @@ const CategoryFilters = ({
     router.push(newURL)
   }, [searchParams, pathname, router])
 
-  const FilterContent = () => (
-    <div className="space-y-6">
-      {/* Sort Section */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-medium text-ui-fg-base">
-          {isRTL ? "ترتيب حسب" : "Sort by"}
-        </h3>
-        <SortProducts
-          sortBy={sortBy} 
-          setQueryParams={handleSortChange}
-          locale={locale}
-        />
+  const SectionCard = ({
+    title,
+    helper,
+    children,
+  }: {
+    title: string
+    helper?: string
+    children: ReactNode
+  }) => (
+    <div className="rounded-2xl border border-ui-border-base bg-ui-bg-base/90 p-4 shadow-sm shadow-ui-border-subtle/30">
+      <div>
+        <Text className="text-sm font-semibold text-ui-fg-base">{title}</Text>
+        {helper && (
+          <Text className="text-xs text-ui-fg-subtle mt-0.5">{helper}</Text>
+        )}
       </div>
-
-      {/* In Stock Filter */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-medium text-ui-fg-base">
-          {isRTL ? "التوفر" : "Availability"}
-        </h3>
-        <div className="space-y-2">
-          <div className="flex items-center space-x-2 rtl:space-x-reverse">
-            <Checkbox
-              id="inStock"
-              checked={filters.inStock}
-              onCheckedChange={(checked) => handleFilterChange('inStock', Boolean(checked))}
-            />
-            <Label htmlFor="inStock" className="text-sm text-ui-fg-subtle">
-              {isRTL ? "متوفر فقط" : "In Stock Only"}
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2 rtl:space-x-reverse">
-            <Checkbox
-              id="onSale"
-              checked={filters.onSale}
-              onCheckedChange={(checked) => handleFilterChange('onSale', Boolean(checked))}
-            />
-            <Label htmlFor="onSale" className="text-sm text-ui-fg-subtle">
-              {isRTL ? "خصم" : "On Sale"}
-            </Label>
-          </div>
-        </div>
-      </div>
-
-      {/* Collections Filter */}
-      {filterOptions.collections.length > 0 && (
-        <div className="space-y-3">
-          <h3 className="text-sm font-medium text-ui-fg-base">
-            {isRTL ? "المجموعات" : "Collections"}
-          </h3>
-          <div className="space-y-2 max-h-40 overflow-y-auto">
-            {filterOptions.collections.map((collection) => (
-              <div key={collection.id} className="flex items-center space-x-2 rtl:space-x-reverse">
-                <Checkbox
-                  id={`collection-${collection.id}`}
-                  checked={filters.collection_id.includes(collection.id)}
-                  onCheckedChange={(checked) => 
-                    handleArrayFilterChange('collection_id', collection.id, Boolean(checked))
-                  }
-                />
-                <Label htmlFor={`collection-${collection.id}`} className="text-sm text-ui-fg-subtle">
-                  {collection.title}
-                </Label>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Product Types Filter */}
-      {filterOptions.types.length > 0 && (
-        <div className="space-y-3">
-          <h3 className="text-sm font-medium text-ui-fg-base">
-            {isRTL ? "النوع" : "Type"}
-          </h3>
-          <div className="space-y-2 max-h-40 overflow-y-auto">
-            {filterOptions.types.map((type) => (
-              <div key={type.id} className="flex items-center space-x-2 rtl:space-x-reverse">
-                <Checkbox
-                  id={`type-${type.id}`}
-                  checked={filters.type_id.includes(type.id)}
-                  onCheckedChange={(checked) => 
-                    handleArrayFilterChange('type_id', type.id, Boolean(checked))
-                  }
-                />
-                <Label htmlFor={`type-${type.id}`} className="text-sm text-ui-fg-subtle">
-                  {type.value}
-                </Label>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Colors Filter */}
-      {filterOptions.colors.length > 0 && (
-        <div className="space-y-3">
-          <h3 className="text-sm font-medium text-ui-fg-base">
-            {isRTL ? "الألوان" : "Colors"}
-          </h3>
-          <div className="space-y-2 max-h-40 overflow-y-auto">
-            {filterOptions.colors.map((color) => (
-              <div key={color} className="flex items-center space-x-2 rtl:space-x-reverse">
-                <Checkbox
-                  id={`color-${color}`}
-                  checked={filters.colors.includes(color)}
-                  onCheckedChange={(checked) => 
-                    handleArrayFilterChange('colors', color, Boolean(checked))
-                  }
-                />
-                <Label htmlFor={`color-${color}`} className="text-sm text-ui-fg-subtle">
-                  {color}
-                </Label>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Materials Filter */}
-      {filterOptions.materials.length > 0 && (
-        <div className="space-y-3">
-          <h3 className="text-sm font-medium text-ui-fg-base">
-            {isRTL ? "المواد" : "Materials"}
-          </h3>
-          <div className="space-y-2 max-h-40 overflow-y-auto">
-            {filterOptions.materials.map((material) => (
-              <div key={material} className="flex items-center space-x-2 rtl:space-x-reverse">
-                <Checkbox
-                  id={`material-${material}`}
-                  checked={filters.materials.includes(material)}
-                  onCheckedChange={(checked) => 
-                    handleArrayFilterChange('materials', material, Boolean(checked))
-                  }
-                />
-                <Label htmlFor={`material-${material}`} className="text-sm text-ui-fg-subtle">
-                  {material}
-                </Label>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Sizes Filter */}
-      {filterOptions.sizes.length > 0 && (
-        <div className="space-y-3">
-          <h3 className="text-sm font-medium text-ui-fg-base">
-            {isRTL ? "المقاسات" : "Sizes"}
-          </h3>
-          <div className="space-y-2 max-h-40 overflow-y-auto">
-            {filterOptions.sizes.map((size) => (
-              <div key={size} className="flex items-center space-x-2 rtl:space-x-reverse">
-                <Checkbox
-                  id={`size-${size}`}
-                  checked={filters.sizes.includes(size)}
-                  onCheckedChange={(checked) => 
-                    handleArrayFilterChange('sizes', size, Boolean(checked))
-                  }
-                />
-                <Label htmlFor={`size-${size}`} className="text-sm text-ui-fg-subtle">
-                  {size}
-                </Label>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Price Range Filter */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-medium text-ui-fg-base">
-          {isRTL ? "نطاق السعر" : "Price Range"}
-        </h3>
-        <div className="space-y-2">
-          {[
-            { value: '', label: isRTL ? 'جميع الأسعار' : 'All Prices' },
-            { value: '0-50', label: isRTL ? 'أقل من 50€' : 'Under €50' },
-            { value: '50-100', label: isRTL ? '50€ - 100€' : '€50 - €100' },
-            { value: '100-200', label: isRTL ? '100€ - 200€' : '€100 - €200' },
-            { value: '200+', label: isRTL ? 'أكثر من 200€' : 'Over €200' }
-          ].map((range) => (
-            <div key={range.value} className="flex items-center space-x-2 rtl:space-x-reverse">
-              <input
-                type="radio"
-                id={`price-${range.value || 'all'}`}
-                name="price"
-                value={range.value}
-                checked={filters.price === range.value}
-                onChange={() => handleFilterChange('price', range.value)}
-                className="w-4 h-4"
-              />
-              <Label htmlFor={`price-${range.value || 'all'}`} className="text-sm text-ui-fg-subtle">
-                {range.label}
-              </Label>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Clear Filters */}
-      {hasActiveFilters && (
-        <div className="pt-4 border-t border-ui-border-base">
-          <Button
-            variant="secondary"
-            onClick={clearFilters}
-            className="w-full"
-          >
-            <X className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
-            {isRTL ? "مسح الفلاتر" : "Clear Filters"}
-          </Button>
-        </div>
-      )}
+      <div className="mt-4 space-y-3">{children}</div>
     </div>
   )
 
+  const CheckboxRow = ({
+    id,
+    label,
+    checked,
+    onCheckedChange,
+  }: {
+    id: string
+    label: string
+    checked: boolean
+    onCheckedChange: (checked: boolean) => void
+  }) => (
+    <label
+      htmlFor={id}
+      className="flex items-center gap-3 rounded-xl border border-ui-border-subtle bg-ui-bg-field px-3 py-2 text-sm text-ui-fg-subtle transition hover:border-ui-border-strong"
+    >
+      <Checkbox
+        id={id}
+        checked={checked}
+        onCheckedChange={(value) => onCheckedChange(Boolean(value))}
+      />
+      <span className="line-clamp-1">{label}</span>
+    </label>
+  )
+
+  const renderFilterContent = (variant: "inline" | "drawer") => (
+    <div
+      className={clx("flex flex-col gap-4", {
+        "max-h-[calc(100vh-240px)] overflow-y-auto pr-1": variant === "drawer",
+      })}
+    >
+      <SectionCard
+        title={isRTL ? "ترتيب النتائج" : "Sort results"}
+        helper={
+          isRTL
+            ? "اختر طريقة ترتيب المنتجات."
+            : "Choose how products should be ordered."
+        }
+      >
+        <SortProducts sortBy={sortBy} setQueryParams={handleSortChange} locale={locale} />
+      </SectionCard>
+
+      <SectionCard
+        title={isRTL ? "التوفر والعروض" : "Availability & Offers"}
+        helper={
+          isRTL
+            ? "أظهر المنتجات المتاحة أو المخفضة فقط."
+            : "Focus on items in stock or currently on sale."
+        }
+      >
+        <div className="flex flex-col gap-3">
+          <CheckboxRow
+            id="inStock"
+            label={isRTL ? "متوفر في المخزون" : "In stock only"}
+            checked={filters.inStock}
+            onCheckedChange={(value) => handleFilterChange("inStock", value)}
+          />
+          <CheckboxRow
+            id="onSale"
+            label={isRTL ? "عروض وخصومات" : "On sale"}
+            checked={filters.onSale}
+            onCheckedChange={(value) => handleFilterChange("onSale", value)}
+          />
+        </div>
+      </SectionCard>
+
+      {filterOptions.collections.length > 0 && (
+        <SectionCard
+          title={isRTL ? "المجموعات" : "Collections"}
+          helper={
+            isRTL
+              ? "خصص النتائج حسب المجموعات المفضلة."
+              : "Narrow the catalog to specific collections."
+          }
+        >
+          <div className="grid grid-cols-1 gap-2">
+            {filterOptions.collections.map((collection) => (
+              <CheckboxRow
+                key={collection.id}
+                id={`collection-${collection.id}`}
+                label={collection.title}
+                checked={filters.collection_id.includes(collection.id)}
+                onCheckedChange={(checked) =>
+                  handleArrayFilterChange("collection_id", collection.id, checked)
+                }
+              />
+            ))}
+          </div>
+        </SectionCard>
+      )}
+
+      {filterOptions.types.length > 0 && (
+        <SectionCard
+          title={isRTL ? "الأنواع" : "Product types"}
+          helper={
+            isRTL
+              ? "اختر نوع المنتج الذي تبحث عنه."
+              : "Pick the product types that matter most."
+          }
+        >
+          <div className="grid grid-cols-1 gap-2">
+            {filterOptions.types.map((type) => (
+              <CheckboxRow
+                key={type.id}
+                id={`type-${type.id}`}
+                label={type.value}
+                checked={filters.type_id.includes(type.id)}
+                onCheckedChange={(checked) =>
+                  handleArrayFilterChange("type_id", type.id, checked)
+                }
+              />
+            ))}
+          </div>
+        </SectionCard>
+      )}
+
+      {filterOptions.colors.length > 0 && (
+        <SectionCard
+          title={isRTL ? "الألوان" : "Colors"}
+          helper={
+            isRTL
+              ? "حدد لوحة الألوان المناسبة لمنتجاتك."
+              : "Dial in the palette that suits your style."
+          }
+        >
+          <div className="grid grid-cols-1 gap-2">
+            {filterOptions.colors.map((color) => (
+              <CheckboxRow
+                key={color}
+                id={`color-${color}`}
+                label={color}
+                checked={filters.colors.includes(color)}
+                onCheckedChange={(checked) =>
+                  handleArrayFilterChange("colors", color, checked)
+                }
+              />
+            ))}
+          </div>
+        </SectionCard>
+      )}
+
+      {filterOptions.materials.length > 0 && (
+        <SectionCard
+          title={isRTL ? "المواد" : "Materials"}
+          helper={
+            isRTL
+              ? "اختر المواد المفضلة لديك."
+              : "Pick finishes and materials you prefer."
+          }
+        >
+          <div className="grid grid-cols-1 gap-2">
+            {filterOptions.materials.map((material) => (
+              <CheckboxRow
+                key={material}
+                id={`material-${material}`}
+                label={material}
+                checked={filters.materials.includes(material)}
+                onCheckedChange={(checked) =>
+                  handleArrayFilterChange("materials", material, checked)
+                }
+              />
+            ))}
+          </div>
+        </SectionCard>
+      )}
+
+      {filterOptions.sizes.length > 0 && (
+        <SectionCard
+          title={isRTL ? "المقاسات" : "Sizes"}
+          helper={
+            isRTL
+              ? "تأكد من توفر المقاسات المناسبة."
+              : "Ensure the sizes you need are available."
+          }
+        >
+          <div className="grid grid-cols-2 gap-2">
+            {filterOptions.sizes.map((size) => (
+              <button
+                key={size}
+                type="button"
+                onClick={() =>
+                  handleArrayFilterChange(
+                    "sizes",
+                    size,
+                    !filters.sizes.includes(size)
+                  )
+                }
+                className={clx(
+                  "rounded-xl border px-3 py-2 text-sm transition",
+                  {
+                    "border-ui-border-strong bg-ui-bg-field text-ui-fg-base":
+                      filters.sizes.includes(size),
+                    "border-ui-border-subtle text-ui-fg-subtle":
+                      !filters.sizes.includes(size),
+                  }
+                )}
+              >
+                {size}
+              </button>
+            ))}
+          </div>
+        </SectionCard>
+      )}
+
+      <SectionCard
+        title={isRTL ? "نطاق السعر" : "Price range"}
+        helper={
+          isRTL
+            ? "اضبط نطاق السعر المناسب لميزانيتك."
+            : "Stay within the budget that fits you."
+        }
+      >
+        <FilterRadioGroup
+          locale={locale}
+          title=""
+          value={filters.price}
+          handleChange={(value: string) => handleFilterChange("price", value)}
+          items={PRICE_PRESETS.map((preset) => ({
+            value: preset.value,
+            label: isRTL ? preset.labelAr : preset.labelEn,
+          }))}
+        />
+      </SectionCard>
+
+      {variant === "inline" && hasActiveFilters && (
+        <Button variant="secondary" onClick={clearFilters} className="w-full">
+          <X className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
+          {isRTL ? "مسح جميع الفلاتر" : "Clear all filters"}
+        </Button>
+      )}
+    </div>
+  )
   const activeFilterCount = [
     filters.inStock,
     filters.onSale,
@@ -402,18 +459,16 @@ const CategoryFilters = ({
     <>
       {/* Mobile Filter Button - Only show when NOT inline (mobile mode) */}
       {!inline && (
-        <div className="flex items-center justify-between mb-4 small:hidden">
+        <div className="small:hidden mb-4 flex w-full justify-end">
           <Button
             variant="secondary"
             onClick={() => setIsDrawerOpen(true)}
-            className="flex items-center space-x-2 rtl:space-x-reverse"
+            className="inline-flex items-center gap-2 rounded-full px-4 py-2 shadow-sm"
           >
-            <SlidersHorizontal className="w-4 h-4" />
+            <SlidersHorizontal className="h-4 w-4" />
             <span>{isRTL ? "الفلاتر" : "Filters"}</span>
             {activeFilterCount > 0 && (
-              <Badge className="ml-2 rtl:ml-0 rtl:mr-2">
-                {activeFilterCount}
-              </Badge>
+              <Badge className="ml-1">{activeFilterCount}</Badge>
             )}
           </Button>
         </div>
@@ -421,39 +476,61 @@ const CategoryFilters = ({
 
       {/* Inline content for desktop containers (controlled by parent) */}
       {inline && (
-        <div className="space-y-6 p-6 bg-ui-bg-subtle rounded-lg border border-ui-border-base">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-ui-fg-base">
-              {isRTL ? "فلاتر الفئة" : "Category Filters"}
-            </h2>
+        <div className="rounded-3xl border border-ui-border-base bg-ui-bg-subtle p-6 shadow-sm" data-testid={dataTestId}>
+          <div className="mb-5 flex items-center justify-between">
+            <div>
+              <Text className="text-base font-semibold text-ui-fg-base">
+                {isRTL ? "فلاتر الفئة" : "Category filters"}
+              </Text>
+              <Text className="text-xs text-ui-fg-muted">
+                {isRTL ? "خصص نتائجك بسهولة." : "Fine-tune the catalogue effortlessly."}
+              </Text>
+            </div>
             {activeFilterCount > 0 && (
-              <Badge>
-                {activeFilterCount}
-              </Badge>
+              <Badge size="small">{activeFilterCount}</Badge>
             )}
           </div>
-          <FilterContent />
+          {renderFilterContent("inline")}
         </div>
       )}
 
       {/* Mobile Drawer - Only show when NOT inline (mobile mode) */}
       {!inline && (
         <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-ui-fg-base">
-                {isRTL ? "فلاتر الفئة" : "Category Filters"}
-              </h2>
-              <Button
-                variant="transparent"
-                onClick={() => setIsDrawerOpen(false)}
-                className="p-2"
-              >
-                <X className="w-5 h-5" />
-              </Button>
+          <DrawerContent
+            data-testid={dataTestId}
+            className="max-h-[90vh] rounded-t-3xl border border-ui-border-base bg-ui-bg-base"
+          >
+            <div className="flex h-full flex-col">
+              <DrawerHeader className="flex flex-row items-start justify-between border-b border-ui-border-base px-6 py-4 text-left">
+                <div className="space-y-1 text-left">
+                  <DrawerTitle>{isRTL ? "تصفية النتائج" : "Filter products"}</DrawerTitle>
+                  <Text className="text-xs text-ui-fg-muted">
+                    {isRTL ? "تحكم سريع في نتائج البحث." : "Quickly refine the results list."}
+                  </Text>
+                </div>
+                <DrawerClose asChild>
+                  <Button variant="transparent" className="p-2">
+                    <X className="w-5 h-5" />
+                  </Button>
+                </DrawerClose>
+              </DrawerHeader>
+              <div className="flex-1 overflow-y-auto px-6 py-4">{renderFilterContent("drawer")}</div>
+              <DrawerFooter className="gap-3">
+                <Button
+                  variant="secondary"
+                  className="flex-1"
+                  onClick={clearFilters}
+                  disabled={!hasActiveFilters}
+                >
+                  {isRTL ? "مسح" : "Reset"}
+                </Button>
+                <DrawerClose asChild>
+                  <Button className="flex-1">{isRTL ? "عرض النتائج" : "Show results"}</Button>
+                </DrawerClose>
+              </DrawerFooter>
             </div>
-            <FilterContent />
-          </div>
+          </DrawerContent>
         </Drawer>
       )}
     </>

@@ -83,6 +83,10 @@ export default async function PaginatedProducts({
       queryParams.collection_id = searchParams.collection_id
     }
 
+    if (searchParams.category_id && typeof searchParams.category_id === 'string') {
+      queryParams.category_id = searchParams.category_id.split(',')
+    }
+
     if (searchParams.type_id && typeof searchParams.type_id === 'string') {
       queryParams.type_id = searchParams.type_id.split(',')
     }

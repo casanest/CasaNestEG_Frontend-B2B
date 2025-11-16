@@ -1,35 +1,27 @@
 "use client"
 
-import { listProducts } from "@lib/data/products"
 import { HttpTypes } from "@medusajs/types"
 import InteractiveLink from "@modules/common/components/interactive-link"
 import ProductCard from "../../productGrid/productCard"
-import { Heading } from "@modules/common/components/heading"
 import { motion } from "framer-motion"
 
-export default async function ProductRail({
-  collection,
-  region,
-  locale,
-}: {
+type ProductRailProps = {
   collection: HttpTypes.StoreCollection
-  region: HttpTypes.StoreRegion
+  products?: HttpTypes.StoreProduct[]
   locale: string
-}) {
+}
+
+export default function ProductRail({
+  collection,
+  products,
+  locale,
+}: ProductRailProps) {
   const dir = locale === "ar" ? "rtl" : "ltr"
   const isRTL = locale === "ar"
 
-  const {
-    response: { products: pricedProducts },
-  } = await listProducts({
-    regionId: region.id,
-    queryParams: {
-      collection_id: collection.id,
-      fields: "*variants.calculated_price",
-    },
-  })
+  const pricedProducts = products?.filter(Boolean) ?? []
 
-  if (!pricedProducts || pricedProducts.length === 0) {
+  if (!pricedProducts.length) {
     return null
   }
 
