@@ -23,8 +23,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const backendUrl = process.env.MEDUSA_BACKEND_URL || "http://localhost:9000"
-    const publishableKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
+    const backendUrl = process.env.MEDUSA_BACKEND_URL || "https://dashboard.casanesteg.com"
+    const publishableKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY||"pk_6e141f5255b954ef17e5fa2f4ad90fc8c0c274ad4b4f4c51dbfcdbc2d652fc80"
 
     if (!publishableKey) {
       console.error('[Tap Complete] Publishable API key not configured')

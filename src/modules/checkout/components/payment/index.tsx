@@ -125,12 +125,12 @@ const Payment = ({
             "flex flex-row text-3xl-regular gap-x-2 items-baseline mb-8",
             {
               "opacity-50 pointer-events-none select-none":
-                !isOpen && (cart.payment_sessions?.length === 0 || !cart.payment_sessions),
+                !isOpen && (cart.payment_collection?.payment_sessions?.length === 0 || !cart.payment_collection?.payment_sessions),
             }
           )}
         >
           {locale === "en" ? "Payment" : "الدفع"}
-          {!isOpen && (cart.payment_sessions?.length ?? 0) > 0 && (
+          {!isOpen && (cart.payment_collection?.payment_sessions?.length ?? 0) > 0 && (
             <CheckCircleSolid />
           )}
         </Heading>

@@ -65,7 +65,7 @@ const configOpts = {
       },
       {
         protocol: "https",
-        hostname: "admin.lacasa-eg.com",
+        hostname: "dashboard.casanesteg.com",
       },
     ],
   },

@@ -56,8 +56,14 @@ export async function POST(request: NextRequest) {
           })
         }
       }
-    } catch (orderCheckError) {
-      console.warn(`[Complete Order] Could not check existing orders:`, orderCheckError)
+    } catch (orderCheckError: any) {
+      const status = orderCheckError?.status ?? orderCheckError?.statusCode
+      console.warn(`[Complete Order] Could not check existing orders:`, {
+        source: "medusa_store_api",
+        step: "order_list",
+        message: orderCheckError?.message,
+        status
+      }, orderCheckError)
       // Continue with order creation
     }
 
@@ -190,12 +196,17 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // Step 5: Get or create payment collection and session
+    // Step 5: Get or create payment collection and session (skip if cart already has payment session from initiate)
+    const hasPaymentSessions = (cartData.payment_collection?.payment_sessions?.length ?? 0) > 0
+    if (hasPaymentSessions) {
+      console.log(`[Complete Order] Cart already has payment session(s), skipping collection/session creation`)
+    }
     console.log(`[Complete Order] Step 5: Getting or creating payment collection and session...`)
     
-    let paymentCollection
+    let paymentCollection = cartData.payment_collection
     let paymentSession
     
+    if (!hasPaymentSessions) {
     try {
       // Check if cart already has a payment collection
       if (cartData.payment_collection && cartData.payment_collection.id) {
@@ -220,11 +231,28 @@ export async function POST(request: NextRequest) {
           paymentCollection = pcData.payment_collection
           console.log(`[Complete Order] New payment collection created: ${paymentCollection.id}`)
         } else {
-          console.error(`[Complete Order] Failed to create payment collection: ${pcResponse.status}`)
+          const errBody = await pcResponse.text().catch(() => "")
+          let errJson: Record<string, unknown> = {}
+          try { errJson = errBody ? JSON.parse(errBody) : {} } catch { /* ignore */ }
+          console.error(`[Complete Order] Failed to create payment collection:`, {
+            source: "medusa_store_api",
+            step: "payment_collection_creation",
+            status: pcResponse.status,
+            statusText: pcResponse.statusText,
+            body: errBody
+          })
           return NextResponse.json({
             success: false,
             error: "Failed to create payment collection",
-            details: "Payment collection creation failed"
+            details: (errJson as any).message || (errJson as any).error || "Payment collection creation failed",
+            error_source: "nextjs_api",
+            error_step: "payment_collection_creation",
+            diagnostics: {
+              where: "Next.js API called Medusa store POST /store/payment-collections",
+              medusa_status: pcResponse.status,
+              medusa_statusText: pcResponse.statusText,
+              medusa_body: errJson
+            }
           }, { status: 500 })
         }
       }
@@ -233,12 +261,29 @@ export async function POST(request: NextRequest) {
       console.log(`[Complete Order] Payment session creation not available, proceeding with cart completion...`)
 
     } catch (paymentError: any) {
-      console.error(`[Complete Order] Payment setup error: ${paymentError.message}`)
+      const status = paymentError?.status ?? paymentError?.statusCode
+      const cause = paymentError?.cause != null ? String(paymentError.cause) : undefined
+      console.error(`[Complete Order] Payment setup error:`, {
+        source: "nextjs_api",
+        step: "payment_setup",
+        message: paymentError.message,
+        status,
+        cause
+      })
       return NextResponse.json({
         success: false,
         error: "Payment setup failed",
-        details: `Payment setup error: ${paymentError.message}`
+        details: paymentError.message,
+        error_source: "nextjs_api",
+        error_step: "payment_setup",
+        diagnostics: {
+          where: "Next.js API calling Medusa store (payment collection or session)",
+          message: paymentError.message,
+          medusa_status: status,
+          cause
+        }
       }, { status: 500 })
+    }
     }
 
     // Step 6: Complete the cart using Medusa SDK cart.complete method with payment session
@@ -357,7 +402,6 @@ export async function POST(request: NextRequest) {
     )
   }
 }
-
 // Helper function to find order by cart ID
 async function findOrderByCartId(cartId: string) {
   try {

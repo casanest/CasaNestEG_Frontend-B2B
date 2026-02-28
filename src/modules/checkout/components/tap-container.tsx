@@ -196,12 +196,27 @@ export const TapContainer = ({
     }
   }
 
+  const hasEmailAndBilling = Boolean(cart?.email && cart?.billing_address)
   const isButtonDisabled = () => {
-    return isProcessing || paymentStatus === "redirecting" || paymentStatus === "processing"
+    return (
+      !hasEmailAndBilling ||
+      isProcessing ||
+      paymentStatus === "redirecting" ||
+      paymentStatus === "processing"
+    )
   }
 
   return (
     <div className="w-full">
+      {!hasEmailAndBilling && paymentStatus === "idle" && (
+        <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+          <Text className="txt-compact-small text-amber-800">
+            {locale === "ar"
+              ? "يرجى إكمال البريد الإلكتروني وعنوان الفواتير في خطوة التوصيل أولاً."
+              : "Please complete your email and billing address in the delivery step first."}
+          </Text>
+        </div>
+      )}
       {/* Payment Status Display */}
       <div className="mb-6 p-4 bg-gray-50 rounded-lg">
         <div className="flex items-center gap-3">
@@ -210,7 +225,7 @@ export const TapContainer = ({
             <Text className="txt-compact-medium text-ui-fg-base font-medium">
               {getStatusMessage()}
             </Text>
-            {paymentStatus === "idle" && (
+            {paymentStatus === "idle" && hasEmailAndBilling && (
               <Text className="txt-compact-small text-ui-fg-subtle">
                 {locale === "ar" 
                   ? "اضغط على زر الدفع للمتابعة"

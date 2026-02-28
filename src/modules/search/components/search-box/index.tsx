@@ -7,8 +7,8 @@ import { XMarkMini } from '@medusajs/icons'
 import { Box } from '@modules/common/components/box'
 import Input from '@modules/common/components/input'
 import { useLocale } from 'next-intl'
-const milisearchUrl = process.env.NEXT_PUBLIC_MILISEARCH_URL || "http://64.23.252.78:7700"
-const milisearchApiKey = process.env.MILISEARCH_API_KEY ||"d89b5c85bcf7bc59a07ede1604046d2548b5f581604a599b0b18b053ce4fc0df"
+const milisearchUrl = process.env.MEILISEARCH_URL ?? 'https://search.casanesteg.com'
+const milisearchApiKey = process.env.MEILISEARCH_API_KEY ?? '788df7bf7f2ad57af246c450c4ad525c46479c5dd97fa7023e59e09186fee5b2'
 export const ControlledSearchBox = ({
   countryCode,
   open,

@@ -70,10 +70,17 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
+    // If cart already has payment session from backend initiate, skip collection/session creation
+    const hasPaymentSessions = (cartData.payment_collection?.payment_sessions?.length ?? 0) > 0
+    let paymentCollection = cartData.payment_collection
+    let paymentSession = hasPaymentSessions ? cartData.payment_collection?.payment_sessions?.[0] : undefined
+
+    if (hasPaymentSessions) {
+      console.log(`[Create Order Direct] Cart already has payment session(s), skipping to cart completion`)
+    } else {
     // Step 3: Get or create payment collection
     console.log(`[Create Order Direct] Step 3: Getting or creating payment collection...`)
     
-    let paymentCollection
     try {
       // Check if cart already has a payment collection
       if (cartData.payment_collection && cartData.payment_collection.id) {
@@ -98,27 +105,59 @@ export async function POST(request: NextRequest) {
           paymentCollection = pcData.payment_collection
           console.log(`[Create Order Direct] New payment collection created: ${paymentCollection.id}`)
         } else {
-          console.error(`[Create Order Direct] Failed to create payment collection: ${(pcResponse as Response).status}`)
+          const errBody = await pcResponse.text().catch(() => "")
+          let errJson: Record<string, unknown> = {}
+          try { errJson = errBody ? JSON.parse(errBody) : {} } catch { /* ignore */ }
+          console.error(`[Create Order Direct] Failed to create payment collection:`, {
+            source: "medusa_store_api",
+            step: "payment_collection_creation",
+            status: (pcResponse as Response).status,
+            statusText: (pcResponse as Response).statusText,
+            body: errBody
+          })
           return NextResponse.json({
             success: false,
             error: "Failed to create payment collection",
-            details: "Payment collection creation failed"
+            details: (errJson as any).message || (errJson as any).error || "Payment collection creation failed",
+            error_source: "nextjs_api",
+            error_step: "payment_collection_creation",
+            diagnostics: {
+              where: "Next.js API called Medusa store POST /store/payment-collections",
+              medusa_status: (pcResponse as Response).status,
+              medusa_statusText: (pcResponse as Response).statusText,
+              medusa_body: errJson
+            }
           }, { status: 500 })
         }
       }
     } catch (pcError: any) {
-      console.error(`[Create Order Direct] Payment collection error: ${pcError.message}`)
+      const status = pcError?.status ?? pcError?.statusCode
+      const cause = pcError?.cause != null ? String(pcError.cause) : undefined
+      console.error(`[Create Order Direct] Payment collection error:`, {
+        source: "nextjs_api",
+        step: "payment_collection_creation",
+        message: pcError.message,
+        status,
+        cause
+      })
       return NextResponse.json({
         success: false,
         error: "Payment collection error",
-        details: pcError.message
+        details: pcError.message,
+        error_source: "nextjs_api",
+        error_step: "payment_collection_creation",
+        diagnostics: {
+          where: "Next.js API calling Medusa store (sdk.client.fetch payment-collections)",
+          message: pcError.message,
+          medusa_status: status,
+          cause
+        }
       }, { status: 500 })
     }
 
     // Step 4: Create payment session using sdk.store.payment.initiatePaymentSession
     console.log(`[Create Order Direct] Step 4: Creating payment session...`)
     
-    let paymentSession
     try {
       // Create payment session using the correct method signature with minimal data
       console.log(`[Create Order Direct] Creating payment session for cart: ${cart_id}`)
@@ -126,7 +165,7 @@ export async function POST(request: NextRequest) {
       const sessionResult = await sdk.store.payment.initiatePaymentSession(
         cartData, // First parameter: StoreCart object
         {
-          provider_id: "pp_tap_tap"
+          provider_id: "tap"
         }
       )
 
@@ -184,6 +223,7 @@ export async function POST(request: NextRequest) {
         error: "Payment session creation failed",
         details: sessionError.message
       }, { status: 500 })
+    }
     }
 
     // Step 5: Complete the cart using Medusa SDK cart.complete method with payment session
@@ -270,7 +310,7 @@ export async function POST(request: NextRequest) {
           payment_details: {
             payment_collection_id: paymentCollection.id,
             payment_session_id: paymentSession.id,
-            provider_id: "pp_tap_tap"
+            provider_id: "tap"
           },
           method: "medusa_sdk_cart_complete_with_payment_session",
           completion_result: completionResult,

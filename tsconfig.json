@@ -31,6 +31,9 @@
       ],
       "@locales/*": [
         "../locales/*"
+      ],
+      "@app/*": [
+        "app/*"
       ]
     },
     "plugins": [

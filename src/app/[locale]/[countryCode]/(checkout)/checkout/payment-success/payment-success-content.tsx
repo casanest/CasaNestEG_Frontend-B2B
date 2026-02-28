@@ -131,6 +131,7 @@ export default function PaymentSuccessContent({ cartId, tapId, data, locale, cou
         
         setStatus("error")
         setError(`Order creation failed: ${orderError.message}`)
+        console.error("[Payment Success] Order creation failed — full message:", orderError.message)
       }
     }
 
@@ -164,8 +165,22 @@ export default function PaymentSuccessContent({ cartId, tapId, data, locale, cou
             throw new Error("Direct order creation response invalid")
           }
         } else {
-          const errorResult = await directOrderResponse.json()
-          throw new Error(errorResult.error || "Direct order creation failed")
+          let errorResult: Record<string, unknown> = {}
+          try {
+            errorResult = await directOrderResponse.json()
+          } catch {
+            errorResult = { error: "Direct order creation failed", details: directOrderResponse.statusText }
+          }
+          const diag = errorResult.diagnostics as Record<string, unknown> | undefined
+          const msg = [
+            errorResult.error || "Direct order creation failed",
+            errorResult.details ? ` — ${errorResult.details}` : "",
+            diag?.where ? ` [${diag.where}]` : "",
+            diag?.medusa_status ? ` Medusa status: ${diag.medusa_status}` : "",
+            diag?.message ? ` — ${diag.message}` : ""
+          ].filter(Boolean).join("")
+          console.error("[Payment Success] Direct order creation failed:", { errorResult, diagnostics: diag })
+          throw new Error(msg)
         }
       } catch (error: any) {
         console.error("Direct order creation error:", error)
@@ -215,6 +230,15 @@ export default function PaymentSuccessContent({ cartId, tapId, data, locale, cou
                 created_at: completeResult.order.created_at
               }
             }
+          } else {
+            let errPayload: Record<string, unknown> = {}
+            try { errPayload = await completeResponse.json() } catch { /* ignore */ }
+            console.warn("[Payment Success] complete-order fallback failed:", {
+              status: completeResponse.status,
+              error: errPayload.error,
+              details: errPayload.details,
+              diagnostics: errPayload.diagnostics
+            })
           }
         } catch (completionError) {
           console.log(`[Payment Success] Cart completion check failed:`, completionError)
