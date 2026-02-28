@@ -12,6 +12,7 @@ import {
   AlertCircle
 } from 'lucide-react'
 import { sdk } from '@lib/config'
+import OrderItemThumbnail from '@modules/order/components/order-item-thumbnail'
 
 interface OrderDetailsPageProps {
   params: {
@@ -137,9 +138,9 @@ const OrderDetailsPage: React.FC<OrderDetailsPageProps> = async ({ params }) => 
                   {order.items?.map((item) => (
                     <div key={item.id} className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg">
                       {item.thumbnail && (
-                        <img
-                          src={item.thumbnail}
-                          alt={item.title}
+                        <OrderItemThumbnail
+                          thumbnail={item.thumbnail}
+                          title={item.title}
                           className="w-16 h-16 rounded-md object-cover"
                         />
                       )}

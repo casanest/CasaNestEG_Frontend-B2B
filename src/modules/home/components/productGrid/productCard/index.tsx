@@ -18,6 +18,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
     const { cheapestPrice } = getProductPrice({ product })
     const [isAdding, setIsAdding] = useState(false)
     const [showSuccess, setShowSuccess] = useState(false)
+    const [imageFailed, setImageFailed] = useState(false)
     const countryCode = useParams().countryCode as string
     const isRTL = locale === "ar"
 
@@ -88,7 +89,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
 
                 {/* Product image */}
                 <div className="relative w-full h-48 mb-3 rounded-xl overflow-hidden bg-gray-50">
-                    {imageSrc ? (
+                    {imageSrc && !imageFailed ? (
                         <img
                             src={imageSrc}
                             alt={product.title}
@@ -98,6 +99,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
                                 group-hover:scale-110
                             "
                             loading="lazy"
+                            onError={() => setImageFailed(true)}
                         />
                     ) : (
                         <div className="flex items-center justify-center w-full h-full text-gray-300">

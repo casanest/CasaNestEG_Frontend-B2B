@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { useLocale } from 'next-intl';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
@@ -28,6 +28,10 @@ interface ProductGridProps {
 
 const ProductGrid = ({ products = [], locale }: ProductGridProps) => {
     const isRTL = locale === "ar";
+    const [failedIds, setFailedIds] = useState<Record<string, boolean>>({});
+    const handleImageError = useCallback((id: string) => {
+        setFailedIds((prev) => ({ ...prev, [id]: true }));
+    }, []);
 
     // If no products provided, show a message
     if (!products || products.length === 0) {
@@ -77,9 +81,10 @@ const ProductGrid = ({ products = [], locale }: ProductGridProps) => {
                             <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
                                 <div className="aspect-square relative overflow-hidden">
                                     <img
-                                        src={product.thumbnail || '/cat1.jpg'}
+                                        src={failedIds[product.id] ? '/cat1.jpg' : (product.thumbnail || '/cat1.jpg')}
                                         alt={product.title}
                                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                                        onError={() => handleImageError(product.id)}
                                     />
                                     {product.variants?.[0]?.calculated_price?.calculated_amount && (
                                         <div className="absolute top-2 right-2 bg-blue-600 text-white px-2 py-1 rounded-md text-sm font-semibold">

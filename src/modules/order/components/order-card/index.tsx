@@ -1,4 +1,5 @@
-import React from 'react'
+"use client"
+import React, { useState, useCallback } from 'react'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { Eye, Package, Calendar, CreditCard, MapPin } from 'lucide-react'
@@ -30,6 +31,11 @@ interface OrderCardProps {
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({ order, locale, countryCode }) => {
+  const [failedThumbnails, setFailedThumbnails] = useState<Record<string, boolean>>({})
+  const handleThumbnailError = useCallback((itemId: string) => {
+    setFailedThumbnails((prev) => ({ ...prev, [itemId]: true }))
+  }, [])
+
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -122,11 +128,16 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, locale, countryCode }) => 
           {order.items.slice(0, 2).map((item) => (
             <div key={item.id} className="flex items-center space-x-3">
               {item.thumbnail && (
-                <img
-                  src={item.thumbnail}
-                  alt={item.title}
-                  className="w-12 h-12 rounded-md object-cover"
-                />
+                failedThumbnails[item.id] ? (
+                  <div className="w-12 h-12 rounded-md bg-gray-200 flex-shrink-0" aria-hidden />
+                ) : (
+                  <img
+                    src={item.thumbnail}
+                    alt={item.title}
+                    className="w-12 h-12 rounded-md object-cover"
+                    onError={() => handleThumbnailError(item.id)}
+                  />
+                )
               )}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">

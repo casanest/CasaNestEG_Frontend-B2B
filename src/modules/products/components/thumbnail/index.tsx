@@ -1,6 +1,6 @@
 import { Container, clx } from "@medusajs/ui"
 import Image from "next/image"
-import React from "react"
+import React, { useEffect, useState } from "react"
 
 import PlaceholderImage from "@modules/common/icons/placeholder-image"
 
@@ -57,7 +57,19 @@ const ImageOrPlaceholder = ({
   image,
   size,
 }: Pick<ThumbnailProps, "size"> & { image?: string }) => {
-  return image ? (
+  const [imageError, setImageError] = useState(false)
+
+  useEffect(() => {
+    setImageError(false)
+  }, [image])
+
+  const showPlaceholder = !image || imageError
+
+  return showPlaceholder ? (
+    <div className="w-full h-full absolute inset-0 flex items-center justify-center">
+      <PlaceholderImage size={size === "small" ? 16 : 24} />
+    </div>
+  ) : (
     <Image
       src={image}
       alt="Thumbnail"
@@ -66,11 +78,8 @@ const ImageOrPlaceholder = ({
       quality={50}
       sizes="(max-width: 576px) 100vw, (max-width: 768px) 50vw, (max-width: 1200px) 33vw, 280px"
       fill
+      onError={() => setImageError(true)}
     />
-  ) : (
-    <div className="w-full h-full absolute inset-0 flex items-center justify-center">
-      <PlaceholderImage size={size === "small" ? 16 : 24} />
-    </div>
   )
 }
 
