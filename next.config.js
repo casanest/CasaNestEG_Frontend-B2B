@@ -56,22 +56,27 @@ const configOpts = {
       {
         protocol: "http",
         hostname: "localhost",
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "medusa-public-images.s3.eu-west-1.amazonaws.com",
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "medusa-server-testing.s3.amazonaws.com",
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "medusa-server-testing.s3.us-east-1.amazonaws.com",
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "dashboard.casanesteg.com",
+        pathname: "/**",
       },
     ],
   },
