@@ -187,7 +187,7 @@ const Payment = ({
                   size="large"
                   onClick={handleSystemDefaultPayment}
                   isLoading={isLoading}
-                  className="w-full"
+                  className="w-full bg-[#043364] hover:bg-blue-900 text-white"
                 >
                   {locale === "ar" ? "إتمام الطلب" : "Complete Order"}
                 </Button>
@@ -215,10 +215,13 @@ const Payment = ({
           </Heading>
           <Text className="txt-compact-medium text-ui-fg-subtle">
             {selectedPaymentMethod === "tap"
-              ? tapPaymentMethod?.title || "Tap Payments"
-              : systemDefaultMethod?.title || "Pay on Delivery"
-            }
+              ? tapPaymentMethod?.title || (locale === "ar" ? "الدفع بالفيزا" : "Card Payment")
+              : systemDefaultMethod?.title || (locale === "ar" ? "الدفع عند التسليم" : "Pay on Delivery")}
           </Text>
+          {/* // ? tapPaymentMethod?.title || "Tap Payments"
+              // : systemDefaultMethod?.title || "Pay on Delivery" */}
+          {/* }
+          </Text> */}
         </div>
         <Button
           variant="transparent"

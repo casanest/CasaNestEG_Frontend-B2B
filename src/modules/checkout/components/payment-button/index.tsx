@@ -155,6 +155,7 @@ export const StripePaymentButton = ({
         size="large"
         isLoading={submitting}
         data-testid={dataTestId}
+        className="bg-[#043364] hover:bg-blue-900 text-white"
       >
        {locale === "en" ? "Place order" : "إتمام الطلب"}
       </Button>

@@ -47,7 +47,7 @@ export const getRegion = async (countryCode: string) => {
 
     if (!regions) {
       return null
-    }
+    } 
 
     regions.forEach((region) => {
       region.countries?.forEach((c) => {
