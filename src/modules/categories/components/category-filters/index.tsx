@@ -26,8 +26,8 @@ type CategoryFiltersProps = {
 }
 
 type FilterOptions = {
-  collections: Array<{id: string, title: string, handle: string}>
-  types: Array<{id: string, value: string}>
+  collections: Array<{ id: string, title: string, handle: string }>
+  types: Array<{ id: string, value: string }>
   colors: string[]
   materials: string[]
   sizes: string[]
@@ -43,8 +43,8 @@ const PRICE_PRESETS = [
   { value: "200+", labelEn: "Over €200", labelAr: "أكثر من 200€" },
 ] as const
 
-const CategoryFilters = ({ 
-  sortBy, 
+const CategoryFilters = ({
+  sortBy,
   countryCode,
   locale,
   categoryId,
@@ -78,6 +78,20 @@ const CategoryFilters = ({
     sizes: searchParams.get('sizes')?.split(',') || [],
   })
 
+  // Sync filters with URL parameters when URL changes
+  useEffect(() => {
+    setFilters({
+      inStock: searchParams.get('inStock') === 'true',
+      onSale: searchParams.get('onSale') === 'true',
+      price: searchParams.get('price') || '',
+      collection_id: searchParams.get('collection_id')?.split(',').filter(Boolean) || [],
+      type_id: searchParams.get('type_id')?.split(',').filter(Boolean) || [],
+      colors: searchParams.get('colors')?.split(',').filter(Boolean) || [],
+      materials: searchParams.get('materials')?.split(',').filter(Boolean) || [],
+      sizes: searchParams.get('sizes')?.split(',').filter(Boolean) || [],
+    })
+  }, [searchParams])
+
   // Load category-specific filter options on component mount
   useEffect(() => {
     const loadFilterOptions = async () => {
@@ -89,10 +103,10 @@ const CategoryFilters = ({
 
   const updateURL = useCallback((newFilters: typeof filters) => {
     const params = new URLSearchParams(searchParams.toString())
-    
+
     // Reset pagination to page 1 when filters change
     params.delete('page')
-    
+
     // Update filter parameters
     Object.entries(newFilters).forEach(([key, value]) => {
       if (Array.isArray(value)) {
