@@ -11,6 +11,7 @@ export type Category = {
   handle_en: string;
   handle_ar: string;
   image_url: string | null;
+  available_languages: string[];
   parent_category_id: string | null;
   parent_category: Category | null;
   category_children: Category[];
@@ -29,7 +30,7 @@ export const listCategories = async (query?: Record<string, any>): Promise<Categ
   const limit = query?.limit || 100;
 
   const { product_categories } = await sdk.client.fetch<{
-    product_categories: Category[];
+    product_categories: any[];
   }>("/store/product-categories", {
     query: {
       fields:
@@ -43,33 +44,44 @@ export const listCategories = async (query?: Record<string, any>): Promise<Categ
 
   // 🟢 Normalize and localize
   const categories: Category[] = product_categories.map((cat) => {
-    const ar = cat.metadata?.localizations?.ar;
-    const en = cat.metadata?.localizations?.en;
+    const ar = cat.metadata?.localizations?.ar ?? {};
+    const en = cat.metadata?.localizations?.en ?? {};
+
+    const normalizeParent = (parent: any): Category | null => {
+      if (!parent) return null;
+      const pAr = parent.metadata?.localizations?.ar ?? {};
+      const pEn = parent.metadata?.localizations?.en ?? {};
+      return {
+        id: parent.id,
+        name_en: pEn.name || parent.name,
+        name_ar: pAr.name || parent.name,
+        description_en: pEn.description || parent.description || "",
+        description_ar: pAr.description || parent.description || "",
+        handle_en: pEn.handle || parent.handle,
+        handle_ar: pAr.handle || parent.handle,
+        image_url: parent.metadata?.image_url || null,
+        available_languages: parent.metadata?.available_languages || [],
+        parent_category_id: parent.parent_category_id || null,
+        parent_category: normalizeParent(parent.parent_category),
+        category_children: [],
+        products: [],
+      };
+    };
 
     return {
       id: cat.id,
-      name_en: en?.name || cat.name,
-      name_ar: ar?.name || cat.name,
-      description_en: en?.description || cat.description,
-      description_ar: ar?.description || cat.description,
-      handle_en: en?.handle || cat.handle,
-      handle_ar: ar?.handle || cat.handle,
+      name_en: en.name || cat.name,
+      name_ar: ar.name || cat.name,
+      description_en: en.description || cat.description || "",
+      description_ar: ar.description || cat.description || "",
+      handle_en: en.handle || cat.handle,
+      handle_ar: ar.handle || cat.handle,
       image_url: cat.metadata?.image_url || null,
       available_languages: cat.metadata?.available_languages || [],
       parent_category_id: cat.parent_category_id || null,
-      parent_category: cat.parent_category
-        ? {
-          id: cat.parent_category.id,
-          name_en: cat.parent_category.name,
-          name_ar: cat.parent_category.name,
-          handle_en: cat.parent_category.handle,
-          handle_ar: cat.parent_category.handle,
-          image_url: cat.parent_category.metadata?.image_url || null,
-          parent_category_id: cat.parent_category.parent_category_id || null,
-          category_children: [],
-        }
-        : null,
+      parent_category: normalizeParent(cat.parent_category),
       category_children: [],
+      products: cat.products || [],
     };
   });
 
@@ -79,11 +91,11 @@ export const listCategories = async (query?: Record<string, any>): Promise<Categ
 
   const roots: Category[] = [];
   categories.forEach((cat) => {
+    const node = mapById.get(cat.id)!;
     if (cat.parent_category_id && mapById.has(cat.parent_category_id)) {
-      const parent = mapById.get(cat.parent_category_id)!;
-      parent.category_children!.push(mapById.get(cat.id)!);
+      mapById.get(cat.parent_category_id)!.category_children.push(node);
     } else {
-      roots.push(mapById.get(cat.id)!);
+      roots.push(node);
     }
   });
 
@@ -91,20 +103,20 @@ export const listCategories = async (query?: Record<string, any>): Promise<Categ
 };
 
 /**
- * 📦 Extracts only parent (root-level) categories
+ * 📦 Extracts only parent (root-level) categories from the already-rooted tree.
+ * Since listCategories() returns roots only, this simply maps them.
  */
 export function getParentCategories(categories: Category[]) {
-  return categories
-    .filter((cat) => !cat.parent_category_id)
-    .map((cat) => ({
-      id: cat.id,
-      name_en: cat.name_en,
-      name_ar: cat.name_ar,
-      handle_en: cat.handle_en,
-      handle_ar: cat.handle_ar,
-      image_url: cat.image_url,
-      parent_category_id: cat.parent_category_id ?? null,
-    }));
+  return categories.map((cat) => ({
+    id: cat.id,
+    name_en: cat.name_en,
+    name_ar: cat.name_ar,
+    handle_en: cat.handle_en,
+    handle_ar: cat.handle_ar,
+    image_url: cat.image_url,
+    available_languages: cat.available_languages,
+    parent_category_id: cat.parent_category_id,
+  }));
 }
 
 /**
@@ -131,7 +143,7 @@ export const getCategoryByHandle = async (
       }
     );
 
-    const cat = response?.product_categories?.[0];
+    const cat = response?.product_categories?.[0] as any;
     if (cat) {
       const ar = cat.metadata?.localizations?.ar ?? {};
       const en = cat.metadata?.localizations?.en ?? {};
@@ -140,8 +152,8 @@ export const getCategoryByHandle = async (
         id: cat.id,
         name_en: en.name || cat.name,
         name_ar: ar.name || cat.name,
-        description_en: en.description || cat.description,
-        description_ar: ar.description || cat.description,
+        description_en: en.description || cat.description || "",
+        description_ar: ar.description || cat.description || "",
         handle_en: en.handle || cat.handle,
         handle_ar: ar.handle || cat.handle,
         image_url: cat.metadata?.image_url || null,
@@ -171,7 +183,9 @@ export const getCategoryByHandle = async (
 
     const lowerHandle = handle.toLowerCase();
     const found = flatList.find((cat) => {
-      const handles = [cat.handle_en, cat.handle_ar].filter(Boolean).map((h) => h!.toLowerCase());
+      const handles = [cat.handle_en, cat.handle_ar]
+        .filter(Boolean)
+        .map((h) => h!.toLowerCase());
       return handles.includes(lowerHandle);
     });
 
@@ -182,4 +196,3 @@ export const getCategoryByHandle = async (
 
   return null;
 };
-
