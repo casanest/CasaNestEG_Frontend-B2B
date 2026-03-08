@@ -54,12 +54,12 @@ export default function ProductPreview({
     >
       <div
         dir={isRTL ? "rtl" : "ltr"}
-        className="relative flex flex-col h-full rounded-[.5rem] overflow-hidden bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] hover:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.12)] hover:-translate-y-1.5"
+        className="relative flex flex-col h-full rounded-[.5rem] overflow-hidden bg-white dark:bg-gray-900 border border-[#043364]/20 dark:border-gray-800 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] hover:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.12)] hover:-translate-y-1.5"
         onMouseEnter={startCycling}
         onMouseLeave={stopCycling}
       >
         {/* Image Section */}
-        <div className="relative aspect-[3/4] overflow-hidden bg-gray-50 dark:bg-gray-800/50">
+        <div className="relative aspect-[3/4] overflow-hidden  rounded-t-[.5rem]  bg-gray-50 dark:bg-gray-800">
           <Thumbnail
             thumbnail={product.thumbnail}
             images={images}
