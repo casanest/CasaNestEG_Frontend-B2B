@@ -55,40 +55,40 @@ export default async function Nav() {
                 <SideMenu productCategories={productCategories} collections={collections} />
               </div>
               <div className="flex items-center h-full  md:hidden">
-                {/* <LocalizedClientLink
+                <LocalizedClientLink
                   href="/"
                   className="inline-block"
                   data-testid="nav-store-link"
                   aria-label="Homepage"
                 >
                   <Image
-                    src="/lacasaLogo.png"
-                    alt="La Casa Logo"
+                    src="/casanest.png"
+                    alt="CASANEST Logo"
                     width={200}
                     height={200}
                     priority
                   />
-                </LocalizedClientLink> */}
-                <ReloadLogo href={`/${locale}`} w={200} h={200} />
+                </LocalizedClientLink>
+                {/* <ReloadLogo href={`/${locale}`} w={200} h={200} /> */}
 
               </div>
             </div>
             <div className="hidden md:flex flex-1 basis-0 h-full flex items-center">
               {/* <LaCasaLogo width="300" height="70" color="#ff5722" /> */}
 
-              {/* <LocalizedClientLink
+              <LocalizedClientLink
                 href="/"
                 className="text-3xl font-extrabold tracking-widest uppercase text-transparent bg-clip-text hover:from-blue-600 hover:to-blue-800 transition-all duration-300 ease-in-out leading-none"
                 data-testid="nav-store-link"
               >
                 <Image
-                  src="/lacasaLogo.png"
+                  src="/casanest.png"
                   alt="Logo"
                   width={170}
                   height={150}
                 />
-              </LocalizedClientLink> */}
-              <ReloadLogo href={`/${locale}`} w={170} h={150} />
+              </LocalizedClientLink>
+              {/* <ReloadLogo href={`/${locale}`} w={170} h={150} /> */}
 
 
             </div>

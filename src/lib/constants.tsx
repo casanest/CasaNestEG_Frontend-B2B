@@ -133,54 +133,116 @@ const TapIcon = () => (
 )
 
 
-export const paymentInfoMap: Record<string, { title: string; icon: React.JSX.Element }> = {
+// export const paymentInfoMap: Record<string, { title: string; icon: React.JSX.Element }> = {
+//   stripe: {
+//     title: "Credit card",
+//     icon: <CreditCard />,
+//   },
+//   "stripe-ideal": {
+//     title: "iDEAL",
+//     icon: <CreditCard />,
+//   },
+//   "stripe-bancontact": {
+//     title: "Bancontact",
+//     icon: <CreditCard />,
+//   },
+//   "stripe-blik": {
+//     title: "BLIK",
+//     icon: <CreditCard />,
+//   },
+//   "stripe-giropay": {
+//     title: "Giropay",
+//     icon: <CreditCard />,
+//   },
+//   "stripe-przelewy24": {
+//     title: "Przelewy24",
+//     icon: <CreditCard />,
+//   },
+//   paypal: {
+//     title: "PayPal",
+//     icon: <CreditCard />,
+//   },
+//   manual: {
+//     title: "Test payment",
+//     icon: <CreditCard />,
+//   },
+//   // New PayMob and Fawry entries
+//   paymob: {
+//     title: "PayMob",
+//     icon: <PayMobIcon />,
+//   },
+//   fawry: {
+//     title: "Fawry",
+//     icon: <FawryIcon />,
+//   }, 
+//   tap: {
+//     title: "Tap",
+//     icon: <TapIcon />,
+//   },
+//   pp_system_default: {
+//     title: "Pay on Delivery",
+//     icon: <CreditCard />,
+//   },
+// }
+
+
+export const paymentInfoMap: Record<
+  string,
+  { title: { en: string; ar: string }; icon: React.JSX.Element }
+> = {
   stripe: {
-    title: "Credit card",
+    title: {
+      en: "Credit Card",
+      ar: "بطاقة ائتمانية",
+    },
     icon: <CreditCard />,
   },
-  "stripe-ideal": {
-    title: "iDEAL",
-    icon: <CreditCard />,
-  },
-  "stripe-bancontact": {
-    title: "Bancontact",
-    icon: <CreditCard />,
-  },
-  "stripe-blik": {
-    title: "BLIK",
-    icon: <CreditCard />,
-  },
-  "stripe-giropay": {
-    title: "Giropay",
-    icon: <CreditCard />,
-  },
-  "stripe-przelewy24": {
-    title: "Przelewy24",
-    icon: <CreditCard />,
-  },
+
   paypal: {
-    title: "PayPal",
+    title: {
+      en: "PayPal",
+      ar: "باي بال",
+    },
     icon: <CreditCard />,
   },
+
   manual: {
-    title: "Test payment",
+    title: {
+      en: "Test Payment",
+      ar: "دفع تجريبي",
+    },
     icon: <CreditCard />,
   },
-  // New PayMob and Fawry entries
+
   paymob: {
-    title: "PayMob",
+    title: {
+      en: "PayMob",
+      ar: "باي موب",
+    },
     icon: <PayMobIcon />,
   },
+
   fawry: {
-    title: "Fawry",
+    title: {
+      en: "Fawry",
+      ar: "فوري",
+    },
     icon: <FawryIcon />,
   },
+
   tap: {
-    title: "Tap",
+    title: {
+      en: "Pay with Tap",
+      ar: "ادفع الآن (Tap)",
+    },
     icon: <TapIcon />,
   },
+
   pp_system_default: {
-    title: "Pay on Delivery",
+    title: {
+      en: "Pay on Delivery",
+      ar: "الدفع عند الاستلام",
+    },
     icon: <CreditCard />,
   },
 }

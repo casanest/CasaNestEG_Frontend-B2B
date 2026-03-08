@@ -61,13 +61,19 @@ export const listProducts = async ({
     const limit = Math.min(Math.max(apiParams.limit || 12, 1), 100)
     const offset = Math.max((pageParam - 1) * limit, 0)
 
+    // const baseQuery: HttpTypes.FindParams & HttpTypes.StoreProductParams = {
+    //   limit,
+    //   offset,
+    //   region_id: region.id,
+    //   ...apiParams,
+    // }
     const baseQuery: HttpTypes.FindParams & HttpTypes.StoreProductParams = {
       limit,
       offset,
       region_id: region.id,
+      fields: "*variants.calculated_price,+metadata,*variants,*variants.options,*options,*options.values,*images,*tags,*categories", // 👈 add +metadata
       ...apiParams,
     }
-
     // Execute API request with only supported parameters
     const response = await sdk.client.fetch<{ products: HttpTypes.StoreProduct[]; count: number }>(`/store/products`, {
       method: "GET",
@@ -76,7 +82,10 @@ export const listProducts = async ({
       next,
       cache: "no-store",
     })
+    console.log("API response for products:", next)
+    console.log("++++++++++++++++++++++++++++++++++:", response)
 
+    
     if (!response || !response.products) {
       return {
         response: { products: [], count: 0 },

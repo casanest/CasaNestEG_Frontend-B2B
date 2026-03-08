@@ -215,8 +215,12 @@ const Payment = ({
           </Heading>
           <Text className="txt-compact-medium text-ui-fg-subtle">
             {selectedPaymentMethod === "tap"
-              ? tapPaymentMethod?.title || (locale === "ar" ? "الدفع بالفيزا" : "Card Payment")
-              : systemDefaultMethod?.title || (locale === "ar" ? "الدفع عند التسليم" : "Pay on Delivery")}
+              ? 
+              // tapPaymentMethod?.title || 
+              (locale === "ar" ? "الدفع بالفيزا" : "Card Payment")
+              : 
+              // systemDefaultMethod?.title ||
+               (locale === "ar" ? "الدفع عند التسليم" : "Pay on Delivery")}
           </Text>
           {/* // ? tapPaymentMethod?.title || "Tap Payments"
               // : systemDefaultMethod?.title || "Pay on Delivery" */}

@@ -2,12 +2,11 @@
 import { Container, clx } from "@medusajs/ui"
 import Image from "next/image"
 import React, { useEffect, useState } from "react"
-
 import PlaceholderImage from "@modules/common/icons/placeholder-image"
 
 type ThumbnailProps = {
   thumbnail?: string | null
-  images?: { url: string }[] | null // تحسين Typing
+  images?: { url: string }[] | null
   size?: "small" | "medium" | "large" | "full" | "square"
   isFeatured?: boolean
   className?: string
@@ -22,7 +21,10 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
   className,
   "data-testid": dataTestid,
 }) => {
-  const initialImage = thumbnail || images?.[0]?.url
+  // الصورة الأساسية (Thumbnail أو أول صورة في المصفوفة)
+  const primaryImage = thumbnail || images?.[0]?.url
+  // الصورة الثانية (ثاني صورة في المصفوفة إذا وجدت، وإلا نستخدم الأساسية)
+  const secondaryImage = images && images.length > 1 ? images[1].url : null
 
   const aspectRatio = (() => {
     if (isFeatured) return "aspect-[11/14]"
@@ -30,7 +32,7 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
     if (size === "small") return "aspect-[9/12]"
     if (size === "medium") return "aspect-[9/14]"
     if (size === "large") return "aspect-[3/4]"
-    return "aspect-[3/4]" // default for "full" and fallback
+    return "aspect-[3/4]"
   })()
 
   const maxHeight = (() => {
@@ -42,14 +44,29 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
   return (
     <Container
       className={clx(
-        "relative w-full overflow-hidden p-4 bg-ui-bg-subtle shadow-elevation-card-rest rounded-large group-hover:shadow-elevation-card-hover transition-shadow ease-in-out duration-150",
+        "relative w-full overflow-hidden p-0 bg-ui-bg-subtle shadow-elevation-card-rest rounded-large transition-all ease-in-out duration-300 group/thumbnail",
         aspectRatio,
         maxHeight,
         className
       )}
       data-testid={dataTestid}
     >
-      <ImageOrPlaceholder image={initialImage} size={size} />
+      {/* الصورة الأساسية */}
+      <ImageOrPlaceholder
+        image={primaryImage}
+        size={size}
+        isSecondary={false}
+        hasSecondary={!!secondaryImage}
+      />
+
+      {/* الصورة الثانية تظهر فقط عند الهوفر */}
+      {secondaryImage && (
+        <ImageOrPlaceholder
+          image={secondaryImage}
+          size={size}
+          isSecondary={true}
+        />
+      )}
     </Container>
   )
 }
@@ -57,7 +74,13 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
 const ImageOrPlaceholder = ({
   image,
   size,
-}: Pick<ThumbnailProps, "size"> & { image?: string }) => {
+  isSecondary,
+  hasSecondary
+}: Pick<ThumbnailProps, "size"> & {
+  image?: string;
+  isSecondary: boolean;
+  hasSecondary?: boolean;
+}) => {
   const [imageError, setImageError] = useState(false)
 
   useEffect(() => {
@@ -66,17 +89,31 @@ const ImageOrPlaceholder = ({
 
   const showPlaceholder = !image || imageError
 
-  return showPlaceholder ? (
-    <div className="w-full h-full absolute inset-0 flex items-center justify-center">
-      <PlaceholderImage size={size === "small" ? 16 : 24} />
-    </div>
-  ) : (
+  if (showPlaceholder && !isSecondary) {
+    return (
+      <div className="w-full h-full absolute inset-0 flex items-center justify-center bg-gray-100">
+        <PlaceholderImage size={size === "small" ? 16 : 24} />
+      </div>
+    )
+  }
+
+  if (showPlaceholder && isSecondary) return null
+
+  return (
     <Image
-      src={image}
-      alt="Thumbnail"
-      className="absolute inset-0 object-cover object-center"
+      src={image as string}
+      alt="Product Image"
+      className={clx(
+        "absolute inset-0 object-cover object-center transition-all duration-700 ease-in-out",
+        {
+          // تنسيق الصورة الأساسية: تختفي تدريجياً عند الهوفر إذا كانت هناك صورة ثانية
+          "z-10 opacity-100 group-hover/thumbnail:opacity-0": !isSecondary && hasSecondary,
+          // تنسيق الصورة الثانية: تكون شفافة وتظهر وتكبر قليلاً عند الهوفر
+          "z-20 opacity-0 group-hover/thumbnail:opacity-100 group-hover/thumbnail:scale-105": isSecondary,
+        }
+      )}
       draggable={false}
-      quality={50}
+      quality={70} // رفعت الجودة قليلاً لأنها تعتمد على الهوفر
       sizes="(max-width: 576px) 100vw, (max-width: 768px) 50vw, (max-width: 1200px) 33vw, 280px"
       fill
       onError={() => setImageError(true)}

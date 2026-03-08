@@ -1,10 +1,13 @@
 import React from "react"
 import PaymentContainer from "./index"
-
+ 
 type SystemDefaultContainerProps = {
   paymentProviderId: string
   selectedPaymentOptionId: string | null
-  paymentInfoMap: Record<string, { title: string; icon: React.JSX.Element }>
+  paymentInfoMap: Record<
+    string,
+    { title: { en: string; ar: string }; icon: React.JSX.Element }
+  > 
   disabled?: boolean
 }
 

@@ -35,7 +35,7 @@ const StoreTemplate = async ({
       data-testid="category-container"
     >
       {/* Desktop Sidebar - Hidden on mobile */}
-      <div className="hidden small:block w-full small:w-72 small:sticky small:top-6">
+      {/* <div className="hidden small:block w-full small:w-72 small:sticky small:top-6">
         <RefinementList
           locale={locale}
           sortBy={sort}
@@ -43,25 +43,36 @@ const StoreTemplate = async ({
           categories={parentCategories}
           inline
         />
-      </div>
-
-      <div className="w-full">
-        {/* Page Title */}
-        <div className="mb-8 text-2xl-semi text-[#043364]">
-          <h1 data-testid="store-page-title">
-            {locale === "ar" ? "جميع المنتجات" : "All products"}
-          </h1>
-        </div>
-
-        {/* Mobile Filters - Visible only on mobile */}
-        <div className="small:hidden mb-6">
+      </div> */}
+      <aside className="hidden small:block w-full small:w-72 flex-shrink-0 small:sticky small:top-24 mb-8 small:mb-0">
+        <div className="rounded-2xl bg-gray-50 dark:bg-gray-900/50 p-6 border border-gray-100 dark:border-gray-800">
           <RefinementList
             locale={locale}
             sortBy={sort}
             countryCode={countryCode}
-            categories={parentCategories}
+            categories={parentCategories || []}
+            inline // This will render it as a tree menu
           />
         </div>
+      </aside>
+
+      <div className="w-full">
+        {/* Page Title */}
+        <div className="flex flex-row justify-between items-center mb-8 text-2xl-semi text-[#043364]">
+          <h1 data-testid="store-page-title" className="font-bold text-xl sm:text-3xl ">
+            {locale === "ar" ? "جميع المنتجات" : "All products"}
+          </h1>
+          <div className="small:hidden ">
+            <RefinementList
+              locale={locale}
+              sortBy={sort}
+              countryCode={countryCode}
+              categories={parentCategories}
+            />
+          </div>
+        </div>
+
+        {/* Mobile Filters - Visible only on mobile */}
 
         {/* Products Grid */}
         <Suspense fallback={<SkeletonProductGrid />}>

@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react"
-import { SlidersHorizontal, X } from "lucide-react"
+import { RotateCcw, SlidersHorizontal, X } from "lucide-react"
 import { Badge, Button, Checkbox, Text, clx } from "@medusajs/ui"
 import SortProducts, { SortOptions } from "./sort-products"
 import { getProductFilterOptions } from "@lib/data/products"
@@ -165,6 +165,7 @@ const RefinementList = ({
       colors: [],
       materials: [],
       sizes: [],
+      category_id: [],
     })
   }, [])
 
@@ -458,7 +459,7 @@ const RefinementList = ({
       </SectionCard>
 
       {variant === "inline" && hasActiveFilters && (
-        <Button variant="secondary" onClick={clearFilters} className="w-full">
+        <Button variant="secondary" onClick={clearFilters} className="w-full mb-5">
           <X className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
           {isRTL ? "مسح جميع الفلاتر" : "Clear all filters"}
         </Button>
@@ -496,60 +497,137 @@ const RefinementList = ({
 
       {/* Inline content for desktop containers (controlled by parent) */}
       {inline && (
-        <div
-          className="rounded-3xl border border-ui-border-base bg-ui-bg-subtle p-6 shadow-sm max-h-[calc(100vh-160px)] overflow-hidden"
+        <aside
+          className="sticky top-28 hidden small:block w-full "
           data-testid={dataTestId}
         >
-          <div className="mb-5 flex items-center justify-between">
-            <div>
-              <Text className="text-base font-semibold text-ui-fg-base">
-                {isRTL ? "فلاتر المتجر" : "Store filters"}
-              </Text>
-              <Text className="text-xs text-ui-fg-muted">
-                {isRTL ? "خصص نتائج المتجر بسهولة." : "Fine-tune the store catalogue effortlessly."}
-              </Text>
-            </div>
-            {activeFilterCount > 0 && <Badge size="small">{activeFilterCount}</Badge>}
-          </div>
-          <div className="max-h-[calc(100vh-240px)] overflow-y-auto pr-2">
-            {renderFilterContent("inline")}
-          </div>
-        </div>
-      )}
+          <div className="group relative flex flex-col ">
 
+            {/* Header Section */}
+            <div className="mb-8 flex items-start justify-between border-b border-ui-border-base/50 pb-6">
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-[#043364] animate-pulse" />
+                  <Text className="text-lg font-bold tracking-tight text-ui-fg-base">
+                    {isRTL ? "تصفية المنتجات" : "Store Filters"}
+                  </Text>
+                </div>
+                <Text className="text-[11px] font-medium text-ui-fg-muted leading-relaxed max-w-[180px]">
+                  {isRTL
+                    ? "استعرض مجموعتنا بدقة وسهولة."
+                    : "Refine your browsing experience effortlessly."}
+                </Text>
+              </div>
+
+              {activeFilterCount > 0 && (
+                <div className="flex flex-col items-end gap-2">
+                  <Badge
+                    size="small"
+                    className="bg-[#043364] text-white rounded-full px-2.5 py-0.5 border-none font-bold"
+                  >
+                    {activeFilterCount}
+                  </Badge>
+                  <button
+                    onClick={clearFilters}
+                    className="text-[10px] font-black uppercase tracking-tighter text-ui-fg-interactive hover:opacity-70 transition-opacity"
+                  >
+                    {isRTL ? "مسح" : "Reset"}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Filter Options Area */}
+            <div className="max-h-[calc(100vh-280px)] overflow-y-auto pr-3 custom-scrollbar-minimal scroll-smooth">
+              <div className="flex flex-col gap-2">
+                {renderFilterContent("inline")}
+              </div>
+            </div>
+
+            {/* Decorative Bottom Shadow/Fade */}
+            <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white/80 dark:from-ui-bg-subtle/80 to-transparent pointer-events-none rounded-b-[2rem]" />
+          </div>
+
+          {/* CSS for custom scrollbar (can be moved to global CSS) */}
+          <style jsx>{`
+      .custom-scrollbar-minimal::-webkit-scrollbar {
+        width: 4px;
+      }
+      .custom-scrollbar-minimal::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar-minimal::-webkit-scrollbar-thumb {
+        background: #e2e8f0;
+        border-radius: 10px;
+      }
+      .dark .custom-scrollbar-minimal::-webkit-scrollbar-thumb {
+        background: #334155;
+      }
+      .custom-scrollbar-minimal::-webkit-scrollbar-thumb:hover {
+        background: #043364;
+      }
+    `}</style>
+        </aside>
+      )}
       {/* Mobile Drawer - Only show when NOT inline (mobile mode) */}
       {!inline && (
         <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
           <DrawerContent
             data-testid={dataTestId}
-            className="max-h-[90vh] rounded-t-3xl border border-ui-border-base bg-ui-bg-base"
+            className="max-h-[92vh] rounded-t-[2.5rem] border-none bg-ui-bg-base shadow-2xl"
           >
-            <div className="flex h-full flex-col">
-              <DrawerHeader className="flex flex-row items-start justify-between border-b border-ui-border-base px-6 py-4 text-left">
-                <div className="space-y-1 text-left">
-                  <DrawerTitle>{isRTL ? "تصفية منتجات المتجر" : "Filter store products"}</DrawerTitle>
-                  <Text className="text-xs text-ui-fg-muted">
-                    {isRTL ? "حدد خياراتك لرؤية النتائج المناسبة." : "Select your options to see the right results."}
+            {/* مقبض سحب علوي للجمالية (Indicator) */}
+            <div className="mx-auto mt-3 h-1.5 w-12 rounded-full bg-ui-border-strong/20" />
+
+            <div className="flex h-full flex-col overflow-hidden">
+              {/* Header - Glass Effect */}
+              <DrawerHeader className="flex flex-row items-center justify-between px-6 py-6 border-b border-ui-border-base/50 backdrop-blur-md">
+                <div className="space-y-0.5 text-left">
+                  <DrawerTitle className="text-xl font-bold tracking-tight text-ui-fg-base">
+                    {isRTL ? "تصفية المنتجات" : "Filter Products"}
+                  </DrawerTitle>
+                  <Text className="text-[10px] font-medium uppercase tracking-wider text-ui-fg-muted">
+                    {activeFilterCount > 0
+                      ? `${activeFilterCount} ${isRTL ? 'فلاتر مختارة' : 'Filters Active'}`
+                      : (isRTL ? "اكتشف خياراتك" : "Refine your search")}
                   </Text>
                 </div>
                 <DrawerClose asChild>
-                  <Button variant="transparent" className="p-2">
-                    <X className="w-5 h-5" />
+                  <Button
+                    variant="transparent"
+                    className="h-10 w-10 rounded-full bg-ui-bg-component p-0 hover:bg-ui-bg-component-hover transition-colors"
+                  >
+                    <X className="w-5 h-5 text-ui-fg-subtle" />
                   </Button>
                 </DrawerClose>
               </DrawerHeader>
-              <div className="flex-1 overflow-y-auto px-6 py-4">{renderFilterContent("drawer")}</div>
-              <DrawerFooter className="gap-3">
+
+              {/* Content Area - Scrollable */}
+              <div className="flex-1 overflow-y-auto px-6 py-4 scrollbar-hide">
+                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  {renderFilterContent("drawer")}
+                </div>
+              </div>
+
+              {/* Footer - Floating Action Design */}
+              <DrawerFooter className="flex flex-row items-center gap-4 border-t border-ui-border-base bg-ui-bg-subtle/50 p-6 pb-10">
                 <Button
                   variant="secondary"
-                  className="flex-1"
+                  className={clx(
+                    "h-12 flex-1 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all",
+                    !hasActiveFilters ? "opacity-50" : "hover:bg-red-50 hover:text-red-600 hover:border-red-100"
+                  )}
                   onClick={clearFilters}
                   disabled={!hasActiveFilters}
                 >
-                  {isRTL ? "مسح" : "Reset"}
+                  <RotateCcw className="mr-2 h-3.5 w-3.5 rtl:ml-2 rtl:mr-0" />
+                  {isRTL ? "إعادة تعيين" : "Reset"}
                 </Button>
+
                 <DrawerClose asChild>
-                  <Button className="flex-1">{isRTL ? "عرض النتائج" : "Show results"}</Button>
+                  <Button className="h-12 flex-[2] rounded-2xl bg-[#043364] text-white shadow-lg shadow-[#043364]/20 hover:bg-[#03284d] active:scale-[0.98] transition-all font-bold text-xs uppercase tracking-widest">
+                    {isRTL ? "عرض النتائج" : "Show results"}
+                  </Button>
                 </DrawerClose>
               </DrawerFooter>
             </div>

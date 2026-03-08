@@ -1,7 +1,7 @@
 "use client";
-import { Package } from "lucide-react";
-import CategoryFilters from "../category-filters";
-import { Select } from "@medusajs/ui";
+import { ArrowUpDown, Package, Text } from "lucide-react";
+import { clx, Select } from "@medusajs/ui";
+import RefinementList from "@modules/store/components/refinement-list";
 
 type ProductsToolbarProps = {
     productCount: number;
@@ -9,12 +9,12 @@ type ProductsToolbarProps = {
     isRTL: boolean;
     locale: string;
     countryCode: string;
-    categoryId: string;
+    // categoryId: string;
     // onSortChange?: (value: string) => void;
 };
 
 const handleSortChange = (value: string) => {
-//    ضيف للurl باراميتر جديد للفرز
+    //    ضيف للurl باراميتر جديد للفرز
     const url = new URL(window.location.href);
     url.searchParams.set("sortBy", value);
     window.location.href = url.toString();
@@ -25,7 +25,7 @@ export const ProductsToolbar = ({
     isRTL,
     locale,
     countryCode,
-    categoryId,
+    // categoryId,
     // onSortChange,
 }: ProductsToolbarProps) => {
     const productLabel = isRTL
@@ -42,48 +42,57 @@ export const ProductsToolbar = ({
         { value: "price_desc", label: isRTL ? "السعر من الأعلى إلى الأقل" : "Price: High to Low" },
     ];
 
+
+
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-4 mb-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-                {/* Left: Product Count */}
-                <div className="flex items-center gap-3">
-                    <Package className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                    <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <div dir={isRTL ? "rtl" : "ltr"} className="mb-6 overflow-hidden rounded-xl border border-gray-100 bg-[#F3F4F6] dark:bg-gray-900/50 dark:border-gray-800 shadow-sm">
+            <div className="flex items-center justify-between px-5 py-3">
+                {/* Left Side (in RTL): Product Count */}
+                <div className="flex items-center gap-1.5">
+                    <span className="text-xl font-black text-gray-950 dark:text-white leading-none">
                         {productCount}
                     </span>
-                    <span className="text-sm text-gray-600 dark:text-gray-400">{productLabel}</span>
+                    <span className="text-[14px] font-bold text-gray-600 dark:text-gray-400">
+                        {isRTL ? "منتج" : "products"}
+                    </span>
                 </div>
+                {/* Right Side (in RTL): Sort Selection */}
+                <div className="flex items-center gap-4">
+                    {/* Desktop Sort */}
+                    <div className="hidden items-center gap-2 sm:flex">
+                        <span className="text-[13px] font-bold text-gray-500 dark:text-gray-400">
+                            {isRTL ? "الترتيب:" : "Sort:"}
+                        </span>
 
-                {/* Right: Sort + Filters */}
-                <div className="flex items-center gap-3">
-                    {/* Sort Select */}
-                    <Select
-                        value={sort}
-                        onValueChange={handleSortChange}
-                        className="w-48"
-                    >
-                        <Select.Trigger className="w-full">
-                            <Select.Value placeholder={isRTL ? "فرز حسب" : "Sort by"} />
-                        </Select.Trigger>
-                        <Select.Content>
-                            {sortOptions.map((opt) => (
-                                <Select.Item key={opt.value} value={opt.value}>
-                                    {opt.label}
-                                </Select.Item>
-                            ))}
-                        </Select.Content>
-                    </Select>
+                        <Select value={sort} onValueChange={handleSortChange}>
+                            <Select.Trigger className={clx(
+                                "h-9 min-w-[70px] border-none bg-transparent p-0 shadow-none bg-white hover:bg-black/5 transition-all focus:ring-0",
+                                "text-[13px] font-extrabold text-gray-900 dark:text-white px-4 rounded-lg "
+                            )}>
+                                <Select.Value placeholder={isRTL ? "الاكثر رواجاً" : "Popularity"} />
+                            </Select.Trigger>
+                            <Select.Content className="rounded-xl border-none shadow-xl backdrop-blur-md">
+                                {sortOptions.map((opt) => (
+                                    <Select.Item key={opt.value} value={opt.value} className="text-xs font-bold text-start">
+                                        {opt.label}
+                                    </Select.Item>
+                                ))}
+                            </Select.Content>
+                        </Select>
+                    </div>
 
-                </div>
-                    {/* Filters - mobile toggle */}
-                    <div className="block sm:hidden">
-                        <CategoryFilters
+                    {/* Mobile Filter Button */}
+                    <div className="sm:hidden">
+                        <RefinementList
                             locale={locale}
                             sortBy={sort}
                             countryCode={countryCode}
-                            categoryId={categoryId}
                         />
                     </div>
+                </div>
+
+          
+
             </div>
         </div>
     );

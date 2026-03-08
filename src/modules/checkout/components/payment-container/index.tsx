@@ -9,12 +9,16 @@ import SkeletonCardDetails from "@modules/skeletons/components/skeleton-card-det
 import { CardElement } from "@stripe/react-stripe-js"
 import { StripeCardElementOptions } from "@stripe/stripe-js"
 import { StripeContext } from "../payment-wrapper/stripe-wrapper"
+import { useParams } from "next/navigation"
 
 type PaymentContainerProps = {
   paymentProviderId: string
   selectedPaymentOptionId: string | null
   disabled?: boolean
-  paymentInfoMap: Record<string, { title: string; icon: JSX.Element }>
+  paymentInfoMap: Record<
+    string,
+    { title: { en: string; ar: string }; icon: React.JSX.Element }
+  > 
   children?: React.ReactNode
 }
 
@@ -25,6 +29,8 @@ const PaymentContainer: React.FC<PaymentContainerProps> = ({
   disabled = false,
   children,
 }) => {
+  const { locale } = useParams() as { locale: "en" | "ar" }
+
   return (
     <RadioGroupOption
       key={paymentProviderId}
@@ -42,7 +48,7 @@ const PaymentContainer: React.FC<PaymentContainerProps> = ({
         <div className="flex items-center gap-x-4">
           <Radio checked={selectedPaymentOptionId === paymentProviderId} />
           <Text className="text-base-regular">
-            {paymentInfoMap[paymentProviderId]?.title || paymentProviderId}
+            {paymentInfoMap[paymentProviderId]?.title[locale] || paymentProviderId}
           </Text>
         </div>
         <span className="justify-self-end text-ui-fg-base">
