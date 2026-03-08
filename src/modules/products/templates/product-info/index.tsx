@@ -1,14 +1,26 @@
 import { HttpTypes } from "@medusajs/types"
 import { Heading, Text } from "@medusajs/ui"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { getLocale } from "next-intl/server"
 
 type ProductInfoProps = {
   product: HttpTypes.StoreProduct
 }
 
-const ProductInfo = ({ product }: ProductInfoProps) => {
+const ProductInfo = async ({ product }: ProductInfoProps) => {
+  const locale = await getLocale()
+  const isRTL = locale === "ar"
+
+  const title = (isRTL
+    ? product?.metadata?.localizations?.ar?.title
+    : product.title) || product.title
+
+  const description = (isRTL
+    ? product?.metadata?.localizations?.ar?.description
+    : product.description) || product.description
+
   return (
-    <div id="product-info">
+    <div id="product-info" dir={isRTL ? "rtl" : "ltr"}>
       <div className="flex flex-col gap-y-4 lg:max-w-[500px] mx-auto text-[#043364]">
         {product.collection && (
           <LocalizedClientLink
@@ -20,17 +32,17 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
         )}
         <Heading
           level="h2"
-          className="text-3xl leading-10 "
+          className="text-3xl leading-10"
           data-testid="product-title"
         >
-          {product.title}
+          {title}
         </Heading>
 
         <Text
           className="text-medium whitespace-pre-line"
           data-testid="product-description"
         >
-          {product.description}
+          {description}
         </Text>
       </div>
     </div>

@@ -10,6 +10,7 @@ type ThumbnailProps = {
   size?: "small" | "medium" | "large" | "full" | "square"
   isFeatured?: boolean
   className?: string
+  activeIndex?: number // ✅ جديد
   "data-testid"?: string
 }
 
@@ -19,12 +20,11 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
   size = "small",
   isFeatured,
   className,
+  activeIndex = 0, // ✅ جديد
   "data-testid": dataTestid,
 }) => {
-  // الصورة الأساسية (Thumbnail أو أول صورة في المصفوفة)
-  const primaryImage = thumbnail || images?.[0]?.url
-  // الصورة الثانية (ثاني صورة في المصفوفة إذا وجدت، وإلا نستخدم الأساسية)
-  const secondaryImage = images && images.length > 1 ? images[1].url : null
+  const allImages = images?.length ? images : thumbnail ? [{ url: thumbnail }] : []
+  const currentImage = allImages[activeIndex]?.url || thumbnail || null
 
   const aspectRatio = (() => {
     if (isFeatured) return "aspect-[11/14]"
@@ -44,32 +44,32 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
   return (
     <Container
       className={clx(
-        "relative w-full overflow-hidden p-0 bg-ui-bg-subtle shadow-elevation-card-rest rounded-large transition-all ease-in-out duration-300 group/thumbnail",
+        "relative w-full overflow-hidden p-0 bg-ui-bg-subtle shadow-elevation-card-rest rounded-large",
         aspectRatio,
         maxHeight,
         className
       )}
       data-testid={dataTestid}
     >
-      {/* الصورة الأساسية */}
-      <ImageOrPlaceholder
-        image={primaryImage}
-        size={size}
-        isSecondary={false}
-        hasSecondary={!!secondaryImage}
-      />
-
-      {/* الصورة الثانية تظهر فقط عند الهوفر */}
-      {secondaryImage && (
-        <ImageOrPlaceholder
-          image={secondaryImage}
-          size={size}
-          isSecondary={true}
+      {currentImage ? (
+        <Image
+          src={currentImage}
+          alt="Product Image"
+          className="absolute inset-0 object-cover object-center transition-opacity duration-500 ease-in-out"
+          draggable={false}
+          quality={70}
+          sizes="(max-width: 576px) 100vw, (max-width: 768px) 50vw, (max-width: 1200px) 33vw, 280px"
+          fill
         />
+      ) : (
+        <div className="w-full h-full absolute inset-0 flex items-center justify-center bg-gray-100">
+          <PlaceholderImage size={size === "small" ? 16 : 24} />
+        </div>
       )}
     </Container>
   )
 }
+
 
 const ImageOrPlaceholder = ({
   image,

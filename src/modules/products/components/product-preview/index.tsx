@@ -1,12 +1,13 @@
 "use client"
 
+import { useState, useRef, useCallback } from "react"
 import { Text, clx } from "@medusajs/ui"
 import { getProductPrice } from "@lib/util/get-product-price"
 import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Thumbnail from "../thumbnail"
 import PreviewPrice from "./price"
-import { ChevronRight, Sparkles, ShoppingCart, Eye } from "lucide-react"
+import { ChevronRight, Sparkles } from "lucide-react"
 
 export default function ProductPreview({
   product,
@@ -19,117 +20,126 @@ export default function ProductPreview({
   region: HttpTypes.StoreRegion
   locale: string
 }) {
+  const [activeIndex, setActiveIndex] = useState(0)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const { cheapestPrice } = getProductPrice({ product })
   const isRTL = locale === "ar"
 
-  // Localization logic
   const title = (isRTL ? product?.metadata?.localizations?.ar?.title : product.title) || product.title
   const description = (isRTL ? product?.metadata?.localizations?.ar?.description : product.description) || product.description
+  const images = product.images || []
+
+  const startCycling = useCallback(() => {
+    if (images.length <= 1) return
+    let idx = 0
+    intervalRef.current = setInterval(() => {
+      idx = (idx + 1) % images.length
+      setActiveIndex(idx)
+    }, 1500) // كل 1500ms يقلب صورة
+  }, [images.length])
+
+  const stopCycling = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
+    setActiveIndex(0)
+  }, [])
 
   return (
     <LocalizedClientLink
       href={`/products/${product.handle}`}
-      className="group block"
+      className="group block rounded-[.5rem]"
       locale={locale}
     >
       <div
         dir={isRTL ? "rtl" : "ltr"}
-        data-testid="product-wrapper"
-        className="relative flex flex-col gap-0 h-full rounded-[2rem] overflow-hidden bg-white dark:bg-gray-900 border border-transparent transition-all duration-700 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] hover:-translate-y-2"
+        className="relative flex flex-col h-full rounded-[.5rem] overflow-hidden bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] hover:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.12)] hover:-translate-y-1.5"
+        onMouseEnter={startCycling}
+        onMouseLeave={stopCycling}
       >
         {/* Image Section */}
-        <div className="relative aspect-[4/5] overflow-hidden bg-gray-50 dark:bg-gray-800">
+        <div className="relative aspect-[3/4] overflow-hidden bg-gray-50 dark:bg-gray-800/50">
           <Thumbnail
             thumbnail={product.thumbnail}
-            images={product.images}
+            images={images}
             size="full"
             isFeatured={isFeatured}
-            className="w-full h-full object-cover transition-all duration-1000 ease-in-out group-hover:scale-110 group-hover:blur-[2px] opacity-90 group-hover:opacity-100"
+            activeIndex={activeIndex} // ✅ بنمرر الـ index
+            className="w-full h-full rounded-0"
           />
 
-          {/* Hover Overlay: Buttons and Description */}
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-all duration-500">
-            <div className="flex gap-2 transform translate-y-8 group-hover:translate-y-0 transition-transform duration-500 delay-150">
-              <div className="flex-1 bg-white text-black text-[10px] font-black uppercase tracking-widest py-3 rounded-xl flex items-center justify-center gap-2">
-                <Eye className="h-3 w-3" />
-                {isRTL ? "عرض" : "View"}
-              </div>
-              <div className="w-12 bg-[#043364] text-white py-3 rounded-xl flex items-center justify-center">
-                <ShoppingCart className="h-3 w-3" />
-              </div>
+          {/* Pagination Dots */}
+          {images.length > 1 && (
+            <div className="absolute bottom-3 inset-x-0 flex justify-center gap-1.5 z-20 pointer-events-none">
+              {images.map((_, idx) => (
+                <div
+                  key={idx}
+                  className={clx(
+                    "h-1 rounded-full transition-all duration-300",
+                    activeIndex === idx
+                      ? "w-4 bg-[#043364] shadow-sm"
+                      : "w-1 bg-[#043364]/50"
+                  )}
+                />
+              ))}
             </div>
-          </div>
+          )}
 
-          {/* Floating Badges */}
-          <div className={clx("absolute top-5 flex flex-col gap-2 z-10", isRTL ? "right-5" : "left-5")}>
+          {/* Badges */}
+          <div className={clx("absolute top-4 flex flex-col gap-2 z-10", isRTL ? "right-4" : "left-4")}>
             {isFeatured && (
-              <span className="bg-white/90 backdrop-blur-md text-black text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full shadow-xl flex items-center gap-2 border border-white/20">
-                <Sparkles className="h-3 w-3 text-yellow-500" />
-                {isRTL ? "حصري" : "Limited"}
-              </span>
+              <div className="bg-white/70 backdrop-blur-md text-black text-[9px] font-bold uppercase tracking-[0.15em] px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5 border border-white/40">
+                <Sparkles className="h-3 w-3 text-amber-500" />
+                {isRTL ? "حصري" : "Bestseller"}
+              </div>
             )}
             {cheapestPrice?.price_type === 'sale' && (
-              <span className="bg-red-500 text-white text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full shadow-lg">
+              <div className="bg-red-500 text-white text-[9px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg self-start">
                 {isRTL ? "خصم" : "Sale"}
-              </span>
+              </div>
             )}
           </div>
         </div>
 
-        {/* Content Section */}
-        <div className="flex flex-col gap-1.5 p-6 bg-white dark:bg-gray-900 transition-colors duration-500 group-hover:bg-gray-50/50 dark:group-hover:bg-gray-800/50">
-          <div className="flex justify-between items-start gap-4">
-            <div className="flex flex-col gap-1 w-full">
-              {/* Product Title */}
-              <Text
-                className="text-gray-900 dark:text-white font-bold text-lg leading-tight group-hover:text-[#043364] transition-all duration-500"
-                data-testid="product-title"
-              >
-                {title}
-              </Text>
-
-              {/* Added: Product Description Under Title */}
-              {description && (
-                <Text className="text-gray-500 dark:text-gray-400 text-xs mt-1 line-clamp-2 leading-relaxed">
-                  {description}
-                </Text>
-              )}
-            </div>
+        {/* Content */}
+        <div className="flex flex-col flex-1 p-5">
+          <div className="flex flex-col gap-1 mb-4">
+            <Text className="text-gray-900 dark:text-white font-semibold text-base line-clamp-1 group-hover:text-[#043364] dark:group-hover:text-blue-400 transition-colors">
+              {title}
+            </Text>
+            {description && (
+              <p className="text-gray-500 dark:text-gray-400 text-xs line-clamp-2 min-h-[2.5rem] leading-relaxed font-medium">
+                {description}
+              </p>
+            )}
           </div>
 
-          {/* Footer Section: Price and Action Button */}
-          <div className="flex items-center justify-between mt-auto pt-4">
-            <div className="flex flex-col">
+          <div className="mt-auto pt-4 border-t border-gray-50 dark:border-gray-800 flex items-center justify-between">
+            <div className="flex flex-col gap-0.5">
+              <span className="text-[10px] uppercase tracking-tighter text-gray-400 font-bold">
+                {isRTL ? "السعر من" : "Price starting at"}
+              </span>
               {cheapestPrice ? (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   <PreviewPrice price={cheapestPrice} />
                   {cheapestPrice?.price_type === 'sale' && (
-                    <span className="text-[10px] font-black text-red-600 bg-red-50 px-2 py-1 rounded-md">
+                    <span className="text-[10px] font-bold text-red-500">
                       -{cheapestPrice.percentage_diff}%
                     </span>
                   )}
                 </div>
               ) : (
-                <div className="w-20 h-6 bg-gray-100 animate-pulse rounded-lg" />
+                <div className="w-16 h-5 bg-gray-100 dark:bg-gray-800 animate-pulse rounded" />
               )}
             </div>
 
-            <div className="h-8 w-8 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-[#043364] group-hover:text-white group-hover:border-transparent transition-all duration-500">
-              <ChevronRight className={clx("h-4 w-4 transition-transform", isRTL && "rotate-180")} />
+            <div className="h-8 w-8 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center transition-all group-hover:scale-110 group-hover:bg-[#043364] group-hover:text-white shadow-sm">
+              <ChevronRight className={clx("h-4 w-4", isRTL && "rotate-180")} />
             </div>
           </div>
         </div>
       </div>
-
-      <style jsx global>{`
-        @keyframes shimmer {
-          0% { transform: translateX(-100%) skewX(-15deg); }
-          100% { transform: translateX(250%) skewX(-15deg); }
-        }
-        .animate-shimmer {
-          animation: shimmer 2.5s infinite linear;
-        }
-      `}</style>
     </LocalizedClientLink>
   )
 }
