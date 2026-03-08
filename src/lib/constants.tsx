@@ -48,45 +48,37 @@ export const noDivisionCurrencies = [
 ]
 
 export const createNavigation = (
-  productCategories: StoreProductCategory[],
+  productCategories: any[], // ✅ استخدم any[] عشان يقبل Category type بتاعتك
   collections?: StoreCollection[]
 ) => [
-    // {
-    //   name: 'Shop',
-    //   handle: '/store',
-    //   category_children: productCategories
-    //     .filter((category) => !category.parent_category)
-    //     .map((category) => ({
-    //       name: category.name,
-    //       type: 'parent_category',
-    //       handle: `/categories/${category.handle}`,
-    //       category_children: category.category_children.map((subCategory) => ({
-    //         name: subCategory.name,
-    //         handle: `/categories/${subCategory.handle}`,
-    //         icon: null,
-    //         category_children: null,
-    //       })),
-    //     })),
-    // },
     {
       name: 'Shop',
       handle: '/store',
       category_children: productCategories
-        .filter((category) => !category.parent_category)
+        .filter((category) => !category.parent_category_id) // ✅ filter by parent_category_id مش parent_category
         .map((category) => ({
-          // 🟢 خليك واضح في اللغتين (لو عندك لغة محددة، استعملها هنا)
           name_en: category.name_en || category.name,
           name_ar: category.name_ar || category.name,
           type: 'parent_category',
           handle_en: `/categories/${category.handle_en || category.handle}`,
           handle_ar: `/categories/${category.handle_ar || category.handle}`,
-          category_children: (category.category_children || []).map((subCategory) => ({
-            name_en: subCategory.name_en || subCategory.name,
-            name_ar: subCategory.name_ar || subCategory.name,
-            handle_en: `/categories/${subCategory.handle_en || subCategory.handle}`,
-            handle_ar: `/categories/${subCategory.handle_ar || subCategory.handle}`,
+          image_url: category.image_url || null,
+          // ✅ Level 2 children
+          category_children: (category.category_children || []).map((sub: any) => ({
+            name_en: sub.name_en || sub.name,
+            name_ar: sub.name_ar || sub.name,
+            handle_en: `/categories/${sub.handle_en || sub.handle}`,
+            handle_ar: `/categories/${sub.handle_ar || sub.handle}`,
             icon: null,
-            category_children: null,
+            // ✅ Level 3 children — كانت null دايماً وده هو السبب!
+            category_children: (sub.category_children || []).map((deep: any) => ({
+              name_en: deep.name_en || deep.name,
+              name_ar: deep.name_ar || deep.name,
+              handle_en: `/categories/${deep.handle_en || deep.handle}`,
+              handle_ar: `/categories/${deep.handle_ar || deep.handle}`,
+              icon: null,
+              category_children: null,
+            })),
           })),
         })),
     },

@@ -38,14 +38,37 @@ export default async function CategoryTemplate({
   }))
 
   // === Breadcrumbs Logic ===
-  const parents: Category[] = []
-  const collectParents = (cat: Category) => {
-    if (cat.parent_category) {
-      parents.push(cat.parent_category)
-      collectParents(cat.parent_category)
+  // const parents: Category[] = []
+  // const collectParents = (cat: Category) => {
+  //   if (cat.parent_category) {
+  //     parents.push(cat.parent_category)
+  //     collectParents(cat.parent_category)
+  //   }
+  // }
+  // collectParents(category)
+
+
+  // === Breadcrumbs Logic — ابني من الـ flat map ===
+  // اعمل flat list من كل الـ categories
+  const flatList: Category[] = []
+  const flatten = (cats: Category[]) => {
+    for (const c of cats) {
+      flatList.push(c)
+      if (c.category_children?.length) flatten(c.category_children)
     }
   }
-  collectParents(category)
+  flatten(categoryTree)
+
+  // ابني الـ breadcrumb path باستخدام parent_category_id
+  const parents: Category[] = []
+  let current: Category | undefined = flatList.find(c => c.id === category.id)
+  while (current?.parent_category_id) {
+    const parent = flatList.find(c => c.id === current!.parent_category_id)
+    if (!parent) break
+    parents.unshift(parent) // ضيف في الأول عشان الترتيب صح
+    current = parent
+  }
+
 
   const categoryName = isRTL ? category.name_ar : category.name_en
   const productCount = category.products?.length || 0
@@ -125,14 +148,18 @@ export default async function CategoryTemplate({
               {/* Scrollable Container */}
               <div className="flex items-center gap-6 overflow-x-auto pb-2 px-8 scrollbar-hide">
                 {category.category_children.map((c) => {
-                  const subCatName = isRTL ? (c.metadata?.localizations?.ar?.name || c.name) : c.name;
-                  // Placeholder for category image - assuming it exists in metadata or can be derived
-                  const imageUrl = c.metadata?.image_url || "/path/to/placeholder-icon.png";
+                  // const subCatName = isRTL ? (c.metadata?.localizations?.ar?.name || c.name) : c.name;
+                  // // Placeholder for category image - assuming it exists in metadata or can be derived
+                  // const imageUrl = c.metadata?.image_url || "/path/to/placeholder-icon.png";
+                  const subCatName = isRTL ? c.name_ar || c.name_en : c.name_en || c.name_ar
+                  const imageUrl = c.image_url || null
+                  const subHandle = isRTL ? c.handle_ar || c.handle_en : c.handle_en || c.handle_ar
 
+                  
                   return (
                     <LocalizedClientLink
                       key={c.id}
-                      href={`/categories/${c.handle}`}
+                      href={`/categories/${subHandle}`}
                       className="group flex flex-col items-center gap-3 flex-shrink-0 w-28 text-center"
                     >
                       {/* Circular Image Container */}

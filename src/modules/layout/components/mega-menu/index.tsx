@@ -4,189 +4,175 @@ import { useState } from 'react';
 import Image from 'next/image';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { useLocale } from 'next-intl';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
 
-// 🧠 أنواع البيانات
+// --- Types ---
 type SubCategory = { label: string; href: string; children?: SubCategory[] };
-type Category = { title: string; handle: string; subCategories: SubCategory[] };
-type MenuItem = { title: string; handle: string; columns: Category[]; image?: string };
+type CategoryColumn = { title: string; handle: string; category_children: SubCategory[] };
+type MenuItem = { title: string; handle: string; columns: CategoryColumn[]; image?: string };
 
-// 🧠 تحويل بيانات navigation القادمة من الـ backend إلى MenuItem[]
-const mapNavigationToMegaMenu = (navItem: any, locale: string): MenuItem[] => {
-    if (!navItem || !Array.isArray(navItem.category_children)) return [];
-
+const mapNavigationToMegaMenu = (categories: any[], locale: string): MenuItem[] => {
     const isArabic = locale === 'ar';
 
-    const mapChildren = (children: any[]): SubCategory[] =>
-        children.map((child) => {
-            const label = isArabic ? child.name_ar || child.name : child.name_en || child.name;
-            const handle = isArabic
-                ? child.handle_ar || child.handle_en || child.handle
-                : child.handle_en || child.handle_ar || child.handle;
+    return categories.map((cat: any) => {
+        // Level 1 = parent category (name_en/name_ar)
+        const title = isArabic ? cat.name_ar || cat.name_en : cat.name_en || cat.name_ar
+        const handle = cat.handle_en || cat.handle_ar || cat.handle || ''
 
-            return {
-                label,
-                href: `${handle}`, // استخدام handle لبناء الرابط الصحيح
-                children: child.category_children && child.category_children.length > 0 ? mapChildren(child.category_children) : [],
-            };
-        });
+        // Level 2 → columns
+        const columns: CategoryColumn[] = (cat.category_children || []).map((child: any) => {
+            const colTitle = isArabic ? child.name_ar || child.name_en : child.name_en || child.name_ar
+            const colHandle = child.handle_en || child.handle_ar || child.handle || ''
 
-    return navItem.category_children.map((cat: any) => {
-        const title = isArabic ? cat.name_ar || cat.name : cat.name_en || cat.name;
-        const handle = isArabic ? cat.handle_ar || cat.handle_en || cat.handle : cat.handle_en || cat.handle_ar || cat.handle;
+            // Level 3 → sub-links
+            const subChildren: SubCategory[] = (child.category_children || []).map((sub: any) => ({
+                label: isArabic ? sub.name_ar || sub.name_en : sub.name_en || sub.name_ar,
+                href: sub.handle_en || sub.handle_ar || sub.handle || '',
+                children: [],
+            }))
 
-        return {
-            title,
-            handle, // إضافة handle هنا
-            columns: [
-                {
-                    title,
-                    handle,
-                    subCategories: mapChildren(cat.category_children || []),
-                },
-            ],
-            image: cat.image_url || cat.metadata?.image_url || undefined,
-        };
-    });
-};
+            return { title: colTitle, handle: colHandle, category_children: subChildren }
+        })
 
-// 🧠 مكون فرعي لعرض التصنيفات الفرعية بشكل متكرر (recursive)
-const SubCategoryList = ({ items }: { items: SubCategory[] }) => {
-    if (!items || items.length === 0) return null;
+        return { title, handle, columns, image: cat.image_url || undefined }
+    })
+}
 
-    return (
-        <ul className="text-sm text-gray-700 space-y-1 pl-4">
-            {items.map((sub, idx) => (
-                <li key={idx}>
-                    <LocalizedClientLink href={sub.href} className="hover:text-blue-600 transition">
-                        {sub.label}
-                    </LocalizedClientLink>
-                    {sub.children && sub.children.length > 0 && <SubCategoryList items={sub.children} />}
-                </li>
-            ))}
-        </ul>
-    );
-};
 
-// 🔢 عدد التصنيفات التي تظهر قبل "More"
-const VISIBLE_CATEGORIES_COUNT = 9;
+// const mapNavigationToMegaMenu = (navigation: any[], locale: string): MenuItem[] => {
+//     const isArabic = locale === 'ar';
 
+//     return navigation.map((navItem: any) => {
+//         // Top level: name (not name_en/name_ar), handle
+//         const title = navItem.name || ''
+//         const handle = navItem.handle || ''
+
+//         // category_children = Level 1 items → become columns
+//         const columns: CategoryColumn[] = (navItem.category_children || []).map((cat: any) => {
+//             // Level 1 has name_en/name_ar
+//             const colTitle = isArabic ? cat.name_ar || cat.name_en || cat.name : cat.name_en || cat.name_ar || cat.name
+//             const colHandle = isArabic ? cat.handle_ar || cat.handle_en || cat.handle : cat.handle_en || cat.handle_ar || cat.handle || ''
+
+//             // Level 2 → sub-links
+//             const subChildren: SubCategory[] = (cat.category_children || []).map((sub: any) => ({
+//                 label: isArabic ? sub.name_ar || sub.name_en || sub.name : sub.name_en || sub.name_ar || sub.name,
+//                 href: isArabic ? sub.handle_ar || sub.handle_en || sub.handle : sub.handle_en || sub.handle_ar || sub.handle || '',
+//                 children: (sub.category_children || []).map((deep: any) => ({
+//                     label: isArabic ? deep.name_ar || deep.name_en || deep.name : deep.name_en || deep.name_ar || deep.name,
+//                     href: isArabic ? deep.handle_ar || deep.handle_en || deep.handle : deep.handle_en || deep.handle_ar || deep.handle || '',
+//                 })),
+//             }))
+
+//             return { title: colTitle, handle: colHandle, category_children: subChildren }
+//         })
+
+//         // Get image from first category_child that has one
+//         const image = navItem.category_children?.find((c: any) => c.image_url)?.image_url || undefined
+
+//         return { title, handle, columns, image }
+//     })
+// }
 const MegaMenu = ({ navigation }: { navigation: any[] }) => {
     const locale = useLocale();
     const isRTL = locale === 'ar';
-    const menuItems = mapNavigationToMegaMenu(navigation[0], locale);
-
+    // const menuItems = mapNavigationToMegaMenu(navigation, locale);
+    // ✅ بعد — خد الـ category_children من أول item (Shop)
+    const shopItem = navigation?.find((item: any) => item.handle === '/store' && item.category_children?.length)
+    const menuItems = mapNavigationToMegaMenu(shopItem?.category_children || [], locale)
     const [openIndex, setOpenIndex] = useState<number | null>(null);
-    const [showMore, setShowMore] = useState(false);
 
-    const visibleCategories = menuItems.slice(0, VISIBLE_CATEGORIES_COUNT);
-    const hiddenCategories = menuItems.slice(VISIBLE_CATEGORIES_COUNT);
+    // ✅ Debug
+    console.log('MegaMenu navigation:', navigation)
 
+    // ✅ Guard against empty/undefined
+    if (!navigation || navigation.length === 0) return null
+
+    // const menuItems = mapNavigationToMegaMenu(navigation, locale);
+
+    // ✅ Debug
+    console.log('MegaMenu items:', menuItems)
     return (
-        <nav dir={isRTL ? 'rtl' : 'ltr'} className="hidden md:block bg-[#f5f8fc] relative z-10 w-full">
-            <ul className="flex px-6 content-container border-b text-sm font-medium space-x-8 text-gray-700">
-                {visibleCategories.map((menu, index) => (
-                    <li
-                        key={index}
-                        className="px-4 py-4 cursor-pointer hover:text-[#043364] hover:bg-white hover:border-b-2 border-[#043364]"
-                        onMouseEnter={() => setOpenIndex(index)}
-                        onMouseLeave={() => setOpenIndex(null)}
-                    >
-                        {/* استخدم الـ handle هنا في الرابط */}
-                        <LocalizedClientLink href={`${menu.handle}`} className="font-semibold">
-                            {menu.title}
-                        </LocalizedClientLink>
+        <nav dir={isRTL ? 'rtl' : 'ltr'} className="hidden md:block  border-b relative z-50 w-full shadow-sm bg-gray-100">
+            <div className="content-container mx-auto">
+                <ul className="flex items-center justify-start text-[13px] font-bold text-gray-800">
+                    {menuItems.slice(0, 10).map((menu, index) => (
+                        <li
+                            key={index}
+                            className="group"
+                            onMouseEnter={() => setOpenIndex(index)}
+                            onMouseLeave={() => setOpenIndex(null)}
+                        >
+                            <LocalizedClientLink
+                                href={`${menu.handle}`}
+                                className={`block px-4 py-4 transition-colors hover:text-[#043364] border-b-2 border-transparent ${openIndex === index ? 'text-[#043364] border-[#043364] bg-gray-50' : ''}`}
+                            >
+                                {menu.title}
+                            </LocalizedClientLink>
+                            
 
-                        {openIndex === index && (
-                            <div className="absolute left-0 top-full bg-white right-0 rounded-b-lg z-50 flex p-6 shadow-md overflow-hidden">
-                                <div className="flex content-container flex-1 gap-12">
-                                    {menu.columns.map((col, colIdx) => (
-                                        <div key={colIdx} className="min-w-[180px]">
-                                            {/* استخدم handle أيضاً هنا */}
-                                            <h4 className="text-md font-semibold text-[#043364] mb-2">
-                                                <LocalizedClientLink href={`${col.handle}`}>
-                                                    {col.title} <span className="ml-1">›</span>
-                                                </LocalizedClientLink>
-                                            </h4>
-                                            {/* عرض التصنيفات الفرعية بشكل متكرر */}
-                                            <SubCategoryList items={col.subCategories} />
-                                        </div>
-                                    ))}
-                                </div>
-                                {menu.image && (
-                                    <div className="flex-shrink-0 ml-6">
-                                        <Image
-                                            src={menu.image}
-                                            alt="Promo"
-                                            width={300}
-                                            height={200}
-                                            className="object-contain"
-                                        />
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </li>
-                ))}
+                            {/* Mega Menu Dropdown */}
+                            {openIndex === index && (
+                                <div className="absolute left-0 right-0 top-full w-full bg-white shadow-[0_15px_30px_-10px_rgba(0,0,0,0.1)] border-t border-gray-100 animate-in fade-in slide-in-from-top-2 duration-200">
+                                    <div className="content-container mx-auto flex p-8 gap-8">
 
-                {/* More Dropdown */}
-                {hiddenCategories.length > 0 && (
-                    <li
-                        className="relative px-4 py-4 cursor-pointer hover:text-red-600"
-                        onMouseEnter={() => setShowMore(true)}
-                        onMouseLeave={() => {
-                            setShowMore(false);
-                            setOpenIndex(null);
-                        }}
-                    >
-                        More
-                        {showMore && (
-                            <ul className="absolute left-0 top-full w-56 bg-white shadow-lg rounded-b-md border py-2 z-50">
-                                {hiddenCategories.map((menu, index) => (
-                                    <li
-                                        key={index}
-                                        className="px-4 py-2 hover:bg-gray-100 hover:text-red-600 relative"
-                                        onMouseEnter={() => setOpenIndex(index + VISIBLE_CATEGORIES_COUNT)}
-                                        onMouseLeave={() => setOpenIndex(null)}
-                                    >
-                                        {/* عنوان الـ menu */}
-                                        <LocalizedClientLink href={`${menu.handle}`} className="font-semibold">
-                                            {menu.title}
-                                        </LocalizedClientLink>
+                                     
 
-                                        {openIndex === index + VISIBLE_CATEGORIES_COUNT && (
-                                            <div className="absolute left-full top-0 bg-white p-6 rounded-b-md shadow-lg border z-50 flex">
-                                                <div className="flex flex-1 gap-12">
-                                                    {menu.columns.map((col, colIdx) => (
-                                                        <div key={colIdx} className="min-w-[180px]">
-                                                            <h4 className="text-md font-semibold text-[#043364] mb-2">
-                                                                <LocalizedClientLink href={`${col.handle}`}>
-                                                                    {col.title} <span className="ml-1">›</span>
+                                        {/* Columns Section */}
+                                        <div className="flex-1 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-10">
+                                            {menu.columns.map((col, colIdx) => (
+                                                <div key={colIdx} className="space-y-4">
+                                                    <LocalizedClientLink
+                                                        href={`${col.handle}`}
+                                                        className="flex items-center text-sm font-black text-[#043364] hover:underline group/title"
+                                                    >
+                                                        {col.title}
+                                                        {isRTL ? <ChevronLeft size={14} className="mr-1" /> : <ChevronRight size={14} className="ml-1" />}
+                                                    </LocalizedClientLink>
+
+                                                    <ul className="space-y-2">
+                                                        {col.category_children.map((sub, subIdx) => (
+                                                            <li key={subIdx}>
+                                                                <LocalizedClientLink
+                                                                    href={sub.href}
+                                                                    className="text-[13px] text-gray-600 hover:text-[#043364] transition-colors block py-0.5"
+                                                                >
+                                                                    {sub.label}
                                                                 </LocalizedClientLink>
-                                                            </h4>
-                                                            <SubCategoryList items={col.subCategories} />
-                                                        </div>
-                                                    ))}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
                                                 </div>
-                                                {menu.image && (
-                                                    <div className="flex-shrink-0 ml-6">
-                                                        <Image
-                                                            src={menu.image}
-                                                            alt="Promo"
-                                                            width={300}
-                                                            height={200}
-                                                            className="object-contain"
-                                                        />
-                                                    </div>
-                                                )}
+                                            ))}
+                                        </div>
+                                        {/* Image Section (Side) */}
+                                        {menu.image && (
+                                            <div className="w-1/4 flex-shrink-0 relative h-[300px] rounded-xl overflow-hidden hidden lg:block">
+                                                <Image
+                                                    src={menu.image}
+                                                    alt={menu.title}
+                                                    fill
+                                                    className="object-contain transform group-hover:scale-105 transition-transform duration-500"
+                                                />
                                             </div>
                                         )}
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </li>
-                )}
-            </ul>
+                                    </div>
+
+                                    {/* Footer Link */}
+                                    <div className="bg-gray-50 p-4 text-center border-t border-gray-100">
+                                        <LocalizedClientLink
+                                            href={`/categories/${menu.handle}`}
+                                            className="text-xs font-bold text-gray-500 hover:text-[#043364] flex items-center justify-center gap-1"
+                                        >
+                                            {isRTL ? 'عرض مجموعة ' : 'View all '} {menu.title}
+                                            {isRTL ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
+                                        </LocalizedClientLink>
+                                    </div>
+                                </div>
+                            )}
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </nav>
     );
 };
