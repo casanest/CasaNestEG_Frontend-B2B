@@ -8,6 +8,10 @@ import { ChevronLeft, ChevronRight, ZoomIn, X, ImageIcon } from "lucide-react"
 import { HttpTypes } from "@medusajs/types"
 import PlaceholderImage from "@modules/common/icons/placeholder-image"
 import { clx } from "@medusajs/ui"
+import {
+  normalizeProductImageUrl,
+  shouldUseUnoptimizedImage,
+} from "@lib/util/product-image-url"
 
 type GalleryImage = Pick<HttpTypes.StoreProductImage, "id" | "url">
 
@@ -19,13 +23,16 @@ type ImageGalleryProps = {
 const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
     const normalized: GalleryImage[] = (images ?? [])
         .filter((img): img is GalleryImage => Boolean(img?.url))
-        .map((img, i) => ({ id: img.id ?? `img-${i}`, url: img.url }))
+        .map((img, i) => ({
+            id: img.id ?? `img-${i}`,
+            url: normalizeProductImageUrl(img.url),
+        }))
 
     const display: GalleryImage[] =
         normalized.length > 0
             ? normalized
             : fallbackImage
-                ? [{ id: "fallback", url: fallbackImage }]
+                ? [{ id: "fallback", url: normalizeProductImageUrl(fallbackImage) }]
                 : []
 
     const [selectedIndex, setSelectedIndex] = useState(0)
@@ -115,6 +122,7 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
                             priority
                             sizes="(max-width: 768px) 100vw, 50vw"
                             className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                            unoptimized={shouldUseUnoptimizedImage(selected.url)}
                         />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center bg-gray-100 animate-pulse">
@@ -197,6 +205,7 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
                                             fill
                                             sizes="80px"
                                             className="object-cover"
+                                            unoptimized={shouldUseUnoptimizedImage(img.url)}
                                         />
                                     </button>
                                 ))}
@@ -257,6 +266,7 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
                             fill
                             priority
                             sizes="90vw"
+                            unoptimized={shouldUseUnoptimizedImage(selected.url)}
                             className={clsx(
                                 "object-contain transition-transform duration-200",
                                 zoomed ? "scale-[2.5] origin-[var(--ox)_var(--oy)]" : "scale-100"
@@ -298,7 +308,14 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
                                     )}
                                 >
                                     {img.url && (
-                                        <Image src={img.url} alt="" fill sizes="40px" className="object-cover" />
+                                        <Image
+                                            src={img.url}
+                                            alt=""
+                                            fill
+                                            sizes="40px"
+                                            className="object-cover"
+                                            unoptimized={shouldUseUnoptimizedImage(img.url)}
+                                        />
                                     )}
                                 </button>
                             ))}

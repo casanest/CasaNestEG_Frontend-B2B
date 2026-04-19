@@ -3,6 +3,10 @@ import { Container, clx } from "@medusajs/ui"
 import Image from "next/image"
 import React, { useEffect, useState } from "react"
 import PlaceholderImage from "@modules/common/icons/placeholder-image"
+import {
+  normalizeProductImageUrl,
+  shouldUseUnoptimizedImage,
+} from "@lib/util/product-image-url"
 
 type ThumbnailProps = {
   thumbnail?: string | null
@@ -23,8 +27,14 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
   activeIndex = 0, // ✅ جديد
   "data-testid": dataTestid,
 }) => {
-  const allImages = images?.length ? images : thumbnail ? [{ url: thumbnail }] : []
-  const currentImage = allImages[activeIndex]?.url || thumbnail || null
+  const allImages = images?.length
+    ? images
+        .filter((img): img is { url: string } => Boolean(img?.url))
+        .map((img) => ({ url: normalizeProductImageUrl(img.url) }))
+    : thumbnail
+      ? [{ url: normalizeProductImageUrl(thumbnail) }]
+      : []
+  const currentImage = allImages[activeIndex]?.url || null
 
   const aspectRatio = (() => {
     if (isFeatured) return "aspect-[11/14]"
@@ -60,6 +70,7 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
           quality={70}
           sizes="(max-width: 576px) 100vw, (max-width: 768px) 50vw, (max-width: 1200px) 33vw, 280px"
           fill
+          unoptimized={shouldUseUnoptimizedImage(currentImage)}
         />
       ) : (
         <div className="w-full h-full absolute inset-0 flex items-center justify-center bg-gray-100">
@@ -99,9 +110,11 @@ const ImageOrPlaceholder = ({
 
   if (showPlaceholder && isSecondary) return null
 
+  const src = normalizeProductImageUrl(image as string)
+
   return (
     <Image
-      src={image as string}
+      src={src}
       alt="Product Image"
       className={clx(
         "absolute inset-0 object-cover object-center transition-all duration-700 ease-in-out",
@@ -116,6 +129,7 @@ const ImageOrPlaceholder = ({
       quality={70} // رفعت الجودة قليلاً لأنها تعتمد على الهوفر
       sizes="(max-width: 576px) 100vw, (max-width: 768px) 50vw, (max-width: 1200px) 33vw, 280px"
       fill
+      unoptimized={shouldUseUnoptimizedImage(src)}
       onError={() => setImageError(true)}
     />
   )
