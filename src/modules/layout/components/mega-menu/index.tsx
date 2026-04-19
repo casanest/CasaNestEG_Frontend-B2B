@@ -2,6 +2,10 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import {
+  normalizeProductImageUrl,
+  shouldUseUnoptimizedImage,
+} from '@lib/util/product-image-url';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { useLocale } from 'next-intl';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
@@ -34,7 +38,13 @@ const mapNavigationToMegaMenu = (categories: any[], locale: string): MenuItem[] 
             return { title: colTitle, handle: colHandle, category_children: subChildren }
         })
 
-        return { title, handle, columns, image: cat.image_url || undefined }
+        const rawImage = cat.image_url as string | undefined
+        return {
+            title,
+            handle,
+            columns,
+            image: rawImage ? normalizeProductImageUrl(rawImage) : undefined,
+        }
     })
 }
 
@@ -151,6 +161,8 @@ const MegaMenu = ({ navigation }: { navigation: any[] }) => {
                                                     src={menu.image}
                                                     alt={menu.title}
                                                     fill
+                                                    sizes="(min-width: 1024px) 25vw, 0px"
+                                                    unoptimized={shouldUseUnoptimizedImage(menu.image)}
                                                     className="object-contain transform group-hover:scale-105 transition-transform duration-500"
                                                 />
                                             </div>
