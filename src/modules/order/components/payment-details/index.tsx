@@ -1,15 +1,30 @@
+"use client"
 
 import { Container, Heading, Text } from "@medusajs/ui"
 
 import { isStripe, paymentInfoMap } from "@lib/constants"
-import Divider from "@modules/common/components/divider"
-import { convertToLocale } from "@lib/util/money"
 import { HttpTypes } from "@medusajs/types"
 import { useLocale } from "next-intl"
-import { clx } from "@medusajs/ui"
 
 type PaymentDetailsProps = {
   order: HttpTypes.StoreOrder
+}
+
+function resolvePaymentMethodLabel(
+  providerId: string | undefined,
+  locale: string
+): string {
+  if (!providerId) {
+    return ""
+  }
+  const title = paymentInfoMap[providerId]?.title
+  if (title && typeof title === "object" && "en" in title && "ar" in title) {
+    if (locale === "ar") {
+      return title.ar
+    }
+    return title.en
+  }
+  return providerId
 }
 
 /**
@@ -65,7 +80,7 @@ const PaymentDetails = ({ order }: PaymentDetailsProps) => {
               className="txt-medium text-ui-fg-subtle"
               data-testid="payment-method"
             >
-              {paymentInfoMap[payment.provider_id]?.title || payment.provider_id}
+              {resolvePaymentMethodLabel(payment.provider_id, locale)}
             </Text>
           </div>
 

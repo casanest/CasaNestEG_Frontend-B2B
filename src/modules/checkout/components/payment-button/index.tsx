@@ -5,6 +5,7 @@ import { placeOrder } from "@lib/data/cart"
 import { HttpTypes } from "@medusajs/types"
 import { Button } from "@medusajs/ui"
 import { useElements, useStripe } from "@stripe/react-stripe-js"
+import { unstable_rethrow } from "next/navigation"
 import React, { useState } from "react"
 import ErrorMessage from "../error-message"
 import confetti from "canvas-confetti"
@@ -73,6 +74,7 @@ export const StripePaymentButton = ({
   const onPaymentCompleted = async () => {
     await placeOrder()
       .catch((err) => {
+        unstable_rethrow(err)
         setErrorMessage(err.message)
       })
       .finally(() => {
@@ -174,6 +176,7 @@ export const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => 
   const onPaymentCompleted = async () => {
     await placeOrder()
       .catch((err) => {
+        unstable_rethrow(err)
         setErrorMessage(err.message)
       })
       .finally(() => {

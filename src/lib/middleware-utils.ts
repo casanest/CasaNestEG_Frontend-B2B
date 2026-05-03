@@ -355,10 +355,41 @@ function createCorsHeaders(request: NextRequest): Record<string, string> {
   return corsHeaders
 }
 
+const MEILISEARCH_FALLBACK_ORIGIN = "https://search.casanesteg.com"
+
+/** Origins allowed for browser fetch/XHR to Meilisearch (connect-src). */
+function collectMeilisearchConnectOrigins(): string[] {
+  const origins = new Set<string>()
+  const candidates = [
+    process.env.NEXT_PUBLIC_MEILISEARCH_URL,
+    process.env.MEILISEARCH_URL,
+    MEILISEARCH_FALLBACK_ORIGIN,
+  ].filter(Boolean) as string[]
+
+  for (const raw of candidates) {
+    try {
+      origins.add(new URL(raw).origin)
+    } catch {
+      // skip invalid URLs
+    }
+  }
+
+  if (process.env.NODE_ENV !== "production") {
+    origins.add("http://127.0.0.1:7700")
+    origins.add("http://localhost:7700")
+  }
+
+  return [...origins].sort()
+}
+
 /**
  * Create security headers for all responses
  */
 export function createSecurityHeaders(): Record<string, string> {
+  const meilisearchOrigins = collectMeilisearchConnectOrigins().join(" ")
+  const connectSrcProduction = `'self' https://api.paymob.com https://accept.paymob.com ${meilisearchOrigins}`
+  const connectSrcDevelopment = `'self' https://api.paymob.com https://accept.paymob.com ws: wss: ${meilisearchOrigins}`
+
   return {
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY",
@@ -368,8 +399,8 @@ export function createSecurityHeaders(): Record<string, string> {
     "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
     "Content-Security-Policy":
       process.env.NODE_ENV === "production"
-        ? "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.paymob.com https://accept.paymob.com;"
-        : "default-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https://api.paymob.com https://accept.paymob.com ws: wss:;",
+        ? `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src ${connectSrcProduction};`
+        : `default-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src ${connectSrcDevelopment};`,
   }
 }
 

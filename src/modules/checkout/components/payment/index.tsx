@@ -1,7 +1,13 @@
 "use client"
 
 import { useState, useCallback, useEffect } from "react"
-import { useSearchParams, useRouter, usePathname, useParams } from "next/navigation"
+import {
+  useSearchParams,
+  useRouter,
+  usePathname,
+  useParams,
+  unstable_rethrow,
+} from "next/navigation"
 import { useLocale } from "next-intl"
 import { Button, clx, Heading, Text } from "@medusajs/ui"
 import { CheckCircleSolid, CreditCard } from "@medusajs/icons"
@@ -99,6 +105,7 @@ const Payment = ({
       // If we reach here, the order was successful and user was redirected
       // The placeOrder function handles the redirect to the success page
     } catch (err: any) {
+      unstable_rethrow(err)
       console.error("Failed to place order:", err)
       setError(err.message || "Failed to complete order. Please try again.")
     } finally {

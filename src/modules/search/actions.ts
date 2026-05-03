@@ -1,10 +1,9 @@
+import { getMeilisearchClientConfig } from '@lib/meilisearch-config'
 import { safeDecodeURIComponent } from '@lib/util/safe-decode-uri'
 import { SearchedProducts } from 'types/global'
 
-// Required in .env: MEDUSA_BACKEND_URL, MEILISEARCH_URL, MEILISEARCH_API_KEY, NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
+// Medusa: MEDUSA_BACKEND_URL, NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY (search key from /store/meilisearch-config)
 export const BACKEND_URL = process.env.MEDUSA_BACKEND_URL
-export const SEARCH_URL = process.env.MEILISEARCH_URL ?? 'https://search.casanesteg.com'
-export const MEILISEARCH_API_KEY = process.env.MEILISEARCH_API_KEY ?? '788df7bf7f2ad57af246c450c4ad525c46479c5dd97fa7023e59e09186fee5b2'
 
 export const PUBLISHABLE_API_KEY =
   process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
@@ -98,18 +97,16 @@ export async function search({
     searchParams.append('q', safeDecodeURIComponent(query))
   }
 
-  if (!SEARCH_URL || !MEILISEARCH_API_KEY) {
+  const meili = await getMeilisearchClientConfig()
+  if (!meili) {
     return { results: [], count: 0 }
   }
 
   const response = await fetch(
-    // `${SEARCH_URL}/indexes/products//search?${searchParams.toString()}`,
-    `${SEARCH_URL}/indexes/products/search?q=${searchParams.get('q')}`,
-
+    `${meili.search_url}/indexes/products/search?q=${searchParams.get('q')}`,
     {
       headers: {
-        // 'x-publishable-api-key': PUBLISHABLE_API_KEY!,
-        'authorization': `Bearer ${MEILISEARCH_API_KEY}`,
+        authorization: `Bearer ${meili.search_api_key}`,
       },
       cache: 'no-store',
     }

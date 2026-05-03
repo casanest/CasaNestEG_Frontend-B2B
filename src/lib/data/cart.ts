@@ -2,8 +2,14 @@
 
 import { sdk } from "@lib/config"
 import medusaError from "@lib/util/medusa-error"
+import {
+  buildOrderConfirmedPath,
+  normalizeAppLocale,
+} from "@lib/util/order-confirmed-path"
+import { fallbackLng, languages } from "@lib/i18n/settings"
 import { HttpTypes } from "@medusajs/types"
 import { revalidateTag } from "next/cache"
+import { getLocale } from "next-intl/server"
 import { redirect } from "next/navigation"
 import {
   getAuthHeaders,
@@ -13,8 +19,34 @@ import {
   removeCartId,
   setCartId,
 } from "./cookies"
-import { getRegion } from "./regions"
+import { getRegion, retrieveRegion } from "./regions"
 import confetti from "canvas-confetti"
+
+async function resolveCountryCodeForConfirmedRedirect(
+  order: HttpTypes.StoreOrder
+): Promise<string> {
+  const fromShipping = order.shipping_address?.country_code?.toLowerCase()
+  if (fromShipping) {
+    return fromShipping
+  }
+
+  const fromBilling = order.billing_address?.country_code?.toLowerCase()
+  if (fromBilling) {
+    return fromBilling
+  }
+
+  if (order.region_id) {
+    const region = await retrieveRegion(order.region_id)
+    const iso = region?.countries?.[0]?.iso_2?.toLowerCase()
+    if (iso) {
+      return iso
+    }
+  }
+
+  return (
+    process.env.NEXT_PUBLIC_DEFAULT_REGION || "fr"
+  ).toLowerCase()
+}
 
 /**
  * Retrieves a cart by its ID. If no ID is provided, it will use the cart ID from the cookies.
@@ -472,14 +504,20 @@ export async function placeOrder(cartId?: string) {
     .catch(medusaError)
 
   if (cartRes?.type === "order") {
-    const countryCode =
-      cartRes.order.shipping_address?.country_code?.toLowerCase()
-
     const orderCacheTag = await getCacheTag("orders")
     revalidateTag(orderCacheTag)
 
     removeCartId()
-    redirect(`/${countryCode}/order/${cartRes?.order.id}/confirmed`)
+
+    const localeParam = await getLocale()
+    const locale = normalizeAppLocale(localeParam, languages, fallbackLng)
+    const countryCode = await resolveCountryCodeForConfirmedRedirect(
+      cartRes.order
+    )
+
+    redirect(
+      buildOrderConfirmedPath(locale, countryCode, cartRes.order.id)
+    )
   }
 
   return cartRes.cart

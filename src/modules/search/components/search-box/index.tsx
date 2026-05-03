@@ -7,8 +7,9 @@ import { XMarkMini } from '@medusajs/icons'
 import { Box } from '@modules/common/components/box'
 import Input from '@modules/common/components/input'
 import { useLocale } from 'next-intl'
-const milisearchUrl = process.env.MEILISEARCH_URL ?? 'https://search.casanesteg.com'
-const milisearchApiKey = process.env.MEILISEARCH_API_KEY ?? '788df7bf7f2ad57af246c450c4ad525c46479c5dd97fa7023e59e09186fee5b2'
+
+type MeiliClient = { search_url: string; search_api_key: string }
+
 export const ControlledSearchBox = ({
   countryCode,
   open,
@@ -69,25 +70,55 @@ export const ControlledSearchBox = ({
 
   const [showDropdown, setShowDropdown] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [meili, setMeili] = useState<MeiliClient | null>(null)
 
   useEffect(() => {
+    let cancelled = false
+    fetch('/api/store/meilisearch-config')
+      .then((res) => (res.ok ? res.json() : Promise.reject()))
+      .then((data: MeiliClient) => {
+        if (
+          cancelled ||
+          !data?.search_api_key ||
+          !data?.search_url
+        ) {
+          return
+        }
+        setMeili(data)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!meili) return
+
     if (query && query.length > 1) {
       setLoading(true)
-      // Replace this with your actual API call
-      fetch(`${milisearchUrl}/indexes/products/search?q=${encodeURIComponent(query)}`,{
-        headers: {
-          'authorization': `Bearer ${milisearchApiKey}`,
-      }})
+      fetch(
+        `${meili.search_url}/indexes/products/search?q=${encodeURIComponent(query)}`,
+        {
+          headers: {
+            authorization: `Bearer ${meili.search_api_key}`,
+          },
+        }
+      )
         .then((res) => res.json())
         .then((data) => {
           setProducts(data.hits || [])
           setLoading(false)
         })
-        .catch(() => setProducts([]))
+        .catch(() => {
+          setProducts([])
+          setLoading(false)
+        })
     } else {
       setProducts([])
+      setLoading(false)
     }
-  }, [query])
+  }, [query, meili, setProducts])
 
   // Close dropdown when clicking outside
   useEffect(() => {
