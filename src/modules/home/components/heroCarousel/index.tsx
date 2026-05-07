@@ -36,19 +36,27 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
             cta: isRTL ? 'استكشف الآن' : 'Explore Now'
         },
         {
-            image: '/home2.jpg',
-            alt: 'Everything you need for technology',
-            link: 'categories/it-devices',
-            title: isRTL ? 'أجهزة تقنية' : 'IT Devices',
-            subtitle: isRTL ? 'كل ما تحتاجه للتكنولوجيا' : 'Everything you need for technology',
-            cta: isRTL ? 'استكشف الآن' : 'Explore Now'
-        },
-        {
             image: '/home3.jpg',
             alt: 'Modern hotel room with comfortable furniture',
             link: 'categories/hotel-furniture',
             title: isRTL ? 'أثاث فنادق' : 'Hotel Furniture',
             subtitle: isRTL ? 'اجعل غرفتك ملاذاً للراحة' : 'Make your room a haven of comfort',
+            cta: isRTL ? 'استكشف الآن' : 'Explore Now'
+        },
+        {
+            image: '/home4.jpg',
+            alt: 'Modern hotel room with comfortable furniture',
+            link: 'categories/electrical-appliances',
+            title: isRTL ? 'أثاث فنادق' : 'Hotel Furniture',
+            subtitle: isRTL ? 'اجعل غرفتك ملاذاً للراحة' : 'Make your room a haven of comfort',
+            cta: isRTL ? 'استكشف الآن' : 'Explore Now'
+        },
+        {
+            image: '/home2.jpg',
+            alt: 'Everything you need for technology',
+            link: 'categories/it-devices',
+            title: isRTL ? 'أجهزة تقنية' : 'IT Devices',
+            subtitle: isRTL ? 'كل ما تحتاجه للتكنولوجيا' : 'Everything you need for technology',
             cta: isRTL ? 'استكشف الآن' : 'Explore Now'
         },
     ];
