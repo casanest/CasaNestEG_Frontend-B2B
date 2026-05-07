@@ -11,15 +11,15 @@ import "../styles/globals.css"
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
   title: {
-    default: "LA CASA | Ideas for Life",
-    template: "%s | LA CASA",
+    default: "CASANEST | Ideas for Life",
+    template: "%s | CASANEST",
   },
   description:
-    "اكتشف عالم لاكازا — كل ما تحتاجه لمنزلك في مكان واحد! Discover La Casa — your one-stop shop for home essentials, appliances, and elegant designs.",
+    "اكتشف عالم كازانست — كل ما تحتاجه لمنزلك في مكان واحد! Discover CASANEST — your one-stop shop for home essentials, appliances, and elegant designs.",
   keywords: [
-    "لاكازا",
-    "LaCasa",
-    "متجر لاكازا",
+    "كازانست",
+    "casanest",
+    "متجر كازانست",
     "تسوق",
     "منزلي",
     "أجهزة كهربائية",
@@ -27,23 +27,23 @@ export const metadata: Metadata = {
     "ديكور",
     "العروض",
     "Home store",
-    "La Casa Egypt",
+    "CASANEST Egypt",
     "Home appliances",
     "Furniture",
     "Kitchenware",
   ],
   openGraph: {
-    title: "LA CASA | Ideas for Life",
+    title: "CASANEST | Ideas for Life",
     description:
-      "كل ما تحتاجه لمنزلك من لاكازا — الجودة والأناقة والخدمة الممتازة في مكان واحد. Everything you need for your home in one place — style, quality, and comfort.",
-    url: "https://lacasa-eg.com/", // غيّرها للرابط الفعلي
-    siteName: "LA CASA",
+      "كل ما تحتاجه لمنزلك من كازانست — الجودة والأناقة والخدمة الممتازة في مكان واحد. Everything you need for your home in one place — style, quality, and comfort.",
+    url: "https://casanesteg.com/", // غيّرها للرابط الفعلي
+    siteName: "CASANEST",
     images: [
       {
-        url: "https://lacasa-eg.com/og-image.jpg", // غيّرها لصورة فعلية داخل public/
+        url: "https://casanesteg.com/og-image.jpg", // غيّرها لصورة فعلية داخل public/
         width: 1200,
         height: 630,
-        alt: "LA CASA Store Preview",
+        alt: "CASANEST Store Preview",
       },
     ],
     locale: "ar_EG",
@@ -51,10 +51,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "LA CASA | Ideas for Life",
+    title: "CASANEST | Ideas for Life",
     description:
-      "اكتشف منتجات لاكازا — الجودة تبدأ من المنزل. Discover La Casa — ideas for a better home.",
-    images: ["https://lacasa-eg.com/og-image.jpg"],
+      "اكتشف منتجات كازانست — الجودة تبدأ من المنزل. Discover CASANEST — ideas for a better home.",
+    images: ["https://casanesteg.com/og-image.jpg"],
   },
 };
 

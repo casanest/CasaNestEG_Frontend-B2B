@@ -16,15 +16,97 @@ import { getProductPrice } from "@lib/util/get-product-price"
 import FeaturedProductsSection from "@modules/home/components/featured-products-section"
 
 export const metadata: Metadata = {
-  title: "LA CASA - Premium Home & Kitchen Store",
-  description: "Welcome to LA CASA, your one-stop shop for premium home appliances, kitchen essentials, and lifestyle products.",
-  keywords: "home appliances, kitchen essentials, premium products, furniture, LA CASA",
-  openGraph: {
-    title: "LA CASA - Premium Home & Kitchen Store",
-    description: "Your one-stop shop for premium home appliances and kitchen essentials",
-    type: "website",
+  title: {
+    default: "CASANEST | Complete Furniture, IT & Business Solutions",
+    template: "%s | CASANEST",
   },
-}
+  description:
+    "CASANEST provides complete solutions for offices, homes, hotels, theaters, retail stores, and educational facilities. Explore premium furniture, IT devices, security systems, networking, lighting, electrical appliances, and integrated business setups.",
+
+  keywords: [
+    "CASANEST",
+    "Office Furniture",
+    "Home Furniture",
+    "Hotel Furniture",
+    "Theater Furniture",
+    "IT Devices",
+    "Security Systems",
+    "Networking Solutions",
+    "Electrical Appliances",
+    "Lighting Solutions",
+    "Office Setup",
+    "Company Setup",
+    "Retail Store Setup",
+    "Hotel Setup",
+    "School Furniture",
+    "University Hall Setup",
+    "Smart Office Solutions",
+    "Furniture Egypt",
+    "Office Solutions",
+    "Integrated Business Solutions",
+    "Furniture and IT Solutions",
+    "Business Furniture",
+    "Commercial Furniture",
+    "Educational Furniture",
+
+    // Arabic
+    "كازانيست",
+    "أثاث مكتبي",
+    "أثاث منزلي",
+    "أثاث فنادق",
+    "أثاث مسارح",
+    "أجهزة تقنية",
+    "أنظمة أمن",
+    "شبكات",
+    "أجهزة كهربائية",
+    "حلول إضاءة",
+    "تجهيز شركات",
+    "تجهيز مكاتب",
+    "تجهيز فنادق",
+    "تجهيز محلات",
+    "تجهيز مدارس",
+    "تجهيز جامعات",
+    "حلول متكاملة",
+    "أثاث في مصر",
+    "حلول أعمال",
+    "أثاث تجاري",
+    "أثاث تعليمي",
+    "كازانست مصر",
+    "كازانست للأثاث",
+    "كازانست للأجهزة",
+    "كازانست للحلول المتكاملة",
+    "كازانست لتجهيز الشركات",
+    "كازانست لتجهيز المكاتب",
+    "كازانست لتجهيز الفنادق",
+    "كازانست لتجهيز المحلات",
+    "كازانست لتجهيز المدارس",
+    "كازانست لتجهيز الجامعات",
+    "كازانست للحلول التجارية",
+    "كازانست للحلول التعليمية",
+  ],
+
+  openGraph: {
+    title: "CASANEST | Complete Furniture, IT & Business Solutions",
+    description:
+      "Premium furniture, IT infrastructure, security systems, appliances, and complete business setup solutions for offices, homes, hotels, retail stores, and educational facilities.",
+    type: "website",
+    siteName: "CASANEST",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "CASANEST | Premium Furniture & Business Solutions",
+    description:
+      "Discover integrated furniture, IT, networking, security, and appliance solutions for modern businesses and homes.",
+  },
+
+  alternates: {
+    languages: {
+      en: "/en",
+      ar: "/ar",
+    },
+  },
+};
 
 export default async function Home({
   params,
