@@ -15,99 +15,224 @@ import PreviewPrice from "@modules/products/components/product-preview/price"
 import { getProductPrice } from "@lib/util/get-product-price"
 import FeaturedProductsSection from "@modules/home/components/featured-products-section"
 
-export const metadata: Metadata = {
-  title: {
-    default: "CASANEST | Complete Furniture, IT & Business Solutions",
-    template: "%s | CASANEST",
-  },
-  description:
-    "CASANEST provides complete solutions for offices, homes, hotels, theaters, retail stores, and educational facilities. Explore premium furniture, IT devices, security systems, networking, lighting, electrical appliances, and integrated business setups.",
+// export const metadata: Metadata = {
+//   title: {
+//     default: "CASANEST | Complete Furniture, IT & Business Solutions",
+//     template: "%s | CASANEST",
+//   },
+//   description:
+//     "CASANEST provides complete solutions for offices, homes, hotels, theaters, retail stores, and educational facilities. Explore premium furniture, IT devices, security systems, networking, lighting, electrical appliances, and integrated business setups.",
 
-  keywords: [
-    "CASANEST",
-    "Office Furniture",
-    "Home Furniture",
-    "Hotel Furniture",
-    "Theater Furniture",
-    "IT Devices",
-    "Security Systems",
-    "Networking Solutions",
-    "Electrical Appliances",
-    "Lighting Solutions",
-    "Office Setup",
-    "Company Setup",
-    "Retail Store Setup",
-    "Hotel Setup",
-    "School Furniture",
-    "University Hall Setup",
-    "Smart Office Solutions",
-    "Furniture Egypt",
-    "Office Solutions",
-    "Integrated Business Solutions",
-    "Furniture and IT Solutions",
-    "Business Furniture",
-    "Commercial Furniture",
-    "Educational Furniture",
+//   keywords: [
+//     "CASANEST",
+//     "Office Furniture",
+//     "Home Furniture",
+//     "Hotel Furniture",
+//     "Theater Furniture",
+//     "IT Devices",
+//     "Security Systems",
+//     "Networking Solutions",
+//     "Electrical Appliances",
+//     "Lighting Solutions",
+//     "Office Setup",
+//     "Company Setup",
+//     "Retail Store Setup",
+//     "Hotel Setup",
+//     "School Furniture",
+//     "University Hall Setup",
+//     "Smart Office Solutions",
+//     "Furniture Egypt",
+//     "Office Solutions",
+//     "Integrated Business Solutions",
+//     "Furniture and IT Solutions",
+//     "Business Furniture",
+//     "Commercial Furniture",
+//     "Educational Furniture",
 
-    // Arabic
-    "كازانيست",
-    "أثاث مكتبي",
-    "أثاث منزلي",
-    "أثاث فنادق",
-    "أثاث مسارح",
-    "أجهزة تقنية",
-    "أنظمة أمن",
-    "شبكات",
-    "أجهزة كهربائية",
-    "حلول إضاءة",
-    "تجهيز شركات",
-    "تجهيز مكاتب",
-    "تجهيز فنادق",
-    "تجهيز محلات",
-    "تجهيز مدارس",
-    "تجهيز جامعات",
-    "حلول متكاملة",
-    "أثاث في مصر",
-    "حلول أعمال",
-    "أثاث تجاري",
-    "أثاث تعليمي",
-    "كازانست مصر",
-    "كازانست للأثاث",
-    "كازانست للأجهزة",
-    "كازانست للحلول المتكاملة",
-    "كازانست لتجهيز الشركات",
-    "كازانست لتجهيز المكاتب",
-    "كازانست لتجهيز الفنادق",
-    "كازانست لتجهيز المحلات",
-    "كازانست لتجهيز المدارس",
-    "كازانست لتجهيز الجامعات",
-    "كازانست للحلول التجارية",
-    "كازانست للحلول التعليمية",
-  ],
+//     // Arabic
+//     "كازانيست",
+//     "أثاث مكتبي",
+//     "أثاث منزلي",
+//     "أثاث فنادق",
+//     "أثاث مسارح",
+//     "أجهزة تقنية",
+//     "أنظمة أمن",
+//     "شبكات",
+//     "أجهزة كهربائية",
+//     "حلول إضاءة",
+//     "تجهيز شركات",
+//     "تجهيز مكاتب",
+//     "تجهيز فنادق",
+//     "تجهيز محلات",
+//     "تجهيز مدارس",
+//     "تجهيز جامعات",
+//     "حلول متكاملة",
+//     "أثاث في مصر",
+//     "حلول أعمال",
+//     "أثاث تجاري",
+//     "أثاث تعليمي",
+//     "كازانست مصر",
+//     "كازانست للأثاث",
+//     "كازانست للأجهزة",
+//     "كازانست للحلول المتكاملة",
+//     "كازانست لتجهيز الشركات",
+//     "كازانست لتجهيز المكاتب",
+//     "كازانست لتجهيز الفنادق",
+//     "كازانست لتجهيز المحلات",
+//     "كازانست لتجهيز المدارس",
+//     "كازانست لتجهيز الجامعات",
+//     "كازانست للحلول التجارية",
+//     "كازانست للحلول التعليمية",
+//   ],
 
-  openGraph: {
-    title: "CASANEST | Complete Furniture, IT & Business Solutions",
-    description:
-      "Premium furniture, IT infrastructure, security systems, appliances, and complete business setup solutions for offices, homes, hotels, retail stores, and educational facilities.",
-    type: "website",
-    siteName: "CASANEST",
-  },
+//   openGraph: {
+//     title: "CASANEST | Complete Furniture, IT & Business Solutions",
+//     description:
+//       "Premium furniture, IT infrastructure, security systems, appliances, and complete business setup solutions for offices, homes, hotels, retail stores, and educational facilities.",
+//     type: "website",
+//     siteName: "CASANEST",
+//   },
 
-  twitter: {
-    card: "summary_large_image",
-    title: "CASANEST | Premium Furniture & Business Solutions",
-    description:
-      "Discover integrated furniture, IT, networking, security, and appliance solutions for modern businesses and homes.",
-  },
+//   twitter: {
+//     card: "summary_large_image",
+//     title: "CASANEST | Premium Furniture & Business Solutions",
+//     description:
+//       "Discover integrated furniture, IT, networking, security, and appliance solutions for modern businesses and homes.",
+//   },
 
-  alternates: {
-    languages: {
-      en: "/en",
-      ar: "/ar",
+//   alternates: {
+//     languages: {
+//       en: "/en",
+//       ar: "/ar",
+//     },
+//   },
+// };
+
+
+// import { Metadata } from "next"
+
+type Props = {
+  params: {
+    countryCode: string
+    locale: string
+  }
+}
+
+export async function generateMetadata({
+  params,
+}: Props): Promise<Metadata> {
+  const { locale, countryCode } = params
+
+  const isArabic = locale === "ar"
+
+  const title = isArabic
+    ? "كازانيست | حلول متكاملة للأثاث والتقنية وتجهيز الأعمال"
+    : "CASANEST | Complete Furniture, IT & Business Solutions"
+
+  const description = isArabic
+    ? "كازانيست تقدم حلولاً متكاملة لتجهيز المكاتب، المنازل، الفنادق، المسارح، المحلات التجارية، والمؤسسات التعليمية. اكتشف الأثاث الفاخر، الأجهزة التقنية، أنظمة الأمن، الشبكات، الإضاءة، والأجهزة الكهربائية."
+    : "CASANEST provides complete solutions for offices, homes, hotels, theaters, retail stores, and educational facilities. Explore premium furniture, IT devices, security systems, networking, lighting, electrical appliances, and integrated business setups."
+
+  const keywords = isArabic
+    ? [
+      "كازانيست",
+      "أثاث مكتبي",
+      "أثاث منزلي",
+      "أثاث فنادق",
+      "أثاث مسارح",
+      "أجهزة تقنية",
+      "أنظمة أمن",
+      "شبكات",
+      "أجهزة كهربائية",
+      "حلول إضاءة",
+      "تجهيز شركات",
+      "تجهيز مكاتب",
+      "تجهيز فنادق",
+      "تجهيز محلات",
+      "تجهيز مدارس",
+      "تجهيز جامعات",
+      "حلول متكاملة",
+      "أثاث في مصر",
+      "حلول أعمال",
+      "أثاث تجاري",
+      "أثاث تعليمي",
+    ]
+    : [
+      "CASANEST",
+      "Office Furniture",
+      "Home Furniture",
+      "Hotel Furniture",
+      "Theater Furniture",
+      "IT Devices",
+      "Security Systems",
+      "Networking Solutions",
+      "Electrical Appliances",
+      "Lighting Solutions",
+      "Office Setup",
+      "Company Setup",
+      "Retail Store Setup",
+      "Hotel Setup",
+      "School Furniture",
+      "University Hall Setup",
+      "Smart Office Solutions",
+      "Furniture Egypt",
+      "Office Solutions",
+      "Integrated Business Solutions",
+    ]
+
+  const currentUrl = `https://casanesteg.com/${locale}/${countryCode}`
+
+  return {
+    title,
+    description,
+    keywords,
+
+    metadataBase: new URL("https://casanesteg.com"),
+
+    openGraph: {
+      title,
+      description,
+      url: currentUrl,
+      siteName: "CASANEST",
+      type: "website",
+      locale: isArabic ? "ar_EG" : "en_US",
+
+      images: [
+        {
+          url: "/opengraph-image.jpg",
+          width: 1600,
+          height: 900,
+          alt: title,
+        },
+      ],
     },
-  },
-};
 
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/opengraph-image.jpg"],
+    },
+
+    alternates: {
+      canonical: currentUrl,
+
+      languages: {
+        en: `https://casanesteg.com/en/${countryCode}`,
+        ar: `https://casanesteg.com/ar/${countryCode}`,
+      },
+    },
+
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+      },
+    },
+  }
+}
 export default async function Home({
   params,
 }: {
