@@ -1,9 +1,9 @@
 "use client"
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { ReactNode, useCallback, useEffect, useRef, useState } from "react"
-import { RotateCcw, SlidersHorizontal, X } from "lucide-react"
-import { Badge, Button, Checkbox, Text, clx } from "@medusajs/ui"
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react"
+import { ChevronDown, RotateCcw, SlidersHorizontal, X } from "lucide-react"
+import { Badge, Button, Checkbox, Divider, Text, clx } from "@medusajs/ui"
 import SortProducts, { SortOptions } from "./sort-products"
 import { getProductFilterOptions } from "@lib/data/products"
 import FilterRadioGroup from "@modules/common/components/filter-radio-group"
@@ -20,6 +20,7 @@ type CategoryOption = {
   id: string
   name_en: string
   name_ar: string
+  parent_category_id?: string | null
 }
 
 type RefinementListProps = {
@@ -29,11 +30,12 @@ type RefinementListProps = {
   'data-testid'?: string
   inline?: boolean
   categories?: CategoryOption[]
+  currentCategoryId?: string
 }
 
 type FilterOptions = {
-  collections: Array<{id: string, title: string, handle: string}>
-  types: Array<{id: string, value: string}>
+  collections: Array<{ id: string, title: string, handle: string }>
+  types: Array<{ id: string, value: string }>
   colors: string[]
   materials: string[]
   sizes: string[]
@@ -49,13 +51,14 @@ const PRICE_PRESETS = [
   { value: "200+", labelEn: "Over €200", labelAr: "أكثر من 200€" },
 ] as const
 
-const RefinementList = ({ 
-  sortBy, 
+const RefinementList = ({
+  sortBy,
   countryCode,
   locale,
   'data-testid': dataTestId,
   inline = false,
   categories,
+  currentCategoryId,
 }: RefinementListProps) => {
   const router = useRouter()
   const pathname = usePathname()
@@ -73,19 +76,25 @@ const RefinementList = ({
     totalProducts: 0
   })
 
-  const initialCategoryParam = searchParams.get('category_id')
+  const filters = useMemo(() => {
+    const readList = (key: string) =>
+      (searchParams.get(key) || "")
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean)
 
-  const [filters, setFilters] = useState({
-    inStock: searchParams.get('inStock') === 'true',
-    onSale: searchParams.get('onSale') === 'true',
-    price: searchParams.get('price') || '',
-    collection_id: searchParams.get('collection_id')?.split(',') || [],
-    type_id: searchParams.get('type_id')?.split(',') || [],
-    colors: searchParams.get('colors')?.split(',') || [],
-    materials: searchParams.get('materials')?.split(',') || [],
-    sizes: searchParams.get('sizes')?.split(',') || [],
-    category_id: initialCategoryParam ? initialCategoryParam.split(',') : [],
-  })
+    return {
+      inStock: searchParams.get("inStock") === "true",
+      onSale: searchParams.get("onSale") === "true",
+      price: searchParams.get("price") || "",
+      collection_id: readList("collection_id"),
+      type_id: readList("type_id"),
+      colors: readList("colors"),
+      materials: readList("materials"),
+      sizes: readList("sizes"),
+      category_id: readList("category_id"),
+    }
+  }, [searchParams])
 
   // Load filter options on component mount
   useEffect(() => {
@@ -98,10 +107,10 @@ const RefinementList = ({
 
   const updateURL = useCallback((newFilters: typeof filters) => {
     const params = new URLSearchParams(searchParams.toString())
-    
+
     // Reset pagination to page 1 when filters change
     params.delete('page')
-    
+
     // Update filter parameters
     Object.entries(newFilters).forEach(([key, value]) => {
       if (Array.isArray(value)) {
@@ -127,25 +136,23 @@ const RefinementList = ({
   }, [pathname, router, searchParams])
 
   const handleFilterChange = useCallback((key: keyof typeof filters, value: any) => {
-    setFilters((prev) => ({
-      ...prev,
+    updateURL({
+      ...filters,
       [key]: value,
-    }))
-  }, [])
+    })
+  }, [filters, updateURL])
 
   const handleArrayFilterChange = useCallback((key: keyof typeof filters, value: string, checked: boolean) => {
-    setFilters((prev) => {
-      const current = prev[key] as string[]
-      const nextArray = checked
-        ? [...current, value]
-        : current.filter((item) => item !== value)
+    const current = filters[key] as string[]
+    const nextArray = checked
+      ? [...current, value]
+      : current.filter((item) => item !== value)
 
-      return {
-        ...prev,
-        [key]: nextArray,
-      }
+    updateURL({
+      ...filters,
+      [key]: nextArray,
     })
-  }, [])
+  }, [filters, updateURL])
 
   const handleSortChange = useCallback((name: string, value: SortOptions) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -156,7 +163,8 @@ const RefinementList = ({
   }, [pathname, router, searchParams])
 
   const clearFilters = useCallback(() => {
-    setFilters({
+    updateURL({
+      ...filters,
       inStock: false,
       onSale: false,
       price: "",
@@ -167,18 +175,154 @@ const RefinementList = ({
       sizes: [],
       category_id: [],
     })
-  }, [])
-
-  const isFirstRender = useRef(true)
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
-
-    updateURL(filters)
   }, [filters, updateURL])
 
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
+    new Set()
+  )
+
+  const toggleCategory = useCallback((id: string) => {
+    setExpandedCategories((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
+  }, [])
+
+  const categoryTree = useMemo(() => {
+    if (!categories?.length) {
+      return {
+        roots: [] as Array<CategoryOption & { children: CategoryOption[] }>,
+        byId: new Map<string, CategoryOption & { children: CategoryOption[] }>(),
+      }
+    }
+
+    const byId = new Map<string, CategoryOption & { children: CategoryOption[] }>()
+    categories.forEach((cat) => {
+      byId.set(String(cat.id), { ...cat, children: [] })
+    })
+
+    const roots: Array<CategoryOption & { children: CategoryOption[] }> = []
+    byId.forEach((cat) => {
+      const parentId = cat.parent_category_id ? String(cat.parent_category_id) : null
+      if (parentId && byId.has(parentId)) {
+        byId.get(parentId)!.children.push(cat)
+      } else {
+        roots.push(cat)
+      }
+    })
+
+    return { roots, byId }
+  }, [categories])
+
+  const visibleCategoryRoots = useMemo(() => {
+    if (!currentCategoryId) return categoryTree.roots
+    const current = categoryTree.byId.get(String(currentCategoryId))
+    if (!current) return categoryTree.roots
+    return current.children
+  }, [categoryTree, currentCategoryId])
+
+  const currentBranchIds = useMemo(() => {
+    if (!currentCategoryId) return [] as string[]
+    const current = categoryTree.byId.get(String(currentCategoryId))
+    if (!current) return [] as string[]
+
+    const ids: string[] = []
+    const walk = (node: CategoryOption & { children: CategoryOption[] }) => {
+      ids.push(String(node.id))
+      node.children.forEach(walk)
+    }
+    walk(current)
+    return ids
+  }, [categoryTree, currentCategoryId])
+
+  useEffect(() => {
+    if (!currentBranchIds.length) return
+    setExpandedCategories(new Set(currentBranchIds))
+  }, [currentBranchIds])
+
+  const renderCategoryNode = (
+    node: CategoryOption & { children: CategoryOption[] },
+    level = 0,
+    isLast = false
+  ) => {
+    const nodeId = String(node.id)
+    const hasChildren = node.children.length > 0
+    const isOpen = expandedCategories.has(nodeId)
+    const label = isRTL ? node.name_ar ?? node.name_en : node.name_en
+    const showConnector = level > 0
+    const lineSideClass = isRTL ? "right-[9px]" : "left-[9px]"
+
+    return (
+      <div key={node.id} className="flex flex-col w-full">
+        <div
+          className={clx("relative w-full", {
+            "pb-1": !isLast,
+          })}
+        >
+          {showConnector && (
+            <span
+              aria-hidden="true"
+              className={clx(
+                "absolute top-0 border-l border-dotted border-ui-border-base/60 opacity-60",
+                lineSideClass,
+                isLast ? "bottom-1/2" : "bottom-0"
+              )}
+            />
+          )}
+          <div
+            className="relative flex items-center w-full"
+            style={{ paddingInlineStart: `${level * 18}px` }}
+          >
+            {showConnector && (
+              <span
+                aria-hidden="true"
+                className={clx(
+                  "absolute top-1/2 h-0 w-3 -translate-y-1/2 border-t border-dotted border-ui-border-base/60 opacity-60",
+                  lineSideClass
+                )}
+              />
+            )}
+            {hasChildren ? (
+              <button
+                type="button"
+                onClick={() => toggleCategory(nodeId)}
+                className="h-5 w-5 rounded-sm border border-ui-border-base text-[10px] font-bold text-ui-fg-base"
+                aria-label={isOpen ? "collapse" : "expand"}
+              >
+                {isOpen ? "-" : "+"}
+              </button>
+            ) : (
+              <span className="inline-block h-5 w-5" />
+            )}
+            <CheckboxRow
+              id={`category-${nodeId}`}
+              label={label}
+              checked={filters.category_id.includes(nodeId)}
+              onCheckedChange={(checked) =>
+                handleArrayFilterChange("category_id", nodeId, checked)
+              }
+            />
+          </div>
+        </div>
+        {hasChildren && isOpen && (
+          <div className="flex flex-col w-full">
+            {node.children.map((child, index) =>
+              renderCategoryNode(
+                child,
+                level + 1,
+                index === node.children.length - 1
+              )
+            )}
+          </div>
+        )}
+      </div>
+    )
+  }
   const hasActiveFilters =
     filters.inStock ||
     filters.onSale ||
@@ -194,20 +338,26 @@ const RefinementList = ({
     title,
     helper,
     children,
+    defaultOpen = true,
   }: {
     title: string
     helper?: string
     children: ReactNode
+    defaultOpen?: boolean
   }) => (
-    <div className="rounded-2xl border border-ui-border-base bg-ui-bg-base/90 p-4 shadow-sm shadow-ui-border-subtle/30">
-      <div>
-        <Text className="text-sm font-semibold text-ui-fg-base">{title}</Text>
-        {helper && (
-          <Text className="text-xs text-ui-fg-subtle mt-0.5">{helper}</Text>
-        )}
-      </div>
-      <div className="mt-4 space-y-3">{children}</div>
-    </div>
+    <details
+      className=""
+      open={defaultOpen}
+    >
+      <summary className="flex cursor-pointer items-center justify-between gap-2  py-2 text-sm font-bold text-ui-fg-base">
+        <span >{title}</span>
+        <ChevronDown className="h-4 w-4 text-ui-fg-subtle transition-transform group-open:rotate-180 mx-3" />
+      </summary>
+      {/* {helper && (
+        <Text className="px-3 pb-2 text-xs text-ui-fg-subtle">{helper}</Text>
+      )} */}
+      <div className=" px-3 pb-3 pt-1 space-y-2">{children}</div>
+    </details>
   )
 
   const CheckboxRow = ({
@@ -223,21 +373,21 @@ const RefinementList = ({
   }) => (
     <label
       htmlFor={id}
-      className="flex items-center gap-3 rounded-xl border border-ui-border-subtle bg-ui-bg-field px-3 py-2 text-sm text-ui-fg-subtle transition hover:border-ui-border-strong"
+      className="flex items-center justify-between w-100 rounded-sm px-1 py-1 text-sm text-ui-fg-base"
     >
+      <span className="line-clamp-1">{label}</span>
       <Checkbox
         id={id}
         checked={checked}
         onCheckedChange={(value) => onCheckedChange(Boolean(value))}
       />
-      <span className="line-clamp-1">{label}</span>
     </label>
   )
 
   const renderFilterContent = (variant: "inline" | "drawer") => (
     <div
-      className={clx("flex flex-col gap-4", {
-        "max-h-[calc(100vh-220px)] overflow-y-auto pr-1": variant === "drawer",
+      className={clx("flex flex-col gap-3", {
+        "max-h-[calc(100vh-220px)] overflow-y-auto ": variant === "drawer",
       })}
     >
       <SectionCard
@@ -250,7 +400,7 @@ const RefinementList = ({
       >
         <SortProducts sortBy={sortBy} setQueryParams={handleSortChange} locale={locale} />
       </SectionCard>
-
+      <Divider className="border-ui-border-base/50 " />
       {categories?.length ? (
         <SectionCard
           title={isRTL ? "الفئات" : "Categories"}
@@ -260,22 +410,12 @@ const RefinementList = ({
               : "Pick the categories you want to explore."
           }
         >
-          <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto pr-1">
-            {categories.map((category) => (
-              <CheckboxRow
-                key={category.id}
-                id={`category-${category.id}`}
-                label={isRTL ? category.name_ar ?? category.name_en : category.name_en}
-                checked={filters.category_id.includes(category.id)}
-                onCheckedChange={(checked) =>
-                  handleArrayFilterChange("category_id", category.id, checked)
-                }
-              />
-            ))}
+          <div className="space-y-2 max-h-60 overflow-y-auto">
+            {visibleCategoryRoots.map((node) => renderCategoryNode(node))}
           </div>
         </SectionCard>
       ) : null}
-
+      <Divider className="border-ui-border-base/50" />
       <SectionCard
         title={isRTL ? "التوفر والعروض" : "Availability & Offers"}
         helper={
@@ -284,7 +424,7 @@ const RefinementList = ({
             : "Focus on items currently available or discounted."
         }
       >
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
           <CheckboxRow
             id="inStock"
             label={isRTL ? "متوفر في المخزون" : "In stock only"}
@@ -299,6 +439,7 @@ const RefinementList = ({
           />
         </div>
       </SectionCard>
+      <Divider className="border-ui-border-base/50" />
 
       {filterOptions.collections.length > 0 && (
         <SectionCard
@@ -309,7 +450,7 @@ const RefinementList = ({
               : "Narrow the catalogue to specific collections."
           }
         >
-          <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto pr-1">
+          <div className="grid grid-cols-1 gap-1 max-h-48 overflow-y-auto pr-1">
             {filterOptions.collections.map((collection) => (
               <CheckboxRow
                 key={collection.id}
@@ -324,6 +465,7 @@ const RefinementList = ({
           </div>
         </SectionCard>
       )}
+      <Divider className="border-ui-border-base/50" />
 
       {filterOptions.types.length > 0 && (
         <SectionCard
@@ -334,7 +476,7 @@ const RefinementList = ({
               : "Pick the product categories you’re interested in."
           }
         >
-          <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto pr-1">
+          <div className="grid grid-cols-1 gap-1 max-h-48 overflow-y-auto pr-1">
             {filterOptions.types.map((type) => (
               <CheckboxRow
                 key={type.id}
@@ -359,7 +501,7 @@ const RefinementList = ({
               : "Dial in the palette that suits your look."
           }
         >
-          <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto pr-1">
+          <div className="grid grid-cols-1 gap-1 max-h-48 overflow-y-auto pr-1">
             {filterOptions.colors.map((color) => (
               <CheckboxRow
                 key={color}
@@ -384,7 +526,7 @@ const RefinementList = ({
               : "Pick finishes and materials you prefer."
           }
         >
-          <div className="grid grid-cols-1 gap-2">
+          <div className="grid grid-cols-1 gap-1">
             {filterOptions.materials.map((material) => (
               <CheckboxRow
                 key={material}
@@ -422,7 +564,7 @@ const RefinementList = ({
                   )
                 }
                 className={clx(
-                  "rounded-xl border px-3 py-2 text-sm transition",
+                  "rounded-sm border px-3 py-2 text-sm transition",
                   {
                     "border-ui-border-strong bg-ui-bg-field text-ui-fg-base":
                       filters.sizes.includes(size),
@@ -504,7 +646,7 @@ const RefinementList = ({
           <div className="group relative flex flex-col ">
 
             {/* Header Section */}
-            <div className="mb-8 flex items-start justify-between border-b border-ui-border-base/50 pb-6">
+            {/* <div className="mb-8 flex items-start justify-between border-b border-ui-border-base/50 pb-6">
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-[#043364] animate-pulse" />
@@ -535,10 +677,10 @@ const RefinementList = ({
                   </button>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Filter Options Area */}
-            <div className="max-h-[calc(100vh-280px)] overflow-y-auto pr-3 custom-scrollbar-minimal scroll-smooth">
+            <div className="max-h-[calc(100vh)] w-full overflow-y-auto  custom-scrollbar-minimal scroll-smooth">
               <div className="flex flex-col gap-2">
                 {renderFilterContent("inline")}
               </div>
