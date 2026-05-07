@@ -20,10 +20,12 @@ export default function AboutUs() {
         dir={isRTL ? "rtl" : "ltr"}
       >
         <h1 className="text-4xl sm:text-5xl font-extrabold mb-4 flex items-center justify-center gap-2" style={{ color: primary }}>
-          <Sparkles size={36} color={primary} /> {locale === "ar" ? "من نحن" : "About LA CASA"}
+          <Sparkles size={36} color={primary} /> {locale === "ar" ? "من نحن | كازانيست" : "About LA CASA"}
         </h1>
         <p className="text-base sm:text-lg text-gray-600">
-          {locale === "ar" ? "نحن نوفر منتجات لسلامة وتصميم ومناقشة مميزة في مجال المنزل لتزيين حياتكم بالقدرة الذاتية." : "We blend comfort, design, and practicality into lifestyle products that elevate every home."}
+          {locale === "ar"
+            ? "إرث من الثقة.. ورؤية تتخطى الحدود"
+            : "We blend comfort, design, and practicality into lifestyle products that elevate every home."}
         </p>
       </motion.div>
 
@@ -32,12 +34,16 @@ export default function AboutUs() {
         {[
           {
             title: locale === "ar" ? "من نحن" : "Who We Are",
-            desc: locale === "ar" ? "نحن مجموعة من المصممين والمهندسين الذين يسعون لتقديم منتجات منزلية مبتكرة تجمع بين الجمال والوظيفة." : "We are a team of designers and engineers dedicated to creating innovative home products that blend beauty and functionality.",
+            desc: locale === "ar"
+              ? "منذ عام 2001، انطلقت مسيرتنا كركيزة اساسية في قطاع التوريدات، لكبرى مؤسسات الدولة وقطاعاتها الحيوية، سواء في القطاع الحكومي او الخاص. نجحنا على مدار اكثر من عقدين في ان نكون الشريك لتلك المؤسسات في توريدات الاثاث وكل ما يلزم من اجهزه كهربائيه والكترونيه وغيرها."
+              : "We are a team of designers and engineers dedicated to creating innovative home products that blend beauty and functionality.",
           },
           {
-            title: locale === "ar" ? "مهمتنا" : "Our Mission",
+            title: locale === "ar" ? "امتداد الجودة" : "Our Mission",
             desc:
-              locale === "ar" ? "تقديم منتجات منزلية ذات جودة عالية وتصميم مبتكر تلبي احتياجات عملائنا وتضفي لمسة من الأناقة على منازلهم." : "To provide high-quality home products with innovative designs that meet our customers' needs and add a touch of elegance to their homes.",
+              locale === "ar"
+                ? "بعد سنوات من النجاح في تجهيز تلك المؤسسات، قررنا في كازانيست نقل هذه الخبرة العريقة وتلك المعايير الاحترافية الى نطاق اوسع. لم نعد نكتفي بتجهيز المقرات فحسب، بل قررنا ان نصل بخدماتنا الى الافراد والعاملين داخل هذه القطاعات، لنمنحهم فرصه الحصول على خدماتنا بما يناسب احتياجاتهم."
+                : "To provide high-quality home products with innovative designs that meet our customers' needs and add a touch of elegance to their homes.",
           },
         ].map((item, i) => (
           <motion.div
@@ -64,9 +70,11 @@ export default function AboutUs() {
         className="mt-20 max-w-3xl bg-[#f0f5ff] border border-[#cddff9] rounded-3xl p-8 sm:p-10 text-center shadow-lg"
         dir={isRTL ? "rtl" : "ltr"}
       >
-        <h3 className="text-2xl font-semibold mb-2" style={{ color: primary }}>{locale === "ar" ? "رؤيتنا" : "Our Vision"}</h3>
+        <h3 className="text-2xl font-semibold mb-2" style={{ color: primary }}>{locale === "ar" ? "تغطية شاملة.. وحلول متكاملة" : "Our Vision"}</h3>
         <p className="text-gray-700 text-sm sm:text-base">
-          {locale === "ar" ? "أن نكون الخيار الأول في عالم المنتجات المنزلية من خلال تقديم تصاميم مبتكرة وجودة عالية." : "To be the first choice in the world of home products by offering innovative designs and high quality."}
+          {locale === "ar"
+            ? "كل ما يخص بيتك ومكتبك حسب الميزانيه المخصصه في مكان واحد، لاننا نؤمن بان البيع الحقيقي هو كيفيه الوصول لمتطلبات العميل طبقا للميزانيه المخصصه لتلك الاحتياجات."
+            : "To be the first choice in the world of home products by offering innovative designs and high quality."}
         </p>
       </motion.div>
 
@@ -99,7 +107,7 @@ export default function AboutUs() {
       </motion.section>
 
       {/* Meet the Team */}
-      <motion.section
+      {/* <motion.section
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
@@ -125,7 +133,7 @@ export default function AboutUs() {
           ))}
         </div>
 
-      </motion.section>
+      </motion.section> */}
 
       {/* Stats */}
       <motion.section
