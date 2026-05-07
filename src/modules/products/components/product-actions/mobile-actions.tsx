@@ -1,6 +1,7 @@
 import { Dialog, Transition } from "@headlessui/react"
 import { Button, clx } from "@medusajs/ui"
 import React, { Fragment, useMemo } from "react"
+import { useLocale } from "next-intl"
 
 import useToggleState from "@lib/hooks/use-toggle-state"
 import ChevronDown from "@modules/common/icons/chevron-down"
@@ -34,6 +35,8 @@ const MobileActions: React.FC<MobileActionsProps> = ({
   show,
   optionsDisabled,
 }) => {
+  const locale = useLocale()
+  const isRTL = locale === "ar"
   const { state, open, close } = useToggleState()
 
   const price = getProductPrice({
@@ -55,7 +58,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
   return (
     <>
       <div
-        className={clx("lg:hidden inset-x-0 bottom-0 fixed", {
+        className={clx("lg:hidden inset-x-0 bottom-0 fixed z-50", {
           "pointer-events-none": !show,
         })}
       >
@@ -74,7 +77,11 @@ const MobileActions: React.FC<MobileActionsProps> = ({
             data-testid="mobile-actions"
           >
             <div className="flex items-center gap-x-2">
-              <span data-testid="mobile-title">{product.title}</span>
+              <span data-testid="mobile-title">
+                {isRTL
+                  ? (product.metadata?.localizations?.ar.title as string) ?? product.title
+                  : product.title}
+              </span>
               <span>—</span>
               {selectedPrice ? (
                 <div className="flex items-end gap-x-2 text-ui-fg-base">
@@ -104,13 +111,15 @@ const MobileActions: React.FC<MobileActionsProps> = ({
               {!isSimple && <Button
                 onClick={open}
                 variant="secondary"
-                className="w-full"
+                className="w-full bg-[#043364] text-white hover:bg-[#093964]"
                 data-testid="mobile-actions-button"
               >
                 <div className="flex items-center justify-between w-full">
                   <span>
                     {variant
-                      ? Object.values(options).join(" / ")
+                      ? Object.values(options).join(" / ")
+                      : isRTL
+                      ? "اختر الخيارات"
                       : "Select Options"}
                   </span>
                   <ChevronDown />
@@ -119,14 +128,20 @@ const MobileActions: React.FC<MobileActionsProps> = ({
               <Button
                 onClick={handleAddToCart}
                 disabled={!inStock || !variant}
-                className="w-full"
+                className="w-full bg-[#043364] text-white hover:bg-[#093964]"
                 isLoading={isAdding}
                 data-testid="mobile-cart-button"
               >
                 {!variant
-                  ? "Select variant"
+                  ? isRTL
+                    ? "اختر النوع"
+                    : "Select variant"
                   : !inStock
-                  ? "Out of stock"
+                  ? isRTL
+                    ? "غير متوفر"
+                    : "Out of stock"
+                  : isRTL
+                  ? "اضف الى السلة"
                   : "Add to cart"}
               </Button>
             </div>

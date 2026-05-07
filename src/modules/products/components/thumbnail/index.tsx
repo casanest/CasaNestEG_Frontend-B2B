@@ -37,12 +37,12 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
   const currentImage = allImages[activeIndex]?.url || null
 
   const aspectRatio = (() => {
-    if (isFeatured) return "aspect-[11/14]"
+    if (isFeatured) return "aspect-[1678/2098]"
     if (size === "square") return "aspect-[1/1]"
-    if (size === "small") return "aspect-[9/12]"
-    if (size === "medium") return "aspect-[9/14]"
-    if (size === "large") return "aspect-[3/4]"
-    return "aspect-[3/4]"
+    if (size === "small") return "aspect-[1678/2098]"
+    if (size === "medium") return "aspect-[1678/2098]"
+    if (size === "large") return "aspect-[1678/2098]"
+    return "aspect-[1678/2098]"
   })()
 
   const maxHeight = (() => {

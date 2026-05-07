@@ -108,7 +108,7 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
                 {/* Main Image Container */}
                 <div
                     ref={mainRef}
-                    className="group relative w-full aspect-[3/3] sm:aspect-[3/2.1] rounded-[1rem] overflow-hidden  border border-[#043364]/30 bg-white  cursor-zoom-in transition-transform duration-500 ease-out"
+                    className="group relative w-full aspect-[1678/2098] rounded-[1rem] overflow-hidden border border-[#043364]/30 bg-white cursor-zoom-in transition-transform duration-500 ease-out"
                     onTouchStart={handleTouchStart}
                     onTouchEnd={handleTouchEnd}
                     onMouseMove={handleMouseMove}
@@ -254,7 +254,7 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
                     {/* Zoomed image */}
                     <div
                         className={clsx(
-                            "relative w-full max-w-3xl mx-8 aspect-[4/5] overflow-hidden rounded-xl transition-all",
+                            "relative w-full max-w-3xl mx-8 aspect-[1678/2098] overflow-hidden rounded-xl transition-all",
                             zoomed ? "cursor-zoom-out" : "cursor-zoom-in"
                         )}
                         onClick={(e) => { e.stopPropagation(); setZoomed(!zoomed) }}
