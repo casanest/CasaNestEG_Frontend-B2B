@@ -29,26 +29,26 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
     const slides: Slide[] = [
         {
             image: '/home1.jpg',
-            alt: 'Refrigerator filled with fresh fruits and juices',
-            link: 'categories/refrigerators',
-            title: isRTL ? 'ثلاجات مميزة' : 'Premium Refrigerators',
-            subtitle: isRTL ? 'استمتع بأفضل تجربة تبريد' : 'Experience the best cooling',
+            alt: 'Sleek refrigerator in a modern kitchen',
+            link: 'categories/home-furniture',
+            title: isRTL ? 'أثاث مكتبي' : 'Office Furniture',
+            subtitle: isRTL ? 'اجعل مكتبك ملاذاً للإنتاجية' : 'Make your workspace a productivity haven',
             cta: isRTL ? 'استكشف الآن' : 'Explore Now'
         },
         {
             image: '/home2.jpg',
-            alt: 'Modern kitchen with built-in appliances',
-            link: 'categories/kitchen',
-            title: isRTL ? 'مطبخ عصري' : 'Modern Kitchen',
-            subtitle: isRTL ? 'كل ما تحتاجه لمطبخك' : 'Everything you need for your kitchen',
+            alt: 'Everything you need for technology',
+            link: 'categories/it-devices',
+            title: isRTL ? 'أجهزة تقنية' : 'IT Devices',
+            subtitle: isRTL ? 'كل ما تحتاجه للتكنولوجيا' : 'Everything you need for technology',
             cta: isRTL ? 'استكشف الآن' : 'Explore Now'
         },
         {
             image: '/home3.jpg',
-            alt: 'Elegant kitchen with modern appliances',
-            link: 'categories/kitchen',
-            title: isRTL ? 'أجهزة مطبخ أنيقة' : 'Elegant Kitchen Appliances',
-            subtitle: isRTL ? 'أضف لمسة من الأناقة' : 'Add a touch of elegance',
+            alt: 'Modern hotel room with comfortable furniture',
+            link: 'categories/hotel-furniture',
+            title: isRTL ? 'أثاث فنادق' : 'Hotel Furniture',
+            subtitle: isRTL ? 'اجعل غرفتك ملاذاً للراحة' : 'Make your room a haven of comfort',
             cta: isRTL ? 'استكشف الآن' : 'Explore Now'
         },
     ];
@@ -105,7 +105,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
 
     return (
         <section
-            className="relative w-full h-[30vh] sm:h-[40vh] lg:h-[50vh]  overflow-hidden md:rounded-lg shadow-md md:my-2"
+            className="relative w-full aspect-[1300/450] overflow-hidden md:rounded-lg shadow-md md:my-2"
             dir={isRTL ? 'rtl' : 'ltr'}
             // onMouseEnter={() => setIsHovering(true)}
             // onMouseLeave={() => setIsHovering(false)}
@@ -132,10 +132,10 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
                                         fill
                                         className="object-cover"
                                         priority={idx === 0}
-                                        quality={90}
-                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+                                    // quality={100}
+                                    // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
                                     />
-                                    <div className={`absolute inset-0 flex flex-col justify-center items-start p-6 sm:p-12 lg:p-16 xl:p-24 text-white bg-gradient-to-r ${isRTL ? 'from-black/70 via-black/40 to-transparent' : 'from-black/70 via-black/40 to-transparent'}`}>
+                                    {/* <div className={`absolute inset-0 flex flex-col justify-center items-start p-6 sm:p-12 lg:p-16 xl:p-24 text-white bg-gradient-to-r ${isRTL ? 'from-black/70 via-black/40 to-transparent' : 'from-black/70 via-black/40 to-transparent'}`}>
                                         <motion.div
                                             className="max-w-xl"
                                             initial={{ opacity: 0, x: isRTL ? 100 : -100 }}
@@ -170,7 +170,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
                                                 {slide.cta}
                                             </motion.button>
                                         </motion.div>
-                                    </div>
+                                    </div> */}
                                 </Link>
                             </div>
                         ))}
