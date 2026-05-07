@@ -71,7 +71,7 @@ function SocialMedia({ className, locale }: { className?: string; locale: string
 }
 
 interface FooterProps {
-  productCategories: Category[];
+  productCategories: ProductCategory[];
   collections: ApiCollection[];
   locale: string;
 }
@@ -190,7 +190,7 @@ export default function Footer({ productCategories, collections, locale }: Foote
                     >
                       <span className="text-teal-500 text-xs">›</span>
                       <LocalizedClientLink
-                        href={`/categories/${c.handle}`}
+                        href={`/categories/${isRTL ? c.handle_ar ?? c.handle_en : c.handle_en ?? c.handle_ar}`}
                         className="text-gray-600 hover:text-[#043364] hover:font-medium transition-all text-sm"
                         data-testid={formatNameForTestId(`${c.name_en}-link`)}
                       >
@@ -226,7 +226,7 @@ export default function Footer({ productCategories, collections, locale }: Foote
                     >
                       <span className="text-teal-500 text-xs">›</span>
                       <LocalizedClientLink
-                        href={`/collections/${c.handle_en}`}
+                        href={`/collections/${isRTL ? c.handle_ar ?? c.handle_en : c.handle_en ?? c.handle_ar}`}
                         className="text-gray-600 hover:text-[#043364] hover:font-medium transition-all text-sm"
                         data-testid={formatNameForTestId(`${c.name_en}-link`)}
                       >
@@ -298,8 +298,8 @@ export default function Footer({ productCategories, collections, locale }: Foote
           <Box className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-600">
             <Text size="sm">
               {isRTL
-                ? `© ${new Date().getFullYear()} جميع الحقوق محفوظة ل La Casa`
-                : `© ${new Date().getFullYear()} All rights reserved to La Casa`}
+                ? `© ${new Date().getFullYear()} جميع الحقوق محفوظة ل CASANEST`
+                : `© ${new Date().getFullYear()} All rights reserved to CASANEST`}
             </Text>
 
             <Box className="flex items-center gap-4">
@@ -318,7 +318,7 @@ export default function Footer({ productCategories, collections, locale }: Foote
           </Box>
 
           {/* Payment Methods */}
-          <Box className="flex justify-center items-center gap-3 mt-6 pt-6 border-t border-gray-100">
+          {/* <Box className="flex justify-center items-center gap-3 mt-6 pt-6 border-t border-gray-100">
             <Text size="xs" className="text-gray-500">
               {isRTL ? "طرق الدفع المقبولة:" : "Accepted Payment Methods:"}
             </Text>
@@ -333,7 +333,7 @@ export default function Footer({ productCategories, collections, locale }: Foote
                 </motion.div>
               ))}
             </Box>
-          </Box>
+          </Box> */}
         </motion.div>
       </Container>
     </Container>

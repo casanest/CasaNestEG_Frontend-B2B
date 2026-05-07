@@ -30,7 +30,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
         {
             image: '/home1.jpg',
             alt: 'Sleek refrigerator in a modern kitchen',
-            link: 'categories/home-furniture',
+            link: 'categories/office-furniture',
             title: isRTL ? 'أثاث مكتبي' : 'Office Furniture',
             subtitle: isRTL ? 'اجعل مكتبك ملاذاً للإنتاجية' : 'Make your workspace a productivity haven',
             cta: isRTL ? 'استكشف الآن' : 'Explore Now'
