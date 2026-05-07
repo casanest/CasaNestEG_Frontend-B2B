@@ -106,9 +106,9 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
         <>
             <div className="flex flex-col gap-6 w-full select-none px-3 max-w-xl mx-auto ">
                 {/* Main Image Container */}
-                <div
-                    ref={mainRef}
-                    className="group relative w-full aspect-[1678/2098] rounded-[1rem] overflow-hidden border border-[#043364]/30 bg-white cursor-zoom-in transition-transform duration-500 ease-out"
+                    <div
+                        ref={mainRef}
+                        className="group relative w-full lg:w-[60%] lg:mx-auto aspect-[1678/2098] rounded-[1rem] overflow-hidden border border-[#043364]/30 bg-white cursor-zoom-in transition-transform duration-500 ease-out"
                     onTouchStart={handleTouchStart}
                     onTouchEnd={handleTouchEnd}
                     onMouseMove={handleMouseMove}
@@ -121,7 +121,7 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
                             fill
                             priority
                             sizes="(max-width: 768px) 100vw, 50vw"
-                            className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                            className="object-contain object-center transition-transform duration-700 group-hover:scale-105"
                             unoptimized={shouldUseUnoptimizedImage(selected.url)}
                         />
                     ) : (
@@ -193,7 +193,7 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
                                         key={img.id}
                                         onClick={() => scrollTo(i)}
                                         className={clx(
-                                            "relative flex-shrink-0 w-14 h-14 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 ease-out",
+                                            "relative flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 rounded-lg sm:rounded-xl overflow-hidden transition-all duration-300 ease-out",
                                             i === selectedIndex
                                                 ? "ring-2 ring-[#043364] ring-offset-2 sm:ring-offset-4 dark:ring-blue-500 dark:ring-offset-gray-950 scale-105 shadow-lg"
                                                 : "opacity-60 hover:opacity-100 grayscale hover:grayscale-0 scale-95 hover:scale-100"
