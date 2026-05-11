@@ -14,6 +14,10 @@ import ProductGrid from "@modules/home/components/productGrid"
 import PreviewPrice from "@modules/products/components/product-preview/price"
 import { getProductPrice } from "@lib/util/get-product-price"
 import FeaturedProductsSection from "@modules/home/components/featured-products-section"
+import Container from "@modules/home/components/shared/Container"
+import FeaturesStrip from "@modules/home/components/features/FeaturesStrip"
+import CategoriesGrid from "@modules/home/components/category-cards/CategoriesGrid"
+import DiscountBanner from "@modules/home/components/banners/DiscountBanner"
 
 // export const metadata: Metadata = {
 //   title: {
@@ -293,58 +297,19 @@ export default async function Home({
   const dir = locale === "ar" ? "rtl" : "ltr"
 
   return (
-    <div className="min-h-screen " dir={dir}>
-      {/* Hero Carousel */}
-      <section className=" ">
-        <div className="md:content-container md:mx-auto">
-          <HeroCarousel locale={locale} />
-        </div>
-      </section>
-
-      {/* Categories Section */}
-      <section className="py-12 bg-gradient-to-b from-white to-gray-50 overflow-hidden">
-        <div className="content-container overflow-hidden mx-auto">
-          <CategoryCarousel locale={locale} productCategories={productCategories} />
-        </div>
-      </section>
 
 
-      {/* Featured Products Section
-      <FeaturedProductsSection
-        title={locale === "ar" ? "المنتجات المميزة" : "Featured Products"}
-        locale={locale}
-        region={region}
-        products={featuredProducts}
-      /> */}
+   
+    <Container className="space-y-10">
 
+      <HeroCarousel locale={locale} />
 
-      {/* Promotion Banner */}
-      <section className="">
-        <PromotionBanner locale={locale} />
-      </section>
+      <FeaturesStrip locale={locale} />
 
-      {/* Collections Section */}
-      <section className=" bg-gradient-to-b from-gray-50 via-white to-gray-50">
-        <div className="content-container mx-auto">
-          <ul className="flex flex-col ">
-            <FeaturedProducts collections={collectionsWithProducts} locale={locale} />
-          </ul>
-        </div>
-      </section>
+      <CategoriesGrid locale={locale} />
 
-      {/* Call to Action */}
-      {/* <section className="py-12 bg-gray-50">
-        <div className="md:content-container">
-          <CallToActionBanner locale={locale} />
-        </div>
-      </section> */}
+      <DiscountBanner locale={locale} />
 
-      {/* Store Features */}
-      {/* <section className="py-12 bg-white">
-        <div className="content-container mx-auto">
-          <StoreFeatures locale={locale} />
-        </div>
-      </section> */}
-    </div>
+    </Container>
   )
 }
