@@ -300,7 +300,7 @@ export default async function Home({
 
 
    
-    <Container className="space-y-10">
+    <Container className="space-y-3 md:space-y-10">
 
       <HeroCarousel locale={locale} />
 

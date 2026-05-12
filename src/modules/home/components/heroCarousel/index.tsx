@@ -226,14 +226,14 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
             </div>
 
             {/* Dots */}
-            <div className="absolute bottom-[-25] left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
+            <div className="absolute bottom-[-10px] md:bottom-[-25px] left-1/2 -translate-x-1/2 flex items-center gap-1.5 sm:gap-2 z-20">
                 {slides.map((_, index) => (
                     <button
                         key={index}
                         onClick={() => scrollTo(index)}
                         className={`transition-all duration-300 rounded-full ${selectedIndex === index
-                            ? 'w-8 h-3 bg-[#022a55]'
-                            : 'w-3 h-3 bg-[#022a55]/50'
+                                ? 'w-5 h-2 sm:w-8 sm:h-3 bg-[#022a55]'
+                                : 'w-2 h-2 sm:w-3 sm:h-3 bg-[#022a55]/50'
                             }`}
                     />
                 ))}
