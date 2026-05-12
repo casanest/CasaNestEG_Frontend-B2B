@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import Image from 'next/image';
-import Link from 'next/link';
+import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -27,7 +27,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
 
     const slides: Slide[] = [
         {
-            image: '/home1.jpg',
+            image: isRTL ? '/home-1-ar.jpg' : '/home-1-en.jpg',
             alt: 'Office Furniture',
             link: 'categories/office-furniture',
             title: isRTL ? 'أثاث مكتبي' : 'Office Furniture',
@@ -37,7 +37,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
             cta: isRTL ? 'استكشف الآن' : 'Explore Now',
         },
         {
-            image: '/home2.jpg',
+            image: isRTL ? '/home-2-ar.jpg' : '/home-2-en.jpg',
             alt: 'Hotel Furniture',
             link: 'categories/hotel-furniture',
             title: isRTL ? 'أثاث فنادق' : 'Hotel Furniture',
@@ -47,13 +47,34 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
             cta: isRTL ? 'استكشف الآن' : 'Explore Now',
         },
         {
-            image: '/home3.jpg',
+            image: isRTL ? '/home-3-ar.jpg' : '/home-3-en.jpg',
             alt: 'Technology',
             link: 'categories/it-devices',
             title: isRTL ? 'أجهزة تقنية' : 'IT Devices',
             subtitle: isRTL
                 ? 'كل ما تحتاجه للتكنولوجيا'
                 : 'Everything you need for technology',
+            cta: isRTL ? 'استكشف الآن' : 'Explore Now',
+        },
+        {
+            image: isRTL ? '/home-4-ar.jpg' : '/home-4-en.jpg',
+            alt: 'Home Furniture',
+            link: 'categories/home-furniture',
+            title: isRTL ? 'أثاث منزلي' : 'Home Furniture',
+            subtitle: isRTL
+                ? 'اجعل منزلك ملاذاً للراحة'
+                : 'Make your home a haven of comfort',
+            cta: isRTL ? 'استكشف الآن' : 'Explore Now',
+        },
+        // اجهزه كهربائيه
+        {
+            image: isRTL ? '/home-5-ar.jpg' : '/home-5-en.jpg',
+            alt: 'Electrical Appliances',
+            link: 'categories/electrical-appliances',
+            title: isRTL ? 'أجهزة كهربائية' : 'Electrical Appliances',
+            subtitle: isRTL
+                ? 'كل ما تحتاجه من الأجهزة الكهربائية'
+                : 'Everything you need in electrical appliances',
             cta: isRTL ? 'استكشف الآن' : 'Explore Now',
         },
     ];
@@ -116,7 +137,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
     return (
         <section
             dir={isRTL ? 'rtl' : 'ltr'}
-            className="relative w-full my-3 md:my-4 lg:my-8"
+            className="relative w-full my-2 md:my-3 lg:my-5 shadow-lg rounded-2xl "
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
         >
@@ -127,28 +148,30 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
             >
                 <div className="flex">
                     {slides.map((slide, idx) => (
-                        <div
+                        // <div
+                        //     itemType='Link'
+                        //     key={idx}
+                        //     className="relative min-w-full"
+                        // >
+                        <LocalizedClientLink
                             key={idx}
-                            className="relative min-w-full"
+                            href={`/${slide.link}`}
+                            className=" min-w-full relative aspect-[1720/520] rounded-2xl overflow-hidden cursor-pointer z-10"
                         >
-                            <Link
-                                href={`/${locale}/${slide.link}`}
-                                className="block relative aspect-[1720/520]"
-                            >
-                                <Image
-                                    src={slide.image}
-                                    alt={slide.alt}
-                                    fill
-                                    priority={idx === 0}
-                                    className="object-cover"
-                                    sizes="100vw"
-                                />
+                            <Image
+                                src={slide.image}
+                                alt={slide.alt}
+                                fill
+                                priority={idx === 0}
+                                className="object-cover "
+                                sizes="100vw"
+                            />
 
-                                {/* Overlay */}
-                                {/* <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent" /> */}
+                            {/* Overlay */}
+                            {/* <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent" /> */}
 
-                                {/* Content */}
-                                {/* <div className="absolute inset-0 flex items-center">
+                            {/* Content */}
+                            {/* <div className="absolute inset-0 flex items-center">
                                     <div className="max-w-2xl px-6 md:px-12 lg:px-20 text-white">
                                         <motion.h2
                                             initial={{ opacity: 0, y: 20 }}
@@ -179,24 +202,24 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
                                         </motion.div>
                                     </div>
                                 </div> */}
-                            </Link>
-                        </div>
+                        </LocalizedClientLink>
+                        // </div>
                     ))}
                 </div>
             </div>
 
             {/* Arrows */}
-            <div className="hidden md:flex absolute inset-y-0 items-center justify-between w-full px-5 z-20">
+            <div className="hidden md:flex absolute inset-y-0 items-center justify-between w-full px-5 z-20 pointer-events-none">
                 <button
                     onClick={isRTL ? scrollNext : scrollPrev}
-                    className="w-11 h-11 rounded-full bg-white/90 hover:bg-[#022a55] hover:text-white transition flex items-center justify-center shadow-lg"
+                    className="w-11 h-11 rounded-full bg-white/90 hover:bg-[#022a55] hover:text-white transition flex items-center justify-center shadow-lg pointer-events-auto"
                 >
                     <ChevronLeft className="w-5 h-5" />
                 </button>
 
                 <button
                     onClick={isRTL ? scrollPrev : scrollNext}
-                    className="w-11 h-11 rounded-full bg-white/90 hover:bg-[#022a55] hover:text-white transition flex items-center justify-center shadow-lg"
+                    className="w-11 h-11 rounded-full bg-white/90 hover:bg-[#022a55] hover:text-white transition flex items-center justify-center shadow-lg pointer-events-auto"
                 >
                     <ChevronRight className="w-5 h-5" />
                 </button>
@@ -209,8 +232,8 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
                         key={index}
                         onClick={() => scrollTo(index)}
                         className={`transition-all duration-300 rounded-full ${selectedIndex === index
-                                ? 'w-8 h-3 bg-[#022a55]'
-                                : 'w-3 h-3 bg-[#022a55]/50'
+                            ? 'w-8 h-3 bg-[#022a55]'
+                            : 'w-3 h-3 bg-[#022a55]/50'
                             }`}
                     />
                 ))}

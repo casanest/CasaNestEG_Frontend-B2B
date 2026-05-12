@@ -85,7 +85,7 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
 const ImageOrPlaceholder = ({
   image,
   size,
-  isSecondary,
+  isSecondary, 
   hasSecondary
 }: Pick<ThumbnailProps, "size"> & {
   image?: string;

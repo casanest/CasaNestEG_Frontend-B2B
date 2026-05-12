@@ -19,35 +19,50 @@ const CategoryCard = ({
     button,
 }: Props) => {
     return (
-        <div className="group relative overflow-hidden rounded-2xl bg-[#f8f8f8]">
-            <div className="aspect-[410/320] relative">
+        <div className="group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md transition-all duration-300">
+            {/* Image */}
+            <div className="relative aspect-[410/220] bg-[#fafafa]">
                 <Image
                     src={image}
                     alt={title}
                     fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    // className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                 />
             </div>
 
-            <div className="absolute inset-0 bg-black/10" />
+            {/* Content */}
+            <div className="flex flex-col items-center justify-center px-6 py-4 text-center bg-[#fafafa]">
+                <h3 className="text-xl md:text-2xl font-bold text-[#152451] mb-2">
+                    {title}
+                </h3>
 
-            <div className="absolute bottom-0 p-6 w-full">
-                <div className="bg-white/90 backdrop-blur-md rounded-xl p-4">
-                    <h3 className="text-xl font-bold mb-1">
-                        {title}
-                    </h3>
+                <p className="text-sm text-gray-500 mb-2">
+                    {subtitle}
+                </p>
 
-                    <p className="text-sm text-gray-500 mb-4">
-                        {subtitle}
-                    </p>
-
-                    <Link
-                        href={href}
-                        className="inline-flex items-center justify-center px-5 h-11 rounded-lg bg-[#022a55] text-white text-sm font-medium hover:bg-[#011933] transition"
-                    >
-                        {button}
-                    </Link>
-                </div>
+                <Link
+                    href={href}
+                    className="
+            inline-flex
+            items-center
+            justify-center
+            min-w-[150px]
+            h-11
+            rounded-lg
+            border
+            border-gray-300
+            bg-white
+            text-sm
+            font-medium
+            text-[#1f1f1f]
+            transition-all
+            duration-300
+            hover:border-[#022a55]/40
+            hover:text-[#022a55]
+          "
+                >
+                    {button}
+                </Link>
             </div>
         </div>
     );

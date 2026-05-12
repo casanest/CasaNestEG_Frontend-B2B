@@ -65,7 +65,7 @@ export default async function Nav() {
                     src="/casanest.png"
                     alt="CASANEST Logo"
                     width={200}
-                    height={50}
+                    height={100}
                     priority
                   />
                 </LocalizedClientLink>
@@ -84,8 +84,8 @@ export default async function Nav() {
                 <Image
                   src="/casanest.png"
                   alt="Logo"
-                  width={125}
-                  height={100}
+                  width={170}
+                  height={150}
                 />
               </LocalizedClientLink>
               {/* <ReloadLogo href={`/${locale}`} w={170} h={150} /> */}

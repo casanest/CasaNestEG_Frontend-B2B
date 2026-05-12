@@ -15,6 +15,8 @@ export default async function Cart() {
     return notFound()
   })
 
+  console.log(cart, "retrieved cart") // Debugging log to check the structure of the retrieved cart
+
   const customer = await retrieveCustomer()
 
   return <CartTemplate cart={cart} customer={customer} />
