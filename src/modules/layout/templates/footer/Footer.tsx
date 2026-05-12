@@ -209,11 +209,16 @@ export default function Footer({ productCategories, collections, locale }: Foote
         {/* Footer Bottom */}
         <Box className={cn("flex flex-col sm:flex-row justify-between items-center gap-3 text-sm text-gray-600", isRTL ? "sm:flex-row-reverse" : "")}
         >
-          <Text size="sm">
-            {isRTL
-              ? `© ${new Date().getFullYear()} جميع الحقوق محفوظة ل CASANEST`
-              : `© ${new Date().getFullYear()} All rights reserved to CASANEST`}
-          </Text>
+          <Box className="flex flex-col items-center sm:items-start gap-1">
+            <Text size="sm">
+              {isRTL
+                ? `© ${new Date().getFullYear()} جميع الحقوق محفوظة ل CASANEST`
+                : `© ${new Date().getFullYear()} All rights reserved to CASANEST`}
+            </Text>
+            <Text size="sm">
+              {isRTL ? "تم تنفيذ هذا الموقع بواسطة شركة EcoZom" : "Website built by EcoZom"}
+            </Text>
+          </Box>
 
           <Box className="flex items-center gap-4">
             <LocalizedClientLink href="/privacy" className="hover:text-[#043364] transition-colors">
