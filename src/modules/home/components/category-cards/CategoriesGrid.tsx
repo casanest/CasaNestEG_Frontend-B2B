@@ -5,7 +5,7 @@ const CategoriesGrid = ({ locale }: { locale: string }) => {
 
     const categories = [
         {
-            image:'/cat-1.jpg',
+            image: '/cat-1.jpg',
             title: isRTL ? 'أثاث منزلي' : 'Home Furniture',
             subtitle: isRTL
                 ? 'تصاميم تناسب منزلك'
@@ -14,7 +14,7 @@ const CategoriesGrid = ({ locale }: { locale: string }) => {
             button: isRTL ? 'تسوق الآن' : 'Shop Now',
         },
         {
-            image: "/cat-2.jpg",
+            image: '/cat-2.jpg',
             title: isRTL ? 'أثاث مكتبي' : 'Office Furniture',
             subtitle: isRTL
                 ? 'حلول مكتبية حديثة'
@@ -23,7 +23,7 @@ const CategoriesGrid = ({ locale }: { locale: string }) => {
             button: isRTL ? 'تسوق الآن' : 'Shop Now',
         },
         {
-            image: "/cat-3.jpg",
+            image: '/cat-3.jpg',
             title: isRTL ? 'أثاث الفنادق' : 'Hotel Furniture',
             subtitle: isRTL
                 ? 'تصميمات فندقية فاخرة'
@@ -32,7 +32,7 @@ const CategoriesGrid = ({ locale }: { locale: string }) => {
             button: isRTL ? 'تسوق الآن' : 'Shop Now',
         },
         {
-            image: "/cat-4.jpg",
+            image: '/cat-4.jpg',
             title: isRTL ? 'حلول متكاملة' : 'Integrated Solutions',
             subtitle: isRTL
                 ? 'كل ما تحتاجه'
@@ -43,7 +43,7 @@ const CategoriesGrid = ({ locale }: { locale: string }) => {
     ];
 
     return (
-        <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+        <section className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-4 gap-3 md:gap-6">
             {categories.map((item, idx) => (
                 <CategoryCard
                     key={idx}

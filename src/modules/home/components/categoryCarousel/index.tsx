@@ -40,7 +40,8 @@ const CategoryCarousel = ({ locale, productCategories }: CategoryCarouselProps) 
     const shouldCenter = parentCategories.length <= 4;
 
     return (
-        <section className="relative " dir={isRTL ? "rtl" : "ltr"}>
+        <section className="relative  " dir={isRTL ? "rtl" : "ltr"}>
+
             <div className="mx-auto ">
                 {/* Header */}
                 {/* Section Header */}
@@ -51,45 +52,6 @@ const CategoryCarousel = ({ locale, productCategories }: CategoryCarouselProps) 
                     viewport={{ once: true }}
                     className="text-center mb-12 sm:mb-16"
                 >
-                    {/* <motion.div
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        whileInView={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        viewport={{ once: true }}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#043364]/10 to-gray-500/10 rounded-full mb-4"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 text-[#043364]"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                        </svg>
-                        <span className="text-sm font-semibold text-[#043364]">
-                            {isRTL ? "منتجاتنا المميزة" : "Featured Collections"}
-                        </span>
-                    </motion.div> */}
-
-                    {/* <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.3 }}
-                        viewport={{ once: true }}
-                        className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#043364] mb-4"
-                    >
-                        {isRTL ? (
-                            <>
-                                اكتشف <span className="text-transparent bg-clip-text bg-gradient-to-r  from-gray-600 to-[#043364]">الفئات</span>
-                            </>
-                        ) : (
-                            <>
-                                Discover Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#043364] to-gray-600">Amazing</span> Collections
-                            </>
-                        )}
-                    </motion.h2> */}
-
                     <motion.p
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
@@ -142,7 +104,7 @@ const CategoryCarousel = ({ locale, productCategories }: CategoryCarouselProps) 
                                 spaceBetween: 28
                             },
                             1280: {
-                                slidesPerView: Math.min(7, parentCategories.length),
+                                slidesPerView: Math.min(6, parentCategories.length),
                                 spaceBetween: 32
                             },
                         }}
@@ -197,6 +159,7 @@ const CategoryCarousel = ({ locale, productCategories }: CategoryCarouselProps) 
                                 </Link>
                             </SwiperSlide>
                         ))}
+                    </Swiper>
                         {/* Enhanced Navigation Buttons */}
                         <motion.div
                             onClick={
@@ -231,8 +194,8 @@ const CategoryCarousel = ({ locale, productCategories }: CategoryCarouselProps) 
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={!isRTL ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7"} />
                             </svg>
                         </motion.div>
-                    </Swiper>
 
+                </div>
                     {/* Custom Navigation Buttons */}
                     <style jsx global>{`
                         .swiper-button-next,
@@ -289,7 +252,6 @@ const CategoryCarousel = ({ locale, productCategories }: CategoryCarouselProps) 
                             cursor: not-allowed !important;
                         }
                     `}</style>
-                </div>
             </div>
         </section>
     );

@@ -1,23 +1,27 @@
 'use client';
 
 import Image from 'next/image';
+import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
 const DiscountBanner = ({ locale }: { locale: string }) => {
     const isRTL = locale === 'ar';
 
     return (
-        <section className="relative overflow-hidden rounded-3xl bg-[#f5f5f5]">
-            <div className="aspect-[1720/280] relative">
+        <section className="relative overflow-hidden rounded-xl md:rounded-2xl bg-[#f5f5f5]">
+            <LocalizedClientLink
+                // href=ar /eg/collections/sale
+                href={`/collections/sale`}
+                className="relative block w-full aspect-[1720/280]"
+            >
                 <Image
                     src="/discount.jpg"
                     alt="discount"
                     fill
                     className="object-cover"
                 />
+                {/* <div className="absolute inset-0 bg-black/20" /> */}
 
-                <div className="absolute inset-0 bg-black/20" />
-
-                <div className="absolute inset-0 flex items-center px-10 lg:px-20">
+                {/* <div className="absolute inset-0 flex items-center px-10 lg:px-20">
                     <div className="max-w-xl text-white">
                         <p className="mb-3 text-lg">
                             {isRTL
@@ -35,8 +39,8 @@ const DiscountBanner = ({ locale }: { locale: string }) => {
                             {isRTL ? 'اكتشف المزيد' : 'Explore More'}
                         </button>
                     </div>
-                </div>
-            </div>
+                </div> */}
+            </LocalizedClientLink>
         </section>
     );
 };

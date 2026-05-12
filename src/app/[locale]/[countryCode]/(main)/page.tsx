@@ -309,7 +309,15 @@ export default async function Home({
       <CategoriesGrid locale={locale} />
 
       <DiscountBanner locale={locale} />
+      {/* Categories Section */}
+      <section className=" bg-gradient-to-b from-white to-gray-50 overflow-hidden">
+        <div className="content-container overflow-hidden mx-auto">
+          <CategoryCarousel locale={locale} productCategories={productCategories} />
+        </div>
+      </section>
+      {/* <CategoryCarousel locale={locale} productCategories={productCategories} /> */}
 
+      <PromotionBanner locale={locale} />
     </Container>
   )
 }
