@@ -26,6 +26,16 @@ const LineItemOptions = ({
       {/* Variant: {variant?.title} */}
       {isRTL ? "النوع: " : " Variant: "}{isRTL ? (variant?.metadata?.localizations?.ar.title as string) ?? variant?.title
         : variant?.title}
+      {/* {variant?.title &&
+        variant.title.trim().toLowerCase() !== "default variant" && (
+          <>
+            {isRTL ? "النوع: " : "Variant: "}
+            {isRTL
+              ? (variant?.metadata?.localizations?.ar?.title as string) ??
+              variant.title
+              : variant.title}
+          </>
+        )} */}
     </Text>
   )
 }

@@ -73,7 +73,7 @@ export async function retrieveCart(cartId?: string) {
       method: "GET",
       query: {
         fields:
-          "*items, *region, *items.product, *items.variant, *items.thumbnail, *items.metadata, +items.total, *promotions, +shipping_methods.name, +shipping_methods.amount",
+          "*items, *region, *items.product, *items.variant,*items.variant.product,*items.variant.product.images, *items.thumbnail, *items.metadata, +items.total, *promotions, +shipping_methods.name, +shipping_methods.amount",
       },
       headers,
       next,
@@ -467,7 +467,7 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
         province: formData.get("billing_address.province"),
         phone: formData.get("billing_address.phone"),
       }
-    
+
     await updateCart(data)
   } catch (e: any) {
     return e.message

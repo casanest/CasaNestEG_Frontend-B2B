@@ -27,6 +27,7 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
   const [updating, setUpdating] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  console.log(item, "line item") // Debugging log to check the structure of the line item
   const changeQuantity = async (quantity: number) => {
     setError(null)
     setUpdating(true)
@@ -64,6 +65,8 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
             thumbnail={item.thumbnail}
             images={item.variant?.product?.images}
             size="square"
+            className="rounded-md object-cover"
+            data-testid="product-thumbnail"
           />
         </LocalizedClientLink>
       </Table.Cell>
@@ -81,7 +84,15 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
             ? (item.product?.metadata?.localizations?.ar.title as string) ?? item.product_title
             : item.product_title}
         </Text>
-        {item.variant && <LineItemOptions variant={item.variant} data-testid="product-variant" />}
+        {item.variant?.title &&
+          item.variant.title.trim().toLowerCase() !== "default variant" && (
+            <LineItemOptions
+              variant={item.variant}
+              data-testid="product-variant"
+            />
+          )}
+        {/* <LineItemOptions variant={item.variant} data-testid="product-variant" /> */}
+        {/* {item.variant && <LineItemOptions variant={item.variant} data-testid="product-variant" />} */}
       </Table.Cell>
 
       {type === "full" && (

@@ -15,7 +15,9 @@ type ItemsTemplateProps = {
 const ItemsTemplate = async ({ cart }: ItemsTemplateProps) => {
   const locale = await getLocale()
   const isRTL = locale === "ar"
-  const items = cart?.items
+  const items = cart?.items 
+
+  console.log(items, "cart items") // Debugging log to check the structure of cart items
 
   // Translations object
   const translations = {
