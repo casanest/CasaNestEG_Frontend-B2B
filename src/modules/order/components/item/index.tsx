@@ -15,68 +15,88 @@ const Item = ({ item, currencyCode }: ItemProps) => {
   const locale = useLocale()
   const isRTL = locale === "ar"
 
+  const localizedTitle =
+    isRTL
+      ? (item.product?.metadata?.localizations?.ar?.title as string) ||
+      item.product_title
+      : item.product_title
+
   return (
     <Table.Row
       dir={isRTL ? "rtl" : "ltr"}
-      className="w-full px-2"
+      className="w-full border-b border-gray-100"
       data-testid="product-row"
     >
-      {/* صورة المنتج */}
-      <Table.Cell className={clx("p-4 align-middle w-24", {
-        // "!pr-0": isRTL,
-        // "!pl-0": !isRTL,
-      })}>
-        <div className={clx("w-16 h-16 overflow-hidden rounded-lg border border-gray-200 ", {
-          "ml-auto": isRTL,
-          "mr-auto": !isRTL,
-        })}>
-          {/* <Thumbnail thumbnail={item.thumbnail} size="square" /> */}
+      {/* Product Thumbnail */}
+      <Table.Cell className="py-5 px-4 align-middle w-[110px]">
+        <div
+          className={clx(
+            "w-20 h-20 rounded-xl overflow-hidden border border-gray-200 bg-white shadow-sm",
+            {
+              "ml-auto": isRTL,
+              "mr-auto": !isRTL,
+            }
+          )}
+        >
           <Thumbnail
             thumbnail={item.thumbnail}
             images={item.variant?.product?.images}
             size="square"
-            className="rounded-md object-cover"
+            className="w-full h-full object-cover"
             data-testid="product-thumbnail"
           />
         </div>
       </Table.Cell>
 
-      {/* عنوان المنتج + الخيارات */}
-      <Table.Cell className={clx("align-middle", {
-        "text-right": isRTL,
-        "text-left": !isRTL,
-      })}>
-        <Text className="font-semibold text-base text-[#043364]" data-testid="product-name">
-          {isRTL
-            ? (item.product?.metadata?.localizations?.ar.title as string) ?? item.product_title
-            : item.product_title}
+      {/* Product Info */}
+      <Table.Cell
+        className={clx("py-5 px-2 align-middle", {
+          "text-right": isRTL,
+          "text-left": !isRTL,
+        })}
+      >
+        <Text
+          className="text-[15px] font-semibold text-[#043364] leading-snug"
+          data-testid="product-name"
+        >
+          {localizedTitle}
         </Text>
-        {/* <LineItemOptions variant={item.variant} data-testid="product-variant" /> */}
+
         {item.variant?.title &&
           item.variant.title.trim().toLowerCase() !== "default variant" && (
-            <LineItemOptions
-              variant={item.variant}
-              data-testid="product-variant"
-            />
+            <div className="mt-2">
+              <LineItemOptions
+                variant={item.variant}
+                data-testid="product-variant"
+              />
+            </div>
           )}
       </Table.Cell>
 
-      {/* السعر + العدد */}
-      <Table.Cell className={clx("align-middle", {
-        // "!pl-0": isRTL,
-        // "!pr-0": !isRTL,
-      })}>
-        <div className={clx("flex flex-col justify-center items-end gap-y-1", {
-          "items-start": isRTL,
-        })}>
-          <div className={clx("flex items-center text-sm text-gray-500", {
-            "flex-row-reverse": isRTL,
-            "gap-x-1": !isRTL,
-            "gap-x-reverse": isRTL,
-          })}>
-            <span className="text-gray-600" data-testid="product-quantity">
-              {item.quantity}x
+      {/* Quantity + Pricing */}
+      <Table.Cell className="py-5 px-4 align-middle min-w-[170px]">
+        <div
+          className={clx("flex flex-col gap-2", {
+            "items-start text-right": isRTL,
+            "items-end text-left": !isRTL,
+          })}
+        >
+          {/* Quantity + Unit Price */}
+          <div
+            className={clx(
+              "flex items-center text-sm text-gray-500 font-medium gap-1.5",
+              {
+                "flex-row-reverse": isRTL,
+              }
+            )}
+          >
+            <span
+              className="text-gray-600"
+              data-testid="product-quantity"
+            >
+              {item.quantity} ×
             </span>
+
             <LineItemUnitPrice
               item={item}
               style="tight"
@@ -84,11 +104,14 @@ const Item = ({ item, currencyCode }: ItemProps) => {
             />
           </div>
 
-          <LineItemPrice
-            item={item}
-            style="tight"
-            currencyCode={currencyCode}
-          />
+          {/* Total Price */}
+          <div className="text-base font-semibold text-[#022a55]">
+            <LineItemPrice
+              item={item}
+              style="tight"
+              currencyCode={currencyCode}
+            />
+          </div>
         </div>
       </Table.Cell>
     </Table.Row>
