@@ -1,6 +1,7 @@
 import { Container } from "@modules/common/components/container";
 import LocalizedClientLink from "@modules/common/components/localized-client-link";
 import { Metadata } from "next";
+import { getLocale, getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -13,9 +14,13 @@ type PageProps = {
     countryCode: string;
   };
 };
+  
+export default async function ContactPage({ params }: PageProps) {
+  const t = await getTranslations("not-found");
 
-export default function ContactPage({ params }: PageProps) {
-  const isRTL = params.locale === "ar";
+  const locale = await getLocale(); // "ar", "en", ...
+
+  const isRTL = locale === "ar";
 
   return (
     <main dir={isRTL ? "rtl" : "ltr"} className="bg-white">
@@ -85,7 +90,7 @@ export default function ContactPage({ params }: PageProps) {
                     <input
                       name="phone"
                       className="h-11 rounded-lg border border-gray-300 px-3 text-sm focus:border-[#043364] focus:outline-none"
-                      placeholder={isRTL ? "05xxxxxxxx" : "+966..."}
+                      placeholder={isRTL ? "010xxxxxxx" : "+20..."}
                     />
                   </label>
                   <label className="grid gap-2 text-sm text-gray-600">
@@ -115,8 +120,8 @@ export default function ContactPage({ params }: PageProps) {
                 </h3>
                 <ul className="mt-4 grid gap-3 text-sm text-gray-600">
                   <li>info@casanest.sa</li>
-                  <li>9200 123 456</li>
-                  <li>{isRTL ? "الرياض، المملكة العربية السعودية" : "Riyadh, Saudi Arabia"}</li>
+                  <li>+201012345678</li>
+                  <li>{isRTL ? "الفيوم، مصر" : "Fayoum, Egypt"}</li>
                 </ul>
               </div>
 

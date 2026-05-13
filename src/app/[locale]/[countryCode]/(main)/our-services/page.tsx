@@ -1,6 +1,7 @@
 import { Container } from "@modules/common/components/container";
 import LocalizedClientLink from "@modules/common/components/localized-client-link";
 import { Metadata } from "next";
+import { getLocale, getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
   title: "Our Services",
@@ -83,9 +84,12 @@ const steps = [
   },
 ];
 
-export default function OurServicesPage({ params }: PageProps) {
-  const isRTL = params.locale === "ar";
+export default async function OurServicesPage({ params }: PageProps) {
+  const t = await getTranslations("not-found");
 
+  const locale = await getLocale(); // "ar", "en", ...
+
+  const isRTL = locale === "ar";
   return (
     <main dir={isRTL ? "rtl" : "ltr"} className="bg-white">
       <section className="bg-gradient-to-br from-[#043364] to-[#022a55] text-white">
