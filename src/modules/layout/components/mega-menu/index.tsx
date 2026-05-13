@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import {
-  normalizeProductImageUrl,
-  shouldUseUnoptimizedImage,
+    normalizeProductImageUrl,
+    shouldUseUnoptimizedImage,
 } from '@lib/util/product-image-url';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { useLocale } from 'next-intl';
@@ -101,31 +101,70 @@ const MegaMenu = ({ navigation }: { navigation: any[] }) => {
 
     // ✅ Debug
     console.log('MegaMenu items:', menuItems)
+    const LinksFirst = [
+        {
+            title_en: 'Home',
+            title_ar: 'الرئيسية',
+            href: '/'
+        },
+        {
+            title_en: 'Integrated Solutions',
+            title_ar: 'الحلول المتكاملة',
+            href: '/categories/integrated-solutions'
+        }
+    ]
+    const LinksSecond = [
+        {
+            title_en: 'Offers',
+            title_ar: 'العروض',
+            href: '/collections/sale'
+        },
+        {
+            title_en: 'Our Services',
+            title_ar: 'خدماتنا',
+            href: '/our-services'
+        },
+        {
+            title_en: 'Contact Us',
+            title_ar: 'اتصل بنا',
+            href: '/contact'
+        }
+    ]
     return (
         <nav dir={isRTL ? 'rtl' : 'ltr'} className="hidden md:block  border-b relative z-50 w-full shadow-sm bg-gray-100">
             <div className="content-container mx-auto">
-                <ul className="flex items-center justify-start text-[13px] font-bold text-gray-800">
-                    {menuItems.slice(0, 10).map((menu, index) => (
+                <ul className="flex items-center justify-start text-md font-bold text-gray-700 text-center">
+                    {LinksFirst.map((link, idx) => (
+                        <li key={idx}>
+                            <LocalizedClientLink
+                                href={link.href}
+                                className="block px-4 py-4 text-md transition-colors hover:text-[#043364] border-b-2 border-transparent  hover:border-[#043364] hover:bg-gray-50 min-w-[120px]"
+                            >
+                                {isRTL ? link.title_ar : link.title_en}
+                            </LocalizedClientLink>
+                        </li>
+                    ))}
+                    {menuItems.slice(0, 5).map((menu, index) => (
                         <li
                             key={index}
                             className="group"
-                            onMouseEnter={() => setOpenIndex(index)}
+                            onMouseEnter={() => menu.columns.length > 0 ? setOpenIndex(index) : null}
                             onMouseLeave={() => setOpenIndex(null)}
                         >
                             <LocalizedClientLink
                                 href={`${menu.handle}`}
-                                className={`block px-4 py-4 transition-colors hover:text-[#043364] border-b-2 border-transparent ${openIndex === index ? 'text-[#043364] border-[#043364] bg-gray-50' : ''}`}
+                                className={`block px-4 py-4 text-md transition-colors  hover:text-[#043364] border-b-2 border-transparent  hover:border-[#043364] hover:bg-gray-50 min-w-[120px]`}
                             >
                                 {menu.title}
                             </LocalizedClientLink>
-                            
+
 
                             {/* Mega Menu Dropdown */}
                             {openIndex === index && (
-                                <div className="absolute left-0 right-0 top-full w-full bg-white shadow-[0_15px_30px_-10px_rgba(0,0,0,0.1)] border-t border-gray-100 animate-in fade-in slide-in-from-top-2 duration-200">
+                                <div className="absolute z-100 left-0 right-0 top-full w-full text-start bg-white shadow-[0_15px_30px_-10px_rgba(0,0,0,0.1)] border-t border-gray-100 animate-in fade-in slide-in-from-top-2 duration-200">
                                     <div className="content-container mx-auto flex p-8 gap-8">
 
-                                     
+
 
                                         {/* Columns Section */}
                                         <div className="flex-1 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-10">
@@ -133,7 +172,7 @@ const MegaMenu = ({ navigation }: { navigation: any[] }) => {
                                                 <div key={colIdx} className="space-y-4">
                                                     <LocalizedClientLink
                                                         href={`${col.handle}`}
-                                                        className="flex items-center text-sm font-black text-[#043364] hover:underline group/title"
+                                                        className="flex items-center text-md font-bold font-black text-[#043364] hover:underline group/title"
                                                     >
                                                         {col.title}
                                                         {isRTL ? <ChevronLeft size={14} className="mr-1" /> : <ChevronRight size={14} className="ml-1" />}
@@ -144,7 +183,7 @@ const MegaMenu = ({ navigation }: { navigation: any[] }) => {
                                                             <li key={subIdx}>
                                                                 <LocalizedClientLink
                                                                     href={sub.href}
-                                                                    className="text-[13px] text-gray-600 hover:text-[#043364] transition-colors block py-0.5"
+                                                                    className="text-md text-gray-600 hover:text-[#043364] transition-colors block py-0.5"
                                                                 >
                                                                     {sub.label}
                                                                 </LocalizedClientLink>
@@ -181,6 +220,16 @@ const MegaMenu = ({ navigation }: { navigation: any[] }) => {
                                     </div>
                                 </div>
                             )}
+                        </li>
+                    ))}
+                    {LinksSecond.map((link, idx) => (
+                        <li key={idx}>
+                            <LocalizedClientLink
+                                href={link.href}
+                                className="block px-4 py-4 text-md transition-colors hover:text-[#043364] border-b-2 border-transparent  hover:border-[#043364] hover:bg-gray-50 min-w-[120px] "
+                            >
+                                {isRTL ? link.title_ar : link.title_en}
+                            </LocalizedClientLink>
                         </li>
                     ))}
                 </ul>
