@@ -8,7 +8,6 @@ import { useElements, useStripe } from "@stripe/react-stripe-js"
 import { unstable_rethrow } from "next/navigation"
 import React, { useState } from "react"
 import ErrorMessage from "../error-message"
-import confetti from "canvas-confetti"
 import { useLocale } from "next-intl"
 
 

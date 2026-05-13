@@ -12,6 +12,7 @@ import { LinkedinIcon } from "@modules/common/icons/linkedin";
 import { FacebookIcon } from "@modules/common/icons/facebook";
 import { XLogoIcon } from "@modules/common/icons/twitter";
 import Image from "next/image";
+import Link from "next/link";
 
 type Category = {
   id: string;
@@ -216,7 +217,8 @@ export default function Footer({ productCategories, collections, locale }: Foote
                 : `© ${new Date().getFullYear()} All rights reserved to CASANEST`}
             </Text>
             <Text size="sm">
-              {isRTL ? "تم تنفيذ هذا الموقع بواسطة شركة EcoZom" : "Website built by EcoZom"}
+              {isRTL ? "تم تنفيذ هذا الموقع بواسطة شركة " : "Website built by "} 
+              <Link href="https://www.ecozom.com" target="_blank" className="font-medium hover:text-[#043364] transition-colors">EcoZom</Link>
             </Text>
           </Box>
 

@@ -11,7 +11,7 @@ const DiscountBanner = ({ locale }: { locale: string }) => {
             <LocalizedClientLink
                 // href=ar /eg/collections/sale
                 href={`/collections/sale`}
-                className="relative block w-full aspect-[1720/280]"
+                className="relative block w-full aspect-[1720/310] sm:aspect-[1720/280]"
             >
                 <Image
                     src="/discount.jpg"

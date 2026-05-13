@@ -156,7 +156,7 @@ const HeroCarousel = ({ locale }: { locale: string }) => {
                         <LocalizedClientLink
                             key={idx}
                             href={`/${slide.link}`}
-                            className=" min-w-full relative aspect-[1720/520] rounded-2xl overflow-hidden cursor-pointer z-10"
+                            className=" min-w-full relative aspect-[1500/700] md:aspect-[1720/520] rounded-2xl overflow-hidden cursor-pointer z-10"
                         >
                             <Image
                                 src={slide.image}

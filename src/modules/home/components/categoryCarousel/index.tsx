@@ -37,7 +37,7 @@ const CategoryCarousel = ({ locale, productCategories }: CategoryCarouselProps) 
         );
     }
 
-    const shouldCenter = parentCategories.length <= 4;
+    const shouldCenter = parentCategories.length <=3;
 
     return (
         <section className="relative  " dir={isRTL ? "rtl" : "ltr"}>
@@ -50,29 +50,35 @@ const CategoryCarousel = ({ locale, productCategories }: CategoryCarouselProps) 
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.7 }}
                     viewport={{ once: true }}
-                    className="text-center mb-12 sm:mb-16"
+                    className="text-center mb-12 sm:mb-16 bg-transparent"
                 >
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ duration: 0.6, delay: 0.4 }}
+                   {/* p -> تسوق حسب القسم */}
+                    <motion.p 
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        whileInView={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
                         viewport={{ once: true }}
-                        className="text-gray-600  text-sm sm:text-base max-w-2xl mx-auto"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#043364]/10 to-gray-500/10 rounded-full mb-4 text-sm font-semibold text-[#043364]"
                     >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                        >
+                            <path
+                                fillRule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+                                clipRule="evenodd"
+                            />
+                        </svg>
                         {isRTL
-                            ? "اكتشف مجموعة واسعة من المنتجات المصنفة خصيصاً لك"
-                            : "Explore a wide range of products categorized just for you"
+                            ? "تسوق حسب القسم"
+                            : "Shop by Category"
                         }
                     </motion.p>
 
-                    {/* Decorative line */}
-                    <motion.div
-                        initial={{ scaleX: 0 }}
-                        whileInView={{ scaleX: 1 }}
-                        transition={{ duration: 0.8, delay: 0.5 }}
-                        viewport={{ once: true }}
-                        className="h-1 w-24 bg-gradient-to-r from-[#043364] to-gray-500 mx-auto mt-6 rounded-full"
-                    />
+
                 </motion.div>
 
                 {/* Carousel */}
@@ -150,7 +156,7 @@ const CategoryCarousel = ({ locale, productCategories }: CategoryCarouselProps) 
 
                                         {/* Category Name */}
                                         <h3
-                                            className="text-xs sm:text-sm lg:text-base font-semibold text-[#043364] mt-2 sm:mt-3 lg:mt-4 line-clamp-2 px-1 select-none group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-br group-hover:from-[#043364] group-hover:via-[#065a9e] group-hover:to-emerald-500 transition-colors duration-300 min-h-[32px] sm:min-h-[40px] flex items-center"
+                                            className="text-xs sm:text-lg lg:text-xl font-bold text-[#043364] mt-2 sm:mt-3 lg:mt-4 line-clamp-2 px-1 select-none group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-br group-hover:from-[#043364] group-hover:via-[#065a9e] group-hover:to-emerald-500 transition-colors duration-300 min-h-[32px] sm:min-h-[40px] flex items-center"
                                             title={isRTL ? category.name_ar : category.name_en}
                                         >
                                             {isRTL ? category.name_ar : category.name_en}

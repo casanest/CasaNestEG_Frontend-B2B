@@ -20,7 +20,6 @@ import {
   setCartId,
 } from "./cookies"
 import { getRegion, retrieveRegion } from "./regions"
-import confetti from "canvas-confetti"
 
 async function resolveCountryCodeForConfirmedRedirect(
   order: HttpTypes.StoreOrder

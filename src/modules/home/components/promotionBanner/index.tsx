@@ -10,8 +10,8 @@ const PromotionBanner = ({ locale }: { locale: string }) => {
         <section className="relative overflow-hidden rounded-xl md:rounded-2xl bg-[#f5f5f5]">
             <LocalizedClientLink
                 // href=ar /eg/collections/sale
-                href={`/collections/sale`}
-                className="relative block w-full aspect-[1720/280]"
+                href={`/categories/theater-chair`}
+                className="relative block w-full aspect-[1720/350] sm:aspect-[1720/280]"
             >
                 <Image
                     src="/PromotionBanner.jpg"
