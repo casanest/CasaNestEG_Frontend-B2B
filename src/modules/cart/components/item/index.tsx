@@ -81,7 +81,7 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
         >
           {/* {item.product_title} */}
           {isRTL
-            ? (item.product?.metadata?.localizations?.ar.title as string) ?? item.product_title
+            ? ((item.product?.metadata as any)?.localizations?.ar?.title as string) ?? item.product_title
             : item.product_title}
         </Text>
         {item.variant?.title &&

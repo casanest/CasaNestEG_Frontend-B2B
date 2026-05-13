@@ -136,13 +136,13 @@ const CategoryFilters = ({
       let next = { ...prev }
 
       if (filterType === "inStock" || filterType === "onSale" || filterType === "price") {
-        next[filterType] = value
+        (next as any)[filterType] = value
       } else {
         const currentValues = prev[filterType] as string[]
         if (currentValues.includes(value)) {
-          next[filterType] = currentValues.filter((v) => v !== value)
+          (next as any)[filterType] = currentValues.filter((v) => v !== value)
         } else {
-          next[filterType] = [...currentValues, value]
+          (next as any)[filterType] = [...currentValues, value]
         }
       }
 

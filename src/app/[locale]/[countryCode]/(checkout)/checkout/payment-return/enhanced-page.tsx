@@ -36,9 +36,9 @@ export default function EnhancedPaymentReturnPage(props: Props) {
 
   const router = useRouter()
   const searchParams = useSearchParams()
-  const timeoutRef = useRef<NodeJS.Timeout>()
-  const intervalRef = useRef<NodeJS.Timeout>()
-  const paramsRef = useRef<{ locale: string; countryCode: string }>()
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
+  const intervalRef = useRef<NodeJS.Timeout | undefined>(undefined)
+  const paramsRef = useRef<{ locale: string; countryCode: string } | undefined>(undefined)
 
   // Initialize params
   useEffect(() => {

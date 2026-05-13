@@ -16,7 +16,6 @@ import {
   deleteCustomerAddress,
   updateCustomerAddress,
 } from "@lib/data/customer"
-import { l } from "framer-motion/dist/types.d-CQt5spQA"
 
 type EditAddressProps = {
   region: HttpTypes.StoreRegion

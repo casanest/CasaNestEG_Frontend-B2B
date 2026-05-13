@@ -89,8 +89,6 @@ const Register = ({ setCurrentView }: Props) => {
               required
               autoComplete="given-name"
               data-testid="first-name-input"
-              containerClassName="border border-gray-300 rounded-lg focus-within:border-[#043364] focus-within:ring-2 focus-within:ring-[#043364]/20 transition-all"
-              inputClassName={isRTL ? 'text-right' : 'text-left'}
             />
             <Input
               label={content.lastName}
@@ -98,8 +96,6 @@ const Register = ({ setCurrentView }: Props) => {
               required
               autoComplete="family-name"
               data-testid="last-name-input"
-              containerClassName="border border-gray-300 rounded-lg focus-within:border-[#043364] focus-within:ring-2 focus-within:ring-[#043364]/20 transition-all"
-              inputClassName={isRTL ? 'text-right' : 'text-left'}
             />
           </div>
 
@@ -110,8 +106,6 @@ const Register = ({ setCurrentView }: Props) => {
             type="email"
             autoComplete="email"
             data-testid="email-input"
-            containerClassName="border border-gray-300 rounded-lg focus-within:border-[#043364] focus-within:ring-2 focus-within:ring-[#043364]/20 transition-all"
-            inputClassName={isRTL ? 'text-right' : 'text-left'}
           />
 
           <Input
@@ -120,8 +114,6 @@ const Register = ({ setCurrentView }: Props) => {
             type="tel"
             autoComplete="tel"
             data-testid="phone-input"
-            containerClassName="border border-gray-300 rounded-lg focus-within:border-[#043364] focus-within:ring-2 focus-within:ring-[#043364]/20 transition-all"
-            inputClassName={isRTL ? 'text-right' : 'text-left'}
           />
 
           <Input
@@ -131,8 +123,6 @@ const Register = ({ setCurrentView }: Props) => {
             type="password"
             autoComplete="new-password"
             data-testid="password-input"
-            containerClassName="border border-gray-300 rounded-lg focus-within:border-[#043364] focus-within:ring-2 focus-within:ring-[#043364]/20 transition-all"
-            inputClassName={isRTL ? 'text-right' : 'text-left'}
           />
         </motion.div>
 
@@ -144,7 +134,7 @@ const Register = ({ setCurrentView }: Props) => {
           <ErrorMessage
             error={message}
             data-testid="register-error"
-            className="mt-4"
+            // className="mt-4"
           />
         </motion.div>
 
@@ -179,8 +169,8 @@ const Register = ({ setCurrentView }: Props) => {
           <SubmitButton
             className="w-full bg-[#043364] hover:bg-[#06529c] text-white py-3 rounded-lg font-medium transition-colors duration-300 shadow-md hover:shadow-lg"
             data-testid="register-button"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            // whileHover={{ scale: 1.02 }}
+            // whileTap={{ scale: 0.98 }}
           >
             {content.join}
           </SubmitButton>

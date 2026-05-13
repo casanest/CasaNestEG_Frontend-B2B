@@ -165,7 +165,7 @@ export default async function CategoryTemplate({
                   // // Placeholder for category image - assuming it exists in metadata or can be derived
                   // const imageUrl = c.metadata?.image_url || "/path/to/placeholder-icon.png";
                   const subCatName = isRTL ? c.name_ar || c.name_en : c.name_en || c.name_ar
-                  const imageUrl = c.image_url || null
+                  const imageUrl = c.image_url || "/placeholder-category.png"
                   const subHandle = isRTL ? c.handle_ar || c.handle_en : c.handle_en || c.handle_ar
 
                   
@@ -208,7 +208,7 @@ export default async function CategoryTemplate({
 
             <Suspense fallback={<SkeletonProductGrid numberOfProducts={8} />}>
               <PaginatedProducts
-                products={category.products}
+                // products={category.products}
                 sortBy={sort}
                 page={pageNumber}
                 categoryId={category.id}

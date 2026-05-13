@@ -215,7 +215,7 @@ const OrderDetailsPage: React.FC<OrderDetailsPageProps> = async ({ params }) => 
                     <p>{order.shipping_address.address_1}</p>
                     {order.shipping_address.address_2 && <p>{order.shipping_address.address_2}</p>}
                     <p>{order.shipping_address.city}, {order.shipping_address.province} {order.shipping_address.postal_code}</p>
-                    <p>{order.shipping_address.country_code.toUpperCase()}</p>
+                    {order.shipping_address.country_code && <p>{order.shipping_address.country_code.toUpperCase()}</p>}
                     {order.shipping_address.phone && <p>Phone: {order.shipping_address.phone}</p>}
                   </div>
                 </div>
@@ -234,7 +234,7 @@ const OrderDetailsPage: React.FC<OrderDetailsPageProps> = async ({ params }) => 
                     <p>{order.billing_address.address_1}</p>
                     {order.billing_address.address_2 && <p>{order.billing_address.address_2}</p>}
                     <p>{order.billing_address.city}, {order.billing_address.province} {order.billing_address.postal_code}</p>
-                    <p>{order.billing_address.country_code.toUpperCase()}</p>
+                    {order.billing_address.country_code && <p>{order.billing_address.country_code.toUpperCase()}</p>}
                     {order.billing_address.phone && <p>Phone: {order.billing_address.phone}</p>}
                   </div>
                 </div>

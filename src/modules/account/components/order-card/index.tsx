@@ -5,6 +5,7 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import { convertToLocale } from "@lib/util/money"
 import { HttpTypes } from "@medusajs/types"
 import { useLocale } from "next-intl"
+import item from "@/modules/order/components/item"
 
 type OrderCardProps = {
   order: HttpTypes.StoreOrder
@@ -111,11 +112,20 @@ const OrderCard = ({ order }: OrderCardProps) => {
             data-testid="order-item"
           >
             <div className="overflow-hidden rounded-lg bg-ui-bg-subtle border border-ui-border-base transition-all duration-200 group-hover:shadow-sm">
-              <Thumbnail
+              {/* <Thumbnail
                 thumbnail={i.thumbnail}
                 images={[]}
                 size="full"
                 className="transition-transform group-hover:scale-105 aspect-square object-cover"
+              /> */}
+              <Thumbnail
+                thumbnail={i.thumbnail}
+                // images={[]}
+
+                images={i.variant?.product?.images}
+                size="full"
+                className="transition-transform group-hover:scale-105 aspect-square object-cover"
+                data-testid="product-thumbnail"
               />
             </div>
             <div className={clx("flex items-center text-small-regular", {
@@ -125,13 +135,18 @@ const OrderCard = ({ order }: OrderCardProps) => {
                 className="text-ui-fg-base font-semibold line-clamp-1"
                 data-testid="item-title"
               >
-                {i.title}
-              </span>
+                {isRTL
+                  ? ((i.product?.metadata as any)?.localizations?.ar?.title as string) ?? i.product_title
+                  : i.product_title}
+              </span> 
               <span className={clx("mx-1 text-ui-fg-muted", {
                 "rotate-180": isRTL
               })}>×</span>
               <span className="text-ui-fg-muted" data-testid="item-quantity">{i.quantity}</span>
             </div>
+            {/* {isRTL
+              ? ((i.product?.metadata as any)?.localizations?.ar?.title as string) ?? i.product_title
+              : i.product_title} */}
           </div>
         ))}
 

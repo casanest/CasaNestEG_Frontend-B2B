@@ -77,23 +77,21 @@ const Login = ({ setCurrentView }: Props) => {
             label={content.emailLabel}
             name="email"
             type="email"
-            placeholder={isRTL ? "example@example.com" : "example@example.com"}
             autoComplete="email"
             required
             data-testid="email-input"
-            containerClassName={`border border-gray-300 rounded-lg focus-within:border-[#043364] focus-within:ring-2 focus-within:ring-[#043364]/20 transition-all ${isRTL ? 'text-right' : 'text-left'}`}
-            inputClassName={isRTL ? 'text-right placeholder:text-right' : 'text-left placeholder:text-left'}
+            // containerClassName={`border border-gray-300 rounded-lg focus-within:border-[#043364] focus-within:ring-2 focus-within:ring-[#043364]/20 transition-all ${isRTL ? 'text-right' : 'text-left'}`}
+            // inputClassName={isRTL ? 'text-right placeholder:text-right' : 'text-left placeholder:text-left'}
           />
           <Input
             label={content.passwordLabel}
             name="password"
             type="password"
-            placeholder={isRTL ? "••••••••" : "••••••••"}
             autoComplete="current-password"
             required
             data-testid="password-input"
-            containerClassName={`border border-gray-300 rounded-lg focus-within:border-[#043364] focus-within:ring-2 focus-within:ring-[#043364]/20 transition-all ${isRTL ? 'text-right' : 'text-left'}`}
-            inputClassName={isRTL ? 'text-right placeholder:text-right' : 'text-left placeholder:text-left'}
+            // containerClassName={`border border-gray-300 rounded-lg focus-within:border-[#043364] focus-within:ring-2 focus-within:ring-[#043364]/20 transition-all ${isRTL ? 'text-right' : 'text-left'}`}
+            // inputClassName={isRTL ? 'text-right placeholder:text-right' : 'text-left placeholder:text-left'}
           />
         </motion.div>
 
@@ -105,7 +103,7 @@ const Login = ({ setCurrentView }: Props) => {
           <ErrorMessage
             error={message}
             data-testid="login-error-message"
-            className="mt-4 text-sm"
+            // className="mt-4 text-sm"
           />
         </motion.div>
 
@@ -118,8 +116,8 @@ const Login = ({ setCurrentView }: Props) => {
           <SubmitButton
             data-testid="sign-in-button"
             className={`w-full bg-[#043364] hover:bg-[#06529c] text-white py-3 rounded-lg font-medium transition-colors duration-300 shadow-md hover:shadow-lg ${isRTL ? 'font-arabic' : 'font-sans'}`}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            // whileHover={{ scale: 1.02 }}
+            // whileTap={{ scale: 0.98 }}
           >
             {content.signIn}
           </SubmitButton>

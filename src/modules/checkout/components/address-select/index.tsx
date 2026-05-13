@@ -38,7 +38,7 @@ const AddressSelect = ({
   const defaultText = isRTL ? "اختر عنوان" : "Choose an address"
 
   return (
-    <Listbox onChange={handleSelect} value={selectedAddress?.id}>
+    <Listbox onChange={handleSelect} value={selectedAddress?.id ?? null}>
       <div dir={isRTL ? "rtl" : "ltr"} className="relative">
         <Listbox.Button
           className={clx(
