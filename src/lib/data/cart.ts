@@ -66,7 +66,7 @@ export async function retrieveCart(cartId?: string) {
   const next = {
     ...(await getCacheOptions("carts")),
   }
-
+ 
   return await sdk.client
     .fetch<HttpTypes.StoreCartResponse>(`/store/carts/${id}`, {
       method: "GET",

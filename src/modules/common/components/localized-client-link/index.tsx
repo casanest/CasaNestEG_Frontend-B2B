@@ -11,10 +11,12 @@ import React from "react"
 const LocalizedClientLink = ({
   children,
   href,
+  locale: _locale,
   ...props
 }: {
   children?: React.ReactNode
   href: string
+  locale?: string
   className?: string
   onClick?: () => void
   passHref?: true

@@ -71,7 +71,7 @@ export const listProducts = async ({
       limit,
       offset,
       region_id: region.id,
-      fields: "*variants.calculated_price,+metadata,*variants,*variants.options,*options,*options.values,*images,*tags,*categories", // 👈 add +metadata
+      fields: "*variants.calculated_price,+metadata,*variants,*variants.options,*options,*options.values,*images,*tags,*categories, ", // 👈 add +metadata
       ...apiParams,
     }
     // Execute API request with only supported parameters
