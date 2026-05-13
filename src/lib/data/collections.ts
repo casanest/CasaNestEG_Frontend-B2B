@@ -105,9 +105,9 @@ export const getCollectionsLocal = async (
     return {
       id: col.id,
       name_en: col.title || "",
-      name_ar: hasArabicTitle ? arLocalization.title : col.title || "",
+      name_ar: hasArabicTitle ? (arLocalization.title || "") : (col.title || ""),
       handle_en: col.handle || "",
-      handle_ar: hasArabicHandle ? arLocalization.handle : col.handle || "",
+      handle_ar: hasArabicHandle ? (arLocalization.handle || "") : (col.handle || ""),
     };
   });
 

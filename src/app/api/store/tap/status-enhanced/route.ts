@@ -236,7 +236,7 @@ export async function GET(request: NextRequest) {
       success: true,
       payment_status: "PENDING",
       cart_id: cartId,
-      charge_id: chargeId,
+      charge_id: chargeId || undefined,
       timestamp: new Date().toISOString(),
       is_successful: false,
       is_pending: true,

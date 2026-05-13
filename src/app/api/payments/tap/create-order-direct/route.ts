@@ -32,11 +32,11 @@ export async function POST(request: NextRequest) {
       }
       
       console.log(`[Create Order Direct] Cart data retrieved:`, {
-        id: cart.cart?.id || cart.id,
-        items_count: cart.cart?.items?.length || cart.items?.length || 0,
-        total: cart.cart?.total || cart.total,
-        email: cart.cart?.email || cart.email,
-        currency_code: cart.cart?.currency_code || cart.currency_code
+        id: cart.cart?.id,
+        items_count: cart.cart?.items?.length || 0,
+        total: cart.cart?.total,
+        email: cart.cart?.email,
+        currency_code: cart.cart?.currency_code
       })
       
     } catch (cartError: any) {
@@ -98,12 +98,12 @@ export async function POST(request: NextRequest) {
               payment_status: payment_status || "CAPTURED"
             }
           })
-        })
+        }) as Response
 
         if (pcResponse.ok) {
           const pcData = await pcResponse.json() as any
           paymentCollection = pcData.payment_collection
-          console.log(`[Create Order Direct] New payment collection created: ${paymentCollection.id}`)
+          console.log(`[Create Order Direct] New payment collection created: ${paymentCollection?.id}`)
         } else {
           const errBody = await pcResponse.text().catch(() => "")
           let errJson: Record<string, unknown> = {}
@@ -194,18 +194,18 @@ export async function POST(request: NextRequest) {
             response: sessionResult
           }, { status: 500 })
         }
-      } else if (sessionResult && sessionResult.id) {
-        // Direct payment session response
-        paymentSession = sessionResult
-        console.log(`[Create Order Direct] Payment session created directly: ${paymentSession.id}`)
-      } else if (sessionResult && sessionResult.payment_session) {
-        // Handle case where response is wrapped in payment_session object
-        paymentSession = sessionResult.payment_session
-        console.log(`[Create Order Direct] Payment session created from wrapper: ${paymentSession.id}`)
-      } else if (sessionResult && sessionResult.session) {
-        // Handle case where response is wrapped in session object
-        paymentSession = sessionResult.session
-        console.log(`[Create Order Direct] Payment session created from session wrapper: ${paymentSession.id}`)
+      // } else if (sessionResult && sessionResult?.id) {
+      //   // Direct payment session response
+      //   paymentSession = sessionResult
+      //   console.log(`[Create Order Direct] Payment session created directly: ${paymentSession?.id}`)
+      // } else if (sessionResult && sessionResult.payment_session) {
+      //   // Handle case where response is wrapped in payment_session object
+      //   paymentSession = sessionResult.payment_session
+      //   console.log(`[Create Order Direct] Payment session created from wrapper: ${paymentSession?.id}`)
+      // } else if (sessionResult && sessionResult.session) {
+      //   // Handle case where response is wrapped in session object
+      //   paymentSession = sessionResult?.session
+      //   console.log(`[Create Order Direct] Payment session created from session wrapper: ${paymentSession?.id}`)
       } else {
         console.error(`[Create Order Direct] Failed to create payment session - unexpected response structure`)
         console.error(`[Create Order Direct] Response:`, sessionResult)
@@ -308,8 +308,8 @@ export async function POST(request: NextRequest) {
             }
           },
           payment_details: {
-            payment_collection_id: paymentCollection.id,
-            payment_session_id: paymentSession.id,
+            payment_collection_id: paymentCollection?.id,
+            payment_session_id: paymentSession?.id,
             provider_id: "tap"
           },
           method: "medusa_sdk_cart_complete_with_payment_session",

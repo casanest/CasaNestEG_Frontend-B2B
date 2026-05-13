@@ -46,7 +46,6 @@ export function validateBillingData(billingData?: PayMobBillingData): PayMobBill
     street: billingData?.street || billingData?.address || "NA",
     building: billingData?.building || "NA",
     phone_number: billingData?.phone_number || "+20100000000",
-    shipping_method: "NA",
     postal_code: billingData?.postal_code || "NA",
     city: billingData?.city || "Cairo",
     country: billingData?.country || "EG",

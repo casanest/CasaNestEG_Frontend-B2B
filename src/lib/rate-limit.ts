@@ -65,7 +65,7 @@ export async function rateLimit(request: NextRequest): Promise<RateLimitResult> 
  */
 function getClientIP(request: NextRequest): string {
   return (
-    request.ip || request.headers.get("x-forwarded-for")?.split(",")[0] || request.headers.get("x-real-ip") || "unknown"
+    request.headers.get("x-forwarded-for")?.split(",")[0] || request.headers.get("x-real-ip") || "unknown"
   )
 }
 
@@ -83,7 +83,7 @@ function getLimitKey(pathname: string): string {
  * Clean up old rate limit entries
  */
 function cleanupOldEntries(windowStart: number): void {
-  for (const [key, value] of rateLimitMap.entries()) {
+  for (const [key, value] of Array.from(rateLimitMap.entries())) {
     if (value.resetTime < windowStart) {
       rateLimitMap.delete(key)
     }

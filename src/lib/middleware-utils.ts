@@ -151,7 +151,7 @@ export async function handleApiRequest(request: NextRequest): Promise<NextRespon
     return NextResponse.json(
       {
         error: "Internal server error",
-        message: process.env.NODE_ENV === "development" ? error.message : "Something went wrong",
+        message: process.env.NODE_ENV === "development" ? (error instanceof Error ? error.message : String(error)) : "Something went wrong",
       },
       {
         status: 500,
@@ -218,7 +218,7 @@ export async function validateApiRequest(request: NextRequest): Promise<{
       valid: false,
       message: "Request validation failed",
       status: 400,
-      details: error.message,
+      details: error instanceof Error ? error.message : String(error),
     }
   }
 }
@@ -379,7 +379,7 @@ function collectMeilisearchConnectOrigins(): string[] {
     origins.add("http://localhost:7700")
   }
 
-  return [...origins].sort()
+  return Array.from(origins).sort()
 }
 
 /**
@@ -411,7 +411,7 @@ export function logRequest(request: NextRequest): void {
   if (process.env.NODE_ENV === "development") {
     console.log(`${request.method} ${request.nextUrl.pathname}`, {
       userAgent: request.headers.get("user-agent"),
-      ip: request.ip || request.headers.get("x-forwarded-for"),
+      ip: request.headers.get("x-forwarded-for"),
       timestamp: new Date().toISOString(),
     })
   }

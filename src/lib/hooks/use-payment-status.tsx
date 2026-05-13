@@ -72,11 +72,11 @@ export function usePaymentStatus({
     isRetrying: false
   })
 
-  const timeoutRef = useRef<NodeJS.Timeout>()
-  const retryTimeoutRef = useRef<NodeJS.Timeout>()
-  const countdownRef = useRef<NodeJS.Timeout>()
-  const abortControllerRef = useRef<AbortController>()
-  const startTimeRef = useRef<number>()
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
+  const retryTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
+  const countdownRef = useRef<NodeJS.Timeout | undefined>(undefined)
+  const abortControllerRef = useRef<AbortController | undefined>(undefined)
+  const startTimeRef = useRef<number | undefined>(undefined)
 
   // Calculate exponential backoff delay
   const getRetryDelay = useCallback((attempt: number) => {

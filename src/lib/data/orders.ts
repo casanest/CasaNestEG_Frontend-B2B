@@ -49,7 +49,7 @@ export const listOrders = async (
         limit,
         offset,
         order: "-created_at",
-        fields: "*items,+items.metadata,*items.variant,*items.product",
+        fields: "*items,+items.metadata,*items.variant,*items.product, *items.variant.product,*items.variant.product.images, *items.thumbnail, *payment_collections.payments,*items.metadata,*items.variant,*items.product, *items.variant.product,*items.variant.product.images, *items.thumbnail,",
         ...filters,
       },
       headers,

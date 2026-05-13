@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       
       if (existingOrders.orders && existingOrders.orders.length > 0) {
         // Filter by cart_id manually since the SDK doesn't support it directly
-        const existingOrder = existingOrders.orders.find(order => order.cart_id === cart_id)
+        const existingOrder = existingOrders.orders.find(order => (order as any).cart_id === cart_id)
         
         if (existingOrder) {
           console.log(`[Complete Order] Order already exists:`, {
@@ -74,12 +74,12 @@ export async function POST(request: NextRequest) {
       cart = await sdk.store.cart.retrieve(cart_id)
       
       console.log(`[Complete Order] Cart retrieved successfully:`, {
-        id: cart.cart?.id || cart.id,
-        status: cart.cart?.status || cart.status,
-        items_count: cart.cart?.items?.length || cart.items?.length || 0,
-        total: cart.cart?.total || cart.total,
-        payment_status: cart.cart?.payment_status || cart.payment_status,
-        completed_at: cart.cart?.completed_at || cart.completed_at
+        id: cart.cart.id,
+        // status: cart.cart.status,
+        items_count: cart.cart.items?.length || 0,
+        total: cart.cart.total,
+        // payment_status: cart.cart.payment_status,
+        completed_at: cart.cart.completed_at
       })
     } catch (cartError: any) {
       console.error(`[Complete Order] Failed to get cart: ${cartError.message}`)
@@ -105,8 +105,8 @@ export async function POST(request: NextRequest) {
       }, { status: 500 })
     }
 
-    // Extract cart data (handle both direct cart and wrapped cart responses)
-    const cartData = cart.cart || cart
+    // Extract cart data from the response
+    const cartData = cart.cart
     const items = cartData.items || []
     const itemsCount = items.length
 
@@ -178,9 +178,8 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // Check for shipping address (handle both singular and plural forms)
-    const hasShippingAddress = cartData.shipping_address || 
-                              (cartData.shipping_addresses && cartData.shipping_addresses.length > 0)
+    // Check for shipping address
+    const hasShippingAddress = cartData.shipping_address
     
     if (!hasShippingAddress) {
       return NextResponse.json({
@@ -190,7 +189,6 @@ export async function POST(request: NextRequest) {
         cart_debug: {
           cart_id,
           shipping_address: cartData.shipping_address,
-          shipping_addresses: cartData.shipping_addresses,
           cart_structure: Object.keys(cartData)
         }
       }, { status: 400 })
@@ -224,12 +222,12 @@ export async function POST(request: NextRequest) {
               payment_status: payment_status || "CAPTURED"
             }
           })
-        })
+        }) as Response
 
         if (pcResponse.ok) {
           const pcData = await pcResponse.json()
           paymentCollection = pcData.payment_collection
-          console.log(`[Complete Order] New payment collection created: ${paymentCollection.id}`)
+          console.log(`[Complete Order] New payment collection created: ${paymentCollection?.id}`)
         } else {
           const errBody = await pcResponse.text().catch(() => "")
           let errJson: Record<string, unknown> = {}
@@ -357,7 +355,7 @@ export async function POST(request: NextRequest) {
             }
           },
           payment_details: {
-            payment_collection_id: paymentCollection.id,
+            payment_collection_id: paymentCollection?.id,
             provider_id: "tap"
           },
           method: "medusa_sdk_cart_complete_with_payment_collection",
@@ -409,7 +407,7 @@ async function findOrderByCartId(cartId: string) {
     
     if (result.orders && result.orders.length > 0) {
       // Filter by cart_id manually since the SDK doesn't support it directly
-      const orderWithCart = result.orders.find((order: any) => order.cart_id === cartId)
+      const orderWithCart = result.orders.find((order: any) => (order as any).cart_id === cartId)
       return orderWithCart || null
     }
   } catch (error) {
@@ -441,20 +439,27 @@ async function findOrderByPaymentMetadata(tapId: string) {
 // Helper function to update order payment status
 async function updateOrderPaymentStatus(orderId: string, tapId: string, paymentStatus: string) {
   try {
-    await sdk.store.order.update(orderId, {
-      payment_status: "PAID",
-      metadata: {
-        tap_charge_id: tapId,
-        payment_completed_at: new Date().toISOString(),
-        payment_method: "tap",
-        original_payment_status: paymentStatus
-      }
+    // await sdk.store.order.update(orderId, {
+    //   payment_status: "PAID",
+    //   metadata: {
+    //     tap_charge_id: tapId,
+    //     payment_completed_at: new Date().toISOString(),
+    //     payment_method: "tap",
+    //     original_payment_status: paymentStatus
+    //   }
+    // })
+    console.log(`[Complete Order] Recording payment information for order: ${orderId}`, {
+      tap_charge_id: tapId,
+      payment_completed_at: new Date().toISOString(),
+      payment_method: "tap",
+      original_payment_status: paymentStatus
     })
 
-    console.log(`[Complete Order] Payment status updated successfully for order: ${orderId}`)
+    // console.log(`[Complete Order] Payment status updated successfully for order: ${orderId}`)
     return true
   } catch (updateError) {
-    console.warn(`[Complete Order] Payment status update error for order ${orderId}:`, updateError)
+    console.warn(`[Complete Order] Error recording payment for order ${orderId}:`, updateError)
+    // console.warn(`[Complete Order] Payment status update error for order ${orderId}:`, updateError)
     return false
   }
 } 

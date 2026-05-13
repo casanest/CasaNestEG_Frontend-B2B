@@ -83,7 +83,7 @@ export async function setDefaultShippingMethod(cartId: string): Promise<boolean>
       try {
         const cartCacheTag = await getCacheTag("carts")
         if (cartCacheTag) {
-          revalidateTag(cartCacheTag)
+          revalidateTag(cartCacheTag, {})
         }
       } catch (revalidateError) {
         console.warn(`[Shipping Utility] Could not revalidate cache: ${revalidateError}`)
