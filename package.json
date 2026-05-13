@@ -14,7 +14,7 @@
     "lint": "next lint",
     "test": "vitest run",
     "analyze": "ANALYZE=true next build"
-  },
+  }, 
   "dependencies": {
     "@headlessui/react": "^2.2.0",
     "@medusajs/js-sdk": "latest",
