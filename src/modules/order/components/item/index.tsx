@@ -30,7 +30,14 @@ const Item = ({ item, currencyCode }: ItemProps) => {
           "ml-auto": isRTL,
           "mr-auto": !isRTL,
         })}>
-          <Thumbnail thumbnail={item.thumbnail} size="square" />
+          {/* <Thumbnail thumbnail={item.thumbnail} size="square" /> */}
+          <Thumbnail
+            thumbnail={item.thumbnail}
+            images={item.variant?.product?.images}
+            size="square"
+            className="rounded-md object-cover"
+            data-testid="product-thumbnail"
+          />
         </div>
       </Table.Cell>
 
@@ -40,9 +47,18 @@ const Item = ({ item, currencyCode }: ItemProps) => {
         "text-left": !isRTL,
       })}>
         <Text className="font-semibold text-base text-[#043364]" data-testid="product-name">
-          {item.title}
+          {isRTL
+            ? (item.product?.metadata?.localizations?.ar.title as string) ?? item.product_title
+            : item.product_title}
         </Text>
-        <LineItemOptions variant={item.variant} data-testid="product-variant" />
+        {/* <LineItemOptions variant={item.variant} data-testid="product-variant" /> */}
+        {item.variant?.title &&
+          item.variant.title.trim().toLowerCase() !== "default variant" && (
+            <LineItemOptions
+              variant={item.variant}
+              data-testid="product-variant"
+            />
+          )}
       </Table.Cell>
 
       {/* السعر + العدد */}

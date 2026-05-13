@@ -38,7 +38,7 @@ const Items = ({ order, locale }: ItemsProps) => {
               })
               .map((item) => {
                 return (
-                  <Item
+                  <Item 
                     key={item.id}
                     item={item}
                     currencyCode={order.currency_code}
