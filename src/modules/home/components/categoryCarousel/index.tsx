@@ -19,11 +19,12 @@ type Category = {
 
 interface CategoryCarouselProps {
     locale: string;
+    dir: string;
     productCategories: Category[];
 }
 
-const CategoryCarousel = ({ locale, productCategories }: CategoryCarouselProps) => {
-    const isRTL = locale === "ar";
+const CategoryCarousel = ({ locale, dir, productCategories }: CategoryCarouselProps) => {
+    const isRTL = dir === "rtl";
     const parentCategories = productCategories.filter((cat) => !cat.parent_category_id);
 
     if (!parentCategories || parentCategories.length === 0) {

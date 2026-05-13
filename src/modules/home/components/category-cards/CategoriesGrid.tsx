@@ -1,8 +1,8 @@
 import CategoryCard from './CategoryCard';
 
-const CategoriesGrid = ({ locale }: { locale: string }) => {
-    const isRTL = locale === 'ar';
-
+const CategoriesGrid = ({ locale, dir }: { locale: string; dir: string }) => {
+    const isRTL = dir === 'rtl';
+ 
     const categories = [
         {
             image: '/cat-1.jpg',

@@ -116,16 +116,16 @@ import DiscountBanner from "@modules/home/components/banners/DiscountBanner"
 // import { Metadata } from "next"
 
 type Props = {
-  params: {
+  params: Promise<{
     countryCode: string
     locale: string
-  }
+  }>
 }
 
 export async function generateMetadata({
   params,
 }: Props): Promise<Metadata> {
-  const { locale, countryCode } = params
+  const { locale, countryCode } = await params
 
   const isArabic = locale === "ar"
 
@@ -240,11 +240,11 @@ export async function generateMetadata({
 export default async function Home({
   params,
 }: {
-  params: { countryCode: string; locale: string }
+  params: Promise<{ countryCode: string; locale: string }>
 }) {
   // const { cheapestPrice } = getProductPrice({ product })
 
-  const { countryCode, locale } = params
+  const { countryCode, locale } = await params
 
   // Fetch all necessary data
   const region = await getRegion(countryCode)
@@ -297,27 +297,27 @@ export default async function Home({
   const dir = locale === "ar" ? "rtl" : "ltr"
 
   return (
-
+ 
 
    
     <Container className="space-y-3 md:space-y-10">
 
-      <HeroCarousel locale={locale} />
+      <HeroCarousel locale={locale} dir={dir} />
 
-      <FeaturesStrip locale={locale} />
+      <FeaturesStrip locale={locale} dir={dir} />
 
-      <CategoriesGrid locale={locale} />
+      <CategoriesGrid locale={locale} dir={dir} />
 
-      <DiscountBanner locale={locale} />
+      <DiscountBanner locale={locale} dir={dir} />
       {/* Categories Section */}
       <section className=" bg-gradient-to-b from-white to-gray-50 overflow-hidden">
         <div className="content-container overflow-hidden mx-auto">
-          <CategoryCarousel locale={locale} productCategories={productCategories} />
+          <CategoryCarousel locale={locale} dir={dir} productCategories={productCategories} />
         </div>
       </section>
-      {/* <CategoryCarousel locale={locale} productCategories={productCategories} /> */}
+      {/* <CategoryCarousel locale={locale} dir={dir} productCategories={productCategories} /> */}
 
-      <PromotionBanner locale={locale} />
+      <PromotionBanner locale={locale} dir={dir} />
     </Container>
   )
 }

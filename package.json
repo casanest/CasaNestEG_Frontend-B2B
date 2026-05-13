@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "dev": "next dev -p 8000",
+    "dev:webpack": "node -e \"process.env.TURBOPACK=false\" next dev -p 8000",
     "build": "next build",
     "start": "next start -p 8000",
     "lint": "eslint .",
@@ -34,7 +35,7 @@
     "lodash": "^4.17.21",
     "lucide-react": "^0.487.0",
     "next": "^16.2.6",
-    "next-intl": "^3.26.3",
+    "next-intl": "^4.9.0",
     "pg": "^8.11.3",
     "qs": "^6.12.1",
     "react": "^19.2.0",

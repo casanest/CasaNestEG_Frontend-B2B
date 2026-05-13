@@ -9,10 +9,11 @@ import {
 
 type FeaturesStripProps = {
     locale: string;
+    dir: string;
 };
 
-const FeaturesStrip = ({ locale }: FeaturesStripProps) => {
-    const isRTL = locale === 'ar';
+const FeaturesStrip = ({ locale, dir }: FeaturesStripProps) => {
+    const isRTL = dir === 'rtl';
 
     const items = [
         {

@@ -1,16 +1,4 @@
-export const fallbackLng = "ar"
-export const languages = [
-  fallbackLng,
-  "en",
-  "fr"
-  // "de",
-  // "it",
-]
-export const localePrefix = "always"
-export const LOCALE_COOKIE = "NEXT_LOCALE"
+import { routing } from "./routing";
 
-export const intlConfig = {
-  locales: languages,
-  defaultLocale: fallbackLng,
-  localeDetection: true,
-}
+export const fallbackLng = routing.defaultLocale;
+export const languages = routing.locales;

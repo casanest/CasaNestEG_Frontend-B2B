@@ -3,8 +3,8 @@
 import Image from 'next/image';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
-const DiscountBanner = ({ locale }: { locale: string }) => {
-    const isRTL = locale === 'ar';
+const DiscountBanner = ({ locale, dir }: { locale: string; dir: string }) => {
+    const isRTL = dir === 'rtl';
 
     return (
         <section className="relative overflow-hidden rounded-xl md:rounded-2xl bg-[#f5f5f5]">

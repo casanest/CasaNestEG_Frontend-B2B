@@ -1,0 +1,180 @@
+{
+  "site": {
+    "name": "EcoZom",
+    "tagline": "Modern software development company"
+  },
+  "nav": {
+    "home": "Home",
+    "work": "Work",
+    "services": "Services",
+    "process": "Process",
+    "blog": "Blog",
+    "about": "About",
+    "contact": "Contact",
+    "company": "Company"
+  },
+  "hero": {
+    "eyebrow": "Engineering Excellence",
+    "titleLead": "Crafting",
+    "titleAccent": "Enterprise-Grade",
+    "titleTail": "Digital Experiences",
+    "description": "We deliver high-end software solutions with enterprise precision. Our architectural approach ensures scalable growth and technical superiority for modern teams.",
+    "primaryCta": "Start a Project",
+    "secondaryCta": "View Methodology"
+  },
+  "work": {
+    "eyebrow": "Featured work",
+    "title": "Projects that show how we ship for real clients",
+    "tabs": {
+      "all": "All projects",
+      "completed": "Completed",
+      "inProgress": "In progress"
+    },
+    "labels": {
+      "client": "Client",
+      "stack": "Stack",
+      "completed": "Completed",
+      "inProgress": "In progress",
+      "featured": "Featured",
+      "viewProject": "View project",
+      "empty": "No projects match this filter."
+    }
+  },
+  "blog": {
+    "eyebrow": "Blog",
+    "title": "Content that explains the work and the technical decisions",
+    "labels": {
+      "readMore": "Read article",
+      "readTime": "read",
+      "by": "by",
+      "empty": "No articles yet."
+    }
+  },
+  "blogDetail": {
+    "readTime": "min read",
+    "published": "Published",
+    "category": "Category",
+    "backToBlog": "Back to blog"
+  },
+  "about": {
+    "eyebrow": "About",
+    "title": "Small team, serious execution, practical results",
+    "description": "We design and build digital products that help companies operate more clearly and grow more reliably.",
+    "values": {
+      "title": "Our values",
+      "list": ["Clarity", "Discipline", "Responsible speed", "Measurable results"]
+    },
+    "team": {
+      "eyebrow": "Team",
+      "title": "The people behind EcoZom"
+    }
+  },
+  "services": {
+    "eyebrow": "Services",
+    "title": "Services shaped for both product and market",
+    "description": "We focus on clear execution, practical delivery, and measurable outcomes."
+  },
+  "servicesOverview": {
+    "title": "Expertise at the Core",
+    "description": "Tailored strategies and technical depth across the full spectrum of modern digital development.",
+    "web": {
+      "title": "Web Dev",
+      "description": "High-performance, secure web applications built with modern architectural patterns."
+    },
+    "mobile": {
+      "title": "Mobile Dev",
+      "description": "Native and cross-platform experiences that prioritize user engagement and fluid performance."
+    },
+    "marketing": {
+      "title": "Digital Marketing",
+      "description": "SEO, campaigns, and analytics foundations that connect product work to measurable growth."
+    },
+    "mvp": {
+      "title": "MVP Development",
+      "description": "Fast, focused idea-to-launch execution for startups that need a credible product baseline."
+    }
+  },
+  "featuredProjects": {
+    "eyebrow": "Selected Works",
+    "title": "A small set of representative projects",
+    "description": "Pioneering solutions for industry leaders.",
+    "cta": "View Portfolio"
+  },
+  "processStrip": {
+    "eyebrow": "Process",
+    "title": "The Delivery Framework",
+    "description": "Precision in every phase, from ideation to production.",
+    "discovery": {
+      "title": "Discovery",
+      "description": "Align scope, goals, and delivery expectations."
+    },
+    "design": {
+      "title": "Design",
+      "description": "Translate requirements into structure and visual direction."
+    },
+    "development": {
+      "title": "Development",
+      "description": "Build the product with iterative checkpoints."
+    },
+    "qa": {
+      "title": "QA & Testing",
+      "description": "Check layout, behavior, and responsiveness carefully."
+    },
+    "launch": {
+      "title": "Launch",
+      "description": "Deploy, verify, and hand over the production system."
+    }
+  },
+  "process": {
+    "eyebrow": "Our Methodology",
+    "title": "Engineered for Precision Growth.",
+    "description": "We blend high-end design with enterprise-grade engineering. Our process is a disciplined journey from abstract vision to scaled reality."
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Let's build something extraordinary.",
+    "description": "We partner with forward-thinking teams to solve complex technical challenges with precision and organic scalability.",
+    "globalPresence": "Global Presence",
+    "directContact": "Direct Contact",
+    "trust": "Trusted by technical leaders at",
+    "locations": {
+      "sanFrancisco": {
+        "name": "San Francisco",
+        "address": "420 Market Street, Suite 100\nSan Francisco, CA 94111"
+      },
+      "london": {
+        "name": "London",
+        "address": "71-75 Shelton Street, Covent Garden\nLondon, WC2H 9JQ"
+      }
+    },
+    "contactDetails": {
+      "email": "hello@ecozom.com",
+      "phone": "+1 (415) 555-2671",
+      "schedule": "Schedule a Discovery Call"
+    },
+    "form": {
+      "name": "Full name",
+      "email": "Work email",
+      "service": "Services of interest",
+      "message": "Project brief",
+      "services": {
+        "web": "Web",
+        "mobile": "Mobile",
+        "marketing": "Digital marketing",
+        "mvp": "MVP development",
+        "cloud": "Cloud",
+        "ai": "AI"
+      },
+      "budget": "Project budget (USD)",
+      "budgetValue": "$50k - $250k+",
+      "budgetMin": "$10,000",
+      "budgetMax": "$500,000+",
+      "briefPlaceholder": "Tell us about your challenge...",
+      "privacy": "By submitting this form, you agree to our Privacy Policy.",
+      "submit": "Send message",
+      "sending": "Sending...",
+      "success": "Message sent! We'll be in touch shortly.",
+      "error": "Failed to send message. Please try again."
+    }
+  }
+}

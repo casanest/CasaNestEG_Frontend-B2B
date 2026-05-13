@@ -16,9 +16,9 @@ type Slide = {
     cta: string;
 };
 
-const HeroCarousel = ({ locale }: { locale: string }) => {
-    const isRTL = locale === 'ar';
-
+const HeroCarousel = ({ locale, dir }: { locale: string; dir: string }) => {
+    const isRTL = dir === 'rtl';
+    console.log('HeroCarousel locale and dir:', { locale, dir, isRTL });
     const [emblaRef, emblaApi] = useEmblaCarousel({
         loop: true,
         direction: isRTL ? 'rtl' : 'ltr',
