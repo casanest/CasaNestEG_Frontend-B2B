@@ -7,6 +7,12 @@ import { unstable_setRequestLocale } from "next-intl/server"
 import { cookies } from "next/headers"
 import { Suspense } from "react"
 import "../styles/globals.css"
+import { Cairo } from "next/font/google"
+
+const cairo = Cairo({
+  subsets: ["arabic", "latin"],
+  weight: ["300", "400", "500", "600", "700"],
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
@@ -88,7 +94,7 @@ export default async function RootLayout({
     <html lang={locale} data-mode="light">
       {/* Provide the intl context */}
       <NextIntlClientProvider locale={locale} messages={messages}>
-        <body>
+        <body className={cairo.className}>
           <main className="relative">{children}</main>
         </body>
       </NextIntlClientProvider>
