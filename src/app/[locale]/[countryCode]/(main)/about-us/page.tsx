@@ -20,7 +20,7 @@ export default function AboutUs() {
         dir={isRTL ? "rtl" : "ltr"}
       >
         <h1 className="text-4xl sm:text-5xl font-extrabold mb-4 flex items-center justify-center gap-2" style={{ color: primary }}>
-          <Sparkles size={36} color={primary} /> {locale === "ar" ? "من نحن | كازانيست" : "About LA CASA"}
+          <Sparkles size={36} color={primary} /> {locale === "ar" ? "من نحن | كازانيست" : "About Us | CasaNest"} <Sparkles size={36} color={primary} />
         </h1>
         <p className="text-base sm:text-lg text-gray-600">
           {locale === "ar"

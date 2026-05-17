@@ -84,8 +84,8 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     }
 
     const title = isRTL
-      ? (productCategory.name_ar || productCategory.name_en) + " - متجر LA CASA"
-      : productCategory.name_en || productCategory.name_ar + " - LA CASA Store"
+      ? (productCategory.name_ar || productCategory.name_en) + " - متجر كازانيست"
+      : productCategory.name_en || productCategory.name_ar + " - CasaNest Store"
     const description = productCategory.description_en ?? `${title} category.`
 
     return {

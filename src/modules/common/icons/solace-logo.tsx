@@ -1,6 +1,6 @@
 import { IconProps } from 'types/icon'
 
-export const LaCasaLogo = (props: IconProps) => {
+export const CasaNestLogo = (props: IconProps) => {
   return (
     <svg
       width="122"
@@ -10,7 +10,7 @@ export const LaCasaLogo = (props: IconProps) => {
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <title>La Casa Logo</title>
+      <title>Casanest Logo</title>
       <text
         x="0"
         y="20"
@@ -18,7 +18,7 @@ export const LaCasaLogo = (props: IconProps) => {
         fontWeight="bold"
         fill="currentColor"
       >
-        LA CASA
+        CASANEST
       </text>
     </svg>
   )

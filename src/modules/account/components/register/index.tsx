@@ -21,7 +21,7 @@ const Register = ({ setCurrentView }: Props) => {
 
   // Localized content
   const content = {
-    title: isRTL ? "كن عضوًا في متجر لا كازا" : "Become a LA CASA Store Member",
+    title: isRTL ? "كن عضوًا في متجر CasaNest" : "Become a CasaNest Store Member",
     subtitle: isRTL ? "أنشئ ملفك الشخصي واحصل على تجربة تسوق مميزة" : "Create your profile for an enhanced shopping experience",
     firstName: isRTL ? "الاسم الأول" : "First name",
     lastName: isRTL ? "الاسم الأخير" : "Last name",

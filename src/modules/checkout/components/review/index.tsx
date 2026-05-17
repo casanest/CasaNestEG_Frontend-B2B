@@ -41,8 +41,8 @@ const Review = ({ cart }: { cart: any }) => {
           <div className="flex items-start gap-x-1 w-full mb-6">
             <div className="w-full">
               <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                {locale === "ar" ? "بالنقر فوق زر تقديم الطلب، فإنك تؤكد أنك قرأت وفهمت وقبلت شروط الاستخدام وشروط البيع وسياسة الإرجاع الخاصة بنا، وتقر بأنك قرأت سياسة الخصوصية الخاصة بمتجر LA CASA."
-                  : " By clicking the Place Order button, you confirm that you have read, understand and accept our Terms of Use, Terms of Sale and Returns Policy and acknowledge that you have read LA CASA Store's Privacy Policy."}
+                {locale === "ar" ? "بالنقر فوق زر تقديم الطلب، فإنك تؤكد أنك قرأت وفهمت وقبلت شروط الاستخدام وشروط البيع وسياسة الإرجاع الخاصة بنا، وتقر بأنك قرأت سياسة الخصوصية الخاصة بمتجر CasaNest."
+                  : " By clicking the Place Order button, you confirm that you have read, understand and accept our Terms of Use, Terms of Sale and Returns Policy and acknowledge that you have read CasaNest Store's Privacy Policy."}
               </Text>
             </div>
           </div>
