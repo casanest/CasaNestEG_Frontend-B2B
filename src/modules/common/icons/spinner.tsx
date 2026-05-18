@@ -4,12 +4,12 @@ import { IconProps } from "types/icon"
 
 const Spinner: React.FC<IconProps> = ({
   size = "16",
-  color = "currentColor",
+  color = "#043364",
   ...attributes
 }) => {
   return (
     <svg
-      className="animate-spin"
+      className="animate-spin drop-shadow-sm"
       width={size}
       height={size}
       xmlns="http://www.w3.org/2000/svg"
@@ -24,6 +24,7 @@ const Spinner: React.FC<IconProps> = ({
         r="10"
         stroke={color}
         strokeWidth="4"
+        strokeLinecap="round"
       ></circle>
       <path
         className="opacity-75"

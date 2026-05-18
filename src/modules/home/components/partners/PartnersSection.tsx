@@ -102,16 +102,16 @@ export default function PartnersSection() {
         <section dir="ltr" className=" pt-0 bg-white overflow-hidden">
             <div className="container mx-auto px-4">
                 {/* Heading */}
-                <div className="text-center mb-14">
-                    <p className="text-sm font-medium text-gray-500 uppercase tracking-[3px] mb-2">
+                <div className="text-center mb-5 md:mb-10">
+                    <p className="text-[12px] md:text-[14px] font-medium text-gray-500 uppercase tracking-[3px] mb-2">
                         {t("trustedBy")}
                     </p>
 
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+                    <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-[#152451]">
                         {t("title")}
                     </h2>
 
-                    <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
+                    <p className="text-[13px] md:text-base text-gray-600 mt-2 md:mt-4 max-w-2xl mx-auto">
                         {t("description")}
                     </p>
                 </div>
