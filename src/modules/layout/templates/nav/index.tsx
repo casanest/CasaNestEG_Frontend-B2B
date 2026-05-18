@@ -67,6 +67,7 @@ export default async function Nav() {
                     width={200}
                     height={100}
                     priority
+                    style={{ width: "auto", height: "auto" }}
                   />
                 </LocalizedClientLink>
                 {/* <ReloadLogo href={`/${locale}`} w={200} h={200} /> */}
@@ -86,6 +87,7 @@ export default async function Nav() {
                   alt="Logo"
                   width={170}
                   height={150}
+                  style={{ width: "auto", height: "auto" }}
                 />
               </LocalizedClientLink>
               {/* <ReloadLogo href={`/${locale}`} w={170} h={150} /> */}

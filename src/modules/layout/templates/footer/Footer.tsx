@@ -98,7 +98,15 @@ export default function Footer({ productCategories, collections, locale }: Foote
               data-testid="nav-store-link"
               aria-label="Homepage"
             >
-              <Image src="/casanest.png" alt="CASANEST Logo" width={200} height={100} priority />
+              <Image
+                src="/casanest.png"
+                alt="CASANEST Logo"
+                width={200}
+                height={100}
+                priority
+                style={{ width: "auto", height: "auto" }}
+              />
+              
             </LocalizedClientLink>
 
             <Text className="text-gray-600 text-sm leading-relaxed">

@@ -18,6 +18,7 @@ import Container from "@modules/home/components/shared/Container"
 import FeaturesStrip from "@modules/home/components/features/FeaturesStrip"
 import CategoriesGrid from "@modules/home/components/category-cards/CategoriesGrid"
 import DiscountBanner from "@modules/home/components/banners/DiscountBanner"
+import PartnersSection from "@/modules/home/components/partners/PartnersSection"
 
 // export const metadata: Metadata = {
 //   title: {
@@ -318,6 +319,8 @@ export default async function Home({
       {/* <CategoryCarousel locale={locale} dir={dir} productCategories={productCategories} /> */}
 
       <PromotionBanner locale={locale} dir={dir} />
+
+      <PartnersSection />
     </Container>
   )
 }

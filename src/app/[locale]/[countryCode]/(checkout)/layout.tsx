@@ -68,6 +68,7 @@ export default async function CheckoutLayout({
                 alt="Logo"
                 width={100}
                 height={100}
+                style={{ width: "auto", height: "auto" }}
               />
             </LocalizedClientLink>
 
@@ -84,6 +85,7 @@ export default async function CheckoutLayout({
                 alt="Logo"
                 width={150}
                 height={150}
+                style={{ width: "auto", height: "auto" }}
               />
             </LocalizedClientLink>
 

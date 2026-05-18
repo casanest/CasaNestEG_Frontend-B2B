@@ -22,6 +22,11 @@
       "description": "We deliver high-quality software solutions with enterprise precision. Our architectural approach ensures scalable growth and technical excellence for modern teams.",
       "primaryCta": "Start Your Project",
       "secondaryCta": "Explore Our Methodology"
+    },
+    "partners": {
+      "trustedBy": "Trusted By",
+      "title": "Our Partners and Clients",
+      "description": "We are proud of the trust of our partners and clients as we work together to deliver integrated solutions and services"
     }
 
   },
