@@ -54,12 +54,12 @@ export default function ProductPreview({
     >
       <div
         dir={isRTL ? "rtl" : "ltr"}
-        className="relative flex flex-col h-full rounded-[.5rem] overflow-hidden bg-white dark:bg-gray-900 border border-[#043364]/20 dark:border-gray-800 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] hover:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.12)] hover:-translate-y-1.5"
+        className="relative flex flex-col h-full rounded-[.5rem] overflow-hidden bg-white "
         onMouseEnter={startCycling}
         onMouseLeave={stopCycling}
       >
         {/* Image Section */}
-        <div className="relative aspect-[3/4] overflow-hidden  rounded-t-[.5rem]  bg-gray-50 dark:bg-gray-800">
+        <div className="relative aspect-[4/4] bg-gray-100 overflow-hidden ">
           <Thumbnail
             thumbnail={product.thumbnail}
             images={images}
@@ -71,7 +71,7 @@ export default function ProductPreview({
 
           {/* Pagination Dots */}
           {images.length > 1 && (
-            <div className="absolute bottom-3 inset-x-0 flex justify-center gap-1.5 z-20 pointer-events-none">
+            <div className="absolute bottom-5 inset-x-0 flex justify-center gap-1.5 z-20 pointer-events-none">
               {images.map((_, idx) => (
                 <div
                   key={idx}
@@ -103,22 +103,22 @@ export default function ProductPreview({
         </div>
 
         {/* Content */}
-        <div className="flex flex-col flex-1 p-5">
+        <div className="flex flex-col flex-1 py-5">
           <div className="flex flex-col gap-1 mb-4">
-            <Text className="text-gray-900 dark:text-white font-semibold text-base line-clamp-1 group-hover:text-[#043364] dark:group-hover:text-blue-400 transition-colors">
+            <Text className="text-gray-900  font-bold text-base line-clamp-2 group-hover:text-[#043364] dark:group-hover:text-blue-400 transition-colors">
               {title}
             </Text>
             {description && (
-              <p className="text-gray-500 dark:text-gray-400 text-xs line-clamp-2 min-h-[2.5rem] leading-relaxed font-medium">
+              <p className="text-gray-500 dark:text-gray-400 text-xs line-clamp-3 min-h-[2.5rem] leading-relaxed font-medium">
                 {description}
               </p>
             )}
           </div>
 
-          <div className="mt-auto pt-4 border-t border-gray-50 dark:border-gray-800 flex items-center justify-between">
+          <div className="mt-auto pt-2 border-t border-gray-50 dark:border-gray-800 flex items-center justify-between">
             <div className="flex flex-col gap-0.5">
               <span className="text-[10px] uppercase tracking-tighter text-gray-400 font-bold">
-                {isRTL ? "السعر من" : "Price starting at"}
+                {isRTL ? "السعر" : "Price"}
               </span>
               {cheapestPrice ? (
                 <div className="flex items-center gap-2">
@@ -132,10 +132,6 @@ export default function ProductPreview({
               ) : (
                 <div className="w-16 h-5 bg-gray-100 dark:bg-gray-800 animate-pulse rounded" />
               )}
-            </div>
-
-            <div className="h-8 w-8 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center transition-all group-hover:scale-110 group-hover:bg-[#043364] group-hover:text-white shadow-sm">
-              <ChevronRight className={clx("h-4 w-4", isRTL && "rotate-180")} />
             </div>
           </div>
         </div>

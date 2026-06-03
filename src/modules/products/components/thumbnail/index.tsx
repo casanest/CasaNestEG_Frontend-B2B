@@ -54,7 +54,7 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
   return (
     <Container
       className={clx(
-        "relative w-full overflow-hidden p-0 bg-ui-bg-subtle shadow-elevation-card-rest rounded-large",
+        "relative w-full overflow-hidden p-0  ",
         aspectRatio,
         maxHeight,
         className
@@ -62,16 +62,20 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
       data-testid={dataTestid}
     >
       {currentImage ? (
-        <Image
-          src={currentImage}
-          alt="Product Image"
-          className="absolute inset-0 object-cover object-center transition-opacity duration-500 ease-in-out"
-          draggable={false}
-          quality={70}
-          sizes="(max-width: 576px) 100vw, (max-width: 768px) 50vw, (max-width: 1200px) 33vw, 280px"
-          fill
-          unoptimized={shouldUseUnoptimizedImage(currentImage)}
-        />
+        <div className="absolute inset-0 ">
+          <div className="relative w-full h-full">
+            <Image
+              src={currentImage}
+              alt="Product Image"
+              className="absolute inset-0 object-contain object-center transition-opacity duration-500 ease-in-out"
+              draggable={false}
+              quality={70}
+              sizes="(max-width: 576px) 100vw, (max-width: 768px) 50vw, (max-width: 1200px) 33vw, 280px"
+              fill
+              unoptimized={shouldUseUnoptimizedImage(currentImage)}
+            />
+          </div>
+        </div>
       ) : (
         <div className="w-full h-full absolute inset-0 flex items-center justify-center bg-gray-100">
           <PlaceholderImage size={size === "small" ? 16 : 24} />
@@ -117,7 +121,7 @@ const ImageOrPlaceholder = ({
       src={src}
       alt="Product Image"
       className={clx(
-        "absolute inset-0 object-cover object-center transition-all duration-700 ease-in-out",
+        "absolute inset-0 object-contain object-center transition-all duration-700 ease-in-out",
         {
           // تنسيق الصورة الأساسية: تختفي تدريجياً عند الهوفر إذا كانت هناك صورة ثانية
           "z-10 opacity-100 group-hover/thumbnail:opacity-0": !isSecondary && hasSecondary,
