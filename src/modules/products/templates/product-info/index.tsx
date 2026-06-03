@@ -41,8 +41,8 @@ const ProductInfo = async ({ product }: ProductInfoProps) => {
     font-bold
     leading-tight
     tracking-tight
-    text-[#043364]
     break-words
+    text-slate-900
   "
           data-testid="product-title"
         >
