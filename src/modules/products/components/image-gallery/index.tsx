@@ -108,7 +108,7 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
                 {/* Main Image Container */}
                 <div
                     ref={mainRef}
-                    className="group relative w-full mx-auto aspect-[7/5] rounded-xl overflow-hidden border border-[#043364]/10 bg-white shadow-[0_24px_60px_-35px_rgba(2,8,23,0.5)] cursor-zoom-in transition-transform duration-500 ease-out"
+                    className="group relative w-full mx-auto aspect-[6/5] rounded-xl overflow-hidden border border-[#043364]/10 bg-white shadow-[0_24px_60px_-35px_rgba(2,8,23,0.5)] cursor-zoom-in transition-transform duration-500 ease-out"
                     onTouchStart={handleTouchStart}
                     onTouchEnd={handleTouchEnd}
                     onMouseMove={handleMouseMove}

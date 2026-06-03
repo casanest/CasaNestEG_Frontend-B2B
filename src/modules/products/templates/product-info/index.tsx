@@ -34,7 +34,16 @@ const ProductInfo = async ({ product }: ProductInfoProps) => {
         )}
         <Heading
           level="h2"
-          className="text-3xl sm:text-4xl lg:text-[2.6rem] leading-tight font-semibold"
+          className="
+    text-2xl
+    sm:text-3xl
+    lg:text-4xl
+    font-bold
+    leading-tight
+    tracking-tight
+    text-[#043364]
+    break-words
+  "
           data-testid="product-title"
         >
           {title}

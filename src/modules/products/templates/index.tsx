@@ -92,25 +92,28 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
               </Suspense>
 
               {description && (
-                <div className="flex flex-col gap-3">
+                <section className="">
                   <h3
-                    className="text-lg font-semibold text-[#043364]"
+                    className="mb-4 text-xl font-bold text-[#043364]"
                     data-testid="product-description-title"
                   >
                     {isRTL ? "الوصف" : "Description"}
                   </h3>
-                  <p
-                    className="text-sm leading-7 text-slate-600"
+
+                  <div
+                    className="whitespace-pre-line text-[18px] leading-8 "
                     data-testid="product-description"
                   >
                     {description}
-                  </p>
-                </div>
+                  </div>
+                </section>
               )}
-
               {visibleSpecs.length > 0 && (
                 <div className="flex flex-col gap-3">
-                  <h3 className="text-lg font-semibold text-[#043364]">
+                  <h3 
+                    className="mb-4 text-xl font-bold text-[#043364]"
+                    data-testid="product-specs-title"
+                  >
                     {isRTL ? "المواصفات" : "Specifications"}
                   </h3>
                   <ul className="grid gap-2 text-sm text-slate-600">
@@ -130,9 +133,12 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
                   </ul>
                 </div>
               )}
-
+              {/* terms */}
               <div className="flex flex-col gap-4">
-                <h3 className="text-lg font-semibold text-[#043364]">
+                <h3 
+                  className="mb-4 text-xl font-bold text-[#043364]"
+                  data-testid="product-terms-title"
+                >
                   {isRTL ? "الشروط" : "Terms"}
                 </h3>
                 <div className="grid grid-cols-1 gap-y-8">
@@ -179,7 +185,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
                   </div>
                 </div>
               </div>
-              
+
             </div>
           </div>
 
