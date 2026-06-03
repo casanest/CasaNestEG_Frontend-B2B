@@ -206,7 +206,7 @@ export default async function CategoryTemplate({
             // This component needs to be updated to match the gray bar style in the image
             />
 
-            <Suspense fallback={<SkeletonProductGrid numberOfProducts={8} />}>
+            <Suspense fallback={<SkeletonProductGrid numberOfProducts={4} />}>
               <PaginatedProducts
                 // products={category.products}
                 sortBy={sort}

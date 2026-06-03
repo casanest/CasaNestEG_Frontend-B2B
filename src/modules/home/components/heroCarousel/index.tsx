@@ -163,7 +163,7 @@ const HeroCarousel = ({ locale, dir }: { locale: string; dir: string }) => {
                                 alt={slide.alt}
                                 fill
                                 priority={idx === 0}
-                                className="object-cover "
+                                className="object-cover"
                                 sizes="100vw"
                             />
 

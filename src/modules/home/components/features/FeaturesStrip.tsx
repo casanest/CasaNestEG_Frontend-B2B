@@ -18,10 +18,10 @@ const FeaturesStrip = ({ locale, dir }: FeaturesStripProps) => {
     const items = [
         {
             icon: Truck,
-            title: isRTL ? 'توصيل مجاني' : 'Free Delivery',
+            title: isRTL ? 'شحن سريع' : 'Fast Shipping',
             desc: isRTL
-                ? 'للطلبات فوق 5000 جنيه مصري'
-                : 'For orders over 5000 EGP',
+                ? 'توصيل سريع إلى باب منزلك'
+                : 'Quick delivery to your doorstep',
         },
         {
             icon: ShieldCheck,

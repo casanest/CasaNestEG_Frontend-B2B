@@ -24,7 +24,7 @@ const CategoriesGrid = ({ locale, dir }: { locale: string; dir: string }) => {
         },
         {
             image: '/cat-3.jpg',
-            title: isRTL ? 'أثاث الفنادق' : 'Hotel Furniture',
+            title: isRTL ? 'أثاث فندقي' : 'Hotel Furniture',
             subtitle: isRTL
                 ? 'تصميمات فندقية فاخرة'
                 : 'Luxury hotel furniture',

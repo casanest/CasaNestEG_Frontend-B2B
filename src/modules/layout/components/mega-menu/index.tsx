@@ -161,8 +161,8 @@ const MegaMenu = ({ navigation }: { navigation: any[] }) => {
 
                             {/* Mega Menu Dropdown */}
                             {openIndex === index && (
-                                <div className="absolute z-100 left-0 right-0 top-full w-full text-start bg-white shadow-[0_15px_30px_-10px_rgba(0,0,0,0.1)] border-t border-gray-100 animate-in fade-in slide-in-from-top-2 duration-200">
-                                    <div className="content-container mx-auto flex p-8 gap-8">
+                                <div className="absolute pb-8 z-100 left-0 h-[calc(100vh-300px)] overflow-y-auto right-0 top-full w-full text-start bg-white shadow-[0_15px_30px_-10px_rgba(0,0,0,0.1)] border-t border-gray-100 animate-in fade-in slide-in-from-top-2 duration-200">
+                                    <div className="content-container mx-auto flex p-8 gap-8 justify-between">
 
 
 
@@ -209,7 +209,7 @@ const MegaMenu = ({ navigation }: { navigation: any[] }) => {
                                     </div>
 
                                     {/* Footer Link */}
-                                    <div className="bg-gray-50 p-4 text-center border-t border-gray-100">
+                                    {/* <div className="bg-gray-50 p-4 text-center border-t border-gray-100">
                                         <LocalizedClientLink
                                             href={`/categories/${menu.handle}`}
                                             className="text-xs font-bold text-gray-500 hover:text-[#043364] flex items-center justify-center gap-1"
@@ -217,7 +217,7 @@ const MegaMenu = ({ navigation }: { navigation: any[] }) => {
                                             {isRTL ? 'عرض مجموعة ' : 'View all '} {menu.title}
                                             {isRTL ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
                                         </LocalizedClientLink>
-                                    </div>
+                                    </div> */}
                                 </div>
                             )}
                         </li>

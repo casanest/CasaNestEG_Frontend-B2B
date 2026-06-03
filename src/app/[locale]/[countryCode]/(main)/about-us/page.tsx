@@ -150,7 +150,7 @@ export default function AboutUs() {
               label: "عملاء سعداء",
             },
             {
-              number: "150+",
+              number: "500+",
               label: "منتجات متاحة",
             },
             {
@@ -160,7 +160,7 @@ export default function AboutUs() {
           ]
           : [
             { number: "10K+", label: "Happy Customers" },
-            { number: "150+", label: "Products Available" },
+            { number: "500+", label: "Products Available" },
             { number: "4.9/5", label: "Customer Rating" },
           ]
         ).map((stat, i) => (

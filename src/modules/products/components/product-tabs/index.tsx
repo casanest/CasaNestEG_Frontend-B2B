@@ -90,39 +90,41 @@ const ShippingInfoTab = () => {
         <div className="flex items-start gap-x-2">
           <FastDelivery />
           <div>
-            <span className="font-semibold">{locale === "ar" ? "توصيل سريع" : "Fast Delivery"}</span>
+            <span className="font-semibold">
+              {locale === "ar" ? "شحن لجميع المحافظات" : "Nationwide Shipping"}
+            </span>
             <p className="max-w-sm">
-              { // egypt only 
-                locale === "ar"
-                  ? "توصيل سريع في جميع أنحاء مصر. تسليم في نفس اليوم أو في اليوم التالي."
-                  : "Fast delivery across Egypt. Same-day or next-day delivery."
-              }
+              {locale === "ar"
+                ? "توصيل سريع إلى جميع أنحاء مصر مع متابعة مستمرة لحالة الشحنة."
+                : "Fast delivery across all Egyptian governorates with continuous shipment tracking."}
             </p>
           </div>
         </div>
+
         <div className="flex items-start gap-x-2">
           <Refresh />
           <div>
-            <span className="font-semibold">{locale === "ar" ? "تبديل المنتج" : "Product Exchange"}</span>
+            <span className="font-semibold">
+              {locale === "ar" ? "استبدال سهل للمنتجات" : "Easy Product Exchange"}
+            </span>
             <p className="max-w-sm">
-              { // egypt only 
-                locale === "en" ?
-                  "  Is the fit not quite right? No worries - we'll exchange your product for a new one."
-                  : "هل المقاس غير مناسب؟ لا داعي للقلق - سنقوم بتبديل منتجك بمنتج جديد."
-              }
+              {locale === "ar"
+                ? "في حالة وجود مشكلة بالمنتج أو عدم ملاءمته، يمكن طلب الاستبدال وفقًا لسياسة المتجر."
+                : "If there is an issue with the product or it is not suitable, you can request an exchange according to our store policy."}
             </p>
           </div>
         </div>
+
         <div className="flex items-start gap-x-2">
           <Back />
           <div>
-            <span className="font-semibold">{locale === "ar" ? "استرجاع المنتج" : "Product Return"}</span>
+            <span className="font-semibold">
+              {locale === "ar" ? "استرجاع مرن" : "Flexible Returns"}
+            </span>
             <p className="max-w-sm">
-              { // egypt only 
-                locale === "ar"
-                  ? "استرجاع مجاني خلال 30 يومًا من استلام الطلب. استرجاع سهل وسريع."
-                  : "Free returns within 30 days of receiving your order. Easy and quick returns."
-              }
+              {locale === "ar"
+                ? "نوفر إمكانية الاسترجاع للمنتجات المؤهلة طبقًا لشروط وسياسة الاسترجاع الخاصة بكل منتج."
+                : "Eligible products can be returned according to the return terms and policy applicable to each product."}
             </p>
           </div>
         </div>
