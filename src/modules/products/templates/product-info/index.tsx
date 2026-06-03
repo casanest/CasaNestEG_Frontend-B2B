@@ -1,7 +1,8 @@
 import { HttpTypes } from "@medusajs/types"
-import { Heading, Text } from "@medusajs/ui"
+import { Heading } from "@medusajs/ui"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { getLocale } from "next-intl/server"
+import { clx } from "@medusajs/ui"
 
 type ProductInfoProps = {
   product: HttpTypes.StoreProduct
@@ -15,35 +16,29 @@ const ProductInfo = async ({ product }: ProductInfoProps) => {
     ? product?.metadata?.localizations?.ar?.title
     : product.title) || product.title
 
-  const description = (isRTL
-    ? product?.metadata?.localizations?.ar?.description
-    : product.description) || product.description
-
   return (
     <div id="product-info" dir={isRTL ? "rtl" : "ltr"}>
-      <div className="flex flex-col gap-y-4 lg:max-w-[500px] mx-auto text-[#043364]">
+      <div
+        className={clx(
+          "flex flex-col gap-3 text-[#043364]",
+          isRTL ? "text-right" : "text-left"
+        )}
+      >
         {product.collection && (
           <LocalizedClientLink
             href={`/collections/${product.collection.handle}`}
-            className="text-medium text-ui-fg-muted hover:text-ui-fg-subtle"
+            className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 hover:text-[#043364] transition-colors"
           >
             {product.collection.title}
           </LocalizedClientLink>
         )}
         <Heading
           level="h2"
-          className="text-3xl leading-10"
+          className="text-3xl sm:text-4xl lg:text-[2.6rem] leading-tight font-semibold"
           data-testid="product-title"
         >
           {title}
         </Heading>
-
-        <Text
-          className="text-medium whitespace-pre-line"
-          data-testid="product-description"
-        >
-          {description}
-        </Text>
       </div>
     </div>
   )

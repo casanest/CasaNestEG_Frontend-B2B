@@ -104,11 +104,11 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
 
     return (
         <>
-            <div className="flex flex-col gap-6 w-full select-none px-3 max-w-xl mx-auto ">
+            <div className="flex flex-col gap-5 w-full select-none max-w-xl mx-auto">
                 {/* Main Image Container */}
-                    <div
-                        ref={mainRef}
-                        className="group relative w-full lg:w-[60%] lg:mx-auto aspect-[1678/2098] rounded-[1rem] overflow-hidden border border-[#043364]/30 bg-white cursor-zoom-in transition-transform duration-500 ease-out"
+                <div
+                    ref={mainRef}
+                    className="group relative w-full mx-auto aspect-[7/5] rounded-xl overflow-hidden border border-[#043364]/10 bg-white shadow-[0_24px_60px_-35px_rgba(2,8,23,0.5)] cursor-zoom-in transition-transform duration-500 ease-out"
                     onTouchStart={handleTouchStart}
                     onTouchEnd={handleTouchEnd}
                     onMouseMove={handleMouseMove}
@@ -116,12 +116,13 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
                 >
                     {selected?.url ? (
                         <Image
+                            key={selected.url}
                             src={selected.url}
                             alt={`Product image ${selectedIndex + 1}`}
                             fill
                             priority
                             sizes="(max-width: 768px) 100vw, 50vw"
-                            className="object-contain object-center transition-transform duration-700 group-hover:scale-105"
+                            className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
                             unoptimized={shouldUseUnoptimizedImage(selected.url)}
                         />
                     ) : (
@@ -135,14 +136,14 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
 
                     {/* Counter Badge - Modern Glassmorphism */}
                     {display.length > 1 && (
-                        <div className="absolute top-6 left-6 bg-white/70 dark:bg-black/50 backdrop-blur-md text-gray-900 dark:text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border border-white/40 shadow-sm">
+                        <div className="absolute top-5 left-5 bg-white/80 backdrop-blur-md text-gray-900 text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border border-white/60 shadow-sm">
                             {selectedIndex + 1} <span className="text-gray-400 mx-1">/</span> {display.length}
                         </div>
                     )}
 
                     {/* Zoom Hint - Sophisticated Icon */}
-                    <div className="absolute top-6 right-6 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm p-2.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                        <ZoomIn className="w-4 h-4 text-[#043364] " />
+                    <div className="absolute top-5 right-5 bg-white/90 backdrop-blur-sm p-2.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                        <ZoomIn className="w-4 h-4 text-[#043364]" />
                     </div>
 
                     {/* Main Navigation Arrows - Premium Feel */}
@@ -165,14 +166,14 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
 
                     {/* Sophisticated Dot Indicators (iOS Style) */}
                     {display.length > 1 && display.length <= 8 && (
-                        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2 px-3 py-2 rounded-full bg-[#043364]/10 backdrop-blur-md">
+                        <div className="absolute bottom-3 mx-auto left-1/2 -translate-x-1/2 flex gap-2 px-3 py-2 rounded-full bg-white/70 backdrop-blur-md shadow-sm">
                             {display.map((_, i) => (
                                 <div
                                     key={i}
                                     className={clx(
                                         "h-1.5 rounded-full transition-all duration-500",
                                         i === selectedIndex
-                                            ? "w-6 bg-[#043364] "
+                                            ? "w-6 bg-[#043364]"
                                             : "w-1.5 bg-[#043364]/40"
                                     )}
                                 />
@@ -183,51 +184,47 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
 
                 {/* Thumbnail Strip - Enhanced Carousel */}
                 {display.length > 1 && (
-                    <div className="relative group/thumbs w-full overflow-hidden px-2 sm:px-4">
-
-                        <div className="overflow-hidden px-1" ref={thumbRef}>
-                            <div className="flex justify-center gap-2 sm:gap-4 py-2 overflow-x-auto scrollbar-hide">
-
+                    <div className="relative group/thumbs w-full overflow-hidden mx-auto">
+                        <div className="overflow-hidden w-full" ref={thumbRef}>
+                            <div className="flex justify-center gap-3 sm:gap-4 overflow-x-auto scrollbar-hide py-2">
                                 {display.map((img, i) => (
                                     <button
                                         key={img.id}
                                         onClick={() => scrollTo(i)}
                                         className={clx(
-                                            "relative flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 rounded-lg sm:rounded-xl overflow-hidden transition-all duration-300 ease-out",
+                                            "relative flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border border-transparent transition-all duration-300 ease-out",
                                             i === selectedIndex
-                                                ? "ring-2 ring-[#043364] ring-offset-2 sm:ring-offset-4 dark:ring-blue-500 dark:ring-offset-gray-950 scale-105 shadow-lg"
-                                                : "opacity-60 hover:opacity-100 grayscale hover:grayscale-0 scale-95 hover:scale-100"
+                                                ? "ring-2 ring-[#043364] ring-offset-2 ring-offset-white shadow-lg"
+                                                : "opacity-70 hover:opacity-100"
                                         )}
                                     >
                                         <Image
                                             src={img.url}
                                             alt={`Thumbnail ${i + 1}`}
                                             fill
-                                            sizes="80px"
+                                            sizes="96px"
                                             className="object-cover"
                                             unoptimized={shouldUseUnoptimizedImage(img.url)}
                                         />
                                     </button>
                                 ))}
-
                             </div>
                         </div>
 
                         {/* arrows hide on mobile */}
                         <button
                             onClick={prev}
-                            className="hidden sm:flex absolute left-2 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 shadow-lg p-2 rounded-full opacity-0 group-hover/thumbs:opacity-100 transition-opacity hover:bg-gray-50 border border-gray-100 dark:border-gray-700"
+                            className="hidden sm:flex absolute left-2 top-1/2 -translate-y-1/2 bg-white shadow-lg p-2 rounded-full opacity-0 group-hover/thumbs:opacity-100 transition-opacity hover:bg-gray-50 border border-gray-100"
                         >
-                            <ChevronLeft className="w-3 h-3 text-gray-600 dark:text-gray-300" />
+                            <ChevronLeft className="w-3 h-3 text-gray-600" />
                         </button>
 
                         <button
                             onClick={next}
-                            className="hidden sm:flex absolute right-2 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 shadow-lg p-2 rounded-full opacity-0 group-hover/thumbs:opacity-100 transition-opacity hover:bg-gray-50 border border-gray-100 dark:border-gray-700"
+                            className="hidden sm:flex absolute right-2 top-1/2 -translate-y-1/2 bg-white shadow-lg p-2 rounded-full opacity-0 group-hover/thumbs:opacity-100 transition-opacity hover:bg-gray-50 border border-gray-100"
                         >
-                            <ChevronRight className="w-3 h-3 text-gray-600 dark:text-gray-300" />
+                            <ChevronRight className="w-3 h-3 text-gray-600" />
                         </button>
-
                     </div>
                 )}
             </div>
