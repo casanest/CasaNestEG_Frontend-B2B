@@ -108,23 +108,27 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
                 {/* Main Image Container */}
                 <div
                     ref={mainRef}
-                    className="group relative w-full mx-auto aspect-[6/5] rounded-xl overflow-hidden border border-[#043364]/10 bg-white shadow-[0_24px_60px_-35px_rgba(2,8,23,0.5)] cursor-zoom-in transition-transform duration-500 ease-out"
+                    className="group relative w-full mx-auto aspect-square rounded-xl overflow-hidden border border-[#043364]/10 bg-gray-50 shadow-[0_24px_60px_-35px_rgba(2,8,23,0.5)] cursor-zoom-in transition-transform duration-500 ease-out"
                     onTouchStart={handleTouchStart}
                     onTouchEnd={handleTouchEnd}
                     onMouseMove={handleMouseMove}
                     onClick={() => { setLightboxOpen(true); setZoomed(false) }}
                 >
                     {selected?.url ? (
-                        <Image
-                            key={selected.url}
-                            src={selected.url}
-                            alt={`Product image ${selectedIndex + 1}`}
-                            fill
-                            priority
-                            sizes="(max-width: 768px) 100vw, 50vw"
-                            className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
-                            unoptimized={shouldUseUnoptimizedImage(selected.url)}
-                        />
+                        <div className="absolute inset-0 ">
+                            <div className="relative w-full h-full">
+                                <Image
+                                    key={selected.url}
+                                    src={selected.url}
+                                    alt={`Product image ${selectedIndex + 1}`}
+                                    fill
+                                    priority
+                                    sizes="(max-width: 768px) 100vw, 50vw"
+                                    className="object-contain object-center transition-transform duration-700 group-hover:scale-105"
+                                    unoptimized={shouldUseUnoptimizedImage(selected.url)}
+                                />
+                            </div>
+                        </div>
                     ) : (
                         <div className="w-full h-full flex items-center justify-center bg-gray-100 animate-pulse">
                             <ImageIcon className="w-12 h-12 text-gray-300" />
@@ -192,20 +196,22 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
                                         key={img.id}
                                         onClick={() => scrollTo(i)}
                                         className={clx(
-                                            "relative flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border border-transparent transition-all duration-300 ease-out",
+                                            "relative flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border border-transparent bg-gray-50 p-1 transition-all duration-300 ease-out",
                                             i === selectedIndex
                                                 ? "ring-2 ring-[#043364] ring-offset-2 ring-offset-white shadow-lg"
                                                 : "opacity-70 hover:opacity-100"
                                         )}
                                     >
-                                        <Image
-                                            src={img.url}
-                                            alt={`Thumbnail ${i + 1}`}
-                                            fill
-                                            sizes="96px"
-                                            className="object-cover"
-                                            unoptimized={shouldUseUnoptimizedImage(img.url)}
-                                        />
+                                        <div className="relative w-full h-full">
+                                            <Image
+                                                src={img.url}
+                                                alt={`Thumbnail ${i + 1}`}
+                                                fill
+                                                sizes="96px"
+                                                className="object-contain object-center"
+                                                unoptimized={shouldUseUnoptimizedImage(img.url)}
+                                            />
+                                        </div>
                                     </button>
                                 ))}
                             </div>
@@ -251,27 +257,29 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
                     {/* Zoomed image */}
                     <div
                         className={clsx(
-                            "relative w-full max-w-3xl mx-8 aspect-[1678/2098] overflow-hidden rounded-xl transition-all",
+                            "relative w-full max-w-4xl mx-6 sm:mx-8 aspect-square overflow-hidden rounded-xl bg-gray-50 p-4 sm:p-6 transition-all",
                             zoomed ? "cursor-zoom-out" : "cursor-zoom-in"
                         )}
                         onClick={(e) => { e.stopPropagation(); setZoomed(!zoomed) }}
                         onMouseMove={handleMouseMove}
                     >
-                        <Image
-                            src={selected.url}
-                            alt={`Product image ${selectedIndex + 1}`}
-                            fill
-                            priority
-                            sizes="90vw"
-                            unoptimized={shouldUseUnoptimizedImage(selected.url)}
-                            className={clsx(
-                                "object-contain transition-transform duration-200",
-                                zoomed ? "scale-[2.5] origin-[var(--ox)_var(--oy)]" : "scale-100"
-                            )}
-                            style={zoomed ? {
-                                transformOrigin: `${mousePos.x}% ${mousePos.y}%`
-                            } : {}}
-                        />
+                        <div className="relative w-full h-full">
+                            <Image
+                                src={selected.url}
+                                alt={`Product image ${selectedIndex + 1}`}
+                                fill
+                                priority
+                                sizes="90vw"
+                                unoptimized={shouldUseUnoptimizedImage(selected.url)}
+                                className={clsx(
+                                    "object-contain object-center transition-transform duration-200",
+                                    zoomed ? "scale-[2.5] origin-[var(--ox)_var(--oy)]" : "scale-100"
+                                )}
+                                style={zoomed ? {
+                                    transformOrigin: `${mousePos.x}% ${mousePos.y}%`
+                                } : {}}
+                            />
+                        </div>
                     </div>
 
                     {/* Nav arrows in lightbox */}
@@ -300,19 +308,21 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
                                     key={img.id}
                                     onClick={(e) => { e.stopPropagation(); scrollTo(i) }}
                                     className={clsx(
-                                        "relative w-10 h-10 rounded-lg overflow-hidden border-2 transition-all",
+                                        "relative w-10 h-10 rounded-lg overflow-hidden border-2 bg-gray-50 p-1 transition-all",
                                         i === selectedIndex ? "border-[#043364] scale-110" : "border-[#043364]/30 opacity-60 hover:opacity-100"
                                     )}
                                 >
                                     {img.url && (
-                                        <Image
-                                            src={img.url}
-                                            alt=""
-                                            fill
-                                            sizes="40px"
-                                            className="object-cover"
-                                            unoptimized={shouldUseUnoptimizedImage(img.url)}
-                                        />
+                                        <div className="relative w-full h-full">
+                                            <Image
+                                                src={img.url}
+                                                alt=""
+                                                fill
+                                                sizes="40px"
+                                                className="object-contain object-center"
+                                                unoptimized={shouldUseUnoptimizedImage(img.url)}
+                                            />
+                                        </div>
                                     )}
                                 </button>
                             ))}
