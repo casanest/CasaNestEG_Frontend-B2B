@@ -10,12 +10,13 @@ import { Category, getParentCategories, listCategories } from "@lib/data/categor
 import RefinementList from "@modules/store/components/refinement-list"
 import { ProductsToolbar } from "../components/productsToolbar"
 import { clx } from "@medusajs/ui"
+import SubcategoryCarousel from "../components/subcategory-carousel"
 
 export default async function CategoryTemplate({
   category,
   sortBy,
   page,
-  countryCode,
+  countryCode, 
   searchParams,
 }: {
   category: Category
@@ -99,7 +100,7 @@ export default async function CategoryTemplate({
             {isRTL ? "الرئيسية" : "Home"}
           </LocalizedClientLink>
 
-          {parents.reverse().map((parent) => (
+          {parents.map((parent) => (
             <div key={parent.id} className="flex items-center gap-1">
               <ChevronRight className={clx("h-3 w-3 opacity-70", isRTL && "rotate-180")} />
               <LocalizedClientLink
@@ -118,16 +119,16 @@ export default async function CategoryTemplate({
         </nav>
 
         {/* Category Title - Large and Bold */}
-        {/* <h1 className="text-4xl md:text-5xl font-black tracking-tight text-gray-950 mt-1">
+        <h1 className="text-xl sm:text-3xl font-black tracking-tight text-gray-950 mt-2">
           {categoryName}
-        </h1> */}
+        </h1>
       </header>
 
       {/* Main Layout: Sidebar (Right) and Content (Left) */}
       <div className="flex flex-col small:flex-row small:items-start gap-x-8">
-
         {/* Sidebar - Right Side (Tree Menu) */}
         <aside dir={isRTL ? "rtl" : "ltr"} className="hidden small:block w-full small:w-72 flex-shrink-0 small:sticky small:top-24 mb-8 small:mb-0">
+         
           <div className="rounded-2xl bg-gray-50 dark:bg-gray-900/50 p-6 border border-gray-100 dark:border-gray-800">
             {/* <h2 className="text-lg font-bold text-gray-950 dark:text-white mb-5">
               {isRTL ? "الاقسام" : "Categories"}
@@ -144,64 +145,23 @@ export default async function CategoryTemplate({
         </aside>
 
         {/* Main Content Area - Left Side */}
-        <main className="flex-1 min-w-0 space-y-4">
+        <main className="flex-1 min-w-0 space-y-2">
 
           {/* Subcategories Carousel Section - Matching the Image */}
           {category.category_children?.length > 0 && (
-            <section className="relative rounded-2xl bg-gray-50 dark:bg-gray-900/50 p-6 border border-gray-100 dark:border-gray-800">
-
-              {/* Carousel Arrows */}
-              <button className="absolute left-2 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-50 hover:text-black transition-all">
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-              <button className="absolute right-2 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-50 hover:text-black transition-all">
-                <ChevronRight className="h-5 w-5" />
-              </button>
-
-              {/* Scrollable Container */}
-              <div className="flex items-center gap-6 overflow-x-auto pb-2 px-8 scrollbar-hide">
-                {category.category_children.map((c) => {
-                  // const subCatName = isRTL ? (c.metadata?.localizations?.ar?.name || c.name) : c.name;
-                  // // Placeholder for category image - assuming it exists in metadata or can be derived
-                  // const imageUrl = c.metadata?.image_url || "/path/to/placeholder-icon.png";
-                  const subCatName = isRTL ? c.name_ar || c.name_en : c.name_en || c.name_ar
-                  const imageUrl = c.image_url || "/placeholder-category.png"
-                  const subHandle = isRTL ? c.handle_ar || c.handle_en : c.handle_en || c.handle_ar
-
-                  
-                  return (
-                    <LocalizedClientLink
-                      key={c.id}
-                      href={`/categories/${subHandle}`}
-                      className="group flex flex-col items-center gap-3 flex-shrink-0 w-28 text-center"
-                    >
-                      {/* Circular Image Container */}
-                      <div className="h-24 w-24 rounded-full bg-[#EBF1F9] dark:bg-gray-800 border-2 border-transparent group-hover:border-[#043364] transition-all overflow-hidden flex items-center justify-center p-4">
-                        <img
-                          src={imageUrl}
-                          alt={subCatName}
-                          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
-                        />
-                      </div>
-                      {/* Subcategory Name */}
-                      <span className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-[#043364] transition-colors leading-tight line-clamp-2">
-                        {subCatName}
-                      </span>
-                    </LocalizedClientLink>
-                  )
-                })}
-              </div>
-            </section>
+            <SubcategoryCarousel items={category.category_children} isRTL={isRTL} />
           )}
 
           {/* Toolbar & Grid Area */}
-          <div dir={isRTL? "rtl": "ltr"} className="space-y-2">
+          <div dir={isRTL? "rtl": "ltr"} className="space-y-1">
             <ProductsToolbar
               productCount={productCount}
               sort={sort}
               isRTL={isRTL}
               locale={locale}
               countryCode={countryCode}
+              categories={allCategories || []}
+              currentCategoryId={category.id}
               // categoryId={category.id}
             // This component needs to be updated to match the gray bar style in the image
             />

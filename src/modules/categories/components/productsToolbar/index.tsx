@@ -9,6 +9,13 @@ type ProductsToolbarProps = {
     isRTL: boolean;
     locale: string;
     countryCode: string;
+    categories?: Array<{
+        id: string;
+        name_en: string;
+        name_ar: string;
+        parent_category_id?: string | null;
+    }>;
+    currentCategoryId?: string;
     // categoryId: string;
     // onSortChange?: (value: string) => void;
 };
@@ -25,6 +32,8 @@ export const ProductsToolbar = ({
     isRTL,
     locale,
     countryCode,
+    categories,
+    currentCategoryId,
     // categoryId,
     // onSortChange,
 }: ProductsToolbarProps) => {
@@ -45,54 +54,78 @@ export const ProductsToolbar = ({
 
 
     return (
-        <div dir={isRTL ? "rtl" : "ltr"} className="mb-6 overflow-hidden rounded-xl border border-gray-100 bg-[#F3F4F6] dark:bg-gray-900/50 dark:border-gray-800 shadow-sm">
-            <div className="flex items-center justify-between px-5 py-3">
-                {/* Left Side (in RTL): Product Count */}
-                <div className="flex items-center gap-1.5">
-                    <span className="text-xl font-black text-gray-950 dark:text-white leading-none">
+        <div
+            dir={isRTL ? "rtl" : "ltr"}
+            className="mb-4 overflow-hidden rounded-xl border border-gray-100 bg-gray-50 shadow-sm"
+        >
+            {/* Desktop */}
+            <div className="hidden sm:flex items-center justify-between px-5 py-3">
+                <div className="flex items-center gap-2">
+                    <span className="text-2xl font-black text-gray-900">
                         {productCount}
                     </span>
-                    <span className="text-[14px] font-bold text-gray-600 dark:text-gray-400">
-                        {isRTL ? "منتج" : "products"}
+                    <span className="text-sm font-bold text-gray-500">
+                        {isRTL ? "منتج" : "Products"}
                     </span>
                 </div>
-                {/* Right Side (in RTL): Sort Selection */}
-                <div className="flex items-center gap-4">
-                    {/* Desktop Sort */}
-                    <div className="hidden items-center gap-2 sm:flex">
-                        <span className="text-[13px] font-bold text-gray-500 dark:text-gray-400">
-                            {isRTL ? "الترتيب:" : "Sort:"}
+
+                <div className="flex items-center gap-3">
+                    <span className="text-sm font-bold text-gray-500">
+                        {isRTL ? "الترتيب:" : "Sort:"}
+                    </span>
+
+                    <Select value={sort} onValueChange={handleSortChange}>
+                        <Select.Trigger
+                            className="
+            h-10 min-w-[180px]
+            bg-white
+            border border-gray-200
+            rounded-lg
+            font-bold
+          "
+                        >
+                            <Select.Value />
+                        </Select.Trigger>
+
+                        <Select.Content>
+                            {sortOptions.map((opt) => (
+                                <Select.Item key={opt.value} value={opt.value}>
+                                    {opt.label}
+                                </Select.Item>
+                            ))}
+                        </Select.Content>
+                    </Select>
+                </div>
+            </div>
+
+            {/* Mobile */}
+            <div className="sm:hidden sticky top-0 z-20 overflow-hidden rounded-xl bg-white shadow-sm backdrop-blur">
+                <div className="grid grid-cols-2 ">
+
+                    <div className="flex items-center justify-center gap-2 py-3">
+                        <span className="text-2xl font-black tracking-tight text-gray-900">
+                            {productCount}
                         </span>
 
-                        <Select value={sort} onValueChange={handleSortChange}>
-                            <Select.Trigger className={clx(
-                                "h-9 min-w-[70px] border-none bg-transparent p-0 shadow-none bg-white hover:bg-black/5 transition-all focus:ring-0",
-                                "text-[13px] font-extrabold text-gray-900 dark:text-white px-4 rounded-lg "
-                            )}>
-                                <Select.Value placeholder={isRTL ? "الاكثر رواجاً" : "Popularity"} />
-                            </Select.Trigger>
-                            <Select.Content className="rounded-xl border-none shadow-xl backdrop-blur-md">
-                                {sortOptions.map((opt) => (
-                                    <Select.Item key={opt.value} value={opt.value} className="text-xs font-bold text-start">
-                                        {opt.label}
-                                    </Select.Item>
-                                ))}
-                            </Select.Content>
-                        </Select>
+                        <span className="text-xs font-bold uppercase tracking-wide text-gray-500">
+                            {productLabel}
+                        </span>
                     </div>
 
-                    {/* Mobile Filter Button */}
-                    <div className="sm:hidden">
+                    {/* divider */}
+                    {/* <div className="h-full w-px bg-gray-200 justify-self-start" /> */}
+
+                    <div className="flex items-center justify-center">
                         <RefinementList
                             locale={locale}
                             sortBy={sort}
                             countryCode={countryCode}
+                            categories={categories}
+                            currentCategoryId={currentCategoryId}
                         />
                     </div>
+
                 </div>
-
-          
-
             </div>
         </div>
     );

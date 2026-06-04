@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react"
-import { ChevronDown, RotateCcw, SlidersHorizontal, X } from "lucide-react"
+import { ArrowUpDown, ChevronDown, RotateCcw, SlidersHorizontal, X } from "lucide-react"
 import { Badge, Button, Checkbox, Divider, Text, clx } from "@medusajs/ui"
 import SortProducts, { SortOptions } from "./sort-products"
 import { getProductFilterOptions } from "@lib/data/products"
@@ -181,6 +181,16 @@ const RefinementList = ({
     new Set()
   )
 
+  const currentSortLabel = useMemo(() => {
+    if (sortBy === "price_asc") {
+      return isRTL ? "السعر: الأقل -> الأعلى" : "Price: Low -> High"
+    }
+    if (sortBy === "price_desc") {
+      return isRTL ? "السعر: الأعلى -> الأقل" : "Price: High -> Low"
+    }
+    return isRTL ? "الأحدث" : "Newest"
+  }, [isRTL, sortBy])
+
   const toggleCategory = useCallback((id: string) => {
     setExpandedCategories((prev) => {
       const next = new Set(prev)
@@ -346,17 +356,19 @@ const RefinementList = ({
     defaultOpen?: boolean
   }) => (
     <details
-      className=""
+      className="group rounded-2xl border border-ui-border-base/60 bg-white/90 px-1 shadow-sm backdrop-blur-sm transition-shadow dark:bg-ui-bg-subtle/50"
       open={defaultOpen}
     >
-      <summary className="flex cursor-pointer items-center justify-between gap-2  py-2 text-sm font-bold text-ui-fg-base">
-        <span >{title}</span>
-        <ChevronDown className="h-4 w-4 text-ui-fg-subtle transition-transform group-open:rotate-180 mx-3" />
+      <summary className="flex cursor-pointer items-center justify-between gap-2 px-3 py-3 text-sm font-semibold text-ui-fg-base">
+        <span>{title}</span>
+        <ChevronDown className="h-4 w-4 text-ui-fg-subtle transition-transform group-open:rotate-180" />
       </summary>
       {/* {helper && (
         <Text className="px-3 pb-2 text-xs text-ui-fg-subtle">{helper}</Text>
       )} */}
-      <div className=" px-3 pb-3 pt-1 space-y-2">{children}</div>
+      <div className="px-3 pb-4 pt-1 space-y-3 group-open:animate-in group-open:fade-in group-open:slide-in-from-top-1">
+        {children}
+      </div>
     </details>
   )
 
@@ -373,7 +385,12 @@ const RefinementList = ({
   }) => (
     <label
       htmlFor={id}
-      className="flex items-center justify-between w-100 rounded-sm px-1 py-1 text-sm text-ui-fg-base"
+      className={clx(
+        "flex items-center justify-between w-100 rounded-lg border border-transparent px-2 py-2 text-sm text-ui-fg-base transition-colors",
+        checked
+          ? "bg-[#043364]/5 border-[#043364]/30"
+          : "hover:bg-ui-bg-subtle"
+      )}
     >
       <span className="line-clamp-1">{label}</span>
       <Checkbox
@@ -390,6 +407,12 @@ const RefinementList = ({
         "max-h-[calc(100vh-220px)] overflow-y-auto ": variant === "drawer",
       })}
     >
+      {variant === "drawer" && hasActiveFilters && (
+        <div className="flex items-center justify-between rounded-2xl border border-[#043364]/20 bg-[#043364]/5 px-4 py-3 text-xs font-semibold text-[#043364]">
+          <span>{isRTL ? "فلاتر نشطة" : "Active filters"}</span>
+          <Badge className="bg-[#043364] text-white">{activeFilterCount}</Badge>
+        </div>
+      )}
       <SectionCard
         title={isRTL ? "ترتيب النتائج" : "Sort results"}
         helper={
@@ -624,17 +647,39 @@ const RefinementList = ({
     <>
       {/* Mobile Filter Button - Only show when NOT inline (mobile mode) */}
       {!inline && (
-        <div className="small:hidden mb-4 flex w-full justify-end">
-          <Button
-            variant="secondary"
-            onClick={() => setIsDrawerOpen(true)}
-            className="inline-flex items-center gap-2 rounded-full px-4 py-2 shadow-sm"
-          >
-            <SlidersHorizontal className="h-4 w-4" />
-            <span>{isRTL ? "الفلاتر" : "Filters"}</span>
-            {activeFilterCount > 0 && <Badge className="ml-1">{activeFilterCount}</Badge>}
-          </Button>
-        </div>
+        // <div className="small:hidden sticky top-0 z-40 -mx-4 px-4  ">
+          // {/* <div className="mx-auto flex w-full max-w-[720px]    overflow-hidden"> */}
+            <button
+              type="button"
+              onClick={() => setIsDrawerOpen(true)}
+              className=" h-12 px-3 flex items-center justify-between gap-2 "
+            >
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal className="h-4 w-4" />
+                <span>{isRTL ? "الفلاتر" : "Filters"}</span>
+              </div>
+              {activeFilterCount > 0 && (
+                <Badge className="bg-[#043364] text-white rounded-full px-2.5">
+                  {activeFilterCount}
+                </Badge>
+              )}
+            </button>
+            // {/* <div className="w-px bg-ui-border-base/60" />
+            // <button
+            //   type="button"
+            //   onClick={() => setIsDrawerOpen(true)}
+            //   className="flex-1 h-12 px-3 flex items-center justify-between gap-2 text-xs font-semibold text-ui-fg-base transition-all hover:bg-ui-bg-subtle active:scale-[0.99]"
+            // >
+            //   <div className="flex items-center gap-2">
+            //     <ArrowUpDown className="h-4 w-4" />
+            //     <span>{isRTL ? "الترتيب" : "Sort"}</span>
+            //   </div>
+            //   <span className="text-[11px] text-ui-fg-subtle line-clamp-1">
+            //     {currentSortLabel}
+            //   </span>
+            // </button> */}
+          // {/* </div> */}
+        // </div>
       )}
 
       {/* Inline content for desktop containers (controlled by parent) */}
@@ -723,7 +768,7 @@ const RefinementList = ({
 
             <div className="flex h-full flex-col overflow-hidden">
               {/* Header - Glass Effect */}
-              <DrawerHeader className="flex flex-row items-center justify-between px-6 py-6 border-b border-ui-border-base/50 backdrop-blur-md">
+              <DrawerHeader className="sticky top-0 z-10 flex flex-row items-center justify-between px-6 py-6 border-b border-ui-border-base/50 bg-white/85 backdrop-blur-md">
                 <div className="space-y-0.5 text-left">
                   <DrawerTitle className="text-xl font-bold tracking-tight text-ui-fg-base">
                     {isRTL ? "تصفية المنتجات" : "Filter Products"}
@@ -745,14 +790,14 @@ const RefinementList = ({
               </DrawerHeader>
 
               {/* Content Area - Scrollable */}
-              <div className="flex-1 overflow-y-auto px-6 py-4 scrollbar-hide">
-                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="flex-1 overflow-y-auto px-6 py-5 scrollbar-hide">
+                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-4">
                   {renderFilterContent("drawer")}
                 </div>
               </div>
 
               {/* Footer - Floating Action Design */}
-              <DrawerFooter className="flex flex-row items-center gap-4 border-t border-ui-border-base bg-ui-bg-subtle/50 p-6 pb-10">
+              <DrawerFooter className="sticky bottom-0 flex flex-row items-center gap-4 border-t border-ui-border-base bg-white/90 p-6 pb-10 backdrop-blur-md shadow-[0_-10px_30px_-20px_rgba(0,0,0,0.35)]">
                 <Button
                   variant="secondary"
                   className={clx(
