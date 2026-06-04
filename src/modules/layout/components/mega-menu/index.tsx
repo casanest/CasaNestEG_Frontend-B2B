@@ -161,7 +161,13 @@ const MegaMenu = ({ navigation }: { navigation: any[] }) => {
 
                             {/* Mega Menu Dropdown */}
                             {openIndex === index && (
-                                <div className="absolute pb-8 z-100 left-0 h-[calc(100vh-300px)] overflow-y-auto right-0 top-full w-full text-start bg-white shadow-[0_15px_30px_-10px_rgba(0,0,0,0.1)] border-t border-gray-100 animate-in fade-in slide-in-from-top-2 duration-200">
+                                <>
+                                    <div
+                                        className="fixed inset-x-0 top-[300px] bottom-0 bg-black/20 backdrop-blur-sm z-40"
+                                        onMouseEnter={() => setOpenIndex(null)}
+                                        onClick={() => setOpenIndex(null)}
+                                    />
+                                    <div className="absolute pb-8 z-50 left-0 h-[calc(100vh-300px)] overflow-y-auto right-0 top-full w-full text-start bg-white shadow-[0_15px_30px_-10px_rgba(0,0,0,0.1)] border-t border-gray-100 animate-in fade-in slide-in-from-top-2 duration-200">
                                     <div className="content-container mx-auto flex p-8 gap-8 justify-between">
 
 
@@ -218,7 +224,8 @@ const MegaMenu = ({ navigation }: { navigation: any[] }) => {
                                             {isRTL ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
                                         </LocalizedClientLink>
                                     </div> */}
-                                </div>
+                                    </div>
+                                </>
                             )}
                         </li>
                     ))}
