@@ -77,7 +77,7 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
           </div>
         </div>
       ) : (
-        <div className="w-full h-full absolute inset-0 flex items-center justify-center bg-gray-100">
+        <div className="w-full h-full absolute inset-0 flex items-center justify-center ">
           <PlaceholderImage size={size === "small" ? 16 : 24} />
         </div>
       )}

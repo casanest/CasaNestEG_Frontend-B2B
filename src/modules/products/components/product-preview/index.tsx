@@ -49,17 +49,17 @@ export default function ProductPreview({
   return (
     <LocalizedClientLink
       href={`/products/${product.handle}`}
-      className="group block rounded-[.5rem]"
+      className="group block "
       locale={locale}
     >
       <div
         dir={isRTL ? "rtl" : "ltr"}
-        className="relative flex flex-col h-full rounded-[.5rem] overflow-hidden bg-white "
+        className="relative flex flex-col h-full bg-white "
         onMouseEnter={startCycling}
         onMouseLeave={stopCycling}
       >
         {/* Image Section */}
-        <div className="relative aspect-[4/4] bg-gray-100 overflow-hidden ">
+        <div className="relative aspect-[4/4]  overflow-hidden ">
           <Thumbnail
             thumbnail={product.thumbnail}
             images={images}
@@ -71,7 +71,7 @@ export default function ProductPreview({
 
           {/* Pagination Dots */}
           {images.length > 1 && (
-            <div className="absolute bottom-5 inset-x-0 flex justify-center gap-1.5 z-20 pointer-events-none">
+            <div className="absolute bottom-3 inset-x-0 flex justify-center gap-1.5 z-20 pointer-events-none">
               {images.map((_, idx) => (
                 <div
                   key={idx}
