@@ -207,7 +207,7 @@ export const listCategories = cache(async (query?: Record<string, any>): Promise
       ...query,
     },
     next,
-    cache: "no-store",
+    cache: "force-cache",
   })
 
   // Step 2: Normalize each category (children array starts empty)
@@ -264,10 +264,10 @@ export const getCategoryByHandle = async (
       query: {
         // fields: "*products,*parent_category",
         fields: "id,name,handle,parent_category_id,metadata",
-        limit: 500,
+        limit: 100,
       },
       next,
-      cache: "no-store",
+      cache: "force-cache",
     })
 
     // Step 2: Normalize flat

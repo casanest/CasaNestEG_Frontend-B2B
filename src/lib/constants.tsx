@@ -47,6 +47,7 @@ export const noDivisionCurrencies = [
   "xau",
 ]
 
+
 export const createNavigation = (
   productCategories: any[], // ✅ استخدم any[] عشان يقبل Category type بتاعتك
   collections?: StoreCollection[]
