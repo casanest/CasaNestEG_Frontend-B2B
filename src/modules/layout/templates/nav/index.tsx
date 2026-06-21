@@ -54,7 +54,7 @@ export default async function Nav() {
               <div className="flex items-center ">
                 <SideMenu productCategories={productCategories} collections={collections} />
               </div>
-              <div className="flex items-center h-full  md:hidden">
+              <div className="flex items-center h-full w-[150px]  md:hidden">
                 <LocalizedClientLink
                   href="/"
                   className="inline-block"
@@ -64,10 +64,10 @@ export default async function Nav() {
                   <Image
                     src="/casanest.png"
                     alt="CASANEST Logo"
-                    width={200}
-                    height={100}
+                    width={100}
+                    height={50}
                     priority
-                    style={{ width: "auto", height: "auto" }}
+                    style={{ width:100, height: 50, objectFit: "contain" }}
                   />
                 </LocalizedClientLink>
                 {/* <ReloadLogo href={`/${locale}`} w={200} h={200} /> */}

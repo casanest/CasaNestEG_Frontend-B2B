@@ -1,4 +1,3 @@
-"use client";
 
 import { cn } from "@lib/util/cn";
 import { formatNameForTestId } from "@lib/util/formatNameForTestId";

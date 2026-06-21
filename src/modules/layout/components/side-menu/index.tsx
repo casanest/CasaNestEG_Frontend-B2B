@@ -230,7 +230,7 @@ const SideMenu = ({
                       currentCategory ? `${currentCategory.handle}` : `/store`
                     }
                   >
-                    Shop all{' '}
+                    {locale === 'ar' ? 'تسوق الكل' : 'Shop all'}{"  "}
                     {currentCategory && currentCategory.name !== 'store'
                       ? currentCategory.name
                       : ''}

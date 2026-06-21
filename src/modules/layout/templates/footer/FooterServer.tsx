@@ -1,24 +1,32 @@
-// components/FooterServer.tsx
+import { cache } from "react";
 import { getParentCategories, listCategories } from "@lib/data/categories";
-import { getCollectionsLocal, listCollections } from "@lib/data/collections";
+import { getCollectionsLocal } from "@lib/data/collections";
 import { getLocale } from "next-intl/server";
 import Footer from "./Footer";
 
-export default async function FooterServer() {
-    // Fetch locale
-    const locale = await getLocale();
+const getCategories = cache(listCategories);
+const getCollections = cache(getCollectionsLocal);
 
-    // Fetch categories and filter parent ones
-    const categories = await listCategories();
+export default async function FooterServer() {
+    const [categoriesRes, collectionsRes, locale] = await Promise.all([
+        getCategories(),
+        getCollections(),
+        getLocale(),
+    ]);
+
+    const categories = Array.isArray(categoriesRes)
+        ? categoriesRes
+        : categoriesRes?.categories ?? [];
+
+    const collections = Array.isArray(collectionsRes?.collections)
+        ? collectionsRes.collections
+        : [];
+
     const parentCategories = await getParentCategories(categories);
 
-    // Fetch collections (all)
-    const {collections}  = await getCollectionsLocal();
-    console.log("Footer collections:", collections);
-    // Return server-rendered Footer
     return (
         <Footer
-            productCategories={parentCategories}
+            productCategories={parentCategories || []}
             collections={collections}
             locale={locale}
         />

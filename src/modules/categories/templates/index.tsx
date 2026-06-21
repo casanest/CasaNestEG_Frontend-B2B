@@ -26,62 +26,51 @@ export default async function CategoryTemplate({
   searchParams?: { [key: string]: string | string[] | undefined }
 }) {
   if (!category || !countryCode) notFound()
-
   const locale = await getLocale()
   const isRTL = locale === "ar"
+
   const pageNumber = page ? parseInt(page) : 1
   const sort = sortBy || "created_at"
+
   const categoryTree = await listCategories()
-  const flatCategories: Category[] = []
-  const flattenCategories = (cats: Category[]) => {
+
+  // 1) Flatten مرة واحدة فقط
+  const flatList: Category[] = []
+
+  const flatten = (cats: Category[]) => {
     for (const cat of cats) {
-      flatCategories.push(cat)
+      flatList.push(cat)
       if (cat.category_children?.length) {
-        flattenCategories(cat.category_children)
+        flatten(cat.category_children)
       }
     }
   }
-  flattenCategories(categoryTree)
 
-  const allCategories = flatCategories.map((category) => ({
+  flatten(categoryTree)
+
+  // 2) Normalize categories 
+  const allCategories = flatList.map((category) => ({
     id: category.id,
     name_en: category.name_en,
     name_ar: category.name_ar,
     parent_category_id: category.parent_category_id ?? null,
   }))
 
-  // === Breadcrumbs Logic ===
-  // const parents: Category[] = []
-  // const collectParents = (cat: Category) => {
-  //   if (cat.parent_category) {
-  //     parents.push(cat.parent_category)
-  //     collectParents(cat.parent_category)
-  //   }
-  // }
-  // collectParents(category)
+  // 3) Create Map for O(1) lookup 
+  const categoryMap = new Map(flatList.map(c => [c.id, c]))
 
-
-  // === Breadcrumbs Logic — ابني من الـ flat map ===
-  // اعمل flat list من كل الـ categories
-  const flatList: Category[] = []
-  const flatten = (cats: Category[]) => {
-    for (const c of cats) {
-      flatList.push(c)
-      if (c.category_children?.length) flatten(c.category_children)
-    }
-  }
-  flatten(categoryTree)
-
-  // ابني الـ breadcrumb path باستخدام parent_category_id
+  // 4) Breadcrumbs 
   const parents: Category[] = []
-  let current: Category | undefined = flatList.find(c => c.id === category.id)
+
+  let current = categoryMap.get(category.id)
+
   while (current?.parent_category_id) {
-    const parent = flatList.find(c => c.id === current!.parent_category_id)
+    const parent = categoryMap.get(current.parent_category_id)
     if (!parent) break
-    parents.unshift(parent) // ضيف في الأول عشان الترتيب صح
+
+    parents.unshift(parent)
     current = parent
   }
-
 
   const categoryName = isRTL ? category.name_ar : category.name_en
   const productCount = category.products?.length || 0

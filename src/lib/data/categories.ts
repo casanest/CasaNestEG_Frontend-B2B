@@ -1,6 +1,7 @@
 import { sdk } from "@lib/config";
 import { HttpTypes } from "@medusajs/types";
 import { getCacheOptions } from "./cookies";
+import { cache } from "react";
 
 export type Category = {
   id: string;
@@ -15,7 +16,7 @@ export type Category = {
   parent_category_id: string | null;
   parent_category: Category | null;
   category_children: Category[];
-  products: any[];
+  // products: any[];
 };
 
 /**
@@ -118,7 +119,7 @@ export function getParentCategories(categories: Category[]) {
     parent_category_id: cat.parent_category_id,
     parent_category: cat.parent_category,
     category_children: cat.category_children,
-    products: cat.products,
+    // products: cat.products,
   }));
 }
 
@@ -186,13 +187,13 @@ const normalizeCategory = (cat: any): Category => {
     category_children: Array.isArray(cat.category_children)
       ? cat.category_children.map((child: any) => normalizeCategory(child))
       : [],
-    products: cat.products || [],
+    // products: cat.products || [],
   };
 };
 /**
  * 🧩 Recursive normalizer to handle localization and nested children
  */
-export const listCategories = async (query?: Record<string, any>): Promise<Category[]> => {
+export const listCategories = cache(async (query?: Record<string, any>): Promise<Category[]> => {
   const next = { ...(await getCacheOptions("categories")) }
 
   // Step 1: Fetch ALL categories flat — no parent filter
@@ -200,8 +201,9 @@ export const listCategories = async (query?: Record<string, any>): Promise<Categ
     product_categories: any[]
   }>("/store/product-categories", {
     query: {
-      fields: "*products,*parent_category",
-      limit: 500, // get everything
+      // fields: "*products,*parent_category",
+      fields: "id,name,handle,parent_category_id,metadata",
+      limit: 100, // get everything
       ...query,
     },
     next,
@@ -226,7 +228,7 @@ export const listCategories = async (query?: Record<string, any>): Promise<Categ
       parent_category_id: cat.parent_category_id || null,
       parent_category: null, // will skip circular refs
       category_children: [], // filled in Step 3
-      products: cat.products || [],
+      // products: cat.products || [],
     }
   })
 
@@ -244,7 +246,7 @@ export const listCategories = async (query?: Record<string, any>): Promise<Categ
   })
 
   return roots
-}
+})
 /**
  * 🔍 Fetch a specific category by handle with its sub-sub-categories
  */
@@ -260,7 +262,8 @@ export const getCategoryByHandle = async (
       product_categories: any[]
     }>("/store/product-categories", {
       query: {
-        fields: "*products,*parent_category",
+        // fields: "*products,*parent_category",
+        fields: "id,name,handle,parent_category_id,metadata",
         limit: 500,
       },
       next,
@@ -285,7 +288,7 @@ export const getCategoryByHandle = async (
         parent_category_id: cat.parent_category_id || null,
         parent_category: null,
         category_children: [],
-        products: cat.products || [],
+        // products: cat.products || [],
       }
     })
 
