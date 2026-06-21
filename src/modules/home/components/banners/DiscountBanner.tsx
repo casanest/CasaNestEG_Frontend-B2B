@@ -1,4 +1,4 @@
-'use client';
+// 'use client';
 
 import Image from 'next/image';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';

@@ -1,4 +1,4 @@
-"use client"
+// "use client"
 
 import PartnerLogo from "./PartnerLogo"
 import { useLocale, useTranslations } from "next-intl"
@@ -99,7 +99,7 @@ export default function PartnersSection() {
     const t = useTranslations("home.partners")
 
     return (
-        <section dir="ltr" className=" pt-0 bg-white overflow-hidden">
+        <section dir="ltr" className="  bg-white overflow-hidden py-6">
             <div className="container mx-auto px-4">
                 {/* Heading */}
                 <div className="text-center mb-5 md:mb-10">

@@ -43,7 +43,7 @@ const CategoriesGrid = ({ locale, dir }: { locale: string; dir: string }) => {
     ];
 
     return (
-        <section className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-4 gap-3 md:gap-6">
+        <section className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-4 gap-3 md:gap-6 py-6">
             {categories.map((item, idx) => (
                 <CategoryCard
                     key={idx}

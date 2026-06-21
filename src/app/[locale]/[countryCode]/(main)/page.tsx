@@ -122,6 +122,7 @@ type Props = {
     locale: string
   }>
 }
+export const revalidate = 60
 
 export async function generateMetadata({
   params,
@@ -248,52 +249,89 @@ export default async function Home({
   const { countryCode, locale } = await params
 
   // Fetch all necessary data
-  const region = await getRegion(countryCode)
-  const { collections } = await listCollections({
-    fields: "id, handle, title, metadata",
-  })
-  const productCategories = await getParentCategories(await listCategories())
+  // const region = await getRegion(countryCode)
+  // const { collections } = await listCollections({
+  //   fields: "id, handle, title, metadata",
+  // })
+  // const productCategories = await getParentCategories(await listCategories())
 
-  // Fetch featured products for the product grid
-  const { response: { products: featuredProducts } } = await listProducts({
-    pageParam: 1,
-    queryParams: { limit: 12 },
-    countryCode,
-  })
+  // // Fetch featured products for the product grid
+  // const { response: { products: featuredProducts } } = await listProducts({
+  //   pageParam: 1,
+  //   queryParams: { limit: 12 },
+  //   countryCode,
+  // })
 
-  if (!collections || !region) {
+  const [
+    region,
+    // collectionsData,
+    categoriesData,
+    featuredData
+  ] = await Promise.all([
+    getRegion(countryCode),
+
+    // listCollections({
+    //   fields: "id, handle, title, metadata",
+    // }),
+
+    listCategories(),
+
+    listProducts({
+      pageParam: 1,
+      queryParams: {
+        limit: 12
+      },
+      countryCode,
+    })
+  ])
+
+
+  // const { collections } = collectionsData
+
+  const productCategories = await getParentCategories(categoriesData)
+
+  const {
+    response: {
+      products: featuredProducts
+    }
+  } = featuredData
+
+  if (!region) {
     return null
   }
+  // if (!collections || !region) {
+  //   return null
+  // }
 
-  const collectionsWithProducts = await Promise.all(
-    collections.map(async (collection) => {
-      try {
-        const {
-          response: { products },
-        } = await listProducts({
-          regionId: region.id,
-          queryParams: {
-            collection_id: collection.id,
-            fields: "*variants.calculated_price",
-          },
-        })
+  // const collectionsWithProducts = await Promise.all(
+  //   collections.map(async (collection) => {
+  //     try {
+  //       const {
+  //         response: { products },
+  //       } = await listProducts({
+  //         regionId: region.id,
+  //         queryParams: {
+  //           collection_id: collection.id,
+  //           fields: "*variants.calculated_price",
+  //         },
+  //       })
 
-        return {
-          ...collection,
-          products,
-        }
-      } catch (error) {
-        console.error(
-          `Failed to load products for collection ${collection.id}:`,
-          error
-        )
-        return {
-          ...collection,
-          products: [],
-        }
-      }
-    })
-  )
+  //       return {
+  //         ...collection,
+  //         products,
+  //       }
+  //     } catch (error) {
+  //       console.error(
+  //         `Failed to load products for collection ${collection.id}:`,
+  //         error
+  //       )
+  //       return {
+  //         ...collection,
+  //         products: [],
+  //       }
+  //     }
+  //   })
+  // )
 
   const dir = locale === "ar" ? "rtl" : "ltr"
 
@@ -301,7 +339,7 @@ export default async function Home({
  
 
    
-    <Container className="space-y-3 md:space-y-10">
+    <Container className="space-y-3 ">
 
       <HeroCarousel locale={locale} dir={dir} />
 
@@ -311,7 +349,7 @@ export default async function Home({
 
       <DiscountBanner locale={locale} dir={dir} />
       {/* Categories Section */}
-      <section className=" bg-gradient-to-b from-white to-gray-50 overflow-hidden">
+      <section className=" bg-gradient-to-b from-white to-gray-50 overflow-hidden py-6">
         <div className="content-container overflow-hidden mx-auto">
           <CategoryCarousel locale={locale} dir={dir} productCategories={productCategories} />
         </div>
