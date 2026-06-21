@@ -205,7 +205,7 @@ export const listCategories = cache(async (query?: Record<string, any>): Promise
       fields: "id,name,handle,parent_category_id,metadata",
       limit: 100, // get everything
       ...query,
-    },
+    }, 
     next,
     cache: "force-cache",
   })
