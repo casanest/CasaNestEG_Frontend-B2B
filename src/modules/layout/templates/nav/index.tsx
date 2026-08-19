@@ -1,156 +1,137 @@
 import { Suspense } from "react"
 
-import { listRegions } from "@lib/data/regions"
-import { StoreRegion } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import CartButton from "@modules/layout/components/cart-button"
 import SideMenu from "@modules/layout/components/side-menu"
 import TopNav from "@modules/layout/components/top-nav"
+import LanguageSwitcher from "@modules/layout/components/language-switcher"
 import Image from "next/image"
-import { User } from "lucide-react"
-import MegaMenu from "@modules/layout/components/mega-menu"
-import NavContent from "./nav-content"
-import { listCategories } from "@lib/data/categories"
+import { FilePlus } from "lucide-react"
+import ScrollHeader from "./ScrollHeader"
+import ProductsDropdown from "./ProductsDropdown"
+import { listCategories, Category } from "@lib/data/categories"
 import { listCollections } from "@lib/data/collections"
-import { createNavigation } from "@lib/constants"
-import { listProducts } from "@lib/data/products"
 import { getLocale } from "next-intl/server"
-import ReloadLogo from "@modules/layout/components/reload-logo"
+
 export default async function Nav() {
   const locale = await getLocale()
-  const isRTL = locale === "ar";
-  const regions = await listRegions().then((regions: StoreRegion[]) => regions)
-  const productCategories = await listCategories()
-  console.log("productCategories", productCategories)
-    
-  const products = await listProducts({
-    queryParams: {
-      limit: 4,
-      offset: 0,
-      region_id: regions[0]?.id,
-      // is_giftcard: false,
-    },
-    // countryCode: regions[0]?.countries[0]?.iso_2,
-    regionId: regions[0]?.id,
-  })
-  const { products: recommendedProducts } = products.response
-  console.log("recommendedProducts", recommendedProducts)
-  const { collections } = await listCollections()
-  console.log("collections", collections)
-  const navigation = createNavigation(productCategories, collections)
-  console.log("navigation", navigation)
+  const isRTL = locale === "ar"
+  const productCategories: Category[] = await listCategories()
 
+  const { collections } = await listCollections()
+
+  const navLinksBefore = [
+    { href: "/", labelEn: "Homepage", labelAr: "الرئيسية" },
+    { href: "/categories/integrated-solutions", labelEn: "Curated Solutions", labelAr: "الحلول المتكاملة" },
+  ]
+
+  const navLinksAfter = [
+    { href: "/our-services", labelEn: "Projects", labelAr: "المشاريع" },
+    { href: "/about-us", labelEn: "About Us", labelAr: "من نحن" },
+  ]
 
   return (
     <>
       <TopNav />
-      <div className=" sticky w-full top-0 inset-x-0 z-[40] group">
-        <header className="relative h-16 mx-auto border-b duration-200 bg-white border-ui-border-base">
-          <nav className="content-container txt-xsmall-plus text-ui-fg-subtle flex items-center justify-between w-full h-full text-small-regular"
-            dir={isRTL ? "rtl" : "ltr"}
-          >
-            <div
-              className="flex-1 basis-0 h-full flex items-center md:hidden">
-              <div className="flex items-center ">
-                <SideMenu productCategories={productCategories} collections={collections} />
-              </div>
-              <div className="flex items-center h-full w-[150px]  md:hidden">
-                <LocalizedClientLink
-                  href="/"
-                  className="inline-block"
-                  data-testid="nav-store-link"
-                  aria-label="Homepage"
-                >
-                  <Image
-                    src="/casanest.png"
-                    alt="CASANEST Logo"
-                    width={100}
-                    height={50}
-                    priority
-                    style={{ width:100, height: 50, objectFit: "contain" }}
-                  />
-                </LocalizedClientLink>
-                {/* <ReloadLogo href={`/${locale}`} w={200} h={200} /> */}
-
-              </div>
-            </div>
-            <div className="hidden md:flex flex-1 basis-0 h-full flex items-center">
-              {/* <LaCasaLogo width="300" height="70" color="#ff5722" /> */}
-
+      <ScrollHeader isRTL={isRTL}>
+            {/* Mobile: SideMenu + Logo */}
+            <div className="flex items-center gap-2 md:hidden">
+              <SideMenu productCategories={productCategories as any} collections={collections} />
               <LocalizedClientLink
                 href="/"
-                className="text-3xl font-extrabold tracking-widest uppercase text-transparent bg-clip-text hover:from-blue-600 hover:to-blue-800 transition-all duration-300 ease-in-out leading-none"
+                className="inline-block"
                 data-testid="nav-store-link"
+                aria-label="Homepage"
               >
                 <Image
                   src="/casanest.png"
-                  alt="Logo"
-                  width={170}
-                  height={150}
+                  alt="CASANEST Logo"
+                  width={120}
+                  height={40}
+                  priority
+                  style={{ width: 120, height: 40, objectFit: "contain" }}
+                />
+              </LocalizedClientLink>
+            </div>
+
+            {/* Desktop: Logo */}
+            <div className="hidden md:flex items-center shrink-0">
+              <LocalizedClientLink
+                href="/"
+                data-testid="nav-store-link"
+                aria-label="Homepage"
+              >
+                <Image
+                  src="/casanest.png"
+                  alt="CASANEST Logo"
+                  width={161}
+                  height={56}
+                  priority
                   style={{ width: "auto", height: "auto" }}
                 />
               </LocalizedClientLink>
-              {/* <ReloadLogo href={`/${locale}`} w={170} h={150} /> */}
-
-
-            </div>
-            <div className=" flex-1 basis-0 h-full flex items-center">
             </div>
 
-            <div className="flex items-center gap-x-6 h-full flex-1 basis-0 justify-end">
-              <div className="flex items-center h-full">
-                <NavContent products={recommendedProducts} />
-              </div>
-              <div className="flex items-center gap-x-6 h-full">
+            {/* Desktop: Center Nav Links */}
+            <div className="hidden md:flex items-center gap-7">
+              {navLinksBefore.map((link, idx) => (
                 <LocalizedClientLink
-                  className="hover:text-ui-fg-base"
-                  href="/account"
-                  data-testid="nav-account-link"
+                  key={idx}
+                  href={link.href}
+                  className="flex items-center gap-1 text-[16px] font-medium text-black hover:text-[#17284a] transition-colors whitespace-nowrap"
                 >
-                  {/* user icon */}
-                  <User className="w-6 h-6 text-[#043364]" />
+                  {isRTL ? link.labelAr : link.labelEn}
                 </LocalizedClientLink>
-              </div>
+              ))}
+              <ProductsDropdown categories={productCategories} />
+              {navLinksAfter.map((link, idx) => (
+                <LocalizedClientLink
+                  key={idx}
+                  href={link.href}
+                  className="flex items-center gap-1 text-[16px] font-medium text-black hover:text-[#17284a] transition-colors whitespace-nowrap"
+                >
+                  {isRTL ? link.labelAr : link.labelEn}
+                </LocalizedClientLink>
+              ))}
+            </div>
+
+            {/* Desktop: Right side - Language + Quote List */}
+            <div className="hidden md:flex items-center gap-4 shrink-0">
+              <LanguageSwitcher />
+              <div className="w-px h-8 bg-gray-300" />
               <Suspense
                 fallback={
                   <LocalizedClientLink
-                    className="hover:text-ui-fg-base flex gap-2"
                     href="/cart"
                     data-testid="nav-cart-link"
-
+                    className="flex items-center gap-2 bg-[#dce3f0] px-4 py-2 rounded-xl text-[16px] font-medium text-black hover:bg-[#c9d4ea] transition-colors"
                   >
-
-                    <span className="w-6 h-6">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <circle cx="9" cy="21" r="1"></circle>
-                        <circle cx="20" cy="21" r="1"></circle>
-                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                      </svg>
-                    </span>
-                    {/* Cart(0) */}
+                    {isRTL ? "قائمة الأسعار" : "Quote List"}
+                    <FilePlus className="w-5 h-5" />
                   </LocalizedClientLink>
                 }
               >
                 <CartButton locale={locale} />
               </Suspense>
             </div>
-          </nav>
 
-        </header>
-        <div className="hidden sticky md:block w-full bg-ui-bg-subtle border-b border-ui-border-base">
-          <MegaMenu navigation={navigation} />
-        </div>
-      </div>
+            {/* Mobile: Right side - Cart */}
+            <div className="flex items-center gap-3 md:hidden">
+              <Suspense
+                fallback={
+                  <LocalizedClientLink
+                    href="/cart"
+                    data-testid="nav-cart-link"
+                    className="flex items-center"
+                  >
+                    <FilePlus className="w-6 h-6 text-[#17284a]" />
+                  </LocalizedClientLink>
+                }
+              >
+                <CartButton locale={locale} />
+              </Suspense>
+            </div>
+          </ScrollHeader>
     </>
   )
 }

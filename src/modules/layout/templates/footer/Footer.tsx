@@ -1,17 +1,13 @@
 
 import { cn } from "@lib/util/cn";
 import { formatNameForTestId } from "@lib/util/formatNameForTestId";
-import { Box } from "@modules/common/components/box";
-import { Container } from "@modules/common/components/container";
-import Divider from "@modules/common/components/divider";
-import { Heading } from "@modules/common/components/heading";
-import { Text } from "@modules/common/components/text";
 import LocalizedClientLink from "@modules/common/components/localized-client-link";
 import { LinkedinIcon } from "@modules/common/icons/linkedin";
 import { FacebookIcon } from "@modules/common/icons/facebook";
 import { XLogoIcon } from "@modules/common/icons/twitter";
 import Image from "next/image";
 import Link from "next/link";
+import { Mail, Phone } from "lucide-react";
 
 type Category = {
   id: string;
@@ -48,19 +44,19 @@ function SocialMedia({ className }: { className?: string }) {
   ];
 
   return (
-    <Box className={cn("flex items-center gap-3", className)}>
+    <div className={cn("flex items-center gap-3", className)}>
       {socials.map(({ href, icon, label, testId }) => (
         <LocalizedClientLink
           key={testId}
           href={href}
           data-testid={testId}
           aria-label={label}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-gray-300 text-[#043364] hover:bg-gray-100 transition"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 text-white hover:bg-white/10 transition"
         >
           {icon}
         </LocalizedClientLink>
       ))}
-    </Box>
+    </div>
   );
 }
 
@@ -73,24 +69,27 @@ interface FooterProps {
 export default function Footer({ productCategories, collections, locale }: FooterProps) {
   const isRTL = locale === "ar";
 
-  const quickLinks = [
-    { href: "/store", label: isRTL ? "المنتجات" : "Store" },
-    { href: "/account", label: isRTL ? "الحساب" : "Account" },
-    { href: "/account/orders", label: isRTL ? "الطلبات" : "Orders" },
-    { href: "/returns", label: isRTL ? "سياسة الإرجاع" : "Return Policy" },
+  const casanestLinks = [
+    { href: "/", label: isRTL ? "الرئيسية" : "Homepage" },
+    { href: "/our-services", label: isRTL ? "المشاريع" : "Projects" },
+    { href: "/about-us", label: isRTL ? "من نحن" : "About Us" },
+  ];
+
+  const supportLinks = [
+    { href: "/contact", label: isRTL ? "تواصل معنا" : "Contact Us" },
+    { href: "/faq", label: isRTL ? "الأسئلة الشائعة" : "FAQs" },
   ];
 
   return (
-    <Container
-      as="footer"
+    <footer
       dir={isRTL ? "rtl" : "ltr"}
-      className="mx-0 max-w-full !px-0 !py-0 text-[#043364] border-t border-gray-200 bg-white mt-10"
+      className="w-full bg-[#051026] text-white"
     >
-      <Container className="flex flex-col gap-10 small:gap-12 text-static !px-4 small:!px-6 !py-8 small:!py-10">
-        {/* Main Footer Content */}
-        <Box className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10">
-          {/* Logo & Description */}
-          <Box className={cn("flex flex-col gap-4", isRTL ? "text-right" : "text-left")}>
+      {/* Main Footer Content */}
+      <div className="content-container mx-auto px-8 md:px-12 lg:px-16 py-16">
+        <div className="flex flex-col lg:flex-row items-start justify-between gap-12 lg:gap-16">
+          {/* Company Info Column */}
+          <div className="flex flex-col gap-4 max-w-[379px]">
             <LocalizedClientLink
               href="/"
               className="inline-block"
@@ -100,150 +99,118 @@ export default function Footer({ productCategories, collections, locale }: Foote
               <Image
                 src="/casanest.png"
                 alt="CASANEST Logo"
-                width={200}
-                height={100}
+                width={172}
+                height={56}
                 priority
-                style={{ width: "auto", height: "auto" }}
+                style={{ width: "auto", height: "auto", filter: "brightness(0) invert(1)" }}
               />
-              
             </LocalizedClientLink>
 
-            <Text className="text-gray-600 text-sm leading-relaxed">
+            <p className="text-[20px] leading-[1.4] text-white/70">
               {isRTL
-                ? "يوفر حلول متكاملة للأثاث والأجهزة والتقنية لتجهيز جميع المساحات بجودة عالية."
-                : "Integrated solutions for furniture, appliances, and tech to equip spaces with high quality."}
-            </Text>
+                ? "حلول متكاملة للأثاث والتقنية والمساحات الاحترافية."
+                : "Integrated solutions for furniture, technology, and professional spaces."}
+            </p>
 
             <SocialMedia />
-          </Box>
+          </div>
 
-          {/* Quick Links */}
-          <Box className={cn("flex flex-col gap-3", isRTL ? "text-right" : "text-left")}>
-            <Heading as="h3" className="text-sm font-semibold">
-              {isRTL ? "روابط سريعة" : "Quick Links"}
-            </Heading>
-            <ul className="grid gap-2 text-sm text-gray-600">
-              {quickLinks.map((link, index) => (
-                <li key={index}>
-                  <LocalizedClientLink
-                    href={link.href}
-                    className="hover:text-[#043364] transition"
-                  >
-                    {link.label}
-                  </LocalizedClientLink>
+          {/* Links Columns */}
+          <div className="flex flex-col sm:flex-row gap-8 sm:gap-4 lg:gap-16 flex-1 max-w-[860px]">
+            {/* Casanest Column */}
+            <div className="flex flex-col gap-4 flex-1">
+              <h3 className="text-[18px] font-medium">
+                {isRTL ? "كازانست" : "Casanest"}
+              </h3>
+              <ul className="flex flex-col gap-4 text-[16px] text-white/80">
+                {casanestLinks.map((link, index) => (
+                  <li key={index}>
+                    <LocalizedClientLink
+                      href={link.href}
+                      className="hover:text-white transition"
+                    >
+                      {link.label}
+                    </LocalizedClientLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Products Column */}
+            {productCategories.length > 0 && (
+              <div className="flex flex-col gap-4 flex-1">
+                <h3 className="text-[18px] font-medium">
+                  {isRTL ? "المنتجات" : "Products"}
+                </h3>
+                <ul className="flex flex-col gap-4 text-[16px] text-white/80" data-testid="footer-categories">
+                  {productCategories.slice(0, 5).map((c) => (
+                    <li key={c.id}>
+                      <LocalizedClientLink
+                        href={`/categories/${isRTL ? c.handle_ar ?? c.handle_en : c.handle_en ?? c.handle_ar}`}
+                        className="hover:text-white transition whitespace-nowrap"
+                        data-testid={formatNameForTestId(`${c.name_en}-link`)}
+                      >
+                        {isRTL ? c.name_ar : c.name_en}
+                      </LocalizedClientLink>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Support Column */}
+            <div className="flex flex-col gap-4 flex-1">
+              <h3 className="text-[18px] font-medium">
+                {isRTL ? "الدعم" : "Support"}
+              </h3>
+              <ul className="flex flex-col gap-4 text-[16px] text-white/80">
+                {supportLinks.map((link, index) => (
+                  <li key={index}>
+                    <LocalizedClientLink
+                      href={link.href}
+                      className="hover:text-white transition"
+                    >
+                      {link.label}
+                    </LocalizedClientLink>
+                  </li>
+                ))}
+                <li className="flex items-center gap-2 py-2">
+                  <Mail className="w-5 h-5 text-white/80 flex-shrink-0" />
+                  <span>info@casanest.sa</span>
                 </li>
-              ))}
-            </ul>
-          </Box>
-
-
-          {/* Categories */}
-          {productCategories.length > 0 && (
-            <Box className={cn("flex flex-col gap-3", isRTL ? "text-right" : "text-left")}>
-              <Heading as="h3" className="text-sm font-semibold">
-                {isRTL ? "الأقسام" : "Categories"}
-              </Heading>
-              <ul className="grid gap-2 text-sm text-gray-600" data-testid="footer-categories">
-                {productCategories.slice(0, 6).map((c) => (
-                  <li key={c.id}>
-                    <LocalizedClientLink
-                      href={`/categories/${isRTL ? c.handle_ar ?? c.handle_en : c.handle_en ?? c.handle_ar}`}
-                      className="hover:text-[#043364] transition"
-                      data-testid={formatNameForTestId(`${c.name_en}-link`)}
-                    >
-                      {isRTL ? c.name_ar : c.name_en}
-                    </LocalizedClientLink>
-                  </li>
-                ))}
+                <li className="flex items-center gap-2 py-2">
+                  <Phone className="w-5 h-5 text-white/80 flex-shrink-0" />
+                  <span>9200 123 456</span>
+                </li>
               </ul>
-            </Box>
-          )}
+            </div>
+          </div>
+        </div>
+      </div>
 
-          {/* Collections */}
-          {collections.length > 0 && (
-            <Box className={cn("flex flex-col gap-3", isRTL ? "text-right" : "text-left")}>
-              <Heading as="h3" className="text-sm font-semibold">
-                {isRTL ? "المجموعات" : "Collections"}
-              </Heading>
-              <ul className="grid gap-2 text-sm text-gray-600">
-                {collections.slice(0, 6).map((c) => (
-                  <li key={c.id}>
-                    <LocalizedClientLink
-                      href={`/collections/${isRTL ? c.handle_ar ?? c.handle_en : c.handle_en ?? c.handle_ar}`}
-                      className="hover:text-[#043364] transition"
-                      data-testid={formatNameForTestId(`${c.name_en}-link`)}
-                    >
-                      {isRTL ? c.name_ar : c.name_en}
-                    </LocalizedClientLink>
-                  </li>
-                ))}
-              </ul>
-            </Box>
-          )}
-
-
-          {/* Contact Info */}
-          <Box className={cn("flex flex-col gap-3", isRTL ? "text-right" : "text-left")}>
-            <Heading as="h3" className="text-sm font-semibold">
-              {isRTL ? "تواصل معنا" : "Contact Us"}
-            </Heading>
-            <ul className="grid gap-2 text-sm text-gray-600">
-              <li className="flex items-start gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#043364] flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                </svg>
-                <span>info@casanest.sa</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#043364] flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-                </svg>
-                <span>9200 123 456</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#043364] flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                </svg>
-                <span>{isRTL ? "الفيوم، مصر" : "Fayoum, Egypt"}</span>
-              </li>
-            </ul>
-          </Box>
-        </Box>
-
-        {/* Divider */}
-        <Divider alignment="horizontal" variant="secondary" />
-
-        {/* Footer Bottom */}
-        <Box className={cn("flex flex-col sm:flex-row justify-between items-center gap-3 text-sm text-gray-600", isRTL ? "sm:flex-row-reverse" : "")}
-        >
-          <Box className="flex flex-col items-center sm:items-start gap-1">
-            <Text size="sm">
+      {/* Credits Bar */}
+      <div className="bg-[#c1cee8] w-full">
+        <div className="content-container mx-auto px-8 md:px-12 lg:px-16 py-5">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-[14px] text-black/70 font-medium">
+            <p>
               {isRTL
-                ? `© ${new Date().getFullYear()} جميع الحقوق محفوظة ل CASANEST`
-                : `© ${new Date().getFullYear()} All rights reserved to CASANEST`}
-            </Text>
-            <Text size="sm">
-              {isRTL ? "تم تنفيذ هذا الموقع بواسطة شركة " : "Website built by "} 
-              <Link href="https://www.ecozom.com" target="_blank" className="font-medium hover:text-[#043364] transition-colors">EcoZom</Link>
-            </Text>
-          </Box>
-
-          <Box className="flex items-center gap-4">
-            <LocalizedClientLink href="/privacy" className="hover:text-[#043364] transition-colors">
-              {isRTL ? "الخصوصية" : "Privacy"}
-            </LocalizedClientLink>
-            <span className="text-gray-300">|</span>
-            <LocalizedClientLink href="/terms" className="hover:text-[#043364] transition-colors">
-              {isRTL ? "الشروط" : "Terms"}
-            </LocalizedClientLink>
-            <span className="text-gray-300">|</span>
-            <LocalizedClientLink href="/cookies" className="hover:text-[#043364] transition-colors">
-              {isRTL ? "الكوكيز" : "Cookies"}
-            </LocalizedClientLink>
-          </Box>
-        </Box>
-      </Container>
-    </Container>
+                ? `© ${new Date().getFullYear()} كازانست. جميع الحقوق محفوظة. مورد تجاري مسجل في مصر.`
+                : `© ${new Date().getFullYear()} Casanest. All rights reserved. Registered commercial supplier in Egypt.`}
+            </p>
+            <div className="flex items-center gap-6">
+              <LocalizedClientLink href="/privacy" className="hover:text-[#17284a] transition-colors">
+                {isRTL ? "سياسة الخصوصية" : "Privacy policy"}
+              </LocalizedClientLink>
+              <LocalizedClientLink href="/terms" className="hover:text-[#17284a] transition-colors">
+                {isRTL ? "شروط الخدمة" : "Terms of service"}
+              </LocalizedClientLink>
+              <LocalizedClientLink href="/cookies" className="hover:text-[#17284a] transition-colors">
+                {isRTL ? "إعدادات الكوكيز" : "Cookie settings"}
+              </LocalizedClientLink>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
   );
 }

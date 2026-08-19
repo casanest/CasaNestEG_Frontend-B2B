@@ -30,6 +30,20 @@
     }
 
   },
+  "faq": {
+    "supportCenter": "Support Center",
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find answers about our products, services, and how we work with you.",
+    "allFaqs": "All FAQs",
+    "ordering": "Ordering & Quotes",
+    "products": "Products & Catalog",
+    "delivery": "Delivery & Installation",
+    "solutions": "Solution Packages",
+    "payments": "Payments & Terms",
+    "stillHaveQuestions": "Still Have Questions?",
+    "ctaDescription": "Our team is here to help. Reach out and we'll get back to you within 24 hours.",
+    "scheduleCall": "Schedule a Call"
+  },
   "not-found": {
     "title": "Page Not Found",
     "description": "The page you are looking for does not exist or has been moved.",

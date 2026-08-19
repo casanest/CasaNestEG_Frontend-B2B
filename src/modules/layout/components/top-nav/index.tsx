@@ -1,85 +1,47 @@
 "use client"
 import React from "react"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube } from "react-icons/fa"
-import { usePathname } from "next/navigation"
 import { useLocale } from "next-intl"
+import { Phone } from "lucide-react"
 
 export default function TopNav() {
-  const pathname = usePathname();
   const locale = useLocale();
   const isRTL = locale === "ar";
 
-  const switchTo = (newLocale: string) => {
-    // Remove current locale from pathname
-    const pathWithoutLocale = pathname.replace(new RegExp(`^/${locale}`), '');
-    const newPath = `/${newLocale}${pathWithoutLocale}`;
-
-    // Force full page reload
-    window.location.href = newPath;
-  };
-  
-
-
   const translations = {
-    helpText: isRTL ? "تحتاج مساعدة؟" : "Need help?",
-    aboutUs: isRTL ? "من نحن" : "About Us",
-    returnPolicy: isRTL ? "سياسة الإرجاع" : "Return Policy",
-    languageSwitch: isRTL ? "English" : "العربية",
-    phoneNumber: "01095305663"
+    faqs: isRTL ? "الأسئلة الشائعة" : "FAQs",
+    contactUs: isRTL ? "تواصل معنا" : "Contact Us",
+    phoneNumber: "9200 123 456"
   };
 
   return (
-    <div className={`hidden md:block w-full text-xs md:text-sm text-gray-500 shadow-md bg-gradient-to-r from-gray-600 via-[#021b3f] to-gray-600 top-0 z-[60] overflow-hidden`} dir={isRTL ? "rtl" : "ltr"}>
-      <div className="flex flex-wrap items-center justify-between content-container mx-auto h-[36px]">
-        {/* Left: Help + Social Icons */}
-        <div className={`flex items-center gap-3 text-white font-medium `}>
-          <span className="truncate">
-            {translations.helpText}{" "}
-            <a href={`tel:${translations.phoneNumber}`} className="hover:underline font-semibold">
-              {translations.phoneNumber}
-            </a>
-          </span>
-          <div className={`hidden md:flex items-center gap-2 text-base ${isRTL ? 'mr-2' : 'ml-2'}`}>
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500">
-              <FaFacebookF />
-            </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500">
-              <FaTwitter />
-            </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500">
-              <FaInstagram />
-            </a>
-            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500">
-              <FaYoutube />
-            </a>
-          </div>
-        </div>
-
-        {/* Right: Links + Language */}
-        <div className={`flex items-center gap-4 text-blue-500 font-medium `}>
-          <div className={`hidden md:flex items-center gap-4 text-white `}>
-            <LocalizedClientLink
-              href="/about-us"
-              className="hover:text-blue-500 transition-colors duration-200 text-sm"
-              locale={locale}
-            >
-              {translations.aboutUs}
-            </LocalizedClientLink>
-            <LocalizedClientLink
-              href="/returns"
-              className="hover:text-blue-500 transition-colors duration-200 text-sm"
-              locale={locale}
-            >
-              {translations.returnPolicy}
-            </LocalizedClientLink>
-          </div>
-          <button
-            onClick={() => switchTo(locale === "en" ? "ar" : "en")}
-            className="bg-white hover:bg-[#043364] hover:text-white text-[#043364] text-xs md:text-sm font-semibold py-0.5 px-3 rounded-full border border-blue-500 transition duration-300"
+    <div
+      className="hidden md:block w-full bg-[#c1cee8] top-0 z-[60] overflow-hidden"
+      dir={isRTL ? "rtl" : "ltr"}
+    >
+      <div className="content-container mx-auto flex items-center justify-end gap-7 py-1.5">
+        <LocalizedClientLink
+          href="/faq"
+          className="text-[14px] font-medium text-black hover:text-[#17284a] transition-colors"
+          locale={locale}
+        >
+          {translations.faqs}
+        </LocalizedClientLink>
+        <LocalizedClientLink
+          href="/contact"
+          className="text-[14px] font-medium text-black hover:text-[#17284a] transition-colors"
+          locale={locale}
+        >
+          {translations.contactUs}
+        </LocalizedClientLink>
+        <div className="flex items-center gap-2">
+          <Phone className="w-5 h-5 text-[#17284a]" />
+          <a
+            href={`tel:${translations.phoneNumber.replace(/\s/g, "")}`}
+            className="text-[14px] font-bold text-[#17284a] hover:underline"
           >
-            {translations.languageSwitch}
-          </button>
+            {translations.phoneNumber}
+          </a>
         </div>
       </div>
     </div>

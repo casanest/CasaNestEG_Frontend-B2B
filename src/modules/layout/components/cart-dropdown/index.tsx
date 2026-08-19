@@ -85,15 +85,17 @@ const CartDropdown = ({
           <LocalizedClientLink
             href="/cart"
             data-testid="nav-cart-link"
-            className="relative flex items-center justify-center"
+            className="relative flex items-center gap-2 bg-[#dce3f0] px-4 py-2 rounded-xl text-[16px] font-medium text-black hover:bg-[#c9d4ea] transition-colors"
           >
-            <ShoppingCart className="w-6 h-6 text-[#043364]" />
-
-            {totalItems > 0 && (
-              <span className="absolute -top-2 -right-2 min-w-[20px] h-5 px-1 flex items-center justify-center rounded-full bg-red-500 text-white text-xs font-semibold shadow">
-                {totalItems}
-              </span>
-            )}
+            {isRTL ? "قائمة الأسعار" : "Quote List"}
+            <div className="relative flex items-center">
+              <ShoppingCart className="w-5 h-5 text-[#17284a]" />
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-[#17284a] text-white text-[12px] font-medium leading-none">
+                  {totalItems}
+                </span>
+              )}
+            </div>
           </LocalizedClientLink>
         </PopoverButton>
 
@@ -161,7 +163,7 @@ const CartDropdown = ({
                                   href={`/products/${item.product_handle}`}
                                 >
                                   {isRTL
-                                    ? (item.product?.metadata?.localizations?.ar
+                                    ? ((item.product?.metadata as any)?.localizations?.ar
                                       ?.title as string) ??
                                     item.product_title
                                     : item.product_title}

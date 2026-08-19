@@ -1,50 +1,26 @@
 'use client'
 
-import React, { Fragment, useMemo, useState } from 'react'
-import { createNavigation } from '@lib/constants'
-import { StoreCollection, StoreProductCategory } from '@medusajs/types'
-import { Box } from '@modules/common/components/box'
-import { Button } from '@modules/common/components/button'
-import {
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogTitle,
-  DialogTrigger,
-} from '@modules/common/components/dialog'
-import Divider from '@modules/common/components/divider'
-import LocalizedClientLink from '@modules/common/components/localized-client-link'
-import * as VisuallyHidden from '@radix-ui/react-visually-hidden'
-import { ArrowLeftIcon } from '@modules/common/icons/arrow-left'
-import X from '@modules/common/icons/x'
-import { ChevronRightIcon } from '@modules/common/icons/chevron-right'
+import { useState, useEffect } from 'react'
 import { BarsIcon } from '@modules/common/icons/bars'
+import X from '@modules/common/icons/x'
+import { ChevronDown, ChevronRight, ChevronLeft } from 'lucide-react'
+import LocalizedClientLink from '@modules/common/components/localized-client-link'
 import { usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl'
-import { ArrowRightIcon } from 'lucide-react'
-import { ChevronLeftIcon } from '@modules/common/icons/chevron-left'
-
-interface CategoryItem {
-  name: string
-  handle: string
-}
 
 const SideMenu = ({
   productCategories,
   collections,
 }: {
-  productCategories: StoreProductCategory[]
-  collections: StoreCollection[]
+  productCategories: any[]
+  collections: any[]
 }) => {
-  const [categoryStack, setCategoryStack] = useState<CategoryItem[]>([])
-  const currentCategory = categoryStack[categoryStack.length - 1] || null
   const [isOpen, setIsOpen] = useState(false)
-
+  const [productsExpanded, setProductsExpanded] = useState(false)
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null)
   const pathname = usePathname()
   const locale = useLocale()
+  const isRTL = locale === 'ar'
 
   const switchTo = (newLocale: string) => {
     const pathWithoutLocale = pathname.replace(`/${locale}`, '')
@@ -52,203 +28,208 @@ const SideMenu = ({
     window.location.href = newPath
   }
 
-  const navigation = useMemo(
-    () => createNavigation(productCategories, collections),
-    [productCategories, collections]
-  )
-
-  const handleCategoryClick = (category: CategoryItem) => {
-    setCategoryStack([
-      ...categoryStack,
-      { name: category.name, handle: category.handle },
-    ])
-  }
-
-  const handleBack = () => {
-    setCategoryStack(categoryStack.slice(0, -1))
-  }
-
-  const handleOpenDialogChange = (open: boolean) => {
-    setIsOpen(open)
-    if (!open) {
-      setCategoryStack([])
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
     }
-  }
-
-  const renderCategories = (categories: any[]) => {
-    return categories.map((item, index) => {
-      const children = item.category_children || []
-      const hasChildren = children.length > 0
-
-      // Localize name and handle
-      const categoryName =
-        locale === 'ar' ? item.name_ar || item.name_en : item.name_en || item.name_ar
-      const categoryHandle =
-        locale === 'ar' ? item.handle_ar || item.handle_en : item.handle_en || item.handle_ar
-
-      const lastCategoryIndex = categories.findLastIndex(
-        (cat) => cat.type === 'parent_category'
-      )
-
-      return (
-        <Fragment key={index}>
-          <Button
-            variant="ghost"
-            className="w-full justify-between"
-            onClick={
-              hasChildren
-                ? () =>
-                  handleCategoryClick({
-                    name: categoryName,
-                    handle: categoryHandle,
-                  })
-                : () => handleOpenDialogChange(false)
-            }
-            asChild={!hasChildren}
-          >
-            {hasChildren ? (
-              <>
-                <span className="flex items-center gap-4">
-                  {item.icon && item.icon}
-                  {categoryName}
-                </span>
-                {locale === 'ar' ? (
-                  <ChevronLeftIcon className="h-5 w-5" />
-                ) : (
-                  <ChevronRightIcon className="h-5 w-5" />
-                )}
-              </>
-            ) : (
-              <LocalizedClientLink href={categoryHandle}>
-                <span className="flex items-center gap-4">
-                  {item.icon && item.icon}
-                  {categoryName}
-                </span>
-              </LocalizedClientLink>
-            )}
-          </Button>
-          {index === lastCategoryIndex && (
-            <Divider className="my-4 -ml-4 w-[calc(100%+2rem)]" />
-          )}
-        </Fragment>
-      )
-    })
-  }
-
-  const getActiveCategories = () => {
-    let currentCategories = [
-      ...(navigation[0]?.category_children || []),
-      ...navigation.slice(1),
-    ]
-
-    for (const category of categoryStack) {
-      const found = currentCategories.find((item) => {
-        const itemName =
-          locale === 'ar' ? item.name_ar || item.name_en : item.name_en || item.name_ar
-        return itemName === category.name
-      })
-
-      if (found?.category_children && found.category_children.length > 0) {
-        currentCategories = found.category_children.map((category) => ({
-          ...category,
-          icon: null,
-        }))
-      } else {
-        break
-      }
+    return () => {
+      document.body.style.overflow = ''
     }
+  }, [isOpen])
 
-    // Map categories to include localized name and handle for rendering
-    return currentCategories.map((item) => ({
-      ...item,
-      name: locale === 'ar' ? item.name_ar || item.name_en : item.name_en || item.name_ar,
-      handle:
-        locale === 'ar' ? item.handle_ar || item.handle_en : item.handle_en || item.handle_ar,
-    }))
+  const handleClose = () => {
+    setIsOpen(false)
+    setProductsExpanded(false)
+    setExpandedCategory(null)
   }
 
-  const shouldRenderButton =
-    !currentCategory || currentCategory.name !== 'Collections'
+  const navLinks = [
+    { href: '/', labelEn: 'Homepage', labelAr: 'الرئيسية' },
+    { href: '/categories/integrated-solutions', labelEn: 'Curated Solutions', labelAr: 'الحلول المتكاملة' },
+    { href: '/our-services', labelEn: 'Projects', labelAr: 'المشاريع' },
+    { href: '/about-us', labelEn: 'About Us', labelAr: 'من نحن' },
+  ]
+
+  const getCatName = (cat: any) =>
+    isRTL ? cat.name_ar || cat.name_en : cat.name_en || cat.name_ar
+
+  const getCatHandle = (cat: any) =>
+    isRTL ? cat.handle_ar || cat.handle_en : cat.handle_en || cat.handle_ar
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenDialogChange}>
-      <DialogTrigger asChild>
-        <Button
-          variant="icon"
-          withIcon
-          className="flex h-auto !p-2 xsmall:!p-3.5 large:hidden"
+    <>
+      <button
+        onClick={() => setIsOpen(true)}
+        className="flex items-center justify-center p-2 md:hidden"
+        aria-label="Open menu"
+      >
+        <BarsIcon />
+      </button>
+
+      {/* Overlay */}
+      <div
+        className={`fixed inset-0 z-[100] transition-all duration-300 ${
+          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+        style={{ visibility: isOpen ? 'visible' : 'hidden' }}
+      >
+        {/* Backdrop */}
+        <div
+          className="absolute inset-0 bg-black/50 transition-opacity duration-300"
+          onClick={handleClose}
+        />
+
+        {/* Panel */}
+        <div
+          className={`absolute top-0 ${isRTL ? 'right-0' : 'left-0'} h-full w-[90%] bg-white shadow-2xl transition-transform duration-300 ease-out flex flex-col ${
+            isOpen
+              ? 'translate-x-0'
+              : isRTL
+                ? 'translate-x-full'
+                : '-translate-x-full'
+          }`}
+          dir={isRTL ? 'rtl' : 'ltr'}
         >
-          <BarsIcon />
-        </Button>
-      </DialogTrigger>
-      <DialogPortal>
-        <DialogOverlay />
-        <DialogContent
-          className="!max-h-full !max-w-full !rounded-none"
-          aria-describedby={undefined}
-          dir={locale === 'ar' ? 'rtl' : 'ltr'}
-        >
-          <DialogHeader
-            dir={locale === 'ar' ? 'rtl' : 'ltr'}
-            className="flex items-center gap-4 !p-4 text-xl text-basic-primary small:text-2xl"
-          >
-            {currentCategory && (
-              <Button variant="tonal" withIcon size="sm" onClick={handleBack}>
-                {locale === 'ar' ? (
-                  <ArrowRightIcon className="h-5 w-5" direction="left" />
-                ) : (
-                  <ArrowLeftIcon className="h-5 w-5" direction="right" />
-                )}
-              </Button>
-            )}
-            {currentCategory?.name || (locale === 'ar' ? 'القائمة' : 'Menu')}
-            <Button
-              onClick={() => handleOpenDialogChange(false)}
-              variant="icon"
-              withIcon
-              size="sm"
-              className={`${locale === 'ar' ? 'mr-auto' : 'ml-auto'} p-2 `}
+          {/* Header */}
+          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
+            <span className="text-xl font-bold text-[#17284a]">
+              {isRTL ? 'القائمة' : 'Menu'}
+            </span>
+            <button
+              onClick={handleClose}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              aria-label="Close menu"
             >
               <X />
-            </Button>
-          </DialogHeader>
-          <VisuallyHidden.Root>
-            <DialogTitle>{locale === 'ar' ? 'القائمة' : 'Menu'}</DialogTitle>
-          </VisuallyHidden.Root>
-          <DialogBody className="overflow-y-auto p-4 small:p-5">
-            <Box className="flex flex-col">
-              {shouldRenderButton && (
-                <Button
-                  variant="tonal"
-                  className="mb-4 w-max"
-                  size="sm"
-                  onClick={() => handleOpenDialogChange(false)}
-                  asChild={!!currentCategory}
-                >
-                  <LocalizedClientLink
-                    href={
-                      currentCategory ? `${currentCategory.handle}` : `/store`
-                    }
-                  >
-                    {locale === 'ar' ? 'تسوق الكل' : 'Shop all'}{"  "}
-                    {currentCategory && currentCategory.name !== 'store'
-                      ? currentCategory.name
-                      : ''}
-                  </LocalizedClientLink>
-                </Button>
-              )}
-              {renderCategories(getActiveCategories())}
-            </Box>
-            <button
-              onClick={() => switchTo(locale === 'en' ? 'ar' : 'en')}
-              className="mt-4 w-full rounded-md border border-ui-border-base bg-ui-bg-base px-4 py-2 text-sm font-semibold text-ui-fg-base shadow-sm transition-colors duration-200 hover:bg-ui-bg-interactive hover:text-ui-fg-interactive hover:text-white"
-            >
-              {locale === 'en' ? 'تغيير إلى العربية' : 'Change to English'}
             </button>
-          </DialogBody>
-        </DialogContent>
-      </DialogPortal>
-    </Dialog>
+          </div>
+
+          {/* Body */}
+          <div className="flex-1 overflow-y-auto px-5 py-4">
+            {/* Main Nav Links */}
+            <nav className="flex flex-col">
+              {navLinks.map((link, idx) => (
+                <LocalizedClientLink
+                  key={idx}
+                  href={link.href}
+                  onClick={handleClose}
+                  className="py-3 text-[18px] font-medium text-black hover:text-[#17284a] transition-colors border-b border-gray-100"
+                >
+                  {isRTL ? link.labelAr : link.labelEn}
+                </LocalizedClientLink>
+              ))}
+
+              {/* Products with expandable categories */}
+              <div className="border-b border-gray-100">
+                <button
+                  onClick={() => setProductsExpanded(!productsExpanded)}
+                  className="w-full flex items-center justify-between py-3 text-[18px] font-medium text-black hover:text-[#17284a] transition-colors"
+                >
+                  {isRTL ? 'المنتجات' : 'Products'}
+                  <ChevronDown
+                    className={`w-5 h-5 transition-transform duration-200 ${
+                      productsExpanded ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+
+                {/* Expandable categories list */}
+                <div
+                  className={`overflow-hidden transition-all duration-300 ease-out ${
+                    productsExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
+                  }`}
+                >
+                  <div className="py-2 pl-4 flex flex-col gap-1">
+                    {/* Shop all link */}
+                    <LocalizedClientLink
+                      href="/store"
+                      onClick={handleClose}
+                      className="py-2 text-[16px] font-bold text-[#17284a] hover:underline"
+                    >
+                      {isRTL ? 'تسوق الكل' : 'Shop All'}
+                    </LocalizedClientLink>
+
+                    {/* Category list */}
+                    {productCategories.map((cat: any) => {
+                      const catName = getCatName(cat)
+                      const catHandle = getCatHandle(cat)
+                      const children = cat.category_children || []
+                      const hasChildren = children.length > 0
+                      const isExpanded = expandedCategory === cat.id
+
+                      return (
+                        <div key={cat.id}>
+                          {hasChildren ? (
+                            <>
+                              <button
+                                onClick={() =>
+                                  setExpandedCategory(isExpanded ? null : cat.id)
+                                }
+                                className="w-full flex items-center justify-between py-2 text-[16px] font-medium text-gray-800 hover:text-[#17284a] transition-colors"
+                              >
+                                <span>{catName}</span>
+                                {isRTL ? (
+                                  <ChevronLeft className="w-4 h-4" />
+                                ) : (
+                                  <ChevronRight className="w-4 h-4" />
+                                )}
+                              </button>
+                              <div
+                                className={`overflow-hidden transition-all duration-300 ease-out ${
+                                  isExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+                                }`}
+                              >
+                                <div className={`flex flex-col gap-1 ${isRTL ? 'pr-4' : 'pl-4'}`}>
+                                  <LocalizedClientLink
+                                    href={`/categories/${catHandle}`}
+                                    onClick={handleClose}
+                                    className="py-1.5 text-[15px] text-gray-600 hover:text-[#17284a] transition-colors"
+                                  >
+                                    {isRTL ? 'عرض الكل' : 'View All'}
+                                  </LocalizedClientLink>
+                                  {children.map((child: any) => (
+                                    <LocalizedClientLink
+                                      key={child.id}
+                                      href={`/categories/${getCatHandle(child)}`}
+                                      onClick={handleClose}
+                                      className="py-1.5 text-[15px] text-gray-600 hover:text-[#17284a] transition-colors"
+                                    >
+                                      {getCatName(child)}
+                                    </LocalizedClientLink>
+                                  ))}
+                                </div>
+                              </div>
+                            </>
+                          ) : (
+                            <LocalizedClientLink
+                              href={`/categories/${catHandle}`}
+                              onClick={handleClose}
+                              className="block py-2 text-[16px] font-medium text-gray-800 hover:text-[#17284a] transition-colors"
+                            >
+                              {catName}
+                            </LocalizedClientLink>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+            </nav>
+
+            {/* Language Switch */}
+            <button
+              onClick={() => switchTo(isRTL ? 'en' : 'ar')}
+              className="mt-6 w-full rounded-lg border border-gray-200 px-4 py-3 text-[15px] font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              {isRTL ? 'Change to English' : 'تغيير إلى العربية'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
   )
 }
 
