@@ -32,8 +32,7 @@ export default async function Nav() {
 
   return (
     <>
-      <TopNav />
-      <ScrollHeader isRTL={isRTL}>
+      <ScrollHeader isRTL={isRTL} topNav={<TopNav />}>
             {/* Mobile: SideMenu + Logo */}
             <div className="flex items-center gap-2 md:hidden">
               <SideMenu productCategories={productCategories as any} collections={collections} />

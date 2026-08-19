@@ -16,10 +16,10 @@ export default function TopNav() {
 
   return (
     <div
-      className="hidden md:block w-full bg-[#c1cee8] top-0 z-[60] overflow-hidden"
+      className="w-full bg-[#c1cee8] overflow-hidden"
       dir={isRTL ? "rtl" : "ltr"}
     >
-      <div className="content-container mx-auto flex items-center justify-end gap-7 py-1.5">
+      <div className="content-container mx-auto flex items-center justify-between md:justify-end gap-4 sm:gap-7 py-1.5">
         <LocalizedClientLink
           href="/faq"
           className="text-[14px] font-medium text-black hover:text-[#17284a] transition-colors"

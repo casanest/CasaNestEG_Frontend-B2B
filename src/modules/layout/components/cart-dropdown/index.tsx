@@ -14,7 +14,7 @@ import LineItemOptions from "@modules/common/components/line-item-options"
 import LineItemPrice from "@modules/common/components/line-item-price"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Thumbnail from "@modules/products/components/thumbnail"
-import { ShoppingCart } from "lucide-react"
+import { FilePlus } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { Fragment, useEffect, useRef, useState } from "react"
 
@@ -87,9 +87,9 @@ const CartDropdown = ({
             data-testid="nav-cart-link"
             className="relative flex items-center gap-2 bg-[#dce3f0] px-4 py-2 rounded-xl text-[16px] font-medium text-black hover:bg-[#c9d4ea] transition-colors"
           >
-            {isRTL ? "قائمة الأسعار" : "Quote List"}
+            {isRTL ? "عروض الأسعار" : "Quote List"}
             <div className="relative flex items-center">
-              <ShoppingCart className="w-5 h-5 text-[#17284a]" />
+              <FilePlus className="w-5 h-5 text-[#17284a]" />
               {totalItems > 0 && (
                 <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-[#17284a] text-white text-[12px] font-medium leading-none">
                   {totalItems}

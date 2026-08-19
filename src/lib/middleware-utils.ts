@@ -386,9 +386,12 @@ function collectMeilisearchConnectOrigins(): string[] {
  * Create security headers for all responses
  */
 export function createSecurityHeaders(): Record<string, string> {
+  if (process.env.NODE_ENV !== "production") {
+    return {}
+  }
+
   const meilisearchOrigins = collectMeilisearchConnectOrigins().join(" ")
   const connectSrcProduction = `'self' https://api.paymob.com https://accept.paymob.com ${meilisearchOrigins}`
-  const connectSrcDevelopment = `'self' https://api.paymob.com https://accept.paymob.com ws: wss: ${meilisearchOrigins}`
 
   return {
     "X-Content-Type-Options": "nosniff",
@@ -398,9 +401,7 @@ export function createSecurityHeaders(): Record<string, string> {
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
     "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
     "Content-Security-Policy":
-      process.env.NODE_ENV === "production"
-        ? `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src ${connectSrcProduction};`
-        : `default-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src ${connectSrcDevelopment};`,
+      `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src ${connectSrcProduction};`,
   }
 }
 
