@@ -2,6 +2,7 @@ import { getBaseURL } from "@/lib/util/env";
 import type { Metadata } from "next";
 import {
   Cairo,
+  Caveat,
   Inter,
   JetBrains_Mono,
   Plus_Jakarta_Sans,
@@ -35,6 +36,12 @@ const cairo = Cairo({
   variable: "--font-cairo",
   subsets: ["arabic", "latin"],
   weight: ["300", "400", "500", "600", "700"],
+})
+
+const caveat = Caveat({
+  variable: "--font-caveat",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 })
 
 export const metadata: Metadata = {
@@ -111,7 +118,7 @@ export default function RootLayout({
      <html lang="ar" data-mode="light">
       {/* Provide the intl context */}
       {/* <NextIntlClientProvider locale={locale} messages={messages}> */}
-        <body className={cairo.className}>
+        <body className={`${cairo.className} ${caveat.variable}`}>
           <main className="relative">{children}</main>
         </body>
       {/* </NextIntlClientProvider> */}

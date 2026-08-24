@@ -1,133 +1,115 @@
 "use client"
 
-import Back from "@modules/common/icons/back"
-import FastDelivery from "@modules/common/icons/fast-delivery"
-import Refresh from "@modules/common/icons/refresh"
-
-import Accordion from "./accordion"
-import { HttpTypes } from "@medusajs/types"
+import { useState } from "react"
 import { useLocale } from "next-intl"
+import { FileText } from "lucide-react"
 
-type ProductTabsProps = {
-  product: HttpTypes.StoreProduct
+type SpecItem = {
+  label: string
+  value: string
 }
 
-const ProductTabs = ({ product }: ProductTabsProps) => {
+type ProductTabsProps = {
+  specs: SpecItem[]
+  description: string
+  documentUrl?: string | null
+}
+
+const ProductTabs = ({ specs, description, documentUrl }: ProductTabsProps) => {
   const locale = useLocale()
+  const isRTL = locale === "ar"
+  const [activeTab, setActiveTab] = useState<"specs" | "description" | "documents">("specs")
+
   const tabs = [
-    {
-      label: locale === "ar" ? "معلومات المنتج" : "Product Information",
-      component: <ProductInfoTab product={product} />,
-    },
-    {
-      label: locale === "ar" ? "معلومات الشحن" : "Shipping Information",
-      component: <ShippingInfoTab />,
-    },
+    { id: "specs" as const, label: isRTL ? "المواصفات" : "Specs" },
+    { id: "description" as const, label: isRTL ? "الوصف" : "Description" },
+    { id: "documents" as const, label: isRTL ? "المستندات" : "Documents" },
   ]
+
+  const visibleSpecs = specs.filter(
+    (spec) => typeof spec.value === "string" && spec.value.trim() !== "-"
+  )
 
   return (
     <div className="w-full">
-      <Accordion type="multiple">
-        {tabs.map((tab, i) => (
-          <Accordion.Item
-            key={i}
-            title={tab.label}
-            headingSize="medium"
-            value={tab.label}
-          // className="text-[#043364]"
+      {/* Tab Header */}
+      <div className="flex items-start border-b border-[#e5e7eb] w-full">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`px-5 pt-2.5 pb-3 text-[14px] font-bold leading-[1.5] transition-colors ${
+              activeTab === tab.id
+                ? "text-[#17284a] border-b-[3px] border-[#17284a]"
+                : "text-[#707176] hover:text-[#17284a]"
+            }`}
           >
-            {tab.component}
-          </Accordion.Item>
+            {tab.label}
+          </button>
         ))}
-      </Accordion>
-    </div>
-  )
-}
-
-const ProductInfoTab = ({ product }: ProductTabsProps) => {
-  const locale = useLocale()
-  return (
-    <div className="text-small-regular py-8">
-      <div className="grid grid-cols-2 gap-x-8">
-        <div className="flex flex-col gap-y-4">
-          <div>
-            <span className="font-semibold">{locale === "ar" ? "المواد" : "Materials"}</span>
-            <p>{product.material ? product.material : "-"}</p>
-          </div>
-          <div>
-            <span className="font-semibold">{locale === "ar" ? "دولة الإصدار" : "Country of origin"}</span>
-            <p>{product.origin_country ? product.origin_country : "-"}</p>
-          </div>
-          <div>
-            <span className="font-semibold">{locale === "ar" ? "نوع المنتج" : "Product type"}</span>
-            <p>{product.type ? product.type.value : "-"}</p>
-          </div>
-        </div>
-        <div className="flex flex-col gap-y-4">
-          <div>
-            <span className="font-semibold">{locale === "ar" ? "الوزن" : "Weight"}</span>
-            <p>{product.weight ? `${product.weight} g` : "-"}</p>
-          </div>
-          <div>
-            <span className="font-semibold">{locale === "ar" ? "الإبعادات" : "Dimensions"}</span>
-            <p>
-              {product.length && product.width && product.height
-                ? `${product.length}L x ${product.width}W x ${product.height}H`
-                : "-"}
-            </p>
-          </div>
-        </div>
       </div>
-    </div>
-  )
-}
 
-const ShippingInfoTab = () => {
-  const locale = useLocale()
-  return (
-    <div className="text-small-regular py-8">
-      <div className="grid grid-cols-1 gap-y-8">
-        <div className="flex items-start gap-x-2">
-          <FastDelivery />
-          <div>
-            <span className="font-semibold">
-              {locale === "ar" ? "شحن لجميع المحافظات" : "Nationwide Shipping"}
-            </span>
-            <p className="max-w-sm">
-              {locale === "ar"
-                ? "توصيل سريع إلى جميع أنحاء مصر مع متابعة مستمرة لحالة الشحنة."
-                : "Fast delivery across all Egyptian governorates with continuous shipment tracking."}
-            </p>
+      {/* Tab Content */}
+      <div className="pt-[24px]">
+        {activeTab === "specs" && (
+          <div className="flex flex-col">
+            {visibleSpecs.length > 0 ? (
+              visibleSpecs.map((spec, i) => (
+                <div
+                  key={spec.label}
+                  className={`flex items-center justify-between gap-4 px-4 py-3.5 min-h-[49px] ${
+                    i % 2 === 0 ? "bg-[#f8f9fa]" : "bg-white"
+                  }`}
+                >
+                  <span className="text-[14px] font-medium text-[#5d5d61]">
+                    {spec.label}
+                  </span>
+                  <span className="text-[14px] font-medium text-[#1c1b1c] text-right">
+                    {spec.value}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <p className="text-[14px] text-[#707176] py-4">
+                {isRTL ? "لا توجد مواصفات متاحة" : "No specifications available"}
+              </p>
+            )}
           </div>
-        </div>
+        )}
 
-        <div className="flex items-start gap-x-2">
-          <Refresh />
-          <div>
-            <span className="font-semibold">
-              {locale === "ar" ? "استبدال سهل للمنتجات" : "Easy Product Exchange"}
-            </span>
-            <p className="max-w-sm">
-              {locale === "ar"
-                ? "في حالة وجود مشكلة بالمنتج أو عدم ملاءمته، يمكن طلب الاستبدال وفقًا لسياسة المتجر."
-                : "If there is an issue with the product or it is not suitable, you can request an exchange according to our store policy."}
-            </p>
+        {activeTab === "description" && (
+          <div className="py-2">
+            {description ? (
+              <p className="text-[14px] leading-[1.5] text-[#5d5d61] whitespace-pre-line">
+                {description}
+              </p>
+            ) : (
+              <p className="text-[14px] text-[#707176]">
+                {isRTL ? "لا يوجد وصف متاح" : "No description available"}
+              </p>
+            )}
           </div>
-        </div>
+        )}
 
-        <div className="flex items-start gap-x-2">
-          <Back />
-          <div>
-            <span className="font-semibold">
-              {locale === "ar" ? "استرجاع مرن" : "Flexible Returns"}
-            </span>
-            <p className="max-w-sm">
-              {locale === "ar"
-                ? "نوفر إمكانية الاسترجاع للمنتجات المؤهلة طبقًا لشروط وسياسة الاسترجاع الخاصة بكل منتج."
-                : "Eligible products can be returned according to the return terms and policy applicable to each product."}
-            </p>
+        {activeTab === "documents" && (
+          <div className="py-2">
+            {documentUrl ? (
+              <a
+                href={documentUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-[14px] font-medium text-[#17284a] hover:underline"
+              >
+                <FileText className="w-4 h-4 text-[#17284a]" />
+                {isRTL ? "تحميل المستند" : "Download Document"}
+              </a>
+            ) : (
+              <p className="text-[14px] text-[#707176]">
+                {isRTL ? "لا توجد مستندات متاحة" : "No documents available"}
+              </p>
+            )}
           </div>
-        </div>
+        )}
       </div>
     </div>
   )

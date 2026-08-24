@@ -66,7 +66,7 @@ export default async function Nav() {
                   width={161}
                   height={56}
                   priority
-                  style={{ width: "auto", height: "auto" }}
+                  style={{ width: 161, height: 56, objectFit: "contain" }}
                 />
               </LocalizedClientLink>
             </div>

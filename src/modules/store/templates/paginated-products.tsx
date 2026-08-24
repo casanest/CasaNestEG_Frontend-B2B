@@ -17,6 +17,7 @@ type PaginatedProductsParams = {
   // Custom filter parameters
   inStock?: string
   onSale?: string
+  madeToOrder?: string
   price?: string
   q?: string
   // Variant-based filters
@@ -68,6 +69,10 @@ export default async function PaginatedProducts({
     
     if (searchParams.onSale === 'true') {
       queryParams.onSale = 'true'
+    }
+    
+    if (searchParams.madeToOrder === 'true') {
+      queryParams.madeToOrder = 'true'
     }
     
     if (searchParams.price && typeof searchParams.price === 'string') {
@@ -129,7 +134,7 @@ export default async function PaginatedProducts({
   return (
     <>
       <ul
-        className="grid grid-cols-2 w-full xs:grid-cols-1 small:grid-cols-3 medium:grid-cols-4 gap-x-4 gap-y-4"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-5 gap-y-8"
         data-testid="products-list"
       >
         {products.map((p) => {

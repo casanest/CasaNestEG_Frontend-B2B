@@ -1,16 +1,15 @@
 import { Dialog, Transition } from "@headlessui/react"
-import { Button, clx } from "@medusajs/ui"
+import { clx } from "@medusajs/ui"
 import React, { Fragment, useMemo } from "react"
 import { useLocale } from "next-intl"
+import { Minus, Plus } from "lucide-react"
 
 import useToggleState from "@lib/hooks/use-toggle-state"
-import ChevronDown from "@modules/common/icons/chevron-down"
 import X from "@modules/common/icons/x"
 
 import { getProductPrice } from "@lib/util/get-product-price"
 import OptionSelect from "./option-select"
 import { HttpTypes } from "@medusajs/types"
-import { isSimpleProduct } from "@lib/util/product"
 
 type MobileActionsProps = {
   product: HttpTypes.StoreProduct
@@ -20,8 +19,10 @@ type MobileActionsProps = {
   inStock?: boolean
   handleAddToCart: () => void
   isAdding?: boolean
-  show: boolean
   optionsDisabled: boolean
+  quantity: number
+  onQuantityChange: (q: number) => void
+  minOrderQty: number
 }
 
 const MobileActions: React.FC<MobileActionsProps> = ({
@@ -32,8 +33,10 @@ const MobileActions: React.FC<MobileActionsProps> = ({
   inStock,
   handleAddToCart,
   isAdding,
-  show,
   optionsDisabled,
+  quantity,
+  onQuantityChange,
+  minOrderQty,
 }) => {
   const locale = useLocale()
   const isRTL = locale === "ar"
@@ -49,105 +52,96 @@ const MobileActions: React.FC<MobileActionsProps> = ({
       return null
     }
     const { variantPrice, cheapestPrice } = price
-
     return variantPrice || cheapestPrice || null
   }, [price])
 
-  const isSimple = isSimpleProduct(product)
+  const mainNumber = selectedPrice?.calculated_price_number ?? 0
+  const formattedNumber = mainNumber.toLocaleString(isRTL ? "ar-EG" : "en-US")
+  const decimalPart = mainNumber % 1 === 0 ? ".00" : ""
+  const isSale = selectedPrice?.price_type === "sale"
 
   return (
     <>
-      <div
-        className={clx("lg:hidden inset-x-0 bottom-0 fixed z-50", {
-          "pointer-events-none": !show,
-        })}
-      >
-        <Transition
-          as={Fragment}
-          show={show}
-          enter="ease-in-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-300"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div
-            className="bg-white flex flex-col gap-y-3 justify-center items-center text-large-regular p-4 h-full w-full border-t border-gray-200"
-            data-testid="mobile-actions"
-          >
-            <div className="flex items-center gap-x-2">
-              <span data-testid="mobile-title">
-                {isRTL
-                  ? (product.metadata?.localizations?.ar.title as string) ?? product.title
-                  : product.title}
+      {/* Fixed bottom bar — always visible on mobile product page */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-[#e5e7eb] shadow-[0_-4px_6px_rgba(0,0,0,0.05)] px-4 py-3 flex flex-col gap-2">
+        {/* Row 1: Price + Quantity */}
+        <div className="flex items-center justify-between gap-4">
+          {/* Price Column */}
+          <div className="flex flex-col gap-0.5 shrink-0">
+            <div className="flex items-baseline gap-0.5 text-[#17284a]">
+              <span className="text-[12px] font-medium">
+                {isRTL ? "ج.م" : "EGP"}
               </span>
-              <span>—</span>
-              {selectedPrice ? (
-                <div className="flex items-end gap-x-2 text-ui-fg-base">
-                  {selectedPrice.price_type === "sale" && (
-                    <p>
-                      <span className="line-through text-small-regular">
-                        {selectedPrice.original_price}
-                      </span>
-                    </p>
-                  )}
-                  <span
-                    className={clx({
-                      "text-ui-fg-interactive":
-                        selectedPrice.price_type === "sale",
-                    })}
-                  >
-                    {selectedPrice.calculated_price}
-                  </span>
-                </div>
-              ) : (
-                <div></div>
-              )}
+              <span className="text-[20px] font-bold leading-[1.4]">
+                {formattedNumber}
+              </span>
+              <span className="text-[12px] font-medium">{decimalPart}</span>
             </div>
-            <div className={clx("grid grid-cols-2 w-full gap-x-4", {
-              "!grid-cols-1": isSimple
-            })}>
-              {!isSimple && <Button
-                onClick={open}
-                variant="secondary"
-                className="w-full bg-[#043364] text-white hover:bg-[#093964]"
-                data-testid="mobile-actions-button"
-              >
-                <div className="flex items-center justify-between w-full">
-                  <span>
-                    {variant
-                      ? Object.values(options).join(" / ")
-                      : isRTL
-                      ? "اختر الخيارات"
-                      : "Select Options"}
-                  </span>
-                  <ChevronDown />
-                </div>
-              </Button>}
-              <Button
-                onClick={handleAddToCart}
-                disabled={!inStock || !variant}
-                className="w-full bg-[#043364] text-white hover:bg-[#093964]"
-                isLoading={isAdding}
-                data-testid="mobile-cart-button"
-              >
-                {!variant
-                  ? isRTL
-                    ? "اختر النوع"
-                    : "Select variant"
-                  : !inStock
-                  ? isRTL
-                    ? "غير متوفر"
-                    : "Out of stock"
-                  : isRTL
-                  ? "اضف الى السلة"
-                  : "Add to cart"}
-              </Button>
-            </div>
+            {isSale && selectedPrice?.original_price && (
+              <span className="text-[12px] text-[#707176] line-through">
+                {selectedPrice.original_price}
+              </span>
+            )}
           </div>
-        </Transition>
+
+          {/* Quantity Box */}
+          <div className="flex items-center gap-3 rounded-[8px] border border-[#e5e7eb] bg-white px-2 py-1.5 shrink-0">
+            <button
+              type="button"
+              onClick={() => onQuantityChange(Math.max(minOrderQty, quantity - 1))}
+              className="text-[#707176] hover:text-[#17284a] transition-colors"
+            >
+              <Minus className="w-4 h-4" />
+            </button>
+            <span className="min-w-[1.5rem] text-center text-[14px] font-bold text-[#1c1b1c]">
+              {quantity}
+            </span>
+            <button
+              type="button"
+              onClick={() => onQuantityChange(Math.min(99, quantity + 1))}
+              className="text-[#707176] hover:text-[#17284a] transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Row 2: Two stacked buttons */}
+        <div className="flex flex-col gap-2">
+          {/* Add to Quote List */}
+          <button
+            onClick={handleAddToCart}
+            disabled={!inStock || !variant || isAdding}
+            className={clx(
+              "w-full h-[44px] rounded-[10px] border border-[#17284a] text-[#17284a] text-[14px] font-medium flex items-center justify-center transition-colors hover:bg-[#f3f4f6]",
+              isRTL && "tracking-[0.05em]"
+            )}
+            data-testid="mobile-add-to-quote"
+          >
+            {isRTL ? "اضافة الي عرض سعر" : "Add to Quote"}
+          </button>
+          {/* Send Quote Request */}
+          <button
+            onClick={handleAddToCart}
+            disabled={!inStock || !variant || isAdding}
+            className={clx(
+              "w-full h-[44px] rounded-[10px] bg-[#17284a] text-white text-[14px] font-medium flex items-center justify-center transition-colors hover:bg-[#0f1d35]",
+              isRTL && "tracking-[0.05em]"
+            )}
+            data-testid="mobile-cart-button"
+          >
+            {!variant
+              ? isRTL ? "اختر النوع" : "Select variant"
+              : !inStock
+                ? isRTL ? "غير متوفر" : "Out of stock"
+                : isAdding
+                  ? isRTL ? "جارٍ..." : "Sending..."
+                  : isRTL ? "ارسال طلب عرض سعر" : "Send Quote Request"}
+          </button>
+        </div>
       </div>
+
+      {/* Options Modal */}
       <Transition appear show={state} as={Fragment}>
         <Dialog as="div" className="relative z-[75]" onClose={close}>
           <Transition.Child

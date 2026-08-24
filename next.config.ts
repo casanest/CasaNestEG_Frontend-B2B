@@ -19,15 +19,22 @@ const nextConfig: NextConfig = {
   //   ],
   // },
 
+  // images: {
+  //   remotePatterns: [
+  //     {
+  //       protocol: "https",
+  //       hostname: "dashboard.casanesteg.com",
+  //     },
+  //     {
+  //       protocol: "https",
+  //       hostname: "media.casanesteg.com",
+  //     },
+  //   ]
+  // },
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "dashboard.casanesteg.com",
-      }
-    ]
+    unoptimized: true,
   },
-
+  
   typescript: {
     ignoreBuildErrors: true,
   },

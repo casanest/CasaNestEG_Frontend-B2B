@@ -3,15 +3,16 @@ import React, { Suspense } from "react"
 import ImageGallery from "@modules/products/components/image-gallery"
 import ProductActions from "@modules/products/components/product-actions"
 import RelatedProducts from "@modules/products/components/related-products"
+import RecentlyViewedProducts from "@modules/products/components/recently-viewed-products"
+import RecentlyViewedTracker from "@modules/products/components/recently-viewed-tracker"
 import ProductInfo from "@modules/products/templates/product-info"
+import ProductTabs from "@modules/products/components/product-tabs"
 import SkeletonRelatedProducts from "@modules/skeletons/templates/skeleton-related-products"
 import { notFound } from "next/navigation"
 import ProductActionsWrapper from "./product-actions-wrapper"
 import { HttpTypes } from "@medusajs/types"
 import { getLocale } from "next-intl/server"
-import Refresh from "@/modules/common/icons/refresh"
-import Back from "@/modules/common/icons/back"
-import FastDelivery from "@/modules/common/icons/fast-delivery"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 type ProductTemplateProps = {
   product: HttpTypes.StoreProduct
@@ -37,6 +38,9 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
     product.description ||
     ""
 
+  const title =
+    (isRTL ? localized?.ar?.title : product.title) || product.title
+
   const specs = [
     {
       label: isRTL ? "الخامة" : "Material",
@@ -54,156 +58,142 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
       label: isRTL ? "العمق" : "Depth",
       value: product.length ? `${product.length} cm` : "-",
     },
-    // {
-    //   label: isRTL ? "مدة التوصيل" : "Delivery time",
-    //   value: (product.metadata as any)?.delivery_time || "-",
-    // },
-    // {
-    //   label: isRTL ? "رمز المنتج" : "SKU",
-    //   value: product.variants?.[0]?.sku || "-",
-    // },
   ]
 
-  const visibleSpecs = specs.filter(
-    (spec) => typeof spec.value === "string" && spec.value.trim() !== "-"
-  )
+  // Build specs from product metadata (skip internal/structural keys)
+  const metadataSkipKeys = [
+    "localizations",
+    "is_new",
+    "title_ar",
+    "title_en",
+    "description_ar",
+    "description_en",
+    "min_order_qty",
+    "MOQ",
+    "localization_updated_at",
+    "warranty",
+    "moq",
+    "document_url",
+  ]
+  if (product.metadata) {
+    for (const [key, value] of Object.entries(product.metadata)) {
+      if (metadataSkipKeys.includes(key)) continue
+      if (typeof value === "object" && value !== null) continue
+      if (value === null || value === undefined || value === "") continue
+
+      const label = key
+        .split(/[_\s]+/)
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+        .join(" ")
+
+      specs.push({
+        label,
+        value: String(value),
+      })
+    }
+  }
+
+  const categoryTitle = product.categories?.[0]?.name || product.collection?.title || ""
+  const categoryHandle = product.categories?.[0]?.handle || (product.collection ? `/collections/${product.collection.handle}` : "/products")
 
   return (
     <>
       <div
         dir={locale === "ar" ? "rtl" : "ltr"}
-        className="content-container  py-8 lg:py-10"
         data-testid="product-container"
       >
-        <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-10 lg:gap-16 items-start">
-          <div className="order-2 lg:order-1  lg:sticky lg:top-24 self-start">
-            <div className="flex flex-col gap-8">
-              <ProductInfo product={product} />
-              <Suspense
-                fallback={
-                  <ProductActions
-                    disabled={true}
-                    product={product}
-                    region={region}
-                  />
-                }
+        {/* Breadcrumbs */}
+        <div className="flex flex-wrap items-center gap-1.5 px-4 lg:px-[60px] py-4 text-[12px] lg:text-[14px]">
+          <LocalizedClientLink href="/" className="text-[#707176] hover:text-[#17284a] transition-colors">
+            {isRTL ? "الرئيسية" : "Home"}
+          </LocalizedClientLink>
+          <span className="text-[#707176]">/</span>
+          <LocalizedClientLink href="/products" className="text-[#707176] hover:text-[#17284a] transition-colors">
+            {isRTL ? "المنتجات" : "Products"}
+          </LocalizedClientLink>
+          {categoryTitle && (
+            <>
+              <span className="text-[#707176]">/</span>
+              <LocalizedClientLink
+                href={categoryHandle.startsWith("/") ? categoryHandle : `/categories/${categoryHandle}`}
+                className="text-[#707176] hover:text-[#17284a] transition-colors"
               >
-                <ProductActionsWrapper id={product.id} region={region} />
-              </Suspense>
+                {categoryTitle}
+              </LocalizedClientLink>
+            </>
+          )}
+          <span className="text-[#707176]">/</span>
+          <span className="font-bold text-[#17284a]">{title}</span>
+        </div>
 
-              {description && (
-                <section className="">
-                  <h3
-                    className="mb-4 text-xl font-bold text-[#043364]"
-                    data-testid="product-description-title"
-                  >
-                    {isRTL ? "الوصف" : "Description"}
-                  </h3>
-
-                  <div
-                    className="whitespace-pre-line text-[18px] leading-8 "
-                    data-testid="product-description"
-                  >
-                    {description}
-                  </div>
-                </section>
-              )}
-              {visibleSpecs.length > 0 && (
-                <div className="flex flex-col gap-3">
-                  <h3 
-                    className="mb-4 text-xl font-bold text-[#043364]"
-                    data-testid="product-specs-title"
-                  >
-                    {isRTL ? "المواصفات" : "Specifications"}
-                  </h3>
-                  <ul className="grid gap-2 text-sm text-slate-600">
-                    {visibleSpecs.map((spec) => (
-                      <li
-                        key={spec.label}
-                        className="flex items-center justify-between gap-4 rounded-xl border border-slate-100 bg-white px-4 py-3 shadow-[0_10px_30px_-20px_rgba(2,8,23,0.4)]"
-                      >
-                        <span className="font-medium text-slate-500">
-                          {spec.label}
-                        </span>
-                        <span className="font-semibold text-slate-800">
-                          {spec.value}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {/* terms */}
-              <div className="flex flex-col gap-4">
-                <h3 
-                  className="mb-4 text-xl font-bold text-[#043364]"
-                  data-testid="product-terms-title"
-                >
-                  {isRTL ? "الشروط" : "Terms"}
-                </h3>
-                <div className="grid grid-cols-1 gap-y-8">
-                  <div className="flex items-start gap-x-2">
-                    <FastDelivery />
-                    <div>
-                      <span className="font-semibold">
-                        {locale === "ar" ? "شحن لجميع المحافظات" : "Nationwide Shipping"}
-                      </span>
-                      <p className="max-w-sm">
-                        {locale === "ar"
-                          ? "توصيل سريع إلى جميع أنحاء مصر مع متابعة مستمرة لحالة الشحنة."
-                          : "Fast delivery across all Egyptian governorates with continuous shipment tracking."}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-x-2">
-                    <Refresh />
-                    <div>
-                      <span className="font-semibold">
-                        {locale === "ar" ? "استبدال سهل للمنتجات" : "Easy Product Exchange"}
-                      </span>
-                      <p className="max-w-sm">
-                        {locale === "ar"
-                          ? "في حالة وجود مشكلة بالمنتج أو عدم ملاءمته، يمكن طلب الاستبدال وفقًا لسياسة المتجر."
-                          : "If there is an issue with the product or it is not suitable, you can request an exchange according to our store policy."}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-x-2">
-                    <Back />
-                    <div>
-                      <span className="font-semibold">
-                        {locale === "ar" ? "استرجاع مرن" : "Flexible Returns"}
-                      </span>
-                      <p className="max-w-sm">
-                        {locale === "ar"
-                          ? "نوفر إمكانية الاسترجاع للمنتجات المؤهلة طبقًا لشروط وسياسة الاسترجاع الخاصة بكل منتج."
-                          : "Eligible products can be returned according to the return terms and policy applicable to each product."}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          <div className="order-1 lg:order-2">
+        {/* Product Hero - 3 column on desktop */}
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 px-4 lg:px-[60px] pt-5 pb-[160px] lg:pb-[60px]">
+          {/* Gallery Column - Left on desktop */}
+          <div className="lg:w-[520px] shrink-0 lg:sticky lg:top-24 self-start w-full">
             <ImageGallery
               images={product?.images}
               fallbackImage={product?.thumbnail}
             />
           </div>
+
+          {/* Info Column - Middle */}
+          <div className="flex-1 flex flex-col gap-4 lg:gap-6 min-w-0">
+            <ProductInfo product={product} />
+
+            {/* Short Description */}
+            {description && (
+              <p className="text-[16px] leading-[1.5] text-[#707176] max-w-[424px]">
+                {description.length > 120
+                  ? description.slice(0, 120) + "…"
+                  : description}
+              </p>
+            )}
+
+            {/* Tabs: Specs / Description / Documents */}
+            <ProductTabs
+              specs={specs}
+              description={description}
+              documentUrl={(product as any).document_url ?? null}
+            />
+          </div>
+
+          {/* Action Sidebar - Right on desktop, mobile sticky bar rendered inside */}
+          <div className="lg:w-[340px] shrink-0 w-full">
+            <Suspense
+              fallback={
+                <ProductActions
+                  disabled={true}
+                  product={product}
+                  region={region}
+                />
+              }
+            >
+              <ProductActionsWrapper id={product.id} region={region} />
+            </Suspense>
+          </div>
         </div>
       </div>
-      <div
-        className="content-container my-16 small:my-32"
-        data-testid="related-products-container"
-      >
-        <Suspense fallback={<SkeletonRelatedProducts />}>
-          <RelatedProducts product={product} countryCode={countryCode} />
-        </Suspense>
+
+      {/* Track recently viewed product in localStorage */}
+      <RecentlyViewedTracker product={product} />
+
+      {/* Shared grey background section for Recently Viewed + Related Products */}
+      <div className="bg-[#f8f9fa] w-full" dir={locale === "ar" ? "rtl" : "ltr"}>
+        <div className="px-4 lg:px-[60px] py-16 flex flex-col gap-16">
+          {/* Recently Viewed (from localStorage) */}
+          <RecentlyViewedProducts
+            region={region}
+            countryCode={countryCode}
+            currentProductId={product.id}
+          />
+
+          {/* Related Products (from backend: collection/tags) */}
+          <div data-testid="related-products-container">
+            <Suspense fallback={<SkeletonRelatedProducts />}>
+              <RelatedProducts product={product} countryCode={countryCode} />
+            </Suspense>
+          </div>
+        </div>
       </div>
     </>
   )

@@ -41,7 +41,7 @@ export default async function RelatedProducts({
   }).then(({ response }) => {
     return response.products.filter(
       (responseProduct) => responseProduct.id !== product.id
-    )
+    ).slice(0, 8)
   })
 
   if (!products.length) {
@@ -49,25 +49,29 @@ export default async function RelatedProducts({
   }
 
   return (
-    <div dir={locale === "ar" ? "rtl" : "ltr"} className="product-page-constraint text-[#043364]">
-      <div className="flex flex-col items-center text-center mb-16">
-        <span className="text-base-regular  mb-6">
-          {locale === "ar" ? "قد يعجبك أيضًا" : "You might also like"}
+    <div dir={locale === "ar" ? "rtl" : "ltr"} className="w-full">
+      <div className="flex flex-col items-start mb-6">
+        <span className="text-[24px] font-medium text-[#707176] mb-1" style={{ fontFamily: "Caveat, cursive" }}>
+          {locale === "ar" ? "قد يعجبك أيضًا" : "You May Also Like"}
         </span>
-        <p className="text-2xl-regular  max-w-lg">
-          {locale === "ar"
-            ? "اكتشف المزيد من المنتجات التي قد تعجبك"
-            : "Discover more products you might like"}
+        <p className="text-[28px] font-bold text-[#17284a]">
+          {locale === "ar" ? "منتجات ذات صلة" : "Related Products"}
         </p>
       </div>
 
-      <ul className="grid grid-cols-2 small:grid-cols-3 medium:grid-cols-4 gap-x-4 gap-y-4">
+      <div
+        className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 -mx-1 px-1"
+        style={{
+          maskImage: "linear-gradient(to right, transparent 0, black 16px, black calc(100% - 40px), transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to right, transparent 0, black 16px, black calc(100% - 40px), transparent 100%)",
+        }}
+      >
         {products.map((product) => (
-          <li key={product.id}>
+          <div key={product.id} className="flex-shrink-0 w-[280px] sm:w-[300px]">
             <Product locale={locale} region={region} product={product} />
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   )
 }

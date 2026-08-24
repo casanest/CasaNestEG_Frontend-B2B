@@ -3,8 +3,7 @@
 import { clx } from "@medusajs/ui"
 import { useLocale } from "next-intl"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
-import { Button } from "@medusajs/ui"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 export function Pagination({
   page,
@@ -30,33 +29,31 @@ export function Pagination({
   }
 
   const navigateToPage = (pageNumber: number) => {
+    if (pageNumber < 1 || pageNumber > totalPages) return
     router.push(createPageUrl(pageNumber))
   }
 
   const renderPageButton = (pageNumber: number, label: string | number, isCurrent: boolean = false) => (
-    <Button
+    <button
       key={pageNumber}
-      variant={isCurrent ? "primary" : "secondary"}
-      size="small"
       onClick={() => navigateToPage(pageNumber)}
       disabled={isCurrent}
       className={clx(
-        "min-w-[40px] h-10 flex items-center justify-center",
-        {
-          "bg-ui-bg-interactive text-ui-fg-on-inverted": isCurrent,
-          "hover:bg-ui-bg-subtle-hover": !isCurrent
-        }
+        "min-w-[40px] h-10 flex items-center justify-center px-4 py-2.5 rounded-[8px] text-[15px] transition-all",
+        isCurrent
+          ? "bg-[#17284a] text-white font-bold cursor-default"
+          : "border border-[#e5e7eb] text-[#17284a] font-normal hover:bg-gray-50"
       )}
       aria-current={isCurrent ? "page" : undefined}
       aria-label={`${isCurrent ? 'Current page' : 'Go to page'} ${pageNumber}`}
     >
       {label}
-    </Button>
+    </button>
   )
 
   const renderEllipsis = (key: string) => (
     <div key={key} className="flex items-center justify-center min-w-[40px] h-10">
-      <MoreHorizontal className="w-4 h-4 text-ui-fg-muted" />
+      <span className="text-[15px] text-[#707176]">...</span>
     </div>
   )
 
@@ -101,56 +98,48 @@ export function Pagination({
   }
 
   return (
-    <nav 
-      className="flex justify-center items-center gap-2 mt-12"
+    <nav
+      className="flex justify-center items-center gap-2 mt-12 mb-8"
       data-testid={dataTestid}
       aria-label="Pagination"
     >
-      {/* Previous Button */}
-      <Button
-        variant="secondary"
-        size="small"
+      {/* Previous Button - Figma pill style */}
+      <button
         onClick={() => navigateToPage(page - 1)}
         disabled={page === 1}
         className={clx(
-          "min-w-[40px] h-10 flex items-center justify-center",
-          {
-            "opacity-50 cursor-not-allowed": page === 1
-          }
+          "w-12 h-12 flex items-center justify-center rounded-[100px] border border-[#e5e7eb] bg-white transition-all",
+          page === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"
         )}
         aria-label="Go to previous page"
       >
-        {isRTL ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-      </Button>
+        {isRTL ? <ChevronRight className="w-6 h-6 text-[#17284a]" /> : <ChevronLeft className="w-6 h-6 text-[#17284a]" />}
+      </button>
 
       {/* Page Numbers */}
-      <div className="hidden sm:flex items-center gap-1">
+      <div className="hidden sm:flex items-center gap-2">
         {renderPaginationItems()}
       </div>
 
       {/* Mobile: Simple current page indicator */}
       <div className="sm:hidden flex items-center gap-2 px-3">
-        <span className="text-sm text-ui-fg-subtle">
+        <span className="text-[15px] text-[#707176]">
           {page} {isRTL ? "من" : "of"} {totalPages}
         </span>
       </div>
 
-      {/* Next Button */}
-      <Button
-        variant="secondary"
-        size="small"
+      {/* Next Button - Figma pill style */}
+      <button
         onClick={() => navigateToPage(page + 1)}
         disabled={page === totalPages}
         className={clx(
-          "min-w-[40px] h-10 flex items-center justify-center",
-          {
-            "opacity-50 cursor-not-allowed": page === totalPages
-          }
+          "w-12 h-12 flex items-center justify-center rounded-[100px] bg-[#17284a] transition-all",
+          page === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-[#1f3158]"
         )}
         aria-label="Go to next page"
       >
-        {isRTL ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-      </Button>
-      </nav>
+        {isRTL ? <ChevronLeft className="w-6 h-6 text-white" /> : <ChevronRight className="w-6 h-6 text-white" />}
+      </button>
+    </nav>
   )
 }

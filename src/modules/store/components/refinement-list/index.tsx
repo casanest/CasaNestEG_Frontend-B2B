@@ -2,19 +2,16 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react"
-import { ArrowUpDown, ChevronDown, RotateCcw, SlidersHorizontal, X } from "lucide-react"
-import { Badge, Button, Checkbox, Divider, Text, clx } from "@medusajs/ui"
-import SortProducts, { SortOptions } from "./sort-products"
+import { ChevronDown, SlidersHorizontal, X } from "lucide-react"
+import { Badge, Button, Text, clx } from "@medusajs/ui"
+import { SortOptions } from "./sort-products"
 import { getProductFilterOptions } from "@lib/data/products"
-import FilterRadioGroup from "@modules/common/components/filter-radio-group"
 import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
 } from "@modules/common/components/ui/drawer"
+import MobileFilterBar from "./mobile-filter-bar"
 
 type CategoryOption = {
   id: string
@@ -33,6 +30,13 @@ type RefinementListProps = {
   currentCategoryId?: string
 }
 
+type ProductCategoryInfo = {
+  id: string
+  name: string
+  parent_category_id: string | null
+  count: number
+}
+
 type FilterOptions = {
   collections: Array<{ id: string, title: string, handle: string }>
   types: Array<{ id: string, value: string }>
@@ -41,15 +45,98 @@ type FilterOptions = {
   sizes: string[]
   priceRange: { min: number, max: number }
   totalProducts: number
+  productCategories: ProductCategoryInfo[]
 }
 
-const PRICE_PRESETS = [
-  { value: "", labelEn: "All price ranges", labelAr: "جميع الأسعار" },
-  { value: "0-50", labelEn: "Under €50", labelAr: "أقل من 50€" },
-  { value: "50-100", labelEn: "€50 - €100", labelAr: "50€ - 100€" },
-  { value: "100-200", labelEn: "€100 - €200", labelAr: "100€ - 200€" },
-  { value: "200+", labelEn: "Over €200", labelAr: "أكثر من 200€" },
-] as const
+type PriceRangeFilterProps = {
+  isRTL: boolean
+  initialPrice: string
+  onApply: (price: string) => void
+}
+
+const PriceRangeFilter = ({ isRTL, initialPrice, onApply }: PriceRangeFilterProps) => {
+  const [minInput, setMinInput] = useState("")
+  const [maxInput, setMaxInput] = useState("")
+
+  useEffect(() => {
+    if (!initialPrice) {
+      setMinInput("")
+      setMaxInput("")
+      return
+    }
+    if (initialPrice.endsWith("+")) {
+      setMinInput(initialPrice.slice(0, -1))
+      setMaxInput("")
+    } else if (initialPrice.includes("-")) {
+      const [min, max] = initialPrice.split("-")
+      setMinInput(min)
+      setMaxInput(max)
+    }
+  }, [initialPrice])
+
+  const handleApply = useCallback(() => {
+    const min = minInput.trim()
+    const max = maxInput.trim()
+    if (min && max) {
+      onApply(`${min}-${max}`)
+    } else if (min) {
+      onApply(`${min}+`)
+    } else if (max) {
+      onApply(`0-${max}`)
+    } else {
+      onApply("")
+    }
+  }, [minInput, maxInput, onApply])
+
+  const handleInputChange = (thumb: "min" | "max", raw: string) => {
+    const clean = raw.replace(/[^0-9]/g, "")
+    if (thumb === "min") {
+      setMinInput(clean)
+    } else {
+      setMaxInput(clean)
+    }
+  }
+
+  return (
+    <div className="flex flex-col w-full">
+      {/* Inputs Row */}
+      <div className="flex items-center gap-3 mb-5">
+        {/* Min Input */}
+        <div className="flex flex-1 items-center gap-1.5 rounded-md border border-gray-200 bg-white px-3 py-2 shadow-sm focus-within:border-[#17284a] transition-colors">
+          <span className="text-[13px] font-medium text-[#8E95A4] select-none flex-shrink-0">{isRTL ? "ج.م" : "EGP"}</span>
+          <input
+            type="text"
+            inputMode="numeric"
+            value={minInput}
+            onChange={(e) => handleInputChange("min", e.target.value)}
+            onBlur={handleApply}
+            placeholder={isRTL ? "الأدنى" : "Min"}
+            className="w-full bg-transparent text-[14px] font-medium text-[#17284a] outline-none border-none min-w-0"
+          />
+        </div>
+
+        <span className="text-gray-300 text-[14px] flex-shrink-0">-</span>
+
+        {/* Max Input */}
+        <div className="flex flex-1 items-center gap-1.5 rounded-md border border-gray-200 bg-white px-3 py-2 shadow-sm focus-within:border-[#17284a] transition-colors">
+          <span className="text-[13px] font-medium text-[#8E95A4] select-none flex-shrink-0">{isRTL ? "ج.م" : "EGP"}</span>
+          <input
+            type="text"
+            inputMode="numeric"
+            value={maxInput}
+            onChange={(e) => handleInputChange("max", e.target.value)}
+            onBlur={handleApply}
+            placeholder={isRTL ? "الأعلى" : "Max"}
+            className="w-full bg-transparent text-[14px] font-medium text-[#17284a] outline-none border-none min-w-0"
+          />
+        </div>
+      </div>
+
+      {/* Bottom Divider */}
+      <div className="border-b border-gray-100" />
+    </div>
+  )
+}
 
 const RefinementList = ({
   sortBy,
@@ -73,7 +160,8 @@ const RefinementList = ({
     materials: [],
     sizes: [],
     priceRange: { min: 0, max: 1000 },
-    totalProducts: 0
+    totalProducts: 0,
+    productCategories: [],
   })
 
   const filters = useMemo(() => {
@@ -86,6 +174,7 @@ const RefinementList = ({
     return {
       inStock: searchParams.get("inStock") === "true",
       onSale: searchParams.get("onSale") === "true",
+      madeToOrder: searchParams.get("madeToOrder") === "true",
       price: searchParams.get("price") || "",
       collection_id: readList("collection_id"),
       type_id: readList("type_id"),
@@ -99,11 +188,11 @@ const RefinementList = ({
   // Load filter options on component mount
   useEffect(() => {
     const loadFilterOptions = async () => {
-      const options = await getProductFilterOptions(countryCode)
+      const options = await getProductFilterOptions(countryCode, currentCategoryId)
       setFilterOptions(options)
     }
     loadFilterOptions()
-  }, [countryCode])
+  }, [countryCode, currentCategoryId])
 
   const updateURL = useCallback((newFilters: typeof filters) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -181,16 +270,6 @@ const RefinementList = ({
     new Set()
   )
 
-  const currentSortLabel = useMemo(() => {
-    if (sortBy === "price_asc") {
-      return isRTL ? "السعر: الأقل -> الأعلى" : "Price: Low -> High"
-    }
-    if (sortBy === "price_desc") {
-      return isRTL ? "السعر: الأعلى -> الأقل" : "Price: High -> Low"
-    }
-    return isRTL ? "الأحدث" : "Newest"
-  }, [isRTL, sortBy])
-
   const toggleCategory = useCallback((id: string) => {
     setExpandedCategories((prev) => {
       const next = new Set(prev)
@@ -242,9 +321,12 @@ const RefinementList = ({
     if (!current) return [] as string[]
 
     const ids: string[] = []
-    const walk = (node: CategoryOption & { children: CategoryOption[] }) => {
+    const walk = (node: CategoryOption) => {
       ids.push(String(node.id))
-      node.children.forEach(walk)
+      const enriched = categoryTree.byId.get(String(node.id))
+      if (enriched) {
+        enriched.children.forEach(walk)
+      }
     }
     walk(current)
     return ids
@@ -255,79 +337,71 @@ const RefinementList = ({
     setExpandedCategories(new Set(currentBranchIds))
   }, [currentBranchIds])
 
+  const productCategoryCountMap = useMemo(() => {
+    const map = new Map<string, number>()
+    filterOptions.productCategories.forEach((cat) => {
+      map.set(String(cat.id), cat.count)
+    })
+    return map
+  }, [filterOptions.productCategories])
+
+  const hasProductsInSubtree = useCallback((node: CategoryOption): boolean => {
+    const nodeId = String(node.id)
+    if (productCategoryCountMap.has(nodeId)) return true
+    const enriched = categoryTree.byId.get(nodeId)
+    if (!enriched) return false
+    return enriched.children.some((child) => hasProductsInSubtree(child))
+  }, [productCategoryCountMap, categoryTree])
+
   const renderCategoryNode = (
-    node: CategoryOption & { children: CategoryOption[] },
-    level = 0,
-    isLast = false
+    node: CategoryOption,
+    level = 0
   ) => {
     const nodeId = String(node.id)
-    const hasChildren = node.children.length > 0
+    const enriched = categoryTree.byId.get(nodeId)
+    const children = enriched?.children || []
+    const hasChildren = children.length > 0
     const isOpen = expandedCategories.has(nodeId)
     const label = isRTL ? node.name_ar ?? node.name_en : node.name_en
-    const showConnector = level > 0
-    const lineSideClass = isRTL ? "right-[9px]" : "left-[9px]"
+    const count = productCategoryCountMap.get(nodeId)
 
     return (
       <div key={node.id} className="flex flex-col w-full">
         <div
-          className={clx("relative w-full", {
-            "pb-1": !isLast,
-          })}
+          className="relative flex items-center gap-2 w-full"
+          style={{ paddingInlineStart: `${level * 20}px` }}
         >
-          {showConnector && (
-            <span
-              aria-hidden="true"
-              className={clx(
-                "absolute top-0 border-l border-dotted border-ui-border-base/60 opacity-60",
-                lineSideClass,
-                isLast ? "bottom-1/2" : "bottom-0"
-              )}
-            />
+          {hasChildren ? (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                toggleCategory(nodeId)
+              }}
+              className="h-5 w-5 flex items-center justify-center text-[#0F172A] hover:bg-gray-100 rounded transition-colors flex-shrink-0"
+              aria-label={isOpen ? "collapse" : "expand"}
+            >
+              <ChevronDown className={clx("h-3.5 w-3.5 transition-transform duration-200", !isOpen && "-rotate-90")} />
+            </button>
+          ) : (
+            <span className="inline-block h-5 w-5 flex-shrink-0" />
           )}
-          <div
-            className="relative flex items-center w-full"
-            style={{ paddingInlineStart: `${level * 18}px` }}
-          >
-            {showConnector && (
-              <span
-                aria-hidden="true"
-                className={clx(
-                  "absolute top-1/2 h-0 w-3 -translate-y-1/2 border-t border-dotted border-ui-border-base/60 opacity-60",
-                  lineSideClass
-                )}
-              />
-            )}
-            {hasChildren ? (
-              <button
-                type="button"
-                onClick={() => toggleCategory(nodeId)}
-                className="h-5 w-5 rounded-sm border border-ui-border-base text-[10px] font-bold text-ui-fg-base"
-                aria-label={isOpen ? "collapse" : "expand"}
-              >
-                {isOpen ? "-" : "+"}
-              </button>
-            ) : (
-              <span className="inline-block h-5 w-5" />
-            )}
-            <CheckboxRow
-              id={`category-${nodeId}`}
-              label={label}
-              checked={filters.category_id.includes(nodeId)}
-              onCheckedChange={(checked) =>
-                handleArrayFilterChange("category_id", nodeId, checked)
-              }
-            />
-          </div>
+          <CheckboxRow
+            id={`category-${nodeId}`}
+            label={label}
+            checked={filters.category_id.includes(nodeId)}
+            onCheckedChange={(checked) =>
+              handleArrayFilterChange("category_id", nodeId, checked)
+            }
+            count={count}
+          />
         </div>
         {hasChildren && isOpen && (
-          <div className="flex flex-col w-full">
-            {node.children.map((child, index) =>
-              renderCategoryNode(
-                child,
-                level + 1,
-                index === node.children.length - 1
-              )
-            )}
+          <div className="flex flex-col w-full mt-1">
+            {children
+              .filter((child) => hasProductsInSubtree(child))
+              .map((child) => renderCategoryNode(child, level + 1))}
           </div>
         )}
       </div>
@@ -336,6 +410,7 @@ const RefinementList = ({
   const hasActiveFilters =
     filters.inStock ||
     filters.onSale ||
+    filters.madeToOrder ||
     filters.price ||
     filters.collection_id.length > 0 ||
     filters.type_id.length > 0 ||
@@ -349,24 +424,23 @@ const RefinementList = ({
     helper,
     children,
     defaultOpen = true,
+    isLast = false,
   }: {
     title: string
     helper?: string
     children: ReactNode
     defaultOpen?: boolean
+    isLast?: boolean
   }) => (
     <details
-      className="group rounded-2xl border border-ui-border-base/60 bg-white/90 px-1 shadow-sm backdrop-blur-sm transition-shadow dark:bg-ui-bg-subtle/50"
+      className={clx("group flex flex-col gap-4", !isLast && "border-b border-gray-200 pb-6 mb-6")}
       open={defaultOpen}
     >
-      <summary className="flex cursor-pointer items-center justify-between gap-2 px-3 py-3 text-sm font-semibold text-ui-fg-base">
-        <span>{title}</span>
-        <ChevronDown className="h-4 w-4 text-ui-fg-subtle transition-transform group-open:rotate-180" />
+      <summary className="flex cursor-pointer items-center justify-between w-full">
+        <span className="text-[16px] font-bold text-[#17284a]">{title}</span>
+        <ChevronDown className="h-4 w-4 text-[#17284a] transition-transform duration-200 group-open:rotate-180" />
       </summary>
-      {/* {helper && (
-        <Text className="px-3 pb-2 text-xs text-ui-fg-subtle">{helper}</Text>
-      )} */}
-      <div className="px-3 pb-4 pt-1 space-y-3 group-open:animate-in group-open:fade-in group-open:slide-in-from-top-1">
+      <div className="flex flex-col gap-3 group-open:animate-in group-open:fade-in group-open:slide-in-from-top-1">
         {children}
       </div>
     </details>
@@ -377,263 +451,366 @@ const RefinementList = ({
     label,
     checked,
     onCheckedChange,
+    count,
   }: {
     id: string
     label: string
     checked: boolean
     onCheckedChange: (checked: boolean) => void
+    count?: number
   }) => (
     <label
       htmlFor={id}
-      className={clx(
-        "flex items-center justify-between w-100 rounded-lg border border-transparent px-2 py-2 text-sm text-ui-fg-base transition-colors",
-        checked
-          ? "bg-[#043364]/5 border-[#043364]/30"
-          : "hover:bg-ui-bg-subtle"
-      )}
+      className="flex items-center justify-between cursor-pointer w-full gap-3"
     >
-      <span className="line-clamp-1">{label}</span>
-      <Checkbox
-        id={id}
-        checked={checked}
-        onCheckedChange={(value) => onCheckedChange(Boolean(value))}
-      />
+      <span className="flex items-center gap-3 min-w-0">
+        <span
+          className={clx(
+            "flex items-center justify-center h-[18px] w-[18px] rounded-[4px] border-[1.5px] transition-all flex-shrink-0",
+            checked
+              ? "bg-[#17284a] border-[#17284a]"
+              : "bg-white border-[#ccc] hover:border-[#17284a]/50"
+          )}
+        >
+          {checked && (
+            <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+            </svg>
+          )}
+        </span>
+        <input
+          id={id}
+          type="checkbox"
+          checked={checked}
+          onChange={(e) => onCheckedChange(e.target.checked)}
+          className="sr-only"
+        />
+        <span className={clx("text-[14px] line-clamp-1", checked ? "font-bold text-[#1c1b1c]" : "text-[#1c1b1c]")}>
+          {label}
+        </span>
+      </span>
+      {count !== undefined && (
+        <span className="text-[14px] text-[#707176] flex-shrink-0">({count})</span>
+      )}
     </label>
   )
 
-  const renderFilterContent = (variant: "inline" | "drawer") => (
+  const [showAllCollections, setShowAllCollections] = useState(false)
+  const [showAllTypes, setShowAllTypes] = useState(false)
+  const [showAllColors, setShowAllColors] = useState(false)
+  const [showAllMaterials, setShowAllMaterials] = useState(false)
+
+  const ShowMoreLink = ({ show, onToggle }: { show: boolean; onToggle: () => void }) => (
+    <button
+      type="button"
+      onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggle() }}
+      className="text-xs text-[#0F172A] underline cursor-pointer self-start mt-1"
+    >
+      {show ? (isRTL ? "عرض أقل" : "Show less") : (isRTL ? "عرض المزيد" : "Show more")}
+    </button>
+  )
+
+  const renderFilterContent = (variant: "inline" | "drawer") => {
+    const visibleCollections = showAllCollections
+      ? filterOptions.collections
+      : filterOptions.collections.slice(0, 5)
+    const visibleTypes = showAllTypes
+      ? filterOptions.types
+      : filterOptions.types.slice(0, 5)
+    const visibleColors = showAllColors
+      ? filterOptions.colors
+      : filterOptions.colors.slice(0, 5)
+    const visibleMaterials = showAllMaterials
+      ? filterOptions.materials
+      : filterOptions.materials.slice(0, 5)
+
+    return (
     <div
-      className={clx("flex flex-col gap-3", {
+      className={clx("flex flex-col gap-6", {
         "max-h-[calc(100vh-220px)] overflow-y-auto ": variant === "drawer",
       })}
     >
       {variant === "drawer" && hasActiveFilters && (
-        <div className="flex items-center justify-between rounded-2xl border border-[#043364]/20 bg-[#043364]/5 px-4 py-3 text-xs font-semibold text-[#043364]">
+        <div className="flex items-center justify-between rounded-2xl border border-[#17284a]/20 bg-[#17284a]/5 px-4 py-3 text-xs font-semibold text-[#17284a]">
           <span>{isRTL ? "فلاتر نشطة" : "Active filters"}</span>
-          <Badge className="bg-[#043364] text-white">{activeFilterCount}</Badge>
+          <Badge className="bg-[#17284a] text-white">{activeFilterCount}</Badge>
         </div>
       )}
-      <SectionCard
-        title={isRTL ? "ترتيب النتائج" : "Sort results"}
-        helper={
-          isRTL
-            ? "اختر كيفية ترتيب المنتجات في المتجر."
-            : "Choose how store products should be ordered."
-        }
-      >
-        <SortProducts sortBy={sortBy} setQueryParams={handleSortChange} locale={locale} />
-      </SectionCard>
-      <Divider className="border-ui-border-base/50 " />
-      {categories?.length ? (
-        <SectionCard
-          title={isRTL ? "الفئات" : "Categories"}
-          helper={
-            isRTL
-              ? "اختر الفئات المناسبة لبحثك."
-              : "Pick the categories you want to explore."
-          }
-        >
-          <div className="space-y-2 max-h-60 overflow-y-auto">
-            {visibleCategoryRoots.map((node) => renderCategoryNode(node))}
-          </div>
-        </SectionCard>
-      ) : null}
-      <Divider className="border-ui-border-base/50" />
-      <SectionCard
-        title={isRTL ? "التوفر والعروض" : "Availability & Offers"}
-        helper={
-          isRTL
-            ? "إظهار العناصر المتوفرة أو المخفضة فقط."
-            : "Focus on items currently available or discounted."
-        }
-      >
-        <div className="flex flex-col gap-2">
-          <CheckboxRow
-            id="inStock"
-            label={isRTL ? "متوفر في المخزون" : "In stock only"}
-            checked={filters.inStock}
-            onCheckedChange={(value) => handleFilterChange("inStock", value)}
-          />
-          <CheckboxRow
-            id="onSale"
-            label={isRTL ? "خصومات وعروض" : "On sale"}
-            checked={filters.onSale}
-            onCheckedChange={(value) => handleFilterChange("onSale", value)}
-          />
-        </div>
-      </SectionCard>
-      <Divider className="border-ui-border-base/50" />
 
+      {/* Dynamic Sections per Root Category */}
+      {categories?.length ? (
+        visibleCategoryRoots
+          .filter((rootNode) => hasProductsInSubtree(rootNode))
+          .map((rootNode) => {
+            const rootId = String(rootNode.id)
+            const rootLabel = isRTL ? rootNode.name_ar ?? rootNode.name_en : rootNode.name_en
+            const enriched = categoryTree.byId.get(rootId)
+            const children = enriched?.children || []
+
+            return (
+              <SectionCard
+                key={rootNode.id}
+                title={rootLabel}
+              >
+                <div className="flex flex-col gap-3 mt-3">
+                  {children.length > 0 ? (
+                    children
+                      .filter((child) => hasProductsInSubtree(child))
+                      .map((childNode) => {
+                        const childId = String(childNode.id)
+                        const childLabel = isRTL ? childNode.name_ar ?? childNode.name_en : childNode.name_en
+                        const count = productCategoryCountMap.get(childId)
+
+                        return (
+                          <CheckboxRow
+                            key={childId}
+                            id={`category-${childId}`}
+                            label={childLabel}
+                            checked={filters.category_id.includes(childId)}
+                            onCheckedChange={(checked) =>
+                              handleArrayFilterChange("category_id", childId, checked)
+                            }
+                            count={count}
+                          />
+                        )
+                      })
+                  ) : (
+                    <CheckboxRow
+                      id={`category-${rootId}`}
+                      label={rootLabel}
+                      checked={filters.category_id.includes(rootId)}
+                      onCheckedChange={(checked) =>
+                        handleArrayFilterChange("category_id", rootId, checked)
+                      }
+                      count={productCategoryCountMap.get(rootId)}
+                    />
+                  )}
+                </div>
+              </SectionCard>
+            )
+          })
+      ) : null}
+
+      {/* Collections */}
       {filterOptions.collections.length > 0 && (
         <SectionCard
           title={isRTL ? "المجموعات" : "Collections"}
-          helper={
-            isRTL
-              ? "تصفح مجموعات محددة من المنتجات."
-              : "Narrow the catalogue to specific collections."
-          }
         >
-          <div className="grid grid-cols-1 gap-1 max-h-48 overflow-y-auto pr-1">
-            {filterOptions.collections.map((collection) => (
-              <CheckboxRow
-                key={collection.id}
-                id={`collection-${collection.id}`}
-                label={collection.title}
-                checked={filters.collection_id.includes(collection.id)}
-                onCheckedChange={(checked) =>
-                  handleArrayFilterChange("collection_id", collection.id, checked)
-                }
-              />
-            ))}
-          </div>
-        </SectionCard>
+            <div className="flex flex-col gap-3">
+              {visibleCollections.map((collection) => (
+                <CheckboxRow
+                  key={collection.id}
+                  id={`collection-${collection.id}`}
+                  label={collection.title}
+                  checked={filters.collection_id.includes(collection.id)}
+                  onCheckedChange={(checked) =>
+                    handleArrayFilterChange("collection_id", collection.id, checked)
+                  }
+                />
+              ))}
+              {filterOptions.collections.length > 5 && (
+                <ShowMoreLink show={showAllCollections} onToggle={() => setShowAllCollections(!showAllCollections)} />
+              )}
+            </div>
+          </SectionCard>
       )}
-      <Divider className="border-ui-border-base/50" />
 
+      {/* Product Types */}
       {filterOptions.types.length > 0 && (
         <SectionCard
-          title={isRTL ? "الأنواع" : "Product types"}
-          helper={
-            isRTL
-              ? "اختر أنواع المنتجات المفضلة."
-              : "Pick the product categories you’re interested in."
-          }
+          title={isRTL ? "الأنواع" : "Product Types"}
         >
-          <div className="grid grid-cols-1 gap-1 max-h-48 overflow-y-auto pr-1">
-            {filterOptions.types.map((type) => (
-              <CheckboxRow
-                key={type.id}
-                id={`type-${type.id}`}
-                label={type.value}
-                checked={filters.type_id.includes(type.id)}
-                onCheckedChange={(checked) =>
-                  handleArrayFilterChange("type_id", type.id, checked)
-                }
-              />
-            ))}
-          </div>
-        </SectionCard>
+            <div className="flex flex-col gap-3">
+              {visibleTypes.map((type) => (
+                <CheckboxRow
+                  key={type.id}
+                  id={`type-${type.id}`}
+                  label={type.value}
+                  checked={filters.type_id.includes(type.id)}
+                  onCheckedChange={(checked) =>
+                    handleArrayFilterChange("type_id", type.id, checked)
+                  }
+                />
+              ))}
+              {filterOptions.types.length > 5 && (
+                <ShowMoreLink show={showAllTypes} onToggle={() => setShowAllTypes(!showAllTypes)} />
+              )}
+            </div>
+          </SectionCard>
       )}
 
+      {/* Colors */}
       {filterOptions.colors.length > 0 && (
         <SectionCard
           title={isRTL ? "الألوان" : "Colors"}
-          helper={
-            isRTL
-              ? "حدد لوحة الألوان الأنسب."
-              : "Dial in the palette that suits your look."
-          }
         >
-          <div className="grid grid-cols-1 gap-1 max-h-48 overflow-y-auto pr-1">
-            {filterOptions.colors.map((color) => (
-              <CheckboxRow
-                key={color}
-                id={`color-${color}`}
-                label={color}
-                checked={filters.colors.includes(color)}
-                onCheckedChange={(checked) =>
-                  handleArrayFilterChange("colors", color, checked)
-                }
-              />
-            ))}
-          </div>
-        </SectionCard>
+            <div className="flex flex-col gap-3">
+              {visibleColors.map((color) => (
+                <CheckboxRow
+                  key={color}
+                  id={`color-${color}`}
+                  label={color}
+                  checked={filters.colors.includes(color)}
+                  onCheckedChange={(checked) =>
+                    handleArrayFilterChange("colors", color, checked)
+                  }
+                />
+              ))}
+              {filterOptions.colors.length > 5 && (
+                <ShowMoreLink show={showAllColors} onToggle={() => setShowAllColors(!showAllColors)} />
+              )}
+            </div>
+          </SectionCard>
       )}
 
+      {/* Materials */}
       {filterOptions.materials.length > 0 && (
         <SectionCard
           title={isRTL ? "المواد" : "Materials"}
-          helper={
-            isRTL
-              ? "اختر المواد والتشطيبات المفضلة لديك."
-              : "Pick finishes and materials you prefer."
-          }
         >
-          <div className="grid grid-cols-1 gap-1">
-            {filterOptions.materials.map((material) => (
-              <CheckboxRow
-                key={material}
-                id={`material-${material}`}
-                label={material}
-                checked={filters.materials.includes(material)}
-                onCheckedChange={(checked) =>
-                  handleArrayFilterChange("materials", material, checked)
-                }
-              />
-            ))}
-          </div>
-        </SectionCard>
+            <div className="flex flex-col gap-3">
+              {visibleMaterials.map((material) => (
+                <CheckboxRow
+                  key={material}
+                  id={`material-${material}`}
+                  label={material}
+                  checked={filters.materials.includes(material)}
+                  onCheckedChange={(checked) =>
+                    handleArrayFilterChange("materials", material, checked)
+                  }
+                />
+              ))}
+              {filterOptions.materials.length > 5 && (
+                <ShowMoreLink show={showAllMaterials} onToggle={() => setShowAllMaterials(!showAllMaterials)} />
+              )}
+            </div>
+          </SectionCard>
       )}
 
+      {/* Sizes */}
       {filterOptions.sizes.length > 0 && (
         <SectionCard
           title={isRTL ? "المقاسات" : "Sizes"}
-          helper={
-            isRTL
-              ? "تأكد من توفر المقاس المناسب."
-              : "Make sure the dimensions fit your needs."
-          }
         >
-          <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto pr-1">
-            {filterOptions.sizes.map((size) => (
-              <button
-                key={size}
-                type="button"
-                onClick={() =>
-                  handleArrayFilterChange(
-                    "sizes",
-                    size,
-                    !filters.sizes.includes(size)
-                  )
-                }
-                className={clx(
-                  "rounded-sm border px-3 py-2 text-sm transition",
-                  {
-                    "border-ui-border-strong bg-ui-bg-field text-ui-fg-base":
-                      filters.sizes.includes(size),
-                    "border-ui-border-subtle text-ui-fg-subtle":
-                      !filters.sizes.includes(size),
+            <div className="grid grid-cols-2 gap-2">
+              {filterOptions.sizes.map((size) => (
+                <button
+                  key={size}
+                  type="button"
+                  onClick={() =>
+                    handleArrayFilterChange(
+                      "sizes",
+                      size,
+                      !filters.sizes.includes(size)
+                    )
                   }
-                )}
-              >
-                {size}
-              </button>
-            ))}
-          </div>
-        </SectionCard>
-      )}
+                  className={clx(
+                    "rounded-[4px] border-[1.5px] px-3 py-2 text-[15px] transition-all",
+                    filters.sizes.includes(size)
+                      ? "border-[#0F172A] bg-[#0F172A]/5 text-[#0F172A] font-medium"
+                      : "border-gray-300 text-gray-700 hover:border-[#0F172A]/50"
+                  )}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+          </SectionCard>
+        )}
 
+        {/* Price Range - Min/Max inputs */}
+        <SectionCard
+          title={isRTL ? "نطاق السعر" : "Price Range"}
+        >
+          <PriceRangeFilter
+            isRTL={isRTL}
+            initialPrice={filters.price}
+            onApply={(price) => handleFilterChange("price", price)}
+          />
+        </SectionCard>
+
+      {/* Availability - Radio buttons (single-select) */}
       <SectionCard
-        title={isRTL ? "نطاق السعر" : "Price range"}
-        helper={
-          isRTL
-            ? "اضبط نطاق السعر المناسب لميزانيتك."
-            : "Stay within the budget that fits you."
-        }
+        title={isRTL ? "التوفر" : "Availability"}
+        isLast
       >
-        <FilterRadioGroup
-          locale={locale}
-          title=""
-          value={filters.price}
-          handleChange={(value: string) => handleFilterChange("price", value)}
-          items={PRICE_PRESETS.map((preset) => ({
-            value: preset.value,
-            label: isRTL ? preset.labelAr : preset.labelEn,
-          }))}
-        />
+        <div className="flex flex-col gap-3">
+          {[
+            { value: "all", label: isRTL ? "الكل" : "All", key: "all" },
+            { value: "inStock", label: isRTL ? "متوفر في المخزون" : "In Stock", key: "inStock" },
+            { value: "madeToOrder", label: isRTL ? "حسب الطلب" : "Made to Order", key: "madeToOrder" },
+          ].map((opt) => {
+            const isSelected = opt.value === "all"
+              ? !filters.inStock && !filters.onSale && !filters.madeToOrder
+              : opt.value === "inStock"
+                ? filters.inStock
+                : opt.value === "madeToOrder"
+                  ? filters.madeToOrder
+                  : filters.onSale
+            return (
+              <label
+                key={opt.key}
+                htmlFor={`availability-${opt.key}`}
+                className="flex items-center gap-3 cursor-pointer w-full"
+              >
+                <span
+                  className={clx(
+                    "flex items-center justify-center h-[18px] w-[18px] rounded-full border-[1.5px] transition-all flex-shrink-0",
+                    isSelected
+                      ? "border-[#17284a] bg-white"
+                      : "border-[#ccc] bg-white hover:border-[#17284a]/50"
+                  )}
+                >
+                  {isSelected && (
+                    <span className="h-[10px] w-[10px] rounded-full bg-[#17284a]" />
+                  )}
+                </span>
+                <input
+                  id={`availability-${opt.key}`}
+                  type="radio"
+                  name="availability"
+                  checked={isSelected}
+                  onChange={() => {
+                    if (opt.value === "all") {
+                      updateURL({ ...filters, inStock: false, onSale: false, madeToOrder: false })
+                    } else if (opt.value === "inStock") {
+                      updateURL({ ...filters, inStock: true, onSale: false, madeToOrder: false })
+                    } else if (opt.value === "madeToOrder") {
+                      updateURL({ ...filters, inStock: false, onSale: false, madeToOrder: true })
+                    }
+                  }}
+                  className="sr-only"
+                />
+                <span className={clx("text-[14px]", isSelected ? "font-bold text-[#1c1b1c]" : "text-[#1c1b1c]")}>
+                  {opt.label}
+                </span>
+              </label>
+            )
+          })}
+        </div>
       </SectionCard>
 
-      {variant === "inline" && hasActiveFilters && (
-        <Button variant="secondary" onClick={clearFilters} className="w-full mb-5">
-          <X className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
-          {isRTL ? "مسح جميع الفلاتر" : "Clear all filters"}
-        </Button>
+      {/* Clear All Filters - Only for inline (desktop sidebar) */}
+      {variant === "inline" && (
+        <button
+          type="button"
+          onClick={clearFilters}
+          className={clx(
+            "w-full bg-[#DCE3F2] text-[#17284a] rounded-[12px] py-3 px-6 text-[15px] font-medium transition-all hover:bg-[#CED5E8] active:scale-[0.98] mt-2",
+            !hasActiveFilters && "opacity-50 cursor-not-allowed"
+          )}
+          disabled={!hasActiveFilters}
+        >
+          {isRTL ? "مسح جميع الفلاتر" : "Clear All Filters"}
+        </button>
       )}
     </div>
   )
+  }
   const activeFilterCount = [
     filters.inStock,
     filters.onSale,
+    filters.madeToOrder,
     filters.price,
     ...filters.collection_id,
     ...filters.type_id,
@@ -645,47 +822,20 @@ const RefinementList = ({
 
   return (
     <>
-      {/* Mobile Filter Button - Only show when NOT inline (mobile mode) */}
+      {/* Mobile Filter Bar - Only show when NOT inline (mobile mode) */}
       {!inline && (
-        // <div className="small:hidden sticky top-0 z-40 -mx-4 px-4  ">
-          // {/* <div className="mx-auto flex w-full max-w-[720px]    overflow-hidden"> */}
-            <button
-              type="button"
-              onClick={() => setIsDrawerOpen(true)}
-              className=" h-12 px-3 flex items-center justify-between gap-2 "
-            >
-              <div className="flex items-center gap-2">
-                <SlidersHorizontal className="h-4 w-4" />
-                <span>{isRTL ? "الفلاتر" : "Filters"}</span>
-              </div>
-              {activeFilterCount > 0 && (
-                <Badge className="bg-[#043364] text-white rounded-full px-2.5">
-                  {activeFilterCount}
-                </Badge>
-              )}
-            </button>
-            // {/* <div className="w-px bg-ui-border-base/60" />
-            // <button
-            //   type="button"
-            //   onClick={() => setIsDrawerOpen(true)}
-            //   className="flex-1 h-12 px-3 flex items-center justify-between gap-2 text-xs font-semibold text-ui-fg-base transition-all hover:bg-ui-bg-subtle active:scale-[0.99]"
-            // >
-            //   <div className="flex items-center gap-2">
-            //     <ArrowUpDown className="h-4 w-4" />
-            //     <span>{isRTL ? "الترتيب" : "Sort"}</span>
-            //   </div>
-            //   <span className="text-[11px] text-ui-fg-subtle line-clamp-1">
-            //     {currentSortLabel}
-            //   </span>
-            // </button> */}
-          // {/* </div> */}
-        // </div>
+        <MobileFilterBar
+          isRTL={isRTL}
+          sort={sortBy}
+          activeFilterCount={activeFilterCount}
+          onOpenFilters={() => setIsDrawerOpen(true)}
+        />
       )}
 
       {/* Inline content for desktop containers (controlled by parent) */}
       {inline && (
         <aside
-          className="sticky top-28 hidden small:block w-full "
+          className="sticky top-28 hidden small:block w-full me-8 lg:me-12 pe-4 lg:pe-8"
           data-testid={dataTestId}
         >
           <div className="group relative flex flex-col ">
@@ -725,7 +875,7 @@ const RefinementList = ({
             </div> */}
 
             {/* Filter Options Area */}
-            <div className="max-h-[calc(100vh)] w-full overflow-y-auto  custom-scrollbar-minimal scroll-smooth">
+            <div className="w-full">
               <div className="flex flex-col gap-2">
                 {renderFilterContent("inline")}
               </div>
@@ -761,62 +911,55 @@ const RefinementList = ({
         <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
           <DrawerContent
             data-testid={dataTestId}
-            className="max-h-[92vh] rounded-t-[2.5rem] border-none bg-ui-bg-base shadow-2xl"
+            className="max-h-[92vh] rounded-t-[24px] border-none bg-white shadow-2xl"
           >
-            {/* مقبض سحب علوي للجمالية (Indicator) */}
-            <div className="mx-auto mt-3 h-1.5 w-12 rounded-full bg-ui-border-strong/20" />
+            {/* Drag Handle */}
+            <div className="mx-auto mt-3 h-[4px] w-[40px] rounded-[2px] bg-[#d1d5db]" />
 
             <div className="flex h-full flex-col overflow-hidden">
-              {/* Header - Glass Effect */}
-              <DrawerHeader className="sticky top-0 z-10 flex flex-row items-center justify-between px-6 py-6 border-b border-ui-border-base/50 bg-white/85 backdrop-blur-md">
-                <div className="space-y-0.5 text-left">
-                  <DrawerTitle className="text-xl font-bold tracking-tight text-ui-fg-base">
-                    {isRTL ? "تصفية المنتجات" : "Filter Products"}
-                  </DrawerTitle>
-                  <Text className="text-[10px] font-medium uppercase tracking-wider text-ui-fg-muted">
-                    {activeFilterCount > 0
-                      ? `${activeFilterCount} ${isRTL ? 'فلاتر مختارة' : 'Filters Active'}`
-                      : (isRTL ? "اكتشف خياراتك" : "Refine your search")}
-                  </Text>
-                </div>
+              {/* Header */}
+              <div className="flex flex-row items-center justify-between px-4 pt-3 pb-4">
+                <h2 className="text-[24px] font-bold text-[#17284a] leading-[1.25]">
+                  {isRTL ? "الفلاتر" : "Filters"}
+                </h2>
                 <DrawerClose asChild>
-                  <Button
-                    variant="transparent"
-                    className="h-10 w-10 rounded-full bg-ui-bg-component p-0 hover:bg-ui-bg-component-hover transition-colors"
+                  <button
+                    className="flex items-center justify-center h-[36px] w-[36px] rounded-full bg-[#f3f4f6] hover:bg-gray-200 transition-colors"
+                    aria-label={isRTL ? "إغلاق" : "Close"}
                   >
-                    <X className="w-5 h-5 text-ui-fg-subtle" />
-                  </Button>
+                    <X className="h-4 w-4 text-[#17284a]" />
+                  </button>
                 </DrawerClose>
-              </DrawerHeader>
+              </div>
 
               {/* Content Area - Scrollable */}
-              <div className="flex-1 overflow-y-auto px-6 py-5 scrollbar-hide">
-                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-4">
+              <div className="flex-1 overflow-y-auto px-4 py-4 scrollbar-hide">
+                <div className="flex flex-col gap-6">
                   {renderFilterContent("drawer")}
                 </div>
               </div>
 
-              {/* Footer - Floating Action Design */}
-              <DrawerFooter className="sticky bottom-0 flex flex-row items-center gap-4 border-t border-ui-border-base bg-white/90 p-6 pb-10 backdrop-blur-md shadow-[0_-10px_30px_-20px_rgba(0,0,0,0.35)]">
-                <Button
-                  variant="secondary"
-                  className={clx(
-                    "h-12 flex-1 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all",
-                    !hasActiveFilters ? "opacity-50" : "hover:bg-red-50 hover:text-red-600 hover:border-red-100"
-                  )}
+              {/* Sticky Footer */}
+              <div className="sticky bottom-0 flex flex-col gap-3 border-t border-[#e5e7eb] bg-white p-4">
+                <DrawerClose asChild>
+                  <button
+                    className="w-full bg-[#17284a] text-white rounded-[16px] py-4 px-9 text-[14px] font-bold text-center transition-all hover:bg-[#0f1d38] active:scale-[0.98]"
+                  >
+                    {isRTL ? "تطبيق الفلاتر" : "Apply Filters"}
+                  </button>
+                </DrawerClose>
+                <button
+                  type="button"
                   onClick={clearFilters}
                   disabled={!hasActiveFilters}
+                  className={clx(
+                    "w-full text-center py-2 text-[14px] font-bold text-[#707176] transition-colors",
+                    hasActiveFilters ? "hover:text-[#17284a]" : "opacity-50 cursor-not-allowed"
+                  )}
                 >
-                  <RotateCcw className="mr-2 h-3.5 w-3.5 rtl:ml-2 rtl:mr-0" />
-                  {isRTL ? "إعادة تعيين" : "Reset"}
-                </Button>
-
-                <DrawerClose asChild>
-                  <Button className="h-12 flex-[2] rounded-2xl bg-[#043364] text-white shadow-lg shadow-[#043364]/20 hover:bg-[#03284d] active:scale-[0.98] transition-all font-bold text-xs uppercase tracking-widest">
-                    {isRTL ? "عرض النتائج" : "Show results"}
-                  </Button>
-                </DrawerClose>
-              </DrawerFooter>
+                  {isRTL ? "مسح جميع الفلاتر" : "Clear All Filters"}
+                </button>
+              </div>
             </div>
           </DrawerContent>
         </Drawer>

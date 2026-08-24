@@ -5,12 +5,11 @@ import { SortOptions } from "@modules/store/components/refinement-list/sort-prod
 import PaginatedProducts from "@modules/store/templates/paginated-products"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { getLocale } from "next-intl/server"
-import { ChevronRight, ChevronLeft } from "lucide-react"
-import { Category, getParentCategories, listCategories } from "@lib/data/categories"
+import { Category, listCategories } from "@lib/data/categories"
+import { listProductsWithSort } from "@lib/data/products"
+import { getRegion } from "@lib/data/regions"
 import RefinementList from "@modules/store/components/refinement-list"
-import { ProductsToolbar } from "../components/productsToolbar"
-import { clx } from "@medusajs/ui"
-import SubcategoryCarousel from "../components/subcategory-carousel"
+import CategoryChipsBar from "../components/category-chips-bar"
 
 export default async function CategoryTemplate({
   category,
@@ -73,91 +72,131 @@ export default async function CategoryTemplate({
   }
 
   const categoryName = isRTL ? category.name_ar : category.name_en
-  const productCount = category.products?.length || 0
+  const categoryDescription = isRTL ? category.description_ar : category.description_en
+
+  // Get top-level categories for chips bar
+  const topLevelCategories = (categoryTree || []).map((cat) => ({
+    id: cat.id,
+    name_en: cat.name_en,
+    name_ar: cat.name_ar,
+    handle_en: cat.handle_en,
+    handle_ar: cat.handle_ar,
+  }))
+
+  // Fetch product count for this category
+  let productCount = 0
+  try {
+    const region = await getRegion(countryCode)
+    if (region) {
+      const { response: { count } } = await listProductsWithSort({
+        page: 1,
+        queryParams: {
+          limit: 1,
+          category_id: [category.id],
+        },
+        sortBy: sort,
+        countryCode,
+      })
+      productCount = count
+    }
+  } catch (e) {
+    // Fallback: count stays 0
+  }
 
   return (
     <div
       dir={isRTL ? "rtl" : "ltr"}
-      className="py-6 lg:py-8 content-container"
+      className="w-full"
       data-testid="category-container"
     >
-      {/* Top Section: Breadcrumbs and Title */}
-      <header dir={isRTL ? "rtl" : "ltr"} className="mb-6 flex flex-col gap-2 px-4">
-        {/* Breadcrumbs - Top Right */}
-        <nav className="flex items-center gap-1 text-xs text-gray-500" aria-label="Breadcrumb">
-          <LocalizedClientLink href="/" className="hover:text-black transition-colors">
+      {/* Page Title Band */}
+      <section className="w-full bg-white px-4 sm:px-6 lg:px-[60px] pt-11 small:pt-10 pb-6">
+        {/* Breadcrumbs */}
+        <nav className="flex items-center gap-2 text-[14px] mb-4" aria-label="Breadcrumb">
+          <LocalizedClientLink href="/" className="text-[#707176] hover:text-[#17284a] transition-colors">
             {isRTL ? "الرئيسية" : "Home"}
           </LocalizedClientLink>
-
+          <span className="text-[#707176]">/</span>
           {parents.map((parent) => (
-            <div key={parent.id} className="flex items-center gap-1">
-              <ChevronRight className={clx("h-3 w-3 opacity-70", isRTL && "rotate-180")} />
+            <div key={parent.id} className="flex items-center gap-2">
               <LocalizedClientLink
                 href={`/categories/${isRTL ? parent.handle_ar : parent.handle_en}`}
-                className="hover:text-black transition-colors"
+                className="text-[#707176] hover:text-[#17284a] transition-colors"
               >
                 {isRTL ? parent.name_ar : parent.name_en}
               </LocalizedClientLink>
+              <span className="text-[#707176]">/</span>
             </div>
           ))}
-
-          <ChevronRight className={clx("h-3 w-3 opacity-70", isRTL && "rotate-180")} />
-          <span className="text-gray-900 font-medium">
+          <span className="text-[#17284a] font-medium">
             {categoryName}
           </span>
         </nav>
 
-        {/* Category Title - Large and Bold */}
-        <h1 className="text-xl sm:text-3xl font-black tracking-tight text-gray-950 mt-2">
-          {categoryName}
-        </h1>
-      </header>
-
-      {/* Main Layout: Sidebar (Right) and Content (Left) */}
-      <div className="flex flex-col small:flex-row small:items-start gap-x-8">
-        {/* Sidebar - Right Side (Tree Menu) */}
-        <aside dir={isRTL ? "rtl" : "ltr"} className="hidden small:block w-full small:w-72 flex-shrink-0 small:sticky small:top-24 mb-8 small:mb-0">
-         
-          <div className="rounded-2xl bg-gray-50 dark:bg-gray-900/50 p-6 border border-gray-100 dark:border-gray-800">
-            {/* <h2 className="text-lg font-bold text-gray-950 dark:text-white mb-5">
-              {isRTL ? "الاقسام" : "Categories"}
-            </h2> */}
-            <RefinementList
-              locale={locale}
-              sortBy={sort}
-              countryCode={countryCode}
-              categories={allCategories || []}
-              currentCategoryId={category.id}
-              inline // This will render it as a tree menu
-            />
+        {/* Title + Subtitle + Count Badge */}
+        <div className="flex flex-col small:flex-row small:items-end small:justify-between gap-4">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-[24px] small:text-[36px] font-bold tracking-tight text-[#17284a] leading-tight">
+              {categoryName}
+            </h1>
+            {categoryDescription && (
+              <p className="text-[14px] small:text-[16px] text-[#707176] max-w-2xl">
+                {categoryDescription}
+              </p>
+            )}
           </div>
-        </aside>
+          {/* Count Badge - Figma style */}
+          <div className="flex-shrink-0 bg-[#f8f9fa] small:bg-white border border-[#e5e7eb] rounded-[8px] px-4 py-2 self-start small:self-auto">
+            <span className="text-[14px] small:text-[15px] font-bold small:font-medium text-[#17284a] whitespace-nowrap">
+              {productCount} {isRTL ? "منتج" : "Products"}
+            </span>
+          </div>
+        </div>
+      </section>
 
-        {/* Main Content Area - Left Side */}
-        <main className="flex-1 min-w-0 space-y-2">
+      {/* Horizontal Filter Bar - Category Chips + Sort */}
+      <CategoryChipsBar
+        categories={topLevelCategories}
+        currentCategoryId={category.id}
+        isRTL={isRTL}
+        locale={locale}
+        sort={sort}
+        productCount={productCount}
+      />
 
-          {/* Subcategories Carousel Section - Matching the Image */}
-          {category.category_children?.length > 0 && (
-            <SubcategoryCarousel items={category.category_children} isRTL={isRTL} />
-          )}
+      {/* Mobile Filter Bar (Filters + Sort) */}
+      <RefinementList
+        locale={locale}
+        sortBy={sort}
+        countryCode={countryCode}
+        categories={allCategories || []}
+        currentCategoryId={category.id}
+      />
 
-          {/* Toolbar & Grid Area */}
-          <div dir={isRTL? "rtl": "ltr"} className="space-y-1">
-            <ProductsToolbar
-              productCount={productCount}
-              sort={sort}
-              isRTL={isRTL}
-              locale={locale}
-              countryCode={countryCode}
-              categories={allCategories || []}
-              currentCategoryId={category.id}
-              // categoryId={category.id}
-            // This component needs to be updated to match the gray bar style in the image
-            />
+      {/* Main Content Layout: Sidebar + Product Grid */}
+      <div className="w-full bg-[#fefefe] px-4 sm:px-6 lg:px-[60px] py-8">
+        <div className="flex flex-col small:flex-row small:items-start gap-8">
+          {/* Sidebar Filters */}
+          <aside
+            dir={isRTL ? "rtl" : "ltr"}
+            className="hidden small:block w-full small:w-[280px] flex-shrink-0"
+          >
+            <div className="sticky top-[220px]">
+              <RefinementList
+                locale={locale}
+                sortBy={sort}
+                countryCode={countryCode}
+                categories={allCategories || []}
+                currentCategoryId={category.id}
+                inline
+              />
+            </div>
+          </aside>
 
+          {/* Main Content Area - Product Grid */}
+          <main className="flex-1 min-w-0">
             <Suspense fallback={<SkeletonProductGrid numberOfProducts={4} />}>
               <PaginatedProducts
-                // products={category.products}
                 sortBy={sort}
                 page={pageNumber}
                 categoryId={category.id}
@@ -165,8 +204,8 @@ export default async function CategoryTemplate({
                 searchParams={searchParams}
               />
             </Suspense>
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
     </div>
   )

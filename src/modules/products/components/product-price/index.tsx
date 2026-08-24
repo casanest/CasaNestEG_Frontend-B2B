@@ -26,40 +26,48 @@ export default function ProductPrice({
     return <div className="block w-32 h-9 bg-gray-100 animate-pulse" />
   }
 
+  const isSale = selectedPrice.price_type === "sale"
+  const mainNumber = selectedPrice.calculated_price_number
+  const formattedNumber = mainNumber.toLocaleString(isRTL ? "ar-EG" : "en-US")
+  const decimalPart = mainNumber % 1 === 0 ? ".00" : ""
+
   return (
-    <div className="flex flex-col gap-3 text-ui-fg-base">
-      <div className="flex flex-wrap items-center gap-3">
-        {selectedPrice.price_type === "sale" && (
-          <span className="rounded-full bg-[#EF4444]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.15em] text-[#EF4444]">
-            {isRTL ? "خصم" : "Sale"}
-          </span>
-        )}
-        <span
-          className={clx("text-3xl font-semibold text-slate-900", {
-            "text-[#EF4444]": selectedPrice.price_type === "sale",
-          })}
-          data-testid="product-price"
-          data-value={selectedPrice.calculated_price_number}
-        >
-          {selectedPrice.calculated_price}
+    <div className="flex flex-col gap-1">
+      {/* Sale badge */}
+      {isSale && (
+        <span className="rounded-full bg-[#EF4444]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.15em] text-[#EF4444] self-start mb-1">
+          {isRTL ? "خصم" : "Sale"}
         </span>
-        {selectedPrice.price_type === "sale" && (
-          <span
-            className="text-sm text-slate-400 line-through"
-            data-testid="original-product-price"
-            data-value={selectedPrice.original_price_number}
-          >
-            {selectedPrice.original_price}
-          </span>
-        )}
-        {selectedPrice.price_type === "sale" && (
-          <span className="rounded-full bg-[#043364]/10 px-2.5 py-1 text-xs font-semibold text-[#043364]">
-            -{selectedPrice.percentage_diff}%
-          </span>
-        )}
+      )}
+
+      {/* Main Price */}
+      <div className="flex items-baseline gap-1 text-[#17284a]">
+        <span className="text-[14px] font-medium leading-[1.5]">
+          {isRTL ? "ج.م" : "EGP"}
+        </span>
+        <span
+          className={clx("text-[24px] font-bold leading-[1.3]", isSale && "text-[#EF4444]")}
+          data-testid="product-price"
+          data-value={mainNumber}
+        >
+          {formattedNumber}
+        </span>
+        <span className="text-[14px] font-medium leading-[1.5]">{decimalPart}</span>
       </div>
+
+      {/* Compare price */}
+      {isSale && (
+        <span
+          className="text-[14px] text-[#707176] line-through"
+          data-testid="original-product-price"
+          data-value={selectedPrice.original_price_number}
+        >
+          {selectedPrice.original_price}
+        </span>
+      )}
+
       {!variant && (
-        <span className="text-xs text-slate-400">
+        <span className="text-[12px] text-[#707176] mt-1">
           {isRTL ? "السعر يبدأ من" : "Price starts at"}
         </span>
       )}

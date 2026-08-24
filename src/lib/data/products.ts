@@ -11,6 +11,7 @@ import { getRegion, retrieveRegion } from "./regions"
 interface ProductFilters {
   inStock?: string
   onSale?: string
+  madeToOrder?: string
   price?: string
   q?: string
   handle?: string
@@ -55,7 +56,7 @@ export const listProducts = async ({
     const next = await getCacheOptions("products")
 
     // Separate API-supported parameters from client-side filters
-    const { inStock, onSale, price, colors, materials, sizes, ...apiParams } = queryParams || {}
+    const { inStock, onSale, madeToOrder, price, colors, materials, sizes, ...apiParams } = queryParams || {}
     
     // Build API query with only supported parameters
     const limit = Math.min(Math.max(apiParams.limit || 12, 1), 100)
@@ -96,18 +97,31 @@ export const listProducts = async ({
 
     let { products, count } = response
 
-    // Apply client-side filtering for unsupported API parameters
-    if (inStock || onSale || price || colors?.length || materials?.length || sizes?.length) {
-      products = products.filter(product => {
-        // Stock filtering
-        if (inStock === 'true') {
-          const hasAvailableVariants = product.variants?.some(variant => {
-            if (!variant.manage_inventory) return true // Not managing inventory = always available
-            if (variant.allow_backorder) return true // Backorder allowed = always available
-            return (variant.inventory_quantity || 0) > 0 // Has stock
-          })
-          if (!hasAvailableVariants) return false
+    // Debug: log price data when price filter is active
+    if (price) {
+      console.log("[PRICE FILTER DEBUG] price param:", price)
+      console.log("[PRICE FILTER DEBUG] total products before filter:", products.length)
+      products.forEach((p, i) => {
+        const v0 = p.variants?.[0]
+        console.log(`[PRICE FILTER DEBUG] product[${i}] ${p.id}:`, {
+          title: p.title,
+          calculated_price: v0?.calculated_price,
+          calculated_amount: v0?.calculated_price?.calculated_amount,
+          variants_count: p.variants?.length,
+        })
+      })
     }
+
+    // Apply client-side filtering for unsupported API parameters
+    if (inStock || onSale || madeToOrder || price || colors?.length || materials?.length || sizes?.length) {
+      products = products.filter(product => {
+        // In Stock filtering - products with a price
+        if (inStock === 'true') {
+          const hasPrice = product.variants?.some(variant =>
+            typeof variant.calculated_price?.calculated_amount === 'number'
+          )
+          if (!hasPrice) return false
+        }
 
         // Sale filtering
         if (onSale === 'true') {
@@ -125,25 +139,28 @@ export const listProducts = async ({
           }
         }
 
+        // Made to order filtering - products with no price
+        if (madeToOrder === 'true') {
+          const hasPrice = product.variants?.some(variant =>
+            typeof variant.calculated_price?.calculated_amount === 'number'
+          )
+          if (hasPrice) return false
+        }
+
         // Price filtering
         if (price && price !== '') {
           const productPrice = product.variants?.[0]?.calculated_price?.calculated_amount
-          if (productPrice) {
-            const priceNum = productPrice / 100 // Convert from cents
-            switch (price) {
-              case '0-50':
-                if (priceNum >= 50) return false
-                break
-              case '50-100':
-                if (priceNum < 50 || priceNum >= 100) return false
-                break
-              case '100-200':
-                if (priceNum < 100 || priceNum >= 200) return false
-                break
-              case '200+':
-                if (priceNum < 200) return false
-                break
-            }
+          if (!productPrice) return false
+          const priceNum = productPrice / 100 // Convert from cents
+          if (price.endsWith('+')) {
+            const min = parseFloat(price.slice(0, -1))
+            if (!isNaN(min) && priceNum < min) return false
+          } else if (price.includes('-')) {
+            const [minStr, maxStr] = price.split('-')
+            const min = parseFloat(minStr)
+            const max = parseFloat(maxStr)
+            if (!isNaN(min) && priceNum < min) return false
+            if (!isNaN(max) && priceNum >= max) return false
           }
         }
 
@@ -226,7 +243,7 @@ export const listProductsWithSort = async ({
   const limit = queryParams?.limit || 12
 
   // Separate API-supported parameters from client-side filters
-  const { inStock, onSale, price, colors, materials, sizes, ...apiParams } = queryParams || {}
+  const { inStock, onSale, madeToOrder, price, colors, materials, sizes, ...apiParams } = queryParams || {}
 
   // Fetch products with a larger limit for sorting, using only API-supported parameters
   const {
@@ -242,16 +259,14 @@ export const listProductsWithSort = async ({
 
   // Apply client-side filtering
   let filteredProducts = products
-  if (inStock || onSale || price || colors?.length || materials?.length || sizes?.length) {
+  if (inStock || onSale || madeToOrder || price || colors?.length || materials?.length || sizes?.length) {
     filteredProducts = products.filter(product => {
-      // Stock filtering
+      // In Stock filtering - products with a price
       if (inStock === 'true') {
-        const hasAvailableVariants = product.variants?.some(variant => {
-          if (!variant.manage_inventory) return true
-          if (variant.allow_backorder) return true
-          return (variant.inventory_quantity || 0) > 0
-        })
-        if (!hasAvailableVariants) return false
+        const hasPrice = product.variants?.some(variant =>
+          typeof variant.calculated_price?.calculated_amount === 'number'
+        )
+        if (!hasPrice) return false
       }
 
       // Sale filtering
@@ -270,25 +285,28 @@ export const listProductsWithSort = async ({
         }
       }
 
+      // Made to order filtering - products with no price
+      if (madeToOrder === 'true') {
+        const hasPrice = product.variants?.some(variant =>
+          typeof variant.calculated_price?.calculated_amount === 'number'
+        )
+        if (hasPrice) return false
+      }
+
       // Price filtering
       if (price && price !== '') {
         const productPrice = product.variants?.[0]?.calculated_price?.calculated_amount
-        if (productPrice) {
-          const priceNum = productPrice / 100
-          switch (price) {
-            case '0-50':
-              if (priceNum >= 50) return false
-              break
-            case '50-100':
-              if (priceNum < 50 || priceNum >= 100) return false
-              break
-            case '100-200':
-              if (priceNum < 100 || priceNum >= 200) return false
-              break
-            case '200+':
-              if (priceNum < 200) return false
-              break
-          }
+        if (!productPrice) return false
+        const priceNum = productPrice / 100
+        if (price.endsWith('+')) {
+          const min = parseFloat(price.slice(0, -1))
+          if (!isNaN(min) && priceNum < min) return false
+        } else if (price.includes('-')) {
+          const [minStr, maxStr] = price.split('-')
+          const min = parseFloat(minStr)
+          const max = parseFloat(maxStr)
+          if (!isNaN(min) && priceNum < min) return false
+          if (!isNaN(max) && priceNum >= max) return false
         }
       }
 
@@ -373,6 +391,7 @@ export const getProductFilterOptions = async (countryCode: string, categoryId?: 
     const materials = new Set<string>()
     const sizes = new Set<string>()
     const priceRanges = new Set<number>()
+    const productCategoriesMap = new Map<string, { id: string; name: string; parent_category_id: string | null; count: number }>()
 
     products.forEach(product => {
       // Collections
@@ -381,8 +400,8 @@ export const getProductFilterOptions = async (countryCode: string, categoryId?: 
           id: product.collection.id,
           title: product.collection.title,
           handle: product.collection.handle
-          })
-        }
+        })
+      }
 
       // Product types
       if (product.type) {
@@ -391,13 +410,31 @@ export const getProductFilterOptions = async (countryCode: string, categoryId?: 
           value: product.type.value
         })
       }
+
+      // Product categories - collect all categories from products
+      if (product.categories && Array.isArray(product.categories)) {
+        product.categories.forEach((cat: any) => {
+          const catId = cat.id
+          const existing = productCategoriesMap.get(catId)
+          if (existing) {
+            existing.count++
+          } else {
+            productCategoriesMap.set(catId, {
+              id: catId,
+              name: cat.name || cat.metadata?.localizations?.en?.name || catId,
+              parent_category_id: cat.parent_category_id || null,
+              count: 1,
+            })
+          }
+        })
+      }
       
       // Variant options (colors, materials, sizes, etc.)
       product.variants?.forEach(variant => {
         // Add price for price range calculation
         if (variant.calculated_price?.calculated_amount) {
           priceRanges.add(variant.calculated_price.calculated_amount / 100)
-            }
+        }
         
         variant.options?.forEach(option => {
           const optionTitle = option.option?.title?.toLowerCase()
@@ -410,7 +447,7 @@ export const getProductFilterOptions = async (countryCode: string, categoryId?: 
           } else if (optionTitle === 'size') {
             sizes.add(optionValue)
           }
-          })
+        })
       })
     })
     
@@ -426,7 +463,8 @@ export const getProductFilterOptions = async (countryCode: string, categoryId?: 
       materials: Array.from(materials).sort(),
       sizes: Array.from(sizes).sort(),
       priceRange: { min: minPrice, max: maxPrice },
-      totalProducts: products.length
+      totalProducts: products.length,
+      productCategories: Array.from(productCategoriesMap.values()),
     }
   } catch (error) {
     console.error("Error fetching filter options:", error)
@@ -437,7 +475,8 @@ export const getProductFilterOptions = async (countryCode: string, categoryId?: 
       materials: [],
       sizes: [],
       priceRange: { min: 0, max: 1000 },
-      totalProducts: 0
+      totalProducts: 0,
+      productCategories: [],
     }
   }
 }

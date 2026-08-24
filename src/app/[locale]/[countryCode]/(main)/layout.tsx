@@ -8,6 +8,7 @@ import CartMismatchBanner from "@modules/layout/components/cart-mismatch-banner"
 import Nav from "@modules/layout/templates/nav"
 import FreeShippingPriceNudge from "@modules/shipping/components/free-shipping-price-nudge"
 import FooterServer from "@modules/layout/templates/footer/FooterServer"
+import CtaSection from "@modules/layout/components/cta-section"
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
@@ -39,6 +40,7 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
         />
       )} */}
       {props.children}
+      <CtaSection />
       <FooterServer />
     </>
   )
