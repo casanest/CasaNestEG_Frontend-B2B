@@ -1,6 +1,11 @@
+@import url("https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap");
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+
+.font-satoshi {
+  font-family: "Satoshi", sans-serif !important;
+}
 
 @layer utilities {
   /* Chrome, Safari and Opera */

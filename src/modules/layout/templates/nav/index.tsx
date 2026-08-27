@@ -22,7 +22,7 @@ export default async function Nav() {
 
   const navLinksBefore = [
     { href: "/", labelEn: "Homepage", labelAr: "الرئيسية" },
-    { href: "/categories/integrated-solutions", labelEn: "Curated Solutions", labelAr: "الحلول المتكاملة" },
+    { href: "/pre-curated-solutions", labelEn: "Curated Solutions", labelAr: "الحلول المتكاملة" },
   ]
 
   const navLinksAfter = [
