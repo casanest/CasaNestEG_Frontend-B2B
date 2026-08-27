@@ -7,7 +7,7 @@ import { FacebookIcon } from "@modules/common/icons/facebook";
 import { XLogoIcon } from "@modules/common/icons/twitter";
 import Image from "next/image";
 import Link from "next/link";
-import { Mail, Phone } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 
 type Category = {
   id: string;
@@ -72,6 +72,7 @@ export default function Footer({ productCategories, collections, locale }: Foote
   const casanestLinks = [
     { href: "/", label: isRTL ? "الرئيسية" : "Homepage" },
     { href: "/our-services", label: isRTL ? "المشاريع" : "Projects" },
+    { href: "/store", label: isRTL ? "الحلول المنتقاة" : "Curated Solutions" },
     { href: "/about-us", label: isRTL ? "من نحن" : "About Us" },
   ];
 
@@ -86,8 +87,8 @@ export default function Footer({ productCategories, collections, locale }: Foote
       className="w-full bg-[#051026] text-white"
     >
       {/* Main Footer Content */}
-      <div className="content-container mx-auto px-8 md:px-12 lg:px-16 py-16">
-        <div className="flex flex-col lg:flex-row items-start justify-between gap-12 lg:gap-16">
+      <div className="content-container mx-auto px-[16px] lg:px-16 py-[44px] lg:py-16">
+        <div className="flex flex-col lg:flex-row items-start justify-between gap-[40px] lg:gap-16">
           {/* Company Info Column */}
           <div className="flex flex-col gap-4 max-w-[379px]">
             <LocalizedClientLink
@@ -116,7 +117,7 @@ export default function Footer({ productCategories, collections, locale }: Foote
           </div>
 
           {/* Links Columns */}
-          <div className="flex flex-col sm:flex-row gap-8 sm:gap-4 lg:gap-16 flex-1 max-w-[860px]">
+          <div className="flex flex-col lg:flex-row gap-[40px] lg:gap-16 flex-1 max-w-[860px]">
             {/* Casanest Column */}
             <div className="flex flex-col gap-4 flex-1">
               <h3 className="text-[18px] font-medium">
@@ -174,13 +175,21 @@ export default function Footer({ productCategories, collections, locale }: Foote
                     </LocalizedClientLink>
                   </li>
                 ))}
-                <li className="flex items-center gap-2 py-2">
-                  <Mail className="w-5 h-5 text-white/80 flex-shrink-0" />
-                  <span>info@casanest.sa</span>
-                </li>
-                <li className="flex items-center gap-2 py-2">
-                  <Phone className="w-5 h-5 text-white/80 flex-shrink-0" />
-                  <span>9200 123 456</span>
+                <li>
+                  <div className="flex flex-row lg:flex-col items-start lg:items-stretch justify-between lg:justify-start gap-[16px] lg:gap-0">
+                    <div className="flex items-center gap-2 py-2">
+                      <Mail className="w-5 h-5 text-white/80 flex-shrink-0" />
+                      <span>info@casanest.sa</span>
+                    </div>
+                    <div className="flex items-center gap-2 py-2">
+                      <Phone className="w-5 h-5 text-white/80 flex-shrink-0" />
+                      <span>9200 123 456</span>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2 py-2">
+                    <MapPin className="w-5 h-5 text-white/80 flex-shrink-0 mt-0.5" />
+                    <span>{isRTL ? "شارع أحمد شوقي، أبراج المدينة الملكية، فوق رانين، البرج الثاني، الطابق الأول العلوي" : "Ahmed Shawki st. Royal City towers, above Ranin, second tower, first upper floor"}</span>
+                  </div>
                 </li>
               </ul>
             </div>
@@ -190,14 +199,21 @@ export default function Footer({ productCategories, collections, locale }: Foote
 
       {/* Credits Bar */}
       <div className="bg-[#c1cee8] w-full">
-        <div className="content-container mx-auto px-8 md:px-12 lg:px-16 py-5">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-[14px] text-black/70 font-medium">
-            <p>
-              {isRTL
-                ? `© ${new Date().getFullYear()} كازانست. جميع الحقوق محفوظة. مورد تجاري مسجل في مصر.`
-                : `© ${new Date().getFullYear()} Casanest. All rights reserved. Registered commercial supplier in Egypt.`}
-            </p>
-            <div className="flex items-center gap-6">
+        <div className="content-container mx-auto p-[16px] lg:px-16 lg:py-5">
+          <div className="flex flex-col lg:flex-row items-center lg:items-start justify-center lg:justify-between gap-[16px] text-[14px] text-black/70 font-medium">
+            <div className="text-center lg:text-left">
+              <p>
+                {isRTL
+                  ? `© ${new Date().getFullYear()} كازانست. جميع الحقوق محفوظة.`
+                  : `© ${new Date().getFullYear()} Casanest. All rights reserved.`}
+              </p>
+              <p>
+                {isRTL
+                  ? "مورد تجاري مسجل في مصر."
+                  : "Registered commercial supplier in Egypt."}
+              </p>
+            </div>
+            <div className="flex items-center gap-[16px] lg:gap-6">
               <LocalizedClientLink href="/privacy" className="hover:text-[#17284a] transition-colors">
                 {isRTL ? "سياسة الخصوصية" : "Privacy policy"}
               </LocalizedClientLink>

@@ -62,83 +62,65 @@ const MobileActions: React.FC<MobileActionsProps> = ({
 
   return (
     <>
-      {/* Fixed bottom bar — always visible on mobile product page */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-[#e5e7eb] shadow-[0_-4px_6px_rgba(0,0,0,0.05)] px-4 py-3 flex flex-col gap-2">
-        {/* Row 1: Price + Quantity */}
-        <div className="flex items-center justify-between gap-4">
-          {/* Price Column */}
-          <div className="flex flex-col gap-0.5 shrink-0">
-            <div className="flex items-baseline gap-0.5 text-[#17284a]">
-              <span className="text-[12px] font-medium">
-                {isRTL ? "ج.م" : "EGP"}
-              </span>
-              <span className="text-[20px] font-bold leading-[1.4]">
-                {formattedNumber}
-              </span>
-              <span className="text-[12px] font-medium">{decimalPart}</span>
-            </div>
-            {isSale && selectedPrice?.original_price && (
-              <span className="text-[12px] text-[#707176] line-through">
-                {selectedPrice.original_price}
-              </span>
-            )}
-          </div>
-
-          {/* Quantity Box */}
-          <div className="flex items-center gap-3 rounded-[8px] border border-[#e5e7eb] bg-white px-2 py-1.5 shrink-0">
-            <button
-              type="button"
-              onClick={() => onQuantityChange(Math.max(minOrderQty, quantity - 1))}
-              className="text-[#707176] hover:text-[#17284a] transition-colors"
-            >
-              <Minus className="w-4 h-4" />
-            </button>
-            <span className="min-w-[1.5rem] text-center text-[14px] font-bold text-[#1c1b1c]">
-              {quantity}
+      {/* Fixed bottom bar — single row matching Figma mobile design */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-[#e5e7eb] shadow-[0_-4px_6px_rgba(0,0,0,0.05)] px-[16px] py-[12px] flex items-center gap-[16px]">
+        {/* Price Column */}
+        <div className="flex flex-col gap-[2px] shrink-0">
+          <div className="flex items-baseline gap-[2px] text-[#17284a]">
+            <span className="text-[12px] font-medium">
+              {isRTL ? "ج.م" : "EGP"}
             </span>
-            <button
-              type="button"
-              onClick={() => onQuantityChange(Math.min(99, quantity + 1))}
-              className="text-[#707176] hover:text-[#17284a] transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
+            <span className="text-[20px] font-bold leading-[1.4]">
+              {formattedNumber}
+            </span>
+            <span className="text-[12px] font-medium">{decimalPart}</span>
           </div>
+          {isSale && selectedPrice?.original_price && (
+            <span className="text-[12px] text-[#707176] line-through">
+              {selectedPrice.original_price}
+            </span>
+          )}
         </div>
 
-        {/* Row 2: Two stacked buttons */}
-        <div className="flex flex-col gap-2">
-          {/* Add to Quote List */}
+        {/* Quantity Box */}
+        <div className="flex items-center gap-[12px] rounded-[8px] border border-[#e5e7eb] bg-white p-[8px] shrink-0">
           <button
-            onClick={handleAddToCart}
-            disabled={!inStock || !variant || isAdding}
-            className={clx(
-              "w-full h-[44px] rounded-[10px] border border-[#17284a] text-[#17284a] text-[14px] font-medium flex items-center justify-center transition-colors hover:bg-[#f3f4f6]",
-              isRTL && "tracking-[0.05em]"
-            )}
-            data-testid="mobile-add-to-quote"
+            type="button"
+            onClick={() => onQuantityChange(Math.max(minOrderQty, quantity - 1))}
+            className="text-[#707176] hover:text-[#17284a] transition-colors"
           >
-            {isRTL ? "اضافة الي عرض سعر" : "Add to Quote"}
+            <Minus className="w-5 h-5" />
           </button>
-          {/* Send Quote Request */}
+          <span className="min-w-[1.5rem] text-center text-[14px] font-bold text-[#1c1b1c]">
+            {quantity}
+          </span>
           <button
-            onClick={handleAddToCart}
-            disabled={!inStock || !variant || isAdding}
-            className={clx(
-              "w-full h-[44px] rounded-[10px] bg-[#17284a] text-white text-[14px] font-medium flex items-center justify-center transition-colors hover:bg-[#0f1d35]",
-              isRTL && "tracking-[0.05em]"
-            )}
-            data-testid="mobile-cart-button"
+            type="button"
+            onClick={() => onQuantityChange(Math.min(99, quantity + 1))}
+            className="text-[#707176] hover:text-[#17284a] transition-colors"
           >
-            {!variant
-              ? isRTL ? "اختر النوع" : "Select variant"
-              : !inStock
-                ? isRTL ? "غير متوفر" : "Out of stock"
-                : isAdding
-                  ? isRTL ? "جارٍ..." : "Sending..."
-                  : isRTL ? "ارسال طلب عرض سعر" : "Send Quote Request"}
+            <Plus className="w-5 h-5" />
           </button>
         </div>
+
+        {/* Request a Quote Button */}
+        <button
+          onClick={handleAddToCart}
+          disabled={!inStock || !variant || isAdding}
+          className={clx(
+            "flex-1 rounded-[10px] bg-[#17284a] text-white text-[13px] font-medium flex items-center justify-center transition-colors hover:bg-[#0f1d35] py-[16px] px-[36px]",
+            isRTL && "tracking-[0.05em]"
+          )}
+          data-testid="mobile-cart-button"
+        >
+          {!variant
+            ? isRTL ? "اختر النوع" : "Select variant"
+            : !inStock
+              ? isRTL ? "غير متوفر" : "Out of stock"
+              : isAdding
+                ? isRTL ? "جارٍ..." : "Sending..."
+                : isRTL ? "اطلب عرض سعر" : "Request a Quote"}
+        </button>
       </div>
 
       {/* Options Modal */}

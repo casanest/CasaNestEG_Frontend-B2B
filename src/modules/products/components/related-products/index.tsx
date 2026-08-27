@@ -1,8 +1,8 @@
 import { listProducts } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
 import { HttpTypes } from "@medusajs/types"
-import Product from "../product-preview"
 import { getLocale } from "next-intl/server"
+import RelatedProductsCarousel from "./carousel"
 
 type RelatedProductsProps = {
   product: HttpTypes.StoreProduct
@@ -59,19 +59,11 @@ export default async function RelatedProducts({
         </p>
       </div>
 
-      <div
-        className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 -mx-1 px-1"
-        style={{
-          maskImage: "linear-gradient(to right, transparent 0, black 16px, black calc(100% - 40px), transparent 100%)",
-          WebkitMaskImage: "linear-gradient(to right, transparent 0, black 16px, black calc(100% - 40px), transparent 100%)",
-        }}
-      >
-        {products.map((product) => (
-          <div key={product.id} className="flex-shrink-0 w-[280px] sm:w-[300px]">
-            <Product locale={locale} region={region} product={product} />
-          </div>
-        ))}
-      </div>
+      <RelatedProductsCarousel
+        products={products}
+        region={region}
+        locale={locale}
+      />
     </div>
   )
 }

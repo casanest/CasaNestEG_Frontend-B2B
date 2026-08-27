@@ -194,7 +194,7 @@ export default function ProductActions({
                 !isValidVariant
               }
               className={clx(
-                "w-full h-[56px] rounded-[16px] bg-[#17284a] text-white text-[16px] font-medium transition-all hover:bg-[#0f1d35] flex items-center justify-center gap-2",
+                "w-full h-[56px] rounded-[16px] bg-[#17284a] text-white text-[12px] font-medium transition-all hover:bg-[#0f1d35] flex items-center justify-center gap-2",
                 isRTL && "tracking-[0.05em]"
               )}
               data-testid="add-product-button"
@@ -243,28 +243,93 @@ export default function ProductActions({
           </div>
         </div>
 
-        {/* Mobile Options — shown only on mobile */}
-        {(product.variants?.length ?? 0) > 1 && (
-          <div className="lg:hidden flex flex-col gap-4">
-            {(product.options || []).map((option) => {
-              return (
-                <div key={option.id} className="flex flex-col gap-2">
-                  <span className="text-[14px] font-bold text-[#1c1b1c]">
-                    {option.title}
-                  </span>
-                  <OptionSelect
-                    option={option}
-                    current={options[option.id]}
-                    updateOption={setOptionValue}
-                    title={option.title ?? ""}
-                    data-testid="product-options-mobile"
-                    disabled={!!disabled || isAdding}
-                  />
-                </div>
-              )
-            })}
+        {/* Mobile Options + Quantity + Trust Points — shown only on mobile */}
+        <div className="lg:hidden flex flex-col gap-[20px]">
+          {/* Variant Options */}
+          {(product.variants?.length ?? 0) > 1 && (
+            <div className="flex flex-col gap-[20px]">
+              {(product.options || []).map((option) => {
+                return (
+                  <div key={option.id} className="flex flex-col gap-[8px]">
+                    <span className="text-[14px] font-bold text-[#1c1b1c]">
+                      {option.title}
+                    </span>
+                    <OptionSelect
+                      option={option}
+                      current={options[option.id]}
+                      updateOption={setOptionValue}
+                      title={option.title ?? ""}
+                      data-testid="product-options-mobile"
+                      disabled={!!disabled || isAdding}
+                    />
+                  </div>
+                )
+              })}
+            </div>
+          )}
+
+          {/* Quantity Selector */}
+          <div className="flex flex-col gap-[8px]">
+            <span className="text-[14px] font-bold text-[#1c1b1c]">
+              {isRTL ? "الكمية" : "Quantity"}
+            </span>
+            <div className="flex items-center gap-[16px]">
+              <div className="flex items-center justify-center gap-[12px] rounded-[8px] border border-[#e5e7eb] bg-white p-[8px] w-[110px]">
+                <button
+                  type="button"
+                  onClick={() => setQuantity((prev) => Math.max(minOrderQty, prev - 1))}
+                  className="text-[#707176] hover:text-[#17284a] transition-colors"
+                >
+                  <Minus className="w-6 h-6" />
+                </button>
+                <span className="min-w-[1.5rem] text-center text-[14px] font-bold text-[#1c1b1c]">
+                  {quantity}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setQuantity((prev) => Math.min(99, prev + 1))}
+                  className="text-[#707176] hover:text-[#17284a] transition-colors"
+                >
+                  <Plus className="w-6 h-6" />
+                </button>
+              </div>
+              <span className="text-[12px] text-[#707176]">
+                {isRTL ? "الحد الأدنى: " : "Min. Order Qty: "}
+                <span className="font-bold text-[#1c1b1c]">
+                  {isRTL ? `${minOrderQty} قطعة` : `${minOrderQty} pcs`}
+                </span>
+              </span>
+            </div>
           </div>
-        )}
+
+          {/* Trust Points */}
+          <div className="flex flex-col gap-[16px] pt-[8px]">
+            <div className="flex items-center gap-[12px]">
+              <Truck className="w-6 h-6 text-[#17284a] flex-shrink-0" />
+              <div className="flex flex-col gap-[2px]">
+                <span className="text-[14px] font-bold text-[#1c1b1c]">
+                  {isRTL ? "توصيل سريع" : "Fast Delivery"}
+                </span>
+                <span className="text-[12px] text-[#707176]">
+                  {isRTL ? "القاهرة والجيزة خلال 3-5 أيام عمل" : "Cairo & Giza within 3-5 business days"}
+                </span>
+              </div>
+            </div>
+            {warrantyNum && (
+              <div className="flex items-center gap-[12px]">
+                <ShieldCheck className="w-6 h-6 text-[#17284a] flex-shrink-0" />
+                <div className="flex flex-col gap-[2px]">
+                  <span className="text-[14px] font-bold text-[#1c1b1c]">
+                    {isRTL ? `ضمان ${warrantyNum} سنوات` : `${warrantyNum}-Year Warranty`}
+                  </span>
+                  <span className="text-[12px] text-[#707176]">
+                    {isRTL ? "تغطية ضمان هيكلية كاملة" : "Full structural warranty coverage"}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
 
         <MobileActions
           product={product}

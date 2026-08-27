@@ -11,7 +11,7 @@ const Layout: React.FC<{
   return (
     <div>
       <Nav />
-      <main className="relative">{children}</main>
+      <main>{children}</main>
       <FooterServer />
     </div>
   )

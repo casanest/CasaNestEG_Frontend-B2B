@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useCallback, useEffect, useRef } from "react"
+import { createPortal } from "react-dom"
 import useEmblaCarousel from "embla-carousel-react"
 import Image from "next/image"
 import { ChevronLeft, ChevronRight, X, ImageIcon } from "lucide-react"
@@ -176,8 +177,8 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
                 )}
             </div>
 
-            {/* Lightbox — white popup matching Figma design */}
-            {lightboxOpen && selected?.url && (
+            {/* Lightbox — white popup matching Figma design (portaled to body to escape sticky stacking context) */}
+            {lightboxOpen && selected?.url && createPortal(
                 <div
                     className="fixed inset-0 z-[9999] bg-black/60 flex items-center justify-center p-4"
                     onClick={() => setLightboxOpen(false)}
@@ -259,7 +260,8 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
                             </div>
                         )}
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </>
     )

@@ -126,8 +126,8 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
           <span className="font-bold text-[#17284a]">{title}</span>
         </div>
 
-        {/* Product Hero - 3 column on desktop */}
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 px-4 lg:px-[60px] pt-5 pb-[160px] lg:pb-[60px]">
+        {/* Product Hero - 3 column on desktop, stacked on mobile */}
+        <div className="flex flex-col lg:flex-row gap-[24px] lg:gap-10 px-[16px] lg:px-[60px] pt-[44px] pb-[160px] lg:pt-5 lg:pb-[60px]">
           {/* Gallery Column - Left on desktop */}
           <div className="lg:w-[520px] shrink-0 lg:sticky lg:top-24 self-start w-full">
             <ImageGallery
@@ -137,24 +137,24 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
           </div>
 
           {/* Info Column - Middle */}
-          <div className="flex-1 flex flex-col gap-4 lg:gap-6 min-w-0">
+          <div className="flex-1 flex flex-col gap-[24px] lg:gap-6 min-w-0">
             <ProductInfo product={product} />
 
             {/* Short Description */}
             {description && (
-              <p className="text-[16px] leading-[1.5] text-[#707176] max-w-[424px]">
-                {description.length > 120
-                  ? description.slice(0, 120) + "…"
-                  : description}
+              <p className="text-[14px] lg:text-[16px] leading-[1.5] text-[#5d5d61] lg:text-[#707176] lg:max-w-[424px]">
+                {description}
               </p>
             )}
 
-            {/* Tabs: Specs / Description / Documents */}
-            <ProductTabs
-              specs={specs}
-              description={description}
-              documentUrl={(product as any).document_url ?? null}
-            />
+            {/* Tabs: Specs / Description / Documents — desktop only, mobile renders after actions */}
+            <div className="hidden lg:block">
+              <ProductTabs
+                specs={specs}
+                description={description}
+                documentUrl={(product as any).document_url ?? null}
+              />
+            </div>
           </div>
 
           {/* Action Sidebar - Right on desktop, mobile sticky bar rendered inside */}
@@ -171,28 +171,38 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
               <ProductActionsWrapper id={product.id} region={region} />
             </Suspense>
           </div>
+
+          {/* Tabs — mobile only, rendered after actions to match Figma flow */}
+          <div className="lg:hidden w-full">
+            <ProductTabs
+              specs={specs}
+              description={description}
+              documentUrl={(product as any).document_url ?? null}
+            />
+          </div>
         </div>
       </div>
 
       {/* Track recently viewed product in localStorage */}
       <RecentlyViewedTracker product={product} />
 
-      {/* Shared grey background section for Recently Viewed + Related Products */}
-      <div className="bg-[#f8f9fa] w-full" dir={locale === "ar" ? "rtl" : "ltr"}>
-        <div className="px-4 lg:px-[60px] py-16 flex flex-col gap-16">
-          {/* Recently Viewed (from localStorage) */}
+      {/* Related Products — grey background */}
+      <div className="bg-[#f3f4f6] w-full" dir={locale === "ar" ? "rtl" : "ltr"}>
+        <div className="px-[16px] lg:px-[60px] py-[44px] lg:py-16" data-testid="related-products-container">
+          <Suspense fallback={<SkeletonRelatedProducts />}>
+            <RelatedProducts product={product} countryCode={countryCode} />
+          </Suspense>
+        </div>
+      </div>
+
+      {/* Recently Viewed — white background */}
+      <div className="bg-white w-full" dir={locale === "ar" ? "rtl" : "ltr"}>
+        <div className="px-[16px] lg:px-[60px] py-[44px] lg:py-16">
           <RecentlyViewedProducts
             region={region}
             countryCode={countryCode}
             currentProductId={product.id}
           />
-
-          {/* Related Products (from backend: collection/tags) */}
-          <div data-testid="related-products-container">
-            <Suspense fallback={<SkeletonRelatedProducts />}>
-              <RelatedProducts product={product} countryCode={countryCode} />
-            </Suspense>
-          </div>
         </div>
       </div>
     </>

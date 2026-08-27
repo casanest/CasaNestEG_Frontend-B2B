@@ -38,10 +38,10 @@ const ProductTabs = ({ specs, description, documentUrl }: ProductTabsProps) => {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-5 pt-2.5 pb-3 text-[14px] font-bold leading-[1.5] transition-colors ${
+            className={`px-[16px] pt-[10px] pb-[12px] text-[14px] leading-[1.5] transition-colors ${
               activeTab === tab.id
-                ? "text-[#17284a] border-b-[3px] border-[#17284a]"
-                : "text-[#707176] hover:text-[#17284a]"
+                ? "font-bold text-[#17284a] border-b-[3px] border-[#17284a]"
+                : "font-medium text-[#707176] hover:text-[#17284a]"
             }`}
           >
             {tab.label}
@@ -50,25 +50,29 @@ const ProductTabs = ({ specs, description, documentUrl }: ProductTabsProps) => {
       </div>
 
       {/* Tab Content */}
-      <div className="pt-[24px]">
+      <div className="pt-[16px] lg:pt-[24px]">
         {activeTab === "specs" && (
           <div className="flex flex-col">
             {visibleSpecs.length > 0 ? (
-              visibleSpecs.map((spec, i) => (
-                <div
-                  key={spec.label}
-                  className={`flex items-center justify-between gap-4 px-4 py-3.5 min-h-[49px] ${
-                    i % 2 === 0 ? "bg-[#f8f9fa]" : "bg-white"
-                  }`}
-                >
-                  <span className="text-[14px] font-medium text-[#5d5d61]">
-                    {spec.label}
-                  </span>
-                  <span className="text-[14px] font-medium text-[#1c1b1c] text-right">
-                    {spec.value}
-                  </span>
-                </div>
-              ))
+              <div className="border border-[#e5e7eb] rounded-[8px] overflow-hidden">
+                {visibleSpecs.map((spec, i) => (
+                  <div
+                    key={spec.label}
+                    className={`flex items-center justify-between gap-4 px-[16px] py-[12px] ${
+                      i < visibleSpecs.length - 1 ? "border-b border-[#e5e7eb]" : ""
+                    } ${
+                      i % 2 === 0 ? "bg-[#f8f9fa]" : "bg-white"
+                    }`}
+                  >
+                    <span className="text-[14px] font-medium text-[#707176]">
+                      {spec.label}
+                    </span>
+                    <span className="text-[14px] font-bold text-[#17284a] text-right">
+                      {spec.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
             ) : (
               <p className="text-[14px] text-[#707176] py-4">
                 {isRTL ? "لا توجد مواصفات متاحة" : "No specifications available"}
