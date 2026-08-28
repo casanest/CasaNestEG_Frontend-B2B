@@ -47,7 +47,13 @@ export type PackageDetail = {
       handle: string
       thumbnail: string | null
       status: string
-      metadata: Record<string, unknown> | null
+      description_en: string | null
+      description_ar: string | null
+      moq: number | null
+      price: {
+        amount: number
+        currency_code: string
+      } | null
     }[]
   }[]
 }
