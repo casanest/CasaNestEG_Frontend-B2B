@@ -1,4 +1,5 @@
 import { Metadata } from "next"
+import { setRequestLocale } from "next-intl/server"
 
 import { listCartOptions, retrieveCart } from "@lib/data/cart"
 import { retrieveCustomer } from "@lib/data/customer"
@@ -14,7 +15,15 @@ export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
 }
 
-export default async function PageLayout(props: { children: React.ReactNode }) {
+export default async function PageLayout(
+  props: {
+    children: React.ReactNode
+    params: Promise<{ locale: string; countryCode: string }>
+  }
+) {
+  const { locale } = await props.params
+  setRequestLocale(locale)
+
   const customer = await retrieveCustomer()
   const cart = await retrieveCart()
   let shippingOptions: StoreCartShippingOption[] = []
@@ -40,8 +49,8 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
         />
       )} */}
       {props.children}
-      <CtaSection />
-      <FooterServer />
+      <CtaSection locale={locale} />
+      <FooterServer locale={locale} />
     </>
   )
 }

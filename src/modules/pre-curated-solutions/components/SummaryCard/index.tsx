@@ -39,7 +39,7 @@ export default function SummaryCard({
   return (
     <div className="bg-white border border-[#e5e7eb] border-solid flex flex-col gap-5 md:gap-6 items-start p-6 md:p-8 rounded-2xl w-full lg:sticky lg:top-[8rem] lg:mt-12">
       {/* Header */}
-      <div className="flex flex-col gap-1 md:gap-2 items-start w-full whitespace-nowrap">
+      <div className="flex flex-col gap-1 md:gap-2 items-start w-full whitespace-normal md:whitespace-nowrap">
         <p className="font-satoshi font-bold leading-[1.4] md:leading-[1.3] text-[#17284a] text-[20px] md:text-[24px]">
           {yourPackageText}
         </p>
@@ -52,7 +52,7 @@ export default function SummaryCard({
       <div className="bg-[#e5e7eb] h-px w-full" />
 
       {/* Category counts */}
-      <div className="flex flex-col gap-3 md:gap-4 items-start text-[16px] text-[#17284a] w-full whitespace-nowrap">
+      <div className="flex flex-col gap-3 md:gap-4 items-start text-[16px] text-[#17284a] w-full whitespace-normal md:whitespace-nowrap">
         {categoryCounts.map((cat, idx) => (
           <div
             key={idx}
@@ -84,7 +84,7 @@ export default function SummaryCard({
       {/* Request Quote button */}
       <div className="flex flex-col items-start pt-2 md:pt-0 w-full">
         <button className="bg-[#17284a] flex items-center justify-center px-6 md:px-9 py-4 rounded-xl w-full hover:bg-[#141b34] transition-colors cursor-pointer">
-          <p className="font-satoshi font-medium leading-[1.5] text-[16px] text-center text-white whitespace-nowrap">
+          <p className="font-satoshi font-medium leading-[1.5] text-[16px] text-center text-white whitespace-normal md:whitespace-nowrap">
             {requestQuoteText}
           </p>
         </button>

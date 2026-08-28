@@ -90,13 +90,13 @@ export default function PackageItemCard({
         {/* Min Order Qty */}
         <div className="flex gap-1 md:gap-1 items-center w-full">
           <PackageIcon className="w-3 h-3 md:w-4 md:h-4 text-[#5d5d61] shrink-0" />
-          <p className="font-satoshi font-normal leading-[1.5] text-[#5d5d61] text-[12px] whitespace-nowrap">
+          <p className="font-satoshi font-normal leading-[1.5] text-[#5d5d61] text-[12px] whitespace-normal md:whitespace-nowrap">
             {minOrderQtyText}
           </p>
         </div>
         {/* Price pill */}
         <div className="bg-[#f3f4f6] flex items-center justify-center px-2 md:px-3 py-1.5 rounded-md w-full">
-          <p className="font-satoshi font-bold leading-[1.5] text-[#17284a] text-[14px] whitespace-nowrap">
+          <p className="font-satoshi font-bold leading-[1.5] text-[#17284a] text-[14px] whitespace-normal md:whitespace-nowrap">
             {priceText}
           </p>
         </div>
@@ -110,7 +110,7 @@ export default function PackageItemCard({
           >
             <Minus className="w-3.5 h-3.5 md:w-5 md:h-5 text-[#1c1b1c]" />
           </button>
-          <p className="font-satoshi font-bold leading-[1.5] text-[#1c1b1c] text-[14px] whitespace-nowrap">
+          <p className="font-satoshi font-bold leading-[1.5] text-[#1c1b1c] text-[14px] whitespace-normal md:whitespace-nowrap">
             {quantity}
           </p>
           <button

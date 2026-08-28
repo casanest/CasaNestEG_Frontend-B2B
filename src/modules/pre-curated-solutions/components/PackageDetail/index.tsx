@@ -121,7 +121,7 @@ export default function PackageDetailClient({ pkg, locale }: PackageDetailProps)
       {/* Header band */}
       <div className="flex flex-col gap-4 md:gap-6 px-4 md:px-8 lg:px-[60px] py-11 md:py-10 w-full max-w-[1600px] mx-auto">
         {/* Breadcrumbs */}
-        <div className="flex gap-1 md:gap-2 items-center text-[14px] whitespace-nowrap font-satoshi">
+        <div className="flex gap-1 md:gap-2 items-center text-[14px] whitespace-normal md:whitespace-nowrap font-satoshi overflow-hidden">
           <LocalizedClientLink
             href="/"
             className="font-normal text-[#707176] leading-[1.5] hover:text-[#17284a] transition-colors"
@@ -143,12 +143,12 @@ export default function PackageDetailClient({ pkg, locale }: PackageDetailProps)
 
         {/* Title + reassurance badge */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:flex-wrap md:gap-4">
-          <h1 className="font-satoshi font-bold leading-[1.3] md:leading-[1.18] text-[#17284a] text-[24px] md:text-[40px] whitespace-nowrap">
+          <h1 className="font-satoshi font-bold leading-[1.3] md:leading-[1.18] text-[#17284a] text-[24px] md:text-[40px] whitespace-normal md:whitespace-nowrap">
             {name}
           </h1>
           <div className="bg-[#051026] md:bg-[#141b34] flex items-center gap-1.5 md:gap-0 px-4 py-2 md:py-[6px] rounded-full shrink-0">
             <Check className="w-3.5 h-3.5 md:hidden text-white" strokeWidth={3} />
-            <p className="font-satoshi font-bold text-[14px] text-white whitespace-nowrap leading-[1.5]">
+            <p className="font-satoshi font-bold text-[14px] text-white whitespace-normal md:whitespace-nowrap leading-[1.5]">
               {reassuranceBadge}
             </p>
           </div>
@@ -172,7 +172,7 @@ export default function PackageDetailClient({ pkg, locale }: PackageDetailProps)
             return (
               <div key={title.id} className="flex flex-col gap-4 lg:gap-3 w-full">
                 {/* Category header */}
-                <div className="flex items-center justify-between pb-2 w-full whitespace-nowrap">
+                <div className="flex items-center justify-between pb-2 w-full whitespace-normal md:whitespace-nowrap">
                   <p className="font-satoshi font-bold leading-[1.4] text-[#17284a] text-[20px]">
                     {titleName}
                   </p>
@@ -182,9 +182,9 @@ export default function PackageDetailClient({ pkg, locale }: PackageDetailProps)
                 </div>
 
                 {/* Items grid - wrapped */}
-                <div className="flex flex-wrap gap-4 items-start w-full lg:grid lg:grid-cols-4 lg:gap-4">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 items-start w-full lg:grid-cols-4 lg:gap-4">
                   {title.products.map((product) => (
-                    <div key={product.id} className="w-[186px] lg:w-full">
+                    <div key={product.id} className="w-full">
                       <PackageItemCard
                         product={product}
                         locale={locale}

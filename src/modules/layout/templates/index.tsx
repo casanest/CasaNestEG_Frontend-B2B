@@ -12,7 +12,7 @@ const Layout: React.FC<{
     <div>
       <Nav />
       <main>{children}</main>
-      <FooterServer />
+      <FooterServer locale={locale} />
     </div>
   )
 }

@@ -19,7 +19,7 @@ export default function SectionHeader({ locale }: SectionHeaderProps) {
       >
         {preHeadline}
       </p>
-      <p className="font-satoshi font-medium leading-[1.18] text-[#17284a] text-[40px] md:text-[56px] md:leading-[1.1] whitespace-nowrap">
+      <p className="font-satoshi font-medium leading-[1.18] text-[#17284a] text-[28px] sm:text-[40px] md:text-[56px] md:leading-[1.1] whitespace-normal md:whitespace-nowrap">
         {heading}
       </p>
       <p className="font-satoshi font-normal leading-[1.5] text-[#5d5d61] text-[16px] md:text-[18px] max-w-[680px]">

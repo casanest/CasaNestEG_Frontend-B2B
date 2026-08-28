@@ -64,14 +64,14 @@ export default function SolutionCard({ package: pkg, locale }: SolutionCardProps
           {/* Item count */}
           <div className="flex gap-2 items-center w-full">
             <PackageIcon className="w-6 h-6 text-[#17284a] shrink-0" />
-            <p className="font-satoshi font-medium leading-[1.5] text-[#17284a] text-[14px] whitespace-nowrap">
+            <p className="font-satoshi font-medium leading-[1.5] text-[#17284a] text-[14px] whitespace-normal md:whitespace-nowrap">
               {itemCountText}
             </p>
           </div>
 
           {/* Button */}
           <div className="bg-[#17284a] flex items-center justify-center px-9 py-4 rounded-xl w-full">
-            <p className="font-satoshi font-medium leading-[1.5] text-[16px] text-center text-white whitespace-nowrap">
+            <p className="font-satoshi font-medium leading-[1.5] text-[16px] text-center text-white whitespace-normal md:whitespace-nowrap">
               {buttonText}
             </p>
           </div>

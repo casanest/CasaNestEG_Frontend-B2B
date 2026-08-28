@@ -11,6 +11,9 @@ import ScrollHeader from "./ScrollHeader"
 import ProductsDropdown from "./ProductsDropdown"
 import { listCategories, Category } from "@lib/data/categories"
 import { listCollections } from "@lib/data/collections"
+import { listPackages } from "@lib/data/packages"
+import { listAllPortfolioProjects } from "@lib/data/portfolio"
+import { retrieveCart } from "@lib/data/cart"
 import { getLocale } from "next-intl/server"
 
 export default async function Nav() {
@@ -19,6 +22,19 @@ export default async function Nav() {
   const productCategories: Category[] = await listCategories()
 
   const { collections } = await listCollections()
+
+  const packages = await listPackages().catch(() => [])
+
+  const portfolioData = await listAllPortfolioProjects().catch(() => ({ categories: [], projects: [] }))
+  const projectGroups = portfolioData.categories
+    .map((cat) => ({
+      category: cat,
+      projects: portfolioData.projects.filter((p) => p.category_slug === cat.slug),
+    }))
+    .filter((g) => g.projects.length > 0)
+
+  const cart = await retrieveCart().catch(() => null)
+  const cartItemCount = cart?.items?.reduce((acc, item) => acc + item.quantity, 0) || 0
 
   const navLinksBefore = [
     { href: "/", labelEn: "Homepage", labelAr: "الرئيسية" },
@@ -35,7 +51,12 @@ export default async function Nav() {
       <ScrollHeader isRTL={isRTL} topNav={<TopNav />}>
             {/* Mobile: SideMenu + Logo */}
             <div className="flex items-center gap-2 md:hidden">
-              <SideMenu productCategories={productCategories as any} collections={collections} />
+              <SideMenu
+                productCategories={productCategories as any}
+                packages={packages}
+                projectGroups={projectGroups}
+                cartCount={cartItemCount}
+              />
               <LocalizedClientLink
                 href="/"
                 className="inline-block"

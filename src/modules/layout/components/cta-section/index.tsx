@@ -1,9 +1,11 @@
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { ArrowRight } from "lucide-react"
-import { getLocale } from "next-intl/server"
 
-export default async function CtaSection() {
-  const locale = await getLocale()
+type CtaSectionProps = {
+  locale: string
+}
+
+export default async function CtaSection({ locale }: CtaSectionProps) {
   const isRTL = locale === "ar"
 
   return (
