@@ -168,6 +168,8 @@ export default function ProjectDetailTemplate({ project }: Props) {
         const paragraphs = rawText.split("\n").filter((t) => t.trim())
         const isEven = index % 2 === 0
         const isOverview = index === 0
+        const quote = isRTL ? project.quote_ar : project.quote_en
+        const position = isRTL ? project.position_ar : project.position_en
 
         return (
           <section
@@ -193,11 +195,24 @@ export default function ProjectDetailTemplate({ project }: Props) {
                       {text}
                     </p>
                   ))}
+                  {/* Quote box — only under the first sub-paragraph */}
+                  {isOverview && quote && (
+                    <div className="flex flex-col items-start gap-[8px] bg-[#F8F9FA] rounded-[16px] p-[24px] w-full">
+                      <p className="text-[16px] small:text-[18px] leading-[1.5] text-[#17284A] italic small:not-italic">
+                        {`"${quote}"`}
+                      </p>
+                      {position && (
+                        <p className="text-[14px] small:text-[16px] leading-[1.5] text-[#17284A] font-bold">
+                          {`— ${position}`}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
                 {/* Image side */}
                 {para.image_url && (
-                  <div className="flex-1 w-full">
-                    <div className="relative h-[240px] small:h-[400px] w-full overflow-hidden rounded-[12px] small:rounded-[16px] border border-[#E5E7EB]">
+                  <div className="flex-1 w-full flex flex-col gap-[16px] small:gap-[24px]">
+                    <div className="relative h-[240px] small:h-[360px] w-full overflow-hidden rounded-[12px] small:rounded-[16px] border border-[#E5E7EB]">
                       <Image
                         src={para.image_url}
                         alt={heading}
@@ -206,6 +221,18 @@ export default function ProjectDetailTemplate({ project }: Props) {
                         className="object-cover"
                       />
                     </div>
+                    {/* Second image — below the first image */}
+                    {para.image_url_2 && (
+                      <div className="relative h-[240px] small:h-[360px] w-full overflow-hidden rounded-[12px] small:rounded-[16px] border border-[#E5E7EB]">
+                        <Image
+                          src={para.image_url_2}
+                          alt={heading}
+                          fill
+                          sizes="(max-width: 1024px) 100vw, 50vw"
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

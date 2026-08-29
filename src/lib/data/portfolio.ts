@@ -42,6 +42,7 @@ export interface PortfolioSubParagraph {
   text_en: string
   text_ar: string
   image_url: string
+  image_url_2?: string
   display_order: number
 }
 
@@ -62,6 +63,10 @@ export interface PortfolioProjectDetail {
   hero_image_url: string
   project_date: string
   is_in_homepage: boolean
+  quote_en?: string
+  quote_ar?: string
+  position_en?: string
+  position_ar?: string
   created_at: string
   updated_at: string
   category: PortfolioCategory | null

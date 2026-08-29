@@ -38,5 +38,7 @@ export default async function ProjectDetailPage({ params }: Props) {
     notFound()
   }
 
+  // console.log("[portfolio] Project detail response:", JSON.stringify(project, null, 2))
+
   return <ProjectDetailTemplate project={project} />
 }
