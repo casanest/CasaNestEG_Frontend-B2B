@@ -519,10 +519,10 @@ export default function SideMenu({ productCategories, packages = [], projectGrou
     <Fragment>
       <button
         onClick={() => setIsOpen(true)}
-        className="flex items-center justify-center p-2 md:hidden"
+        className="flex items-center justify-center w-10 h-10 rounded-[8px] border border-white md:hidden"
         aria-label="Open menu"
       >
-        <BarsIcon />
+        <BarsIcon className="text-white" />
       </button>
 
       <div

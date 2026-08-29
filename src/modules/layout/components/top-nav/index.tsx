@@ -16,7 +16,7 @@ export default function TopNav() {
 
   return (
     <div
-      className="w-full bg-[#c1cee8] overflow-hidden"
+      className="hidden md:block w-full bg-[#c1cee8] overflow-hidden"
       dir={isRTL ? "rtl" : "ltr"}
     >
       <div className="content-container mx-auto flex items-center justify-between md:justify-end gap-2 sm:gap-4 md:gap-7 py-1.5 overflow-hidden">

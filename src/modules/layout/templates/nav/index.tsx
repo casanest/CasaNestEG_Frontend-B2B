@@ -7,6 +7,7 @@ import TopNav from "@modules/layout/components/top-nav"
 import LanguageSwitcher from "@modules/layout/components/language-switcher"
 import Image from "next/image"
 import { FilePlus } from "lucide-react"
+import { FileAddIcon } from "@modules/common/icons/file-add"
 import ScrollHeader from "./ScrollHeader"
 import ProductsDropdown from "./ProductsDropdown"
 import { listCategories, Category } from "@lib/data/categories"
@@ -49,30 +50,30 @@ export default async function Nav() {
   return (
     <>
       <ScrollHeader isRTL={isRTL} topNav={<TopNav />}>
-            {/* Mobile: SideMenu + Logo */}
-            <div className="flex items-center gap-2 md:hidden">
-              <SideMenu
-                productCategories={productCategories as any}
-                packages={packages}
-                projectGroups={projectGroups}
-                cartCount={cartItemCount}
+            {/* Mobile: Hamburger (left) */}
+            <SideMenu
+              productCategories={productCategories as any}
+              packages={packages}
+              projectGroups={projectGroups}
+              cartCount={cartItemCount}
+            />
+
+            {/* Mobile: Centered Logo */}
+            <LocalizedClientLink
+              href="/"
+              className="inline-block md:hidden"
+              data-testid="nav-store-link"
+              aria-label="Homepage"
+            >
+              <Image
+                src="/casanest.png"
+                alt="CASANEST Logo"
+                width={104}
+                height={34}
+                priority
+                style={{ width: 104, height: 34, objectFit: "contain", filter: "brightness(0) invert(1)" }}
               />
-              <LocalizedClientLink
-                href="/"
-                className="inline-block"
-                data-testid="nav-store-link"
-                aria-label="Homepage"
-              >
-                <Image
-                  src="/casanest.png"
-                  alt="CASANEST Logo"
-                  width={120}
-                  height={40}
-                  priority
-                  style={{ width: 120, height: 40, objectFit: "contain" }}
-                />
-              </LocalizedClientLink>
-            </div>
+            </LocalizedClientLink>
 
             {/* Desktop: Logo */}
             <div className="hidden md:flex items-center shrink-0">
@@ -135,22 +136,21 @@ export default async function Nav() {
               </Suspense>
             </div>
 
-            {/* Mobile: Right side - Cart */}
-            <div className="flex items-center gap-3 md:hidden">
-              <Suspense
-                fallback={
-                  <LocalizedClientLink
-                    href="/cart"
-                    data-testid="nav-cart-link"
-                    className="flex items-center"
-                  >
-                    <FilePlus className="w-6 h-6 text-[#17284a]" />
-                  </LocalizedClientLink>
-                }
-              >
-                <CartButton locale={locale} />
-              </Suspense>
-            </div>
+            {/* Mobile: Right side - Quote button (icon only) */}
+            <LocalizedClientLink
+              href="/cart"
+              data-testid="nav-cart-link"
+              className="flex items-center bg-[#cdd6e9] p-2 rounded-[12px] md:hidden"
+            >
+              <div className="relative">
+                <FileAddIcon className="text-black" />
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 min-w-[14px] h-[14px] px-1 flex items-center justify-center rounded-full bg-[#17284a] text-white text-[12px] font-medium leading-none font-satoshi">
+                    {cartItemCount}
+                  </span>
+                )}
+              </div>
+            </LocalizedClientLink>
           </ScrollHeader>
     </>
   )

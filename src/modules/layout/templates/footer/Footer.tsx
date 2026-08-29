@@ -97,21 +97,13 @@ export default function Footer({ productCategories, collections, locale }: Foote
               data-testid="nav-store-link"
               aria-label="Homepage"
             >
-              {/* Mobile logo: white square + Casanest text (Figma design) */}
-              <div className="flex md:hidden items-center gap-2" dir={isRTL ? "rtl" : "ltr"}>
-                <div className="bg-white rounded-[6px] w-8 h-8 shrink-0" />
-                <p className="font-satoshi font-bold text-[22px] text-white leading-normal whitespace-nowrap">
-                  Casanest
-                </p>
-              </div>
-              {/* Desktop logo */}
               <Image
                 src="/casanest.png"
                 alt="CASANEST Logo"
                 width={172}
                 height={56}
                 priority
-                className="hidden md:block"
+                className="w-[120px] h-auto md:w-[172px] object-contain"
                 style={{ filter: "brightness(0) invert(1)" }}
               />
             </LocalizedClientLink>

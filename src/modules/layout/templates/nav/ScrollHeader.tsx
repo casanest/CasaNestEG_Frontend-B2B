@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { usePathname } from "next/navigation"
 
 export default function ScrollHeader({
   children,
@@ -12,6 +13,9 @@ export default function ScrollHeader({
   topNav?: React.ReactNode
 }) {
   const [scrolled, setScrolled] = useState(false)
+  const [cartOpen, setCartOpen] = useState(false)
+  const pathname = usePathname()
+  const isHomePage = /^\/[a-z]{2}\/[a-z]{2}\/?$/.test(pathname)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,14 +31,26 @@ export default function ScrollHeader({
     }
   }, [])
 
+  useEffect(() => {
+    const handler = (e: Event) => {
+      setCartOpen((e as CustomEvent).detail.open)
+    }
+    window.addEventListener("cart-dropdown-state", handler as EventListener)
+    return () => window.removeEventListener("cart-dropdown-state", handler as EventListener)
+  }, [])
+
+  const showBg = scrolled || cartOpen
+
   return (
     <div className="sticky top-0 inset-x-0 z-[40] w-full">
       {topNav}
       <div
         className={`w-full transition-all duration-300 ${
-          scrolled
-            ? "bg-white shadow-md border-b border-gray-200"
-            : "bg-transparent"
+          showBg
+            ? "bg-[#141b34] md:bg-white md:shadow-md md:border-b md:border-gray-200"
+            : isHomePage
+              ? "bg-gradient-to-b from-black/40 to-transparent"
+              : "bg-[#141b34] md:bg-transparent"
         }`}
       >
         <header className="relative mx-auto duration-200">

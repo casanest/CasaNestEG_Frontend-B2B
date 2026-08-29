@@ -73,6 +73,10 @@ const CartDropdown = ({
     }
   }, [totalItems, pathname])
 
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("cart-dropdown-state", { detail: { open: cartDropdownOpen } }))
+  }, [cartDropdownOpen])
+
   return (
     <div
       className="relative h-full z-50"
