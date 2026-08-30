@@ -6,7 +6,6 @@ import { clx } from "@medusajs/ui"
 import { getProductPrice } from "@lib/util/get-product-price"
 import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import PreviewPrice from "./price"
 import { Sparkles, Package, Tag } from "lucide-react"
 import { addToCart } from "@lib/data/cart"
 import { useParams } from "next/navigation"
@@ -193,8 +192,20 @@ export default function ProductPreview({
           {/* Price / Price on Request */}
           <div className="mt-2">
             {cheapestPrice ? (
-              <div className="flex items-center gap-2">
-                <PreviewPrice price={cheapestPrice} />
+              <div className="flex items-center gap-2 flex-wrap">
+                {cheapestPrice.price_type === "sale" && (
+                  <span className="text-[14px] line-through text-[#707176]">
+                    {cheapestPrice.original_price}
+                  </span>
+                )}
+                <span
+                  className={clx(
+                    "text-[18px] font-bold",
+                    cheapestPrice.price_type === "sale" ? "text-red-600" : "text-[#17284a]"
+                  )}
+                >
+                  {cheapestPrice.calculated_price}
+                </span>
                 {cheapestPrice?.price_type === 'sale' && (
                   <span className="text-[10px] font-bold text-red-500">
                     -{cheapestPrice.percentage_diff}%

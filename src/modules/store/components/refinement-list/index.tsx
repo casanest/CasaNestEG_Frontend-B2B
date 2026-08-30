@@ -2,8 +2,8 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react"
-import { ChevronDown, SlidersHorizontal, X } from "lucide-react"
-import { Badge, Button, Text, clx } from "@medusajs/ui"
+import { ChevronDown, X } from "lucide-react"
+import { clx } from "@medusajs/ui"
 import { SortOptions } from "./sort-products"
 import { getProductFilterOptions } from "@lib/data/products"
 import {
@@ -52,9 +52,12 @@ type PriceRangeFilterProps = {
   isRTL: boolean
   initialPrice: string
   onApply: (price: string) => void
+  minPrice: number
+  maxPrice: number
+  variant?: "inline" | "drawer"
 }
 
-const PriceRangeFilter = ({ isRTL, initialPrice, onApply }: PriceRangeFilterProps) => {
+const PriceRangeFilter = ({ isRTL, initialPrice, onApply, minPrice, maxPrice, variant = "inline" }: PriceRangeFilterProps) => {
   const [minInput, setMinInput] = useState("")
   const [maxInput, setMaxInput] = useState("")
 
@@ -65,12 +68,15 @@ const PriceRangeFilter = ({ isRTL, initialPrice, onApply }: PriceRangeFilterProp
       return
     }
     if (initialPrice.endsWith("+")) {
-      setMinInput(initialPrice.slice(0, -1))
+      const min = parseFloat(initialPrice.slice(0, -1))
+      setMinInput(isNaN(min) ? "" : String(min))
       setMaxInput("")
     } else if (initialPrice.includes("-")) {
       const [min, max] = initialPrice.split("-")
-      setMinInput(min)
-      setMaxInput(max)
+      const minNum = parseFloat(min)
+      const maxNum = parseFloat(max)
+      setMinInput(isNaN(minNum) ? "" : min)
+      setMaxInput(isNaN(maxNum) ? "" : max)
     }
   }, [initialPrice])
 
@@ -97,43 +103,89 @@ const PriceRangeFilter = ({ isRTL, initialPrice, onApply }: PriceRangeFilterProp
     }
   }
 
+  const range = maxPrice - minPrice
+  const leftPercent = range > 0 && minInput ? Math.max(0, Math.min(100, ((parseFloat(minInput) - minPrice) / range) * 100)) : 0
+  const rightPercent = range > 0 && maxInput ? Math.max(0, Math.min(100, ((parseFloat(maxInput) - minPrice) / range) * 100)) : 100
+
+  const inputClass = variant === "drawer"
+    ? "flex flex-1 items-center gap-1 rounded-[8px] border border-[#ccc] bg-white px-[10px] py-[10px] transition-colors focus-within:border-[#17284a]"
+    : "flex flex-1 items-center gap-1.5 rounded-md border border-gray-200 bg-white px-3 py-2 shadow-sm focus-within:border-[#17284a] transition-colors"
+
   return (
     <div className="flex flex-col w-full">
       {/* Inputs Row */}
-      <div className="flex items-center gap-3 mb-5">
+      <div className="flex items-center gap-3 mb-3">
         {/* Min Input */}
-        <div className="flex flex-1 items-center gap-1.5 rounded-md border border-gray-200 bg-white px-3 py-2 shadow-sm focus-within:border-[#17284a] transition-colors">
-          <span className="text-[13px] font-medium text-[#8E95A4] select-none flex-shrink-0">{isRTL ? "ج.م" : "EGP"}</span>
+        <div className={inputClass}>
+          <span className="text-[12px] font-normal text-[#707176] select-none flex-shrink-0">{isRTL ? "ج.م" : "EGP"}</span>
           <input
             type="text"
             inputMode="numeric"
             value={minInput}
             onChange={(e) => handleInputChange("min", e.target.value)}
-            onBlur={handleApply}
+            onKeyDown={(e) => { if (e.key === "Enter") handleApply() }}
+            onBlur={variant === "drawer" ? handleApply : undefined}
             placeholder={isRTL ? "الأدنى" : "Min"}
-            className="w-full bg-transparent text-[14px] font-medium text-[#17284a] outline-none border-none min-w-0"
+            className="w-full bg-transparent text-[12px] font-bold text-[#1c1b1c] outline-none border-none min-w-0"
           />
         </div>
 
-        <span className="text-gray-300 text-[14px] flex-shrink-0">-</span>
+        <span className="text-[14px] text-[#707176] flex-shrink-0">-</span>
 
         {/* Max Input */}
-        <div className="flex flex-1 items-center gap-1.5 rounded-md border border-gray-200 bg-white px-3 py-2 shadow-sm focus-within:border-[#17284a] transition-colors">
-          <span className="text-[13px] font-medium text-[#8E95A4] select-none flex-shrink-0">{isRTL ? "ج.م" : "EGP"}</span>
+        <div className={inputClass}>
+          <span className="text-[12px] font-normal text-[#707176] select-none flex-shrink-0">{isRTL ? "ج.م" : "EGP"}</span>
           <input
             type="text"
             inputMode="numeric"
             value={maxInput}
             onChange={(e) => handleInputChange("max", e.target.value)}
-            onBlur={handleApply}
+            onKeyDown={(e) => { if (e.key === "Enter") handleApply() }}
+            onBlur={variant === "drawer" ? handleApply : undefined}
             placeholder={isRTL ? "الأعلى" : "Max"}
-            className="w-full bg-transparent text-[14px] font-medium text-[#17284a] outline-none border-none min-w-0"
+            className="w-full bg-transparent text-[12px] font-bold text-[#1c1b1c] outline-none border-none min-w-0"
           />
         </div>
       </div>
 
-      {/* Bottom Divider */}
-      <div className="border-b border-gray-100" />
+      {/* Slider Track - drawer variant only */}
+      {variant === "drawer" && (
+        <div className="relative flex items-center justify-center w-full h-[20px]">
+          <div className="relative w-full h-[4px] rounded-[2px] bg-[#e5e7eb]">
+            <div
+              className="absolute h-[4px] rounded-[2px] bg-[#17284a]"
+              style={{
+                left: `${leftPercent}%`,
+                width: `${Math.max(0, rightPercent - leftPercent)}%`,
+              }}
+            />
+            <div
+              className="absolute size-[16px] rounded-full bg-[#17284a] border-2 border-white shadow-sm -translate-x-1/2"
+              style={{ left: `${leftPercent}%`, top: '-6px' }}
+            />
+            <div
+              className="absolute size-[16px] rounded-full bg-[#17284a] border-2 border-white shadow-sm -translate-x-1/2"
+              style={{ left: `${rightPercent}%`, top: '-6px' }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Apply Button - inline variant only */}
+      {variant === "inline" && (
+        <button
+          type="button"
+          onClick={handleApply}
+          className="flex flex-row justify-center items-center gap-2 w-full h-14 bg-[#17284a] rounded-2xl text-white transition-colors hover:bg-[#0f1d38]"
+        >
+          {isRTL ? "تطبيق" : "Apply"}
+        </button>
+      )}
+
+      {/* Bottom Divider - inline variant only */}
+      {variant === "inline" && (
+        <div className="border-b border-gray-100 mt-4" />
+      )}
     </div>
   )
 }
@@ -159,7 +211,7 @@ const RefinementList = ({
     colors: [],
     materials: [],
     sizes: [],
-    priceRange: { min: 0, max: 1000 },
+    priceRange: { min: 0, max: 0 },
     totalProducts: 0,
     productCategories: [],
   })
@@ -425,26 +477,40 @@ const RefinementList = ({
     children,
     defaultOpen = true,
     isLast = false,
+    variant = "inline",
   }: {
     title: string
     helper?: string
     children: ReactNode
     defaultOpen?: boolean
     isLast?: boolean
-  }) => (
-    <details
-      className={clx("group flex flex-col gap-4", !isLast && "border-b border-gray-200 pb-6 mb-6")}
-      open={defaultOpen}
-    >
-      <summary className="flex cursor-pointer items-center justify-between w-full">
-        <span className="text-[16px] font-bold text-[#17284a]">{title}</span>
-        <ChevronDown className="h-4 w-4 text-[#17284a] transition-transform duration-200 group-open:rotate-180" />
-      </summary>
-      <div className="flex flex-col gap-3 group-open:animate-in group-open:fade-in group-open:slide-in-from-top-1">
-        {children}
-      </div>
-    </details>
-  )
+    variant?: "inline" | "drawer"
+  }) => {
+    if (variant === "drawer") {
+      return (
+        <div className={clx("flex flex-col gap-4", !isLast && "border-b border-[#e5e7eb] pb-[24px]")}>
+          <span className="text-[16px] font-bold text-[#17284a]">{title}</span>
+          <div className="flex flex-col gap-3">
+            {children}
+          </div>
+        </div>
+      )
+    }
+    return (
+      <details
+        className={clx("group flex flex-col gap-4", !isLast && "border-b border-gray-200 pb-6 mb-6")}
+        open={defaultOpen}
+      >
+        <summary className="flex cursor-pointer items-center justify-between w-full">
+          <span className="text-[16px] font-bold text-[#17284a]">{title}</span>
+          <ChevronDown className="h-4 w-4 text-[#17284a] transition-transform duration-200 group-open:rotate-180" />
+        </summary>
+        <div className="flex flex-col gap-3 group-open:animate-in group-open:fade-in group-open:slide-in-from-top-1">
+          {children}
+        </div>
+      </details>
+    )
+  }
 
   const CheckboxRow = ({
     id,
@@ -525,17 +591,7 @@ const RefinementList = ({
       : filterOptions.materials.slice(0, 5)
 
     return (
-    <div
-      className={clx("flex flex-col gap-6", {
-        "max-h-[calc(100vh-220px)] overflow-y-auto ": variant === "drawer",
-      })}
-    >
-      {variant === "drawer" && hasActiveFilters && (
-        <div className="flex items-center justify-between rounded-2xl border border-[#17284a]/20 bg-[#17284a]/5 px-4 py-3 text-xs font-semibold text-[#17284a]">
-          <span>{isRTL ? "فلاتر نشطة" : "Active filters"}</span>
-          <Badge className="bg-[#17284a] text-white">{activeFilterCount}</Badge>
-        </div>
-      )}
+    <div className="flex flex-col gap-6">
 
       {/* Dynamic Sections per Root Category */}
       {categories?.length ? (
@@ -551,6 +607,7 @@ const RefinementList = ({
               <SectionCard
                 key={rootNode.id}
                 title={rootLabel}
+                variant={variant}
               >
                 <div className="flex flex-col gap-3 mt-3">
                   {children.length > 0 ? (
@@ -595,6 +652,7 @@ const RefinementList = ({
       {filterOptions.collections.length > 0 && (
         <SectionCard
           title={isRTL ? "المجموعات" : "Collections"}
+          variant={variant}
         >
             <div className="flex flex-col gap-3">
               {visibleCollections.map((collection) => (
@@ -619,6 +677,7 @@ const RefinementList = ({
       {filterOptions.types.length > 0 && (
         <SectionCard
           title={isRTL ? "الأنواع" : "Product Types"}
+          variant={variant}
         >
             <div className="flex flex-col gap-3">
               {visibleTypes.map((type) => (
@@ -643,6 +702,7 @@ const RefinementList = ({
       {filterOptions.colors.length > 0 && (
         <SectionCard
           title={isRTL ? "الألوان" : "Colors"}
+          variant={variant}
         >
             <div className="flex flex-col gap-3">
               {visibleColors.map((color) => (
@@ -667,6 +727,7 @@ const RefinementList = ({
       {filterOptions.materials.length > 0 && (
         <SectionCard
           title={isRTL ? "المواد" : "Materials"}
+          variant={variant}
         >
             <div className="flex flex-col gap-3">
               {visibleMaterials.map((material) => (
@@ -691,6 +752,7 @@ const RefinementList = ({
       {filterOptions.sizes.length > 0 && (
         <SectionCard
           title={isRTL ? "المقاسات" : "Sizes"}
+          variant={variant}
         >
             <div className="grid grid-cols-2 gap-2">
               {filterOptions.sizes.map((size) => (
@@ -718,21 +780,28 @@ const RefinementList = ({
           </SectionCard>
         )}
 
-        {/* Price Range - Min/Max inputs */}
-        <SectionCard
-          title={isRTL ? "نطاق السعر" : "Price Range"}
-        >
-          <PriceRangeFilter
-            isRTL={isRTL}
-            initialPrice={filters.price}
-            onApply={(price) => handleFilterChange("price", price)}
-          />
-        </SectionCard>
+        {/* Price Range - Dynamic slider + inputs */}
+        {filterOptions.priceRange.max > 0 && (
+          <SectionCard
+            title={isRTL ? "نطاق السعر" : "Price Range"}
+            variant={variant}
+          >
+            <PriceRangeFilter
+              isRTL={isRTL}
+              initialPrice={filters.price}
+              onApply={(price) => handleFilterChange("price", price)}
+              minPrice={filterOptions.priceRange.min}
+              maxPrice={filterOptions.priceRange.max}
+              variant={variant}
+            />
+          </SectionCard>
+        )}
 
       {/* Availability - Radio buttons (single-select) */}
       <SectionCard
         title={isRTL ? "التوفر" : "Availability"}
         isLast
+        variant={variant}
       >
         <div className="flex flex-col gap-3">
           {[
@@ -755,10 +824,10 @@ const RefinementList = ({
               >
                 <span
                   className={clx(
-                    "flex items-center justify-center h-[18px] w-[18px] rounded-full border-[1.5px] transition-all flex-shrink-0",
+                    "flex items-center justify-center h-[18px] w-[18px] rounded-full transition-all flex-shrink-0",
                     isSelected
-                      ? "border-[#17284a] bg-white"
-                      : "border-[#ccc] bg-white hover:border-[#17284a]/50"
+                      ? "border-[2px] border-[#17284a] bg-white"
+                      : "border-[1.5px] border-[#ccc] bg-white hover:border-[#17284a]/50"
                   )}
                 >
                   {isSelected && (
@@ -913,9 +982,6 @@ const RefinementList = ({
             data-testid={dataTestId}
             className="max-h-[92vh] rounded-t-[24px] border-none bg-white shadow-2xl"
           >
-            {/* Drag Handle */}
-            <div className="mx-auto mt-3 h-[4px] w-[40px] rounded-[2px] bg-[#d1d5db]" />
-
             <div className="flex h-full flex-col overflow-hidden">
               {/* Header */}
               <div className="flex flex-row items-center justify-between px-4 pt-3 pb-4">
@@ -933,10 +999,8 @@ const RefinementList = ({
               </div>
 
               {/* Content Area - Scrollable */}
-              <div className="flex-1 overflow-y-auto px-4 py-4 scrollbar-hide">
-                <div className="flex flex-col gap-6">
-                  {renderFilterContent("drawer")}
-                </div>
+              <div className="flex-1 overflow-y-auto p-4 scrollbar-hide">
+                {renderFilterContent("drawer")}
               </div>
 
               {/* Sticky Footer */}

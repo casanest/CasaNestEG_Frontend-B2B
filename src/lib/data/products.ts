@@ -25,6 +25,63 @@ interface ProductFilters {
   sizes?: string[]
 }
 
+/**
+ * Parse a price filter string (e.g. "100-500", "100+", "0-500") into min/max bounds.
+ * Returns null if the filter is empty or unparseable.
+ */
+function parsePriceFilter(price: string): { min: number | null; max: number | null } | null {
+  if (!price || price.trim() === '') return null
+
+  if (price.endsWith('+')) {
+    const min = parseFloat(price.slice(0, -1))
+    return { min: isNaN(min) ? null : min, max: null }
+  }
+
+  if (price.includes('-')) {
+    const [minStr, maxStr] = price.split('-')
+    const min = parseFloat(minStr)
+    const max = parseFloat(maxStr)
+    return {
+      min: isNaN(min) ? null : min,
+      max: isNaN(max) ? null : max,
+    }
+  }
+
+  return null
+}
+
+/**
+ * Collect all valid calculated prices from a product's variants.
+ * The Medusa /store/products API returns calculated_amount in currency units (not cents).
+ */
+function getProductPrices(product: HttpTypes.StoreProduct): number[] {
+  return (product.variants || [])
+    .map(v => v.calculated_price?.calculated_amount)
+    .filter((p): p is number => typeof p === 'number' && p > 0)
+}
+
+/**
+ * Check if a product has at least one variant price within the given range.
+ * - min only (max=null): product matches if any price >= min
+ * - max only (min=null): product matches if any price <= max
+ * - both: product matches if any price falls within [min, max]
+ */
+function productMatchesPriceRange(product: HttpTypes.StoreProduct, min: number | null, max: number | null): boolean {
+  const prices = getProductPrices(product)
+  if (prices.length === 0) return false
+
+  if (min !== null && max !== null) {
+    return prices.some(p => p >= min && p <= max)
+  }
+  if (min !== null) {
+    return prices.some(p => p >= min)
+  }
+  if (max !== null) {
+    return prices.some(p => p <= max)
+  }
+  return true
+}
+
 export const listProducts = async ({
   pageParam = 1,
   queryParams,
@@ -97,21 +154,6 @@ export const listProducts = async ({
 
     let { products, count } = response
 
-    // Debug: log price data when price filter is active
-    if (price) {
-      console.log("[PRICE FILTER DEBUG] price param:", price)
-      console.log("[PRICE FILTER DEBUG] total products before filter:", products.length)
-      products.forEach((p, i) => {
-        const v0 = p.variants?.[0]
-        console.log(`[PRICE FILTER DEBUG] product[${i}] ${p.id}:`, {
-          title: p.title,
-          calculated_price: v0?.calculated_price,
-          calculated_amount: v0?.calculated_price?.calculated_amount,
-          variants_count: p.variants?.length,
-        })
-      })
-    }
-
     // Apply client-side filtering for unsupported API parameters
     if (inStock || onSale || madeToOrder || price || colors?.length || materials?.length || sizes?.length) {
       products = products.filter(product => {
@@ -147,21 +189,10 @@ export const listProducts = async ({
           if (hasPrice) return false
         }
 
-        // Price filtering
-        if (price && price !== '') {
-          const productPrice = product.variants?.[0]?.calculated_price?.calculated_amount
-          if (!productPrice) return false
-          const priceNum = productPrice / 100 // Convert from cents
-          if (price.endsWith('+')) {
-            const min = parseFloat(price.slice(0, -1))
-            if (!isNaN(min) && priceNum < min) return false
-          } else if (price.includes('-')) {
-            const [minStr, maxStr] = price.split('-')
-            const min = parseFloat(minStr)
-            const max = parseFloat(maxStr)
-            if (!isNaN(min) && priceNum < min) return false
-            if (!isNaN(max) && priceNum >= max) return false
-          }
+        // Price filtering - check all variant prices against the range
+        const priceFilter = parsePriceFilter(price || '')
+        if (priceFilter) {
+          if (!productMatchesPriceRange(product, priceFilter.min, priceFilter.max)) return false
         }
 
         // Color filtering
@@ -293,58 +324,47 @@ export const listProductsWithSort = async ({
         if (hasPrice) return false
       }
 
-      // Price filtering
-      if (price && price !== '') {
-        const productPrice = product.variants?.[0]?.calculated_price?.calculated_amount
-        if (!productPrice) return false
-        const priceNum = productPrice / 100
-        if (price.endsWith('+')) {
-          const min = parseFloat(price.slice(0, -1))
-          if (!isNaN(min) && priceNum < min) return false
-        } else if (price.includes('-')) {
-          const [minStr, maxStr] = price.split('-')
-          const min = parseFloat(minStr)
-          const max = parseFloat(maxStr)
-          if (!isNaN(min) && priceNum < min) return false
-          if (!isNaN(max) && priceNum >= max) return false
+        // Price filtering - check all variant prices against the range
+        const priceFilter = parsePriceFilter(price || '')
+        if (priceFilter) {
+          if (!productMatchesPriceRange(product, priceFilter.min, priceFilter.max)) return false
         }
-      }
 
-      // Color filtering
-      if (colors && colors.length > 0) {
-        const hasMatchingColor = product.variants?.some(variant =>
-          variant.options?.some(option =>
-            option.option?.title?.toLowerCase() === 'color' &&
-            colors.includes(option.value)
+        // Color filtering
+        if (colors && colors.length > 0) {
+          const hasMatchingColor = product.variants?.some(variant =>
+            variant.options?.some(option =>
+              option.option?.title?.toLowerCase() === 'color' &&
+              colors.includes(option.value)
+            )
           )
-        )
-        if (!hasMatchingColor) return false
-      }
+          if (!hasMatchingColor) return false
+        }
 
-      // Material filtering
-      if (materials && materials.length > 0) {
-        const hasMatchingMaterial = product.variants?.some(variant =>
-          variant.options?.some(option =>
-            option.option?.title?.toLowerCase() === 'material' &&
-            materials.includes(option.value)
+        // Material filtering
+        if (materials && materials.length > 0) {
+          const hasMatchingMaterial = product.variants?.some(variant =>
+            variant.options?.some(option =>
+              option.option?.title?.toLowerCase() === 'material' &&
+              materials.includes(option.value)
+            )
           )
-        )
-        if (!hasMatchingMaterial) return false
-      }
+          if (!hasMatchingMaterial) return false
+        }
 
-      // Size filtering
-      if (sizes && sizes.length > 0) {
-        const hasMatchingSize = product.variants?.some(variant =>
-          variant.options?.some(option =>
-            option.option?.title?.toLowerCase() === 'size' &&
-            sizes.includes(option.value)
+        // Size filtering
+        if (sizes && sizes.length > 0) {
+          const hasMatchingSize = product.variants?.some(variant =>
+            variant.options?.some(option =>
+              option.option?.title?.toLowerCase() === 'size' &&
+              sizes.includes(option.value)
+            )
           )
-        )
-        if (!hasMatchingSize) return false
-      }
+          if (!hasMatchingSize) return false
+        }
 
-      return true
-    })
+        return true
+      })
   }
 
   const sortedProducts = sortProducts(filteredProducts, sortBy)
@@ -431,9 +451,9 @@ export const getProductFilterOptions = async (countryCode: string, categoryId?: 
       
       // Variant options (colors, materials, sizes, etc.)
       product.variants?.forEach(variant => {
-        // Add price for price range calculation
+        // Add price for price range calculation (API returns currency units, not cents)
         if (variant.calculated_price?.calculated_amount) {
-          priceRanges.add(variant.calculated_price.calculated_amount / 100)
+          priceRanges.add(variant.calculated_price.calculated_amount)
         }
         
         variant.options?.forEach(option => {
@@ -454,7 +474,7 @@ export const getProductFilterOptions = async (countryCode: string, categoryId?: 
     // Calculate price ranges based on actual prices
     const priceArray = Array.from(priceRanges).sort((a, b) => a - b)
     const minPrice = priceArray[0] || 0
-    const maxPrice = priceArray[priceArray.length - 1] || 1000
+    const maxPrice = priceArray.length > 0 ? priceArray[priceArray.length - 1] : 0
 
     return {
       collections: Array.from(collectionsMap.values()),
@@ -474,7 +494,7 @@ export const getProductFilterOptions = async (countryCode: string, categoryId?: 
       colors: [],
       materials: [],
       sizes: [],
-      priceRange: { min: 0, max: 1000 },
+      priceRange: { min: 0, max: 0 },
       totalProducts: 0,
       productCategories: [],
     }
