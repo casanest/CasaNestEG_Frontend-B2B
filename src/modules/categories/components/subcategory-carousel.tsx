@@ -61,7 +61,7 @@ const SubcategoryCarousel = ({ items, isRTL }: SubcategoryCarouselProps) => {
       >
         {items.map((c) => {
           const subCatName = isRTL ? c.name_ar || c.name_en : c.name_en || c.name_ar;
-          const imageUrl = c.image_url || '/placeholder-category.png';
+          const imageUrl = c.image_url || '/placeholder-category.webp';
           const subHandle = isRTL ? c.handle_ar || c.handle_en : c.handle_en || c.handle_ar;
 
           return (

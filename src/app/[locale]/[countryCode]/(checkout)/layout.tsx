@@ -64,7 +64,7 @@ export default async function CheckoutLayout({
               data-testid="nav-store-link"
             >
               <Image
-                src="/casanest.png"
+                src="/casanest.webp"
                 alt="Logo"
                 width={100}
                 height={100}
@@ -81,7 +81,7 @@ export default async function CheckoutLayout({
               data-testid="nav-store-link"
             >
               <Image
-                src="/casanest.png"
+                src="/casanest.webp"
                 alt="Logo"
                 width={150}
                 height={150}

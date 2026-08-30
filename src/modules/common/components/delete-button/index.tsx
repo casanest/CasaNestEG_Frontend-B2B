@@ -1,4 +1,4 @@
-import { deleteLineItem } from "@lib/data/cart"
+import { useCartStore } from "@lib/store/useCartStore"
 import { Spinner, Trash } from "@medusajs/icons"
 import { clx } from "@medusajs/ui"
 import { useState } from "react"
@@ -13,12 +13,12 @@ const DeleteButton = ({
   className?: string
 }) => {
   const [isDeleting, setIsDeleting] = useState(false)
+  const removeItem = useCartStore((state) => state.removeItem)
 
   const handleDelete = async (id: string) => {
     setIsDeleting(true)
-    await deleteLineItem(id).catch((err) => {
-      setIsDeleting(false)
-    })
+    removeItem(id)
+    setIsDeleting(false)
   }
 
   return (

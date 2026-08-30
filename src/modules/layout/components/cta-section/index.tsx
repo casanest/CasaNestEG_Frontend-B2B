@@ -42,7 +42,7 @@ export default async function CtaSection({ locale }: CtaSectionProps) {
         {/* CTA Image */}
         <div className="relative h-[200px] rounded-[16px] overflow-hidden bg-gray-800">
           <img
-            src="/cta-space.jpg"
+            src="/cta-space.webp"
             alt="Have a Space to Build"
             className="absolute inset-0 w-full h-full object-cover"
           />
@@ -140,7 +140,7 @@ export default async function CtaSection({ locale }: CtaSectionProps) {
         {/* Right: Image */}
 <div className="relative h-[200px] lg:h-[464px] w-full lg:w-[55%] rounded-[16px] lg:rounded-[20px] overflow-hidden bg-gray-800">
           <img
-            src="/cta-space-desktop.jpg"
+            src="/cta-space-desktop.webp"
             alt="Have a Space to Build"
             className="absolute inset-0 w-full h-full object-cover"
           />

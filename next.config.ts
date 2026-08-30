@@ -5,7 +5,7 @@ const withNextIntl = createNextIntlPlugin("./src/lib/i18n/request.ts");
 
 const nextConfig: NextConfig = {
 
-  allowedDevOrigins: ["http://192.168.1.7:3000", "http://192.168.56.1:3000"],
+  allowedDevOrigins: ["http://192.168.1.7:3000", "http://192.168.56.1:3000", "http://192.168.1.9:8000"],
 
   // images: {
   //   qualities: [70, 75],

@@ -7,9 +7,10 @@ import { getProductPrice } from "@lib/util/get-product-price"
 import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { Sparkles, Package, Tag } from "lucide-react"
-import { addToCart } from "@lib/data/cart"
+import { useCartStore } from "@lib/store/useCartStore"
 import { useParams } from "next/navigation"
 import { normalizeProductImageUrl, shouldUseUnoptimizedImage } from "@lib/util/product-image-url"
+import { getPricesForVariant } from "@lib/util/get-product-price"
 import PlaceholderImage from "@modules/common/icons/placeholder-image"
 
 export default function ProductPreview({
@@ -72,16 +73,44 @@ export default function ProductPreview({
     setActiveIndex(0)
   }, [])
 
+  const addItem = useCartStore((state) => state.addItem)
+
   const handleAddToQuote = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     e.preventDefault()
     if (!defaultVariantId) return
     setIsAdding(true)
     try {
-      await addToCart({
+      const variant = defaultVariant as any
+      const priceInfo = getPricesForVariant(variant)
+      const category = product.categories?.[0] as any
+
+      addItem({
+        productId: product.id,
         variantId: defaultVariantId,
+        productHandle: product.handle || "",
+        productTitle: product.title,
+        productTitleAr: (product.metadata as any)?.localizations?.ar?.title as string | undefined,
+        productDescription: product.description || undefined,
+        productDescriptionAr: (product.metadata as any)?.localizations?.ar?.description as string | undefined,
+        thumbnail: product.thumbnail || null,
+        images: (product.images || []).filter((img) => Boolean(img?.url)).map((img) => ({ url: normalizeProductImageUrl(img.url!) })),
         quantity: minOrderQty ? parseInt(String(minOrderQty)) : 1,
-        countryCode,
+        variantTitle: variant?.title,
+        variantTitleAr: (variant?.metadata as any)?.localizations?.ar?.title as string | undefined,
+        variantOptions: variant?.options?.map((opt: any) => ({ option_id: opt.option_id, value: opt.value, metadata: opt.metadata })),
+        variantMetadata: variant?.metadata,
+        productMetadata: product.metadata as any,
+        unitPrice: priceInfo?.calculated_price_number ?? null,
+        originalPrice: priceInfo?.original_price_number ?? null,
+        currencyCode: priceInfo?.currency_code || region?.currency_code || "usd",
+        categoryName: category?.name,
+        categoryNameAr: category?.metadata?.localizations?.ar?.name as string | undefined,
+        categoryMetadata: category?.metadata,
+        manageInventory: variant?.manage_inventory,
+        allowBackorder: variant?.allow_backorder,
+        inventoryQuantity: variant?.inventory_quantity,
+        minOrderQty: minOrderQty ? parseInt(String(minOrderQty)) : undefined,
       })
       setShowSuccess(true)
       setTimeout(() => setShowSuccess(false), 2000)

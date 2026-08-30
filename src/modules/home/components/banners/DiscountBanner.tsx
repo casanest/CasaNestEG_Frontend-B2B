@@ -14,7 +14,7 @@ const DiscountBanner = ({ locale, dir }: { locale: string; dir: string }) => {
                 className="relative block w-full aspect-[1720/310] sm:aspect-[1720/280]"
             >
                 <Image
-                    src="/discount.jpg"
+                    src="/discount.webp"
                     alt="discount"
                     fill
                     className="object-cover"

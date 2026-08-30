@@ -5,8 +5,10 @@ import React, { useState } from "react"
 import { HttpTypes } from "@medusajs/types"
 import { getProductPrice } from "@lib/util/get-product-price"
 import PreviewPrice from "@modules/products/components/product-preview/price"
-import { addToCart } from "@lib/data/cart"
+import { useCartStore } from "@lib/store/useCartStore"
 import { useParams } from "next/navigation"
+import { getPricesForVariant } from "@lib/util/get-product-price"
+import { normalizeProductImageUrl } from "@lib/util/product-image-url"
 import PlaceholderImage from "@modules/common/icons/placeholder-image"
 
 type ProductCardProps = {
@@ -25,6 +27,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
     const defaultVariant = product.variants?.[0]
     const defaultVariantId = defaultVariant?.id || ""
 
+    const addItem = useCartStore((state) => state.addItem)
+
     const handleAddToCart = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation()
         event.preventDefault()
@@ -33,10 +37,36 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
         setIsAdding(true)
 
         try {
-            await addToCart({
+            const variant = defaultVariant as any
+            const priceInfo = getPricesForVariant(variant)
+            const category = product.categories?.[0] as any
+
+            addItem({
+                productId: product.id,
                 variantId: defaultVariantId,
+                productHandle: product.handle || "",
+                productTitle: product.title,
+                productTitleAr: (product.metadata as any)?.localizations?.ar?.title as string | undefined,
+                productDescription: product.description || undefined,
+                productDescriptionAr: (product.metadata as any)?.localizations?.ar?.description as string | undefined,
+                thumbnail: product.thumbnail || null,
+                images: (product.images || []).filter((img) => Boolean(img?.url)).map((img) => ({ url: normalizeProductImageUrl(img.url!) })),
                 quantity: 1,
-                countryCode,
+                variantTitle: variant?.title,
+                variantTitleAr: (variant?.metadata as any)?.localizations?.ar?.title as string | undefined,
+                variantOptions: variant?.options?.map((opt: any) => ({ option_id: opt.option_id, value: opt.value, metadata: opt.metadata })),
+                variantMetadata: variant?.metadata,
+                productMetadata: product.metadata as any,
+                unitPrice: priceInfo?.calculated_price_number ?? null,
+                originalPrice: priceInfo?.original_price_number ?? null,
+                currencyCode: priceInfo?.currency_code || "usd",
+                categoryName: category?.name,
+                categoryNameAr: category?.metadata?.localizations?.ar?.name as string | undefined,
+                categoryMetadata: category?.metadata,
+                manageInventory: variant?.manage_inventory,
+                allowBackorder: variant?.allow_backorder,
+                inventoryQuantity: variant?.inventory_quantity,
+                minOrderQty: undefined,
             })
             setShowSuccess(true)
             setTimeout(() => setShowSuccess(false), 2000)

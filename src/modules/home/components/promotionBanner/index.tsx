@@ -14,7 +14,7 @@ const PromotionBanner = ({ locale, dir }: { locale: string; dir: string }) => {
                 className="relative block w-full aspect-[1720/350] sm:aspect-[1720/280]"
             >
                 <Image
-                    src="/PromotionBanner.jpg"
+                    src="/PromotionBanner.webp"
                     alt="promotion banner"
                     fill
                     className="object-cover"

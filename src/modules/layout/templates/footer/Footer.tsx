@@ -98,7 +98,7 @@ export default function Footer({ productCategories, collections, locale }: Foote
               aria-label="Homepage"
             >
               <Image
-                src="/casanest.png"
+                src="/casanest.webp"
                 alt="CASANEST Logo"
                 width={172}
                 height={56}

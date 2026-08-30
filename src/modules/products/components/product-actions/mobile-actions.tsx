@@ -52,9 +52,13 @@ const MobileActions: React.FC<MobileActionsProps> = ({
       return null
     }
     const { variantPrice, cheapestPrice } = price
-    return variantPrice || cheapestPrice || null
-  }, [price])
+    if (variant) {
+      return variantPrice || null
+    }
+    return cheapestPrice || null
+  }, [price, variant])
 
+  const hasPrice = !!selectedPrice
   const mainNumber = selectedPrice?.calculated_price_number ?? 0
   const formattedNumber = mainNumber.toLocaleString(isRTL ? "ar-EG" : "en-US")
   const decimalPart = mainNumber % 1 === 0 ? ".00" : ""
@@ -66,18 +70,26 @@ const MobileActions: React.FC<MobileActionsProps> = ({
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-[#e5e7eb] shadow-[0_-4px_6px_rgba(0,0,0,0.05)] px-[16px] py-[12px] flex items-center gap-[16px]">
         {/* Price Column */}
         <div className="flex flex-col gap-[2px] shrink-0">
-          <div className="flex items-baseline gap-[2px] text-[#17284a]">
-            <span className="text-[12px] font-medium">
-              {isRTL ? "ج.م" : "EGP"}
-            </span>
-            <span className="text-[20px] font-bold leading-[1.4]">
-              {formattedNumber}
-            </span>
-            <span className="text-[12px] font-medium">{decimalPart}</span>
-          </div>
-          {isSale && selectedPrice?.original_price && (
-            <span className="text-[12px] text-[#707176] line-through">
-              {selectedPrice.original_price}
+          {hasPrice ? (
+            <>
+              <div className="flex items-baseline gap-[2px] text-[#17284a]">
+                <span className="text-[12px] font-medium">
+                  {isRTL ? "ج.م" : "EGP"}
+                </span>
+                <span className="text-[20px] font-bold leading-[1.4]">
+                  {formattedNumber}
+                </span>
+                <span className="text-[12px] font-medium">{decimalPart}</span>
+              </div>
+              {isSale && selectedPrice?.original_price && (
+                <span className="text-[12px] text-[#707176] line-through">
+                  {selectedPrice.original_price}
+                </span>
+              )}
+            </>
+          ) : (
+            <span className="text-[14px] font-bold text-[#17284a] whitespace-nowrap">
+              {isRTL ? "اطلب عرض سعر" : "Request a Quote"}
             </span>
           )}
         </div>

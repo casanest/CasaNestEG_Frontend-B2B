@@ -1,11 +1,14 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import { useRouter, useParams } from "next/navigation"
 import { PackageDetail } from "@lib/data/packages"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import PackageItemCard from "../PackageItemCard"
 import SummaryCard from "../SummaryCard"
 import { Check } from "lucide-react"
+import { useCartStore } from "@lib/store/useCartStore"
+import { useRfqStore } from "@lib/store/useRfqStore"
 
 type PackageDetailProps = {
   pkg: PackageDetail
@@ -20,6 +23,12 @@ type ItemState = {
 
 export default function PackageDetailClient({ pkg, locale }: PackageDetailProps) {
   const isRTL = locale === "ar"
+  const router = useRouter()
+  const { countryCode, locale: urlLocale } = useParams()
+  const addItem = useCartStore((state) => state.addItem)
+  const openCartDropdown = useCartStore((state) => state.openCartDropdown)
+  const setRfqItems = useRfqStore((state) => state.setItems)
+  const [isAdding, setIsAdding] = useState(false)
 
   const name = isRTL ? pkg.name_ar : pkg.name_en
   const description = isRTL ? pkg.description_ar : pkg.description_en
@@ -116,6 +125,61 @@ export default function PackageDetailClient({ pkg, locale }: PackageDetailProps)
 
   const sortedTitles = [...pkg.titles].sort((a, b) => a.display_order - b.display_order)
 
+  const handleAddToQuoteList = () => {
+    const selectedItems = allProducts.filter(
+      ({ product }) => itemStates[product.id]?.selected
+    )
+
+    if (selectedItems.length === 0) return
+
+    setIsAdding(true)
+
+    selectedItems.forEach(({ product, titleName }) => {
+      const state = itemStates[product.id]
+      addItem({
+        productId: product.id,
+        variantId: product.id,
+        productHandle: product.handle,
+        productTitle: product.title,
+        productDescription: isRTL ? product.description_en ?? undefined : product.description_en ?? undefined,
+        productDescriptionAr: product.description_ar ?? undefined,
+        thumbnail: product.thumbnail,
+        images: [],
+        quantity: state?.quantity ?? product.moq ?? 1,
+        unitPrice: product.price?.amount ?? null,
+        originalPrice: product.price?.amount ?? null,
+        currencyCode: product.price?.currency_code ?? "usd",
+        categoryName: titleName,
+        minOrderQty: product.moq ?? undefined,
+      })
+    })
+
+    setIsAdding(false)
+  }
+
+  const handleRequestQuote = () => {
+    if (selectedCount === 0) return
+
+    const selectedItems = allProducts.filter(
+      ({ product }) => itemStates[product.id]?.selected
+    )
+
+    setRfqItems(
+      selectedItems.map(({ product, titleName }) => {
+        const state = itemStates[product.id]
+        return {
+          productId: product.id,
+          productTitle: product.title,
+          quantity: state?.quantity ?? product.moq ?? 1,
+          thumbnail: product.thumbnail,
+          categoryName: titleName,
+        }
+      })
+    )
+
+    router.push(`/${urlLocale}/${countryCode}/pre-curated-solutions/${pkg.slug}/request-quote`)
+  }
+
   return (
     <div className="bg-[#f8f9fa] w-full" dir={isRTL ? "rtl" : "ltr"}>
       {/* Header band */}
@@ -210,6 +274,9 @@ export default function PackageDetailClient({ pkg, locale }: PackageDetailProps)
             selectedCount={selectedCount}
             totalCount={totalCount}
             categoryCounts={Object.values(categoryCounts)}
+            onAddToQuoteList={handleAddToQuoteList}
+            isAdding={isAdding}
+            onRequestQuote={handleRequestQuote}
           />
         </div>
       </div>

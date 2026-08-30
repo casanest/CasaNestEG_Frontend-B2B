@@ -10,6 +10,9 @@ type SummaryCardProps = {
     selected: number
     total: number
   }[]
+  onAddToQuoteList: () => void
+  isAdding: boolean
+  onRequestQuote: () => void
 }
 
 export default function SummaryCard({
@@ -18,6 +21,9 @@ export default function SummaryCard({
   selectedCount,
   totalCount,
   categoryCounts,
+  onAddToQuoteList,
+  isAdding,
+  onRequestQuote,
 }: SummaryCardProps) {
   const isRTL = locale === "ar"
 
@@ -35,6 +41,9 @@ export default function SummaryCard({
   const requestQuoteText = isRTL
     ? "اطلب عرض سعر لهذه الباقة"
     : "Request Quote for This Package"
+  const addToQuoteListText = isRTL
+    ? "أضف إلى قائمة عروض السعر"
+    : "Add to Quote List"
 
   return (
     <div className="bg-white border border-[#e5e7eb] border-solid flex flex-col gap-5 md:gap-6 items-start p-6 md:p-8 rounded-2xl w-full lg:sticky lg:top-[8rem] lg:mt-12">
@@ -83,9 +92,28 @@ export default function SummaryCard({
 
       {/* Request Quote button */}
       <div className="flex flex-col items-start pt-2 md:pt-0 w-full">
-        <button className="bg-[#17284a] flex items-center justify-center px-6 md:px-9 py-4 rounded-xl w-full hover:bg-[#141b34] transition-colors cursor-pointer">
+        <button
+          onClick={onRequestQuote}
+          disabled={selectedCount === 0}
+          className="bg-[#17284a] flex items-center justify-center px-6 md:px-9 py-4 rounded-xl w-full hover:bg-[#141b34] transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           <p className="font-satoshi font-medium leading-[1.5] text-[16px] text-center text-white whitespace-normal md:whitespace-nowrap">
             {requestQuoteText}
+          </p>
+        </button>
+      </div>
+
+      {/* Add to Quote List button */}
+      <div className="flex flex-col items-start w-full">
+        <button
+          onClick={onAddToQuoteList}
+          disabled={isAdding || selectedCount === 0}
+          className="bg-[#17284a] flex items-center justify-center px-6 md:px-9 py-4 rounded-xl w-full hover:bg-[#141b34] transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <p className="font-satoshi font-medium leading-[1.5] text-[16px] text-center text-white whitespace-normal md:whitespace-nowrap">
+            {isAdding
+              ? isRTL ? "جارٍ الإضافة..." : "Adding..."
+              : addToQuoteListText}
           </p>
         </button>
       </div>

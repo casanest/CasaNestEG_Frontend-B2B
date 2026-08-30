@@ -5,7 +5,7 @@ const CategoriesGrid = ({ locale, dir }: { locale: string; dir: string }) => {
  
     const categories = [
         {
-            image: '/cat-1.jpg',
+            image: '/cat-1.webp',
             title: isRTL ? 'أثاث منزلي' : 'Home Furniture',
             subtitle: isRTL
                 ? 'تصاميم تناسب منزلك'
@@ -14,7 +14,7 @@ const CategoriesGrid = ({ locale, dir }: { locale: string; dir: string }) => {
             button: isRTL ? 'تسوق الآن' : 'Shop Now',
         },
         {
-            image: '/cat-2.jpg',
+            image: '/cat-2.webp',
             title: isRTL ? 'أثاث مكتبي' : 'Office Furniture',
             subtitle: isRTL
                 ? 'حلول مكتبية حديثة'
@@ -23,7 +23,7 @@ const CategoriesGrid = ({ locale, dir }: { locale: string; dir: string }) => {
             button: isRTL ? 'تسوق الآن' : 'Shop Now',
         },
         {
-            image: '/cat-3.jpg',
+            image: '/cat-3.webp',
             title: isRTL ? 'أثاث فندقي' : 'Hotel Furniture',
             subtitle: isRTL
                 ? 'تصميمات فندقية فاخرة'
@@ -32,7 +32,7 @@ const CategoriesGrid = ({ locale, dir }: { locale: string; dir: string }) => {
             button: isRTL ? 'تسوق الآن' : 'Shop Now',
         },
         {
-            image: '/cat-4.jpg',
+            image: '/cat-4.webp',
             title: isRTL ? 'حلول متكاملة' : 'Integrated Solutions',
             subtitle: isRTL
                 ? 'كل ما تحتاجه'

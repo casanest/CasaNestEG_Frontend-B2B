@@ -7,71 +7,32 @@ import {
   Transition,
 } from "@headlessui/react"
 import { convertToLocale } from "@lib/util/money"
-import { HttpTypes } from "@medusajs/types"
 import { Button } from "@medusajs/ui"
-import DeleteButton from "@modules/common/components/delete-button"
-import LineItemOptions from "@modules/common/components/line-item-options"
-import LineItemPrice from "@modules/common/components/line-item-price"
+import { useCartStore, QuoteItem } from "@lib/store/useCartStore"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Thumbnail from "@modules/products/components/thumbnail"
 import { FilePlus } from "lucide-react"
-import { usePathname } from "next/navigation"
-import { Fragment, useEffect, useRef, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
 
 const CartDropdown = ({
-  cart: cartState,
   locale,
 }: {
-  cart?: HttpTypes.StoreCart | null
   locale: string
 }) => {
-  const [activeTimer, setActiveTimer] = useState<NodeJS.Timeout | undefined>()
   const [cartDropdownOpen, setCartDropdownOpen] = useState(false)
 
-  const pathname = usePathname()
   const isRTL = locale === "ar"
 
-  const totalItems =
-    cartState?.items?.reduce((acc, item) => acc + item.quantity, 0) || 0
+  const items = useCartStore((state) => state.items)
+  const removeItem = useCartStore((state) => state.removeItem)
 
-  const subtotal = cartState?.subtotal ?? 0
-  const itemRef = useRef<number>(totalItems)
+  const totalItems = items.reduce((acc, item) => acc + item.quantity, 0)
+
+  const subtotal = items.reduce((acc, item) => acc + (item.unitPrice ?? 0) * item.quantity, 0)
+  const currencyCode = items[0]?.currencyCode || "usd"
 
   const open = () => setCartDropdownOpen(true)
   const close = () => setCartDropdownOpen(false)
-
-  const timedOpen = () => {
-    open()
-
-    const timer = setTimeout(() => {
-      close()
-    }, 5000)
-
-    setActiveTimer(timer)
-  }
-
-  const openAndCancel = () => {
-    if (activeTimer) {
-      clearTimeout(activeTimer)
-    }
-
-    open()
-  }
-
-  useEffect(() => {
-    return () => {
-      if (activeTimer) {
-        clearTimeout(activeTimer)
-      }
-    }
-  }, [activeTimer])
-
-  useEffect(() => {
-    if (itemRef.current !== totalItems && !pathname.includes("/cart")) {
-      timedOpen()
-      itemRef.current = totalItems
-    }
-  }, [totalItems, pathname])
 
   useEffect(() => {
     window.dispatchEvent(new CustomEvent("cart-dropdown-state", { detail: { open: cartDropdownOpen } }))
@@ -80,7 +41,7 @@ const CartDropdown = ({
   return (
     <div
       className="relative h-full z-50"
-      onMouseEnter={openAndCancel}
+      onMouseEnter={open}
       onMouseLeave={close}
       dir={isRTL ? "rtl" : "ltr"}
     >
@@ -132,28 +93,28 @@ const CartDropdown = ({
               </div>
             </div>
 
-            {cartState && cartState.items?.length ? (
+            {items.length ? (
               <>
                 {/* Items */}
                 <div className="max-h-[420px] overflow-y-auto px-6 py-5 space-y-6">
-                  {cartState.items
+                  {[...items]
                     .sort((a, b) =>
-                      (a.created_at ?? "") > (b.created_at ?? "") ? -1 : 1
+                      (a.createdAt ?? "") > (b.createdAt ?? "") ? -1 : 1
                     )
-                    .map((item) => (
+                    .map((item: QuoteItem) => (
                       <div
                         key={item.id}
                         data-testid="cart-item"
                         className="flex gap-4 border-b border-gray-100 pb-5 last:border-none"
                       >
                         <LocalizedClientLink
-                          href={`/products/${item.product_handle}`}
+                          href={`/products/${item.productHandle}`}
                           className="shrink-0"
                         >
                           <div className="w-24 rounded-xl overflow-hidden border border-gray-100">
                             <Thumbnail
                               thumbnail={item.thumbnail}
-                              images={item.variant?.product?.images}
+                              images={item.images}
                               size="square"
                             />
                           </div>
@@ -164,27 +125,19 @@ const CartDropdown = ({
                             <div className="min-w-0">
                               <h4 className="text-sm font-medium text-gray-900 truncate">
                                 <LocalizedClientLink
-                                  href={`/products/${item.product_handle}`}
+                                  href={`/products/${item.productHandle}`}
                                 >
                                   {isRTL
-                                    ? ((item.product?.metadata as any)?.localizations?.ar
-                                      ?.title as string) ??
-                                    item.product_title
-                                    : item.product_title}
+                                    ? item.productTitleAr ?? item.productTitle
+                                    : item.productTitle}
                                 </LocalizedClientLink>
                               </h4>
-                              {item.variant?.title &&
-                                item.variant.title.trim().toLowerCase() !== "default variant" && (
-                                  // <LineItemOptions
-                                  //   variant={item.variant}
-                                  //   data-testid="product-variant"
-                                  // />
+                              {item.variantTitle &&
+                                item.variantTitle.trim().toLowerCase() !== "default variant" && (
                                   <div className="mt-1 text-sm text-gray-500">
-                                    <LineItemOptions
-                                      variant={item.variant}
-                                      data-testid="cart-item-variant"
-                                      data-value={item.variant}
-                                    />
+                                    {isRTL
+                                      ? (item.variantTitleAr ?? item.variantTitle)
+                                      : item.variantTitle}
                                   </div>
                                 )}
 
@@ -195,18 +148,25 @@ const CartDropdown = ({
                             </div>
 
                             <div className="text-right">
-                              <LineItemPrice
-                                item={item}
-                                style="tight"
-                                currencyCode={cartState.currency_code}
-                              />
-                              <DeleteButton
-                                id={item.id}
-                                className="mt-3 text-sm text-red-500 hover:text-red-600"
+                              {item.unitPrice != null ? (
+                                <span className="text-sm font-semibold text-gray-900">
+                                  {convertToLocale({
+                                    amount: item.unitPrice * item.quantity,
+                                    currency_code: item.currencyCode,
+                                  })}
+                                </span>
+                              ) : (
+                                <span className="text-sm text-gray-500">
+                                  {isRTL ? "السعر عند الطلب" : "Price on Request"}
+                                </span>
+                              )}
+                              <button
+                                onClick={() => removeItem(item.id)}
+                                className="mt-3 block text-sm text-red-500 hover:text-red-600"
                                 data-testid="cart-item-remove-button"
                               >
                                 {isRTL ? "إزالة" : "Remove"}
-                              </DeleteButton>
+                              </button>
                             </div>
                           </div>
 
@@ -233,10 +193,12 @@ const CartDropdown = ({
                       data-testid="cart-subtotal"
                       data-value={subtotal}
                     >
-                      {convertToLocale({
-                        amount: subtotal,
-                        currency_code: cartState.currency_code,
-                      })}
+                      {subtotal > 0
+                        ? convertToLocale({
+                            amount: subtotal,
+                            currency_code: currencyCode,
+                          })
+                        : isRTL ? "السعر عند الطلب" : "Price on Request"}
                     </span>
                   </div>
 
@@ -246,7 +208,7 @@ const CartDropdown = ({
                       data-testid="go-to-cart-button"
                       className="w-full h-12 rounded-xl bg-[#043364] text-white hover:bg-[#032850] hover:text-white transition"
                     >
-                      {isRTL ? "الذهاب إلى السلة" : "Go to Cart"}
+                      {isRTL ? "الذهاب إلى عرض السعر" : "Go to Quote"}
                     </Button>
                   </LocalizedClientLink>
                 </div>

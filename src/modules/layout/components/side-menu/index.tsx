@@ -7,6 +7,7 @@ import LocalizedClientLink from '@modules/common/components/localized-client-lin
 import { usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl'
 import Image from 'next/image'
+import { useCartStore } from '@lib/store/useCartStore'
 
 type Package = {
   id: string
@@ -36,16 +37,18 @@ type SideMenuProps = {
   productCategories: any[]
   packages?: Package[]
   projectGroups?: ProjectGroup[]
-  cartCount?: number
 }
 
-export default function SideMenu({ productCategories, packages = [], projectGroups = [], cartCount = 0 }: SideMenuProps) {
+export default function SideMenu({ productCategories, packages = [], projectGroups = [] }: SideMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [view, setView] = useState<'main' | 'products' | 'solutions' | 'projects'>('main')
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null)
   const pathname = usePathname()
   const locale = useLocale()
   const isRTL = locale === 'ar'
+
+  const cartItems = useCartStore((state) => state.items)
+  const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0)
 
   const switchTo = (newLocale: string) => {
     const pathWithoutLocale = pathname.replace(`/${locale}`, '')
@@ -166,7 +169,7 @@ export default function SideMenu({ productCategories, packages = [], projectGrou
         <div className="flex h-[76px] items-center justify-between px-4 shrink-0 w-full">
           <LocalizedClientLink href="/" onClick={handleClose}>
             <Image
-              src="/casanest.png"
+              src="/casanest.webp"
               alt="CASANEST Logo"
               width={110}
               height={36}

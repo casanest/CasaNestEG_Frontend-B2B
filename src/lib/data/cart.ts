@@ -72,7 +72,7 @@ export async function retrieveCart(cartId?: string) {
       method: "GET",
       query: {
         fields:
-          "*items, *region, *items.product, *items.variant,*items.variant.product,*items.variant.product.images, *items.thumbnail, *items.metadata, +items.total, *promotions, +shipping_methods.name, +shipping_methods.amount",
+          "*items, *region, *items.product, *items.product.categories, *items.variant,*items.variant.options,*items.variant.product,*items.variant.product.images, *items.thumbnail, *items.metadata, +items.total, *promotions, +shipping_methods.name, +shipping_methods.amount",
       },
       headers,
       next,
@@ -227,24 +227,46 @@ export async function addToCart({
     ...(await getAuthHeaders()),
   }
 
-  await sdk.store.cart
-    .createLineItem(
-      cart.id,
-      {
-        variant_id: variantId,
-        quantity,
-      },
-      {},
-      headers
-    )
-    .then(async () => {
-      const cartCacheTag = await getCacheTag("carts")
-      revalidateTag(cartCacheTag)
+  try {
+    await sdk.store.cart
+      .createLineItem(
+        cart.id,
+        {
+          variant_id: variantId,
+          quantity,
+        },
+        {},
+        headers
+      )
+      .then(async () => {
+        const cartCacheTag = await getCacheTag("carts")
+        revalidateTag(cartCacheTag)
 
-      const fulfillmentCacheTag = await getCacheTag("fulfillment")
-      revalidateTag(fulfillmentCacheTag)
-    })
-    .catch(medusaError)
+        const fulfillmentCacheTag = await getCacheTag("fulfillment")
+        revalidateTag(fulfillmentCacheTag)
+      })
+  } catch (error: any) {
+    // If the standard API fails (e.g. variant has no price),
+    // fall back to the custom endpoint that bypasses price validation
+    await sdk.client
+      .fetch(`/store/cart/add-item`, {
+        method: "POST",
+        body: {
+          cart_id: cart.id,
+          variant_id: variantId,
+          quantity,
+        },
+        headers,
+      })
+      .then(async () => {
+        const cartCacheTag = await getCacheTag("carts")
+        revalidateTag(cartCacheTag)
+
+        const fulfillmentCacheTag = await getCacheTag("fulfillment")
+        revalidateTag(fulfillmentCacheTag)
+      })
+      .catch(medusaError)
+  }
 }
 
 export async function updateLineItem({

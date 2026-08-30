@@ -1,8 +1,7 @@
-import { retrieveCart } from "@lib/data/cart"
+"use client"
+
 import CartDropdown from "../cart-dropdown"
 
-export default async function CartButton({locale}: {locale: string}) {
-  const cart = await retrieveCart().catch(() => null)
-
-  return <CartDropdown cart={cart} locale={locale} />
+export default function CartButton({ locale }: { locale: string }) {
+  return <CartDropdown locale={locale} />
 }

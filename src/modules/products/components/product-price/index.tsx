@@ -23,6 +23,15 @@ export default function ProductPrice({
   const selectedPrice = variant ? variantPrice : cheapestPrice
 
   if (!selectedPrice) {
+    if (variant) {
+      return (
+        <div className="flex flex-col gap-1">
+          <span className="text-[18px] font-bold text-[#17284a]">
+            {isRTL ? "اطلب عرض سعر" : "Request a Quote"}
+          </span>
+        </div>
+      )
+    }
     return <div className="block w-32 h-9 bg-gray-100 animate-pulse" />
   }
 

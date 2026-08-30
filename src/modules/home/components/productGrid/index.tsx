@@ -81,7 +81,7 @@ const ProductGrid = ({ products = [], locale }: ProductGridProps) => {
                             <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
                                 <div className="aspect-square relative overflow-hidden">
                                     <img
-                                        src={failedIds[product.id] ? '/cat1.jpg' : (product.thumbnail || '/cat1.jpg')}
+                                        src={failedIds[product.id] ? '/cat1.webp' : (product.thumbnail || '/cat1.webp')}
                                         alt={product.title}
                                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                                         onError={() => handleImageError(product.id)}

@@ -7,14 +7,13 @@ import TopNav from "@modules/layout/components/top-nav"
 import LanguageSwitcher from "@modules/layout/components/language-switcher"
 import Image from "next/image"
 import { FilePlus } from "lucide-react"
-import { FileAddIcon } from "@modules/common/icons/file-add"
 import ScrollHeader from "./ScrollHeader"
 import ProductsDropdown from "./ProductsDropdown"
+import MobileCartButton from "@modules/layout/components/mobile-cart-button"
 import { listCategories, Category } from "@lib/data/categories"
 import { listCollections } from "@lib/data/collections"
 import { listPackages } from "@lib/data/packages"
 import { listAllPortfolioProjects } from "@lib/data/portfolio"
-import { retrieveCart } from "@lib/data/cart"
 import { getLocale } from "next-intl/server"
 
 export default async function Nav() {
@@ -34,9 +33,6 @@ export default async function Nav() {
     }))
     .filter((g) => g.projects.length > 0)
 
-  const cart = await retrieveCart().catch(() => null)
-  const cartItemCount = cart?.items?.reduce((acc, item) => acc + item.quantity, 0) || 0
-
   const navLinksBefore = [
     { href: "/", labelEn: "Homepage", labelAr: "الرئيسية" },
     { href: "/pre-curated-solutions", labelEn: "Curated Solutions", labelAr: "الحلول المتكاملة" },
@@ -55,7 +51,6 @@ export default async function Nav() {
               productCategories={productCategories as any}
               packages={packages}
               projectGroups={projectGroups}
-              cartCount={cartItemCount}
             />
 
             {/* Mobile: Centered Logo */}
@@ -66,7 +61,7 @@ export default async function Nav() {
               aria-label="Homepage"
             >
               <Image
-                src="/casanest.png"
+                src="/casanest.webp"
                 alt="CASANEST Logo"
                 width={104}
                 height={34}
@@ -83,7 +78,7 @@ export default async function Nav() {
                 aria-label="Homepage"
               >
                 <Image
-                  src="/casanest.png"
+                  src="/casanest.webp"
                   alt="CASANEST Logo"
                   width={161}
                   height={56}
@@ -137,20 +132,7 @@ export default async function Nav() {
             </div>
 
             {/* Mobile: Right side - Quote button (icon only) */}
-            <LocalizedClientLink
-              href="/cart"
-              data-testid="nav-cart-link"
-              className="flex items-center bg-[#cdd6e9] p-2 rounded-[12px] md:hidden"
-            >
-              <div className="relative">
-                <FileAddIcon className="text-black" />
-                {cartItemCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 min-w-[14px] h-[14px] px-1 flex items-center justify-center rounded-full bg-[#17284a] text-white text-[12px] font-medium leading-none font-satoshi">
-                    {cartItemCount}
-                  </span>
-                )}
-              </div>
-            </LocalizedClientLink>
+            <MobileCartButton />
           </ScrollHeader>
     </>
   )
