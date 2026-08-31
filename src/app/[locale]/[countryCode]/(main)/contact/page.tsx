@@ -6,9 +6,8 @@ import {
   Mail,
   Clock,
   MapPin,
-  ChevronDown,
-  UploadCloud,
 } from "lucide-react";
+import ContactForm from "@modules/contact/components/contact-form";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -21,15 +20,6 @@ type PageProps = {
     countryCode: string;
   };
 };
-
-const subjectOptions = [
-  "General Inquiry",
-  "Product Question",
-  "Solution Package",
-  "Procurement Project",
-  "Partnership",
-  "Support",
-];
 
 type PlatformVisual = {
   logo: string;
@@ -161,7 +151,12 @@ export default async function ContactPage({ params }: PageProps) {
                   </div>
                 </div>
                 {/* Row 3 - Location (full width, horizontal on mobile) */}
-                <div className="bg-white border border-[#e5e7eb] rounded-[12px] p-[16px] lg:p-[20px] w-full lg:flex-1 flex flex-row lg:flex-col gap-[16px] items-center lg:items-start">
+                <a
+                  href="https://www.google.com/maps/place/Raneen+-+Faiyum/@29.3227053,30.8412534,20z/data=!4m6!3m5!1s0x145979f19890b951:0xdda9dba3c918178!8m2!3d29.3226987!4d30.8416217!16s%2Fg%2F11sbfgr1wf?entry=ttu&g_ep=EgoyMDI2MDgyNi4wIKXMDSoASAFQAw%3D%3D"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-white border border-[#e5e7eb] rounded-[12px] p-[16px] lg:p-[20px] w-full lg:flex-1 flex flex-row lg:flex-col gap-[16px] items-center lg:items-start hover:shadow-lg transition"
+                >
                   <div className="w-[40px] h-[40px] lg:w-[44px] lg:h-[44px] rounded-full bg-[#f3f4f6] flex items-center justify-center shrink-0">
                     <MapPin size={20} className="text-[#17284a]" />
                   </div>
@@ -175,164 +170,12 @@ export default async function ContactPage({ params }: PageProps) {
                         : "Ahmed Shawki st. Royal City towers, above Ranin, second tower, first upper floor"}
                     </p>
                   </div>
-                </div>
+                </a>
               </div>
             </div>
 
             {/* Right Column - Form Card */}
-            <div className="bg-white border border-[#e5e7eb] rounded-[16px] p-[20px] lg:p-[24px] w-full lg:max-w-[728px] flex flex-col gap-[20px] lg:gap-[28px]">
-              <form
-                className="flex flex-col gap-[16px] lg:gap-[20px]"
-                action="mailto:info@casanest.com"
-                method="post"
-                encType="text/plain"
-              >
-                {/* Row 1 - Names */}
-                <div className="flex gap-[16px] flex-col lg:flex-row">
-                  <div className="flex-1 flex flex-col gap-[6px] lg:gap-[8px]">
-                    <label className="text-[14px] font-medium text-[#17284a]">
-                      {isRTL ? "الاسم الكامل" : "Full Name"}
-                    </label>
-                    <input
-                      name="name"
-                      required
-                      className="h-[44px] lg:h-[52px] bg-[#f3f4f6] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] text-[16px] text-[#17284a] placeholder:text-[#5d5d61] focus:outline-none focus:ring-2 focus:ring-[#17284a]/20"
-                      placeholder={isRTL ? "مثال: علي" : "e.g. Aly"}
-                    />
-                  </div>
-                  <div className="flex-1 flex flex-col gap-[6px] lg:gap-[8px]">
-                    <label className="text-[14px] font-medium text-[#17284a]">
-                      {isRTL ? "الموقع" : "Location"}
-                    </label>
-                    <input
-                      name="location"
-                      className="h-[44px] lg:h-[52px] bg-[#f3f4f6] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] text-[16px] text-[#17284a] placeholder:text-[#5d5d61] focus:outline-none focus:ring-2 focus:ring-[#17284a]/20"
-                      placeholder={isRTL ? "مثال: المنصورة" : "e.g. Mansoura"}
-                    />
-                  </div>
-                </div>
-
-                {/* Row 2 - Contacts */}
-                <div className="flex gap-[16px] flex-col lg:flex-row">
-                  <div className="flex-1 flex flex-col gap-[6px] lg:gap-[8px]">
-                    <label className="text-[14px] font-medium text-[#17284a]">
-                      {isRTL ? "البريد الإلكتروني" : "Email Address"}
-                    </label>
-                    <input
-                      name="email"
-                      type="email"
-                      required
-                      className="h-[44px] lg:h-[52px] bg-[#f3f4f6] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] text-[16px] text-[#17284a] placeholder:text-[#5d5d61] focus:outline-none focus:ring-2 focus:ring-[#17284a]/20"
-                      placeholder={isRTL ? "مثال: علي@شركة.com" : "e.g. aly@company.com"}
-                    />
-                  </div>
-                  <div className="flex-1 flex flex-col gap-[6px] lg:gap-[8px]">
-                    <label className="text-[14px] font-medium text-[#17284a]">
-                      {isRTL ? "رقم الهاتف" : "Phone Number"}
-                    </label>
-                    <input
-                      name="phone"
-                      className="h-[44px] lg:h-[52px] bg-[#f3f4f6] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] text-[16px] text-[#17284a] placeholder:text-[#5d5d61] focus:outline-none focus:ring-2 focus:ring-[#17284a]/20"
-                      placeholder={isRTL ? "مثال: +20 100 123 4567" : "e.g. +20 100 123 4567"}
-                    />
-                  </div>
-                </div>
-
-                {/* Company Name */}
-                <div className="flex flex-col gap-[6px] lg:gap-[8px]">
-                  <label className="text-[14px] font-medium text-[#17284a]">
-                    {isRTL ? "اسم الشركة" : "Company Name"}
-                  </label>
-                  <input
-                    name="company"
-                    className="h-[44px] lg:h-[52px] bg-[#f3f4f6] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] text-[16px] text-[#17284a] placeholder:text-[#5d5d61] focus:outline-none focus:ring-2 focus:ring-[#17284a]/20"
-                    placeholder={
-                      isRTL
-                        ? "مثال: شركاء تطوير القاهرة"
-                        : "e.g. Cairo Development Partners"
-                    }
-                  />
-                </div>
-
-                {/* Subject Dropdown */}
-                <div className="flex flex-col gap-[6px] lg:gap-[8px]">
-                  <label className="text-[14px] font-medium text-[#17284a]">
-                    {isRTL ? "الموضوع" : "Subject"}
-                  </label>
-                  <div className="relative">
-                    <select
-                      name="subject"
-                      className="h-[44px] lg:h-[52px] w-full bg-[#f3f4f6] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] text-[16px] text-[#17284a] appearance-none focus:outline-none focus:ring-2 focus:ring-[#17284a]/20 cursor-pointer"
-                      defaultValue=""
-                    >
-                      <option value="" disabled>
-                        {isRTL ? "اختر موضوعاً" : "Select a topic"}
-                      </option>
-                      {subjectOptions.map((opt) => (
-                        <option key={opt} value={opt}>
-                          {opt}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown
-                      size={20}
-                      className="absolute right-[14px] lg:right-[16px] top-1/2 -translate-y-1/2 text-[#17284a] pointer-events-none"
-                    />
-                  </div>
-                </div>
-
-                {/* Message */}
-                <div className="flex flex-col gap-[6px] lg:gap-[8px]">
-                  <label className="text-[14px] font-medium text-[#17284a]">
-                    {isRTL ? "الرسالة" : "Message"}
-                  </label>
-                  <textarea
-                    name="message"
-                    rows={4}
-                    required
-                    className="bg-[#f3f4f6] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] text-[16px] text-[#17284a] placeholder:text-[#5d5d61] focus:outline-none focus:ring-2 focus:ring-[#17284a]/20 resize-none"
-                    placeholder={
-                      isRTL
-                        ? "أخبرنا عن متطلبات مشروعك، الكميات، والجدول الزمني..."
-                        : "Tell us about your project requirements, quantities, and timelines..."
-                    }
-                  />
-                </div>
-
-                {/* Upload Section - hidden on mobile */}
-                <div className="hidden lg:flex flex-col gap-[12px]">
-                  <label className="text-[14px] font-medium text-[#17284a]">
-                    {isRTL ? "المرفقات (اختياري)" : "Attachments (Optional)"}
-                  </label>
-                  <div className="bg-[#f9fafb] border border-dashed border-[#e5e7eb] rounded-[12px] flex flex-col gap-[12px] items-center justify-center py-[32px] cursor-pointer hover:border-[#17284a]/30 transition">
-                    <UploadCloud size={32} className="text-[#17284a]" />
-                    <div className="flex flex-col gap-[4px] items-center">
-                      <p className="text-[16px] text-[#17284a]">
-                        {isRTL
-                          ? "اسحب وأفلت الملفات هنا أو"
-                          : "Drag & drop files here or"}
-                      </p>
-                      <p className="text-[14px] font-medium text-[#17284a] underline">
-                        {isRTL ? "تصفح الملفات" : "Browse Files"}
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-[14px] text-[#6b7280]">
-                    {isRTL
-                      ? "الصيغ المقبولة: PDF, DOC, DOCX, XLS, XLSX, DWG — الحد الأقصى 10 ميجابايت لكل ملف"
-                      : "Accepted formats: PDF, DOC, DOCX, XLS, XLSX, DWG — Max 10MB per file"}
-                  </p>
-                </div>
-
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  className="bg-[#17284a] text-white text-[16px] font-medium rounded-[16px] lg:rounded-[12px] py-[24px] px-[36px] hover:bg-[#0f1d38] transition"
-                >
-                  {isRTL ? "إرسال الاستفسار ←" : "Submit Enquiry →"}
-                </button>
-              </form>
-            </div>
+            <ContactForm isRTL={isRTL} />
           </div>
       </section>
 
@@ -422,7 +265,12 @@ export default async function ContactPage({ params }: PageProps) {
             </p>
           </div>
           {/* Map Container */}
-          <div className="relative bg-[#e5e7eb] rounded-[16px] overflow-hidden h-[280px] lg:h-[429px] w-full">
+          <a
+            href="https://www.google.com/maps/place/Raneen+-+Faiyum/@29.3227053,30.8412534,20z/data=!4m6!3m5!1s0x145979f19890b951:0xdda9dba3c918178!8m2!3d29.3226987!4d30.8416217!16s%2Fg%2F11sbfgr1wf?entry=ttu&g_ep=EgoyMDI2MDgyNi4wIKXMDSoASAFQAw%3D%3D"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative bg-[#e5e7eb] rounded-[16px] overflow-hidden h-[280px] lg:h-[429px] w-full block hover:shadow-lg transition"
+          >
             <img
               src="/contact/map.png"
               alt="Office location map"
@@ -435,7 +283,7 @@ export default async function ContactPage({ params }: PageProps) {
                 className="w-full h-full"
               />
             </div>
-          </div>
+          </a>
         </div>
       </section>
     </main>
