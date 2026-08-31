@@ -5,6 +5,7 @@ export type SocialMediaLink = {
   platform: string
   url: string
   label: string | null
+  description: string | null
   display_order: number
 }
 
