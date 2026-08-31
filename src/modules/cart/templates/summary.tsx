@@ -91,7 +91,7 @@ const Summary = ({ items }: SummaryProps) => {
       {/* Action Buttons */}
       <div className="flex flex-col gap-[12px] lg:gap-3 items-start w-full">
         <LocalizedClientLink
-          href="/contact"
+          href="/rfq"
           data-testid="checkout-button"
           className="w-full"
         >

@@ -1,5 +1,7 @@
 import { Container } from "@modules/common/components/container";
 import LocalizedClientLink from "@modules/common/components/localized-client-link";
+import SocialMediaLinks from "@modules/common/components/social-media-links";
+import { listSocialMedia } from "@lib/data/social-media";
 import { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 
@@ -21,6 +23,8 @@ export default async function ContactPage({ params }: PageProps) {
   const locale = await getLocale(); // "ar", "en", ...
 
   const isRTL = locale === "ar";
+
+  const socialMediaLinks = await listSocialMedia();
 
   return (
     <main dir={isRTL ? "rtl" : "ltr"} className="bg-white">
@@ -123,6 +127,14 @@ export default async function ContactPage({ params }: PageProps) {
                   <li>+201012345678</li>
                   <li>{isRTL ? "الفيوم، مصر" : "Fayoum, Egypt"}</li>
                 </ul>
+                {socialMediaLinks.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="text-sm font-semibold text-[#043364] mb-2">
+                      {isRTL ? "تابعنا" : "Follow Us"}
+                    </h4>
+                    <SocialMediaLinks links={socialMediaLinks} variant="contact" />
+                  </div>
+                )}
               </div>
 
               <div className="rounded-2xl border border-gray-200 p-6 shadow-sm bg-gray-50">

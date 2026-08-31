@@ -1,5 +1,6 @@
 import { getParentCategories, listCategories } from "@lib/data/categories";
 import { getCollectionsLocal } from "@lib/data/collections";
+import { listSocialMedia } from "@lib/data/social-media";
 import Footer from "./Footer";
 
 type FooterServerProps = {
@@ -19,12 +20,14 @@ export default async function FooterServer({ locale }: FooterServerProps) {
         : []) as any;
 
     const parentCategories = await getParentCategories(categories);
+    const socialMediaLinks = await listSocialMedia();
 
     return (
         <Footer
             productCategories={parentCategories || []}
             collections={collections}
             locale={locale}
+            socialMediaLinks={socialMediaLinks}
         />
     );
 }

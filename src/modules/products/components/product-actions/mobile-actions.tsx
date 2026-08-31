@@ -118,7 +118,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
         {/* Request a Quote Button */}
         <button
           onClick={handleAddToCart}
-          disabled={!inStock || !variant || isAdding}
+          disabled={!inStock || !variant}
           className={clx(
             "flex-1 rounded-[10px] bg-[#17284a] text-white text-[13px] font-medium flex items-center justify-center transition-colors hover:bg-[#0f1d35] py-[16px] px-[36px]",
             isRTL && "tracking-[0.05em]"
@@ -129,9 +129,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
             ? isRTL ? "اختر النوع" : "Select variant"
             : !inStock
               ? isRTL ? "غير متوفر" : "Out of stock"
-              : isAdding
-                ? isRTL ? "جارٍ..." : "Sending..."
-                : isRTL ? "اطلب عرض سعر" : "Request a Quote"}
+              : isRTL ? "اطلب عرض سعر" : "Request a Quote"}
         </button>
       </div>
 

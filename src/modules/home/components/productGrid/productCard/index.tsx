@@ -29,6 +29,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
 
     const addItem = useCartStore((state) => state.addItem)
 
+    const rawMoq =
+        (product as any).moq ||
+        (product.metadata?.min_order_qty as string | number) ||
+        (product.metadata?.MOQ as string | number)
+    const minOrderQty = (() => {
+        if (!rawMoq) return 1
+        const parsed = parseInt(String(rawMoq), 10)
+        return isNaN(parsed) || parsed < 1 ? 1 : parsed
+    })()
+
     const handleAddToCart = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation()
         event.preventDefault()
@@ -51,7 +61,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
                 productDescriptionAr: (product.metadata as any)?.localizations?.ar?.description as string | undefined,
                 thumbnail: product.thumbnail || null,
                 images: (product.images || []).filter((img) => Boolean(img?.url)).map((img) => ({ url: normalizeProductImageUrl(img.url!) })),
-                quantity: 1,
+                quantity: minOrderQty,
                 variantTitle: variant?.title,
                 variantTitleAr: (variant?.metadata as any)?.localizations?.ar?.title as string | undefined,
                 variantOptions: variant?.options?.map((opt: any) => ({ option_id: opt.option_id, value: opt.value, metadata: opt.metadata })),
@@ -66,7 +76,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
                 manageInventory: variant?.manage_inventory,
                 allowBackorder: variant?.allow_backorder,
                 inventoryQuantity: variant?.inventory_quantity,
-                minOrderQty: undefined,
+                minOrderQty: minOrderQty > 1 ? minOrderQty : undefined,
             })
             setShowSuccess(true)
             setTimeout(() => setShowSuccess(false), 2000)
@@ -174,7 +184,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
                                 hover:scale-110 hover:shadow-lg
                                 transition-all duration-300 shadow-md
                                 disabled:opacity-50 disabled:cursor-not-allowed
-                                ${showSuccess ? "bg-green-500" : ""}
+                                ${showSuccess ? "!bg-[rgb(253,176,34)]" : ""}
                             `}
                             aria-label={isRTL ? "إضافة إلى السلة" : "Add to cart"}
                         >

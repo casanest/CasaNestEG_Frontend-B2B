@@ -45,7 +45,12 @@ export default function ProductPreview({
   const defaultVariant = product.variants?.[0]
   const defaultVariantId = defaultVariant?.id || ""
 
-  const minOrderQty = (product.metadata?.min_order_qty as string | number) || null
+  const rawMoq =
+    (product as any).moq ||
+    (product.metadata?.min_order_qty as string | number) ||
+    (product.metadata?.MOQ as string | number) ||
+    null
+  const minOrderQty = rawMoq ? parseInt(String(rawMoq)) : null
   const productCode = (product.metadata?.product_code as string) || product.variants?.[0]?.sku || null
 
   const categoryName = product.categories?.[0]
@@ -268,7 +273,7 @@ export default function ProductPreview({
             className={clx(
               "mt-auto w-full h-12 rounded-xl flex items-center justify-center gap-2 text-[15px] font-medium transition-all duration-300 active:scale-[0.98]",
               showSuccess
-                ? "bg-green-600 text-white"
+                ? "bg-[rgb(253,176,34)] text-white"
                 : "bg-[#1E293B] text-white hover:bg-[#0F172A] hover:shadow-md"
             )}
             aria-label={isRTL ? "إضافة إلى قائمة التسعير" : "Add to Quote List"}

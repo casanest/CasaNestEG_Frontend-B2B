@@ -1,12 +1,9 @@
 
-import { cn } from "@lib/util/cn";
 import { formatNameForTestId } from "@lib/util/formatNameForTestId";
 import LocalizedClientLink from "@modules/common/components/localized-client-link";
-import { LinkedinIcon } from "@modules/common/icons/linkedin";
-import { FacebookIcon } from "@modules/common/icons/facebook";
-import { XLogoIcon } from "@modules/common/icons/twitter";
+import SocialMediaLinks from "@modules/common/components/social-media-links";
+import type { SocialMediaLink } from "@lib/data/social-media";
 import Image from "next/image";
-import Link from "next/link";
 import { Mail, Phone, MapPin } from "lucide-react";
 
 type Category = {
@@ -36,37 +33,14 @@ type ProductCategory = {
   category_children: ProductCategory[];
 };
 
-function SocialMedia({ className }: { className?: string }) {
-  const socials = [
-    { href: "#", icon: <LinkedinIcon />, label: "LinkedIn", testId: "linkedin-link" },
-    { href: "#", icon: <FacebookIcon />, label: "Facebook", testId: "facebook-link" },
-    { href: "#", icon: <XLogoIcon />, label: "X (Twitter)", testId: "x-link" },
-  ];
-
-  return (
-    <div className={cn("flex items-center gap-3", className)}>
-      {socials.map(({ href, icon, label, testId }) => (
-        <LocalizedClientLink
-          key={testId}
-          href={href}
-          data-testid={testId}
-          aria-label={label}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 text-white hover:bg-white/10 transition"
-        >
-          {icon}
-        </LocalizedClientLink>
-      ))}
-    </div>
-  );
-}
-
 interface FooterProps {
   productCategories: ProductCategory[];
   collections: ApiCollection[];
   locale: string;
+  socialMediaLinks?: SocialMediaLink[];
 }
 
-export default function Footer({ productCategories, collections, locale }: FooterProps) {
+export default function Footer({ productCategories, collections, locale, socialMediaLinks = [] }: FooterProps) {
   const isRTL = locale === "ar";
 
   const casanestLinks = [
@@ -114,7 +88,7 @@ export default function Footer({ productCategories, collections, locale }: Foote
                 : "Integrated solutions for furniture, technology, and professional spaces."}
             </p>
 
-            <SocialMedia />
+            {socialMediaLinks.length > 0 && <SocialMediaLinks links={socialMediaLinks} />}
           </div>
 
           {/* Links Columns */}

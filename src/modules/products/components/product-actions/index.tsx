@@ -5,7 +5,7 @@ import { HttpTypes } from "@medusajs/types"
 import { clx } from "@medusajs/ui"
 import OptionSelect from "@modules/products/components/product-actions/option-select"
 import { isEqual } from "lodash"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
 import ProductPrice from "../product-price"
 import MobileActions from "./mobile-actions"
@@ -54,8 +54,13 @@ export default function ProductActions({
 
   const [quantity, setQuantity] = useState(minOrderQty)
   const countryCode = useParams().countryCode as string
-  const locale = useLocale()
+  const locale = useLocale() as string
   const isRTL = locale === "ar"
+  const router = useRouter()
+
+  const handleRequestQuote = () => {
+    router.push(`/${locale}/${countryCode}/products/${product.handle}/request-quote`)
+  }
 
   useEffect(() => {
     if (product.variants?.length === 1) {
@@ -106,6 +111,8 @@ export default function ProductActions({
   }, [selectedVariant])
 
   const addItem = useCartStore((state) => state.addItem)
+  const openCartDropdown = useCartStore((state) => state.openCartDropdown)
+  const [isAddingToList, setIsAddingToList] = useState(false)
 
   const handleAddToCart = async () => {
     if (!selectedVariant?.id) return null
@@ -145,6 +152,14 @@ export default function ProductActions({
     })
 
     setIsAdding(false)
+  }
+
+  const handleAddToQuoteList = async () => {
+    if (!selectedVariant?.id) return
+    await handleAddToCart()
+    openCartDropdown()
+    setIsAddingToList(true)
+    setTimeout(() => setIsAddingToList(false), 2000)
   }
 
   return (
@@ -215,12 +230,11 @@ export default function ProductActions({
           {/* Action Buttons */}
           <div className="flex flex-col gap-2">
             <button
-              onClick={handleAddToCart}
+              onClick={handleRequestQuote}
               disabled={
                 !inStock ||
                 !selectedVariant ||
                 !!disabled ||
-                isAdding ||
                 !isValidVariant
               }
               className={clx(
@@ -233,14 +247,20 @@ export default function ProductActions({
                 ? isRTL ? "اختر خيارًا" : "Select an option"
                 : !inStock || !isValidVariant
                   ? isRTL ? "غير متوفر" : "Out of stock"
-                  : isAdding
-                    ? isRTL ? "جارٍ الإضافة..." : "Adding..."
                     : isRTL ? "اطلب عرض سعر" : "Request a Quote"}
             </button>
             <button
-              className="w-full h-[56px] rounded-[16px] border border-black text-black text-[16px] font-medium transition-all hover:bg-black hover:text-white flex items-center justify-center gap-2"
+              onClick={handleAddToQuoteList}
+              disabled={!selectedVariant || !inStock || !isValidVariant || isAddingToList}
+              className={`w-full h-[56px] rounded-[16px] border text-[16px] font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed ${
+                isAddingToList
+                  ? "border-transparent text-white bg-[rgb(253,176,34)]"
+                  : "border-black text-black hover:bg-black hover:text-white"
+              }`}
             >
-              {isRTL ? "أضف إلى قائمة الأسعار" : "Add to Quote List"}
+              {isAddingToList
+                ? isRTL ? "تمت الإضافة ✓" : "Added ✓"
+                : isRTL ? "أضف إلى قائمة الأسعار" : "Add to Quote List"}
             </button>
           </div>
 
@@ -367,8 +387,8 @@ export default function ProductActions({
           options={options}
           updateOptions={setOptionValue}
           inStock={inStock}
-          handleAddToCart={handleAddToCart}
-          isAdding={isAdding}
+          handleAddToCart={handleRequestQuote}
+          isAdding={false}
           optionsDisabled={!!disabled || isAdding}
           quantity={quantity}
           onQuantityChange={setQuantity}
