@@ -32,45 +32,45 @@ const platformVisuals: Record<string, PlatformVisual> = {
   linkedin: {
     logo: "/contact/linkedin-logo.svg",
     gradient: "from-[#ebf0ff]",
-    cta: "Connect on LinkedIn",
+    cta: "Follow",
   },
   instagram: {
     logo: "/contact/instagram-logo.svg",
     gradient: "from-[#fff0eb]",
-    cta: "Follow on Instagram",
+    cta: "Follow",
   },
   twitter: {
     logo: "/contact/x-logo.svg",
     logoWidth: "w-[128px]",
     gradient: "from-[#f0f2f5]",
-    cta: "Follow on X",
+    cta: "Follow",
   },
   facebook: {
     logo: "/contact/facebook-logo.svg",
     gradient: "from-[#e8ecff]",
-    cta: "Follow on Facebook",
+    cta: "Follow",
   },
   youtube: {
     logo: "/contact/youtube-logo.svg",
     gradient: "from-[#fff0eb]",
-    cta: "Subscribe on YouTube",
+    cta: "Follow",
   },
   tiktok: {
     logo: "/contact/tiktok-logo.svg",
     gradient: "from-[#f0f2f5]",
-    cta: "Follow on TikTok",
+    cta: "Follow",
   },
   whatsapp: {
     logo: "/contact/whatsapp-logo.svg",
     gradient: "from-[#ebf0ff]",
-    cta: "Chat on WhatsApp",
+    cta: "Follow",
   },
 };
 
 const defaultVisual: PlatformVisual = {
   logo: "/contact/facebook-logo.svg",
   gradient: "from-[#e8ecff]",
-  cta: "Follow Us",
+  cta: "Follow",
 };
 
 export default async function ContactPage({ params }: PageProps) {
@@ -234,7 +234,7 @@ export default async function ContactPage({ params }: PageProps) {
                   </div>
                   <div className="border border-black rounded-[16px] px-[36px] py-[8px] lg:py-[16px] w-full h-[44px] lg:h-auto flex items-center justify-center gap-[8px] hover:bg-black hover:text-white transition">
                     <span className="w-[6px] h-[6px] rounded-full bg-current shrink-0 lg:hidden"></span>
-                    <span className="text-[12px] lg:text-[16px] font-medium">{visual.cta}</span>
+                    <span className="text-[12px] lg:text-[16px] font-medium">{isRTL ? "تابع" : visual.cta}</span>
                   </div>
                 </a>
               );
@@ -272,7 +272,7 @@ export default async function ContactPage({ params }: PageProps) {
             className="relative bg-[#e5e7eb] rounded-[16px] overflow-hidden h-[280px] lg:h-[429px] w-full block hover:shadow-lg transition"
           >
             <img
-              src="/contact/map.png"
+              src="/contact/map.webp"
               alt="Office location map"
               className="absolute inset-0 w-full h-full object-cover pointer-events-none"
             />

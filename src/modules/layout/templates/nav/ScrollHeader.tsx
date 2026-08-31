@@ -16,6 +16,7 @@ export default function ScrollHeader({
   const [cartOpen, setCartOpen] = useState(false)
   const pathname = usePathname()
   const isHomePage = /^\/[a-z]{2}\/[a-z]{2}\/?$/.test(pathname)
+  const isAboutUsPage = /^\/[a-z]{2}\/[a-z]{2}\/about-us\/?$/.test(pathname)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -43,14 +44,22 @@ export default function ScrollHeader({
 
   return (
     <div className="sticky top-0 inset-x-0 z-[40] w-full">
-      {topNav}
+      {topNav && (
+        <div className={isAboutUsPage && !showBg ? "hidden md:block [&>div]:bg-transparent [&>div]:text-white" : ""}>
+          {topNav}
+        </div>
+      )}
       <div
         className={`w-full transition-all duration-300 ${
-          showBg
-            ? "bg-[#141b34] md:bg-white md:shadow-md md:border-b md:border-gray-200"
-            : isHomePage
-              ? "bg-gradient-to-b from-black/40 to-transparent"
-              : "bg-[#141b34] md:bg-transparent"
+          isAboutUsPage
+            ? showBg
+              ? "bg-[#141b34] md:bg-white md:shadow-md md:border-b md:border-gray-200"
+              : "bg-[#141b34] nav-dark"
+            : showBg
+              ? "bg-[#141b34] md:bg-white md:shadow-md md:border-b md:border-gray-200"
+              : isHomePage
+                ? "bg-gradient-to-b from-black/40 to-transparent"
+                : "bg-[#141b34] md:bg-transparent"
         }`}
       >
         <header className="relative mx-auto duration-200">

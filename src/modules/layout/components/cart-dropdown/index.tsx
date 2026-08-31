@@ -50,13 +50,25 @@ const CartDropdown = ({
           <LocalizedClientLink
             href="/cart"
             data-testid="nav-cart-link"
-            className="relative flex items-center gap-2 bg-[#dce3f0] px-4 py-2 rounded-xl text-[16px] font-medium text-black hover:bg-[#c9d4ea] transition-colors"
+            className="relative flex items-center gap-2 bg-[#DCE3F0] px-4 py-2 rounded-xl text-[16px] font-medium text-black hover:bg-[#c9d4ea] transition-colors"
+            style={{ fontFamily: "Satoshi, sans-serif", height: "40px" }}
           >
             {isRTL ? "عروض الأسعار" : "Quote List"}
+            <div className="w-px h-[15px] bg-black opacity-20" />
             <div className="relative flex items-center">
-              <FilePlus className="w-5 h-5 text-[#17284a]" />
+              <FilePlus className="w-6 h-6 text-black" strokeWidth={1.5} />
               {totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-[#17284a] text-white text-[12px] font-medium leading-none">
+                <span
+                  className="absolute flex items-center justify-center rounded-full bg-[#17284A] text-white text-[12px] font-medium leading-none"
+                  style={{
+                    fontFamily: "Satoshi, sans-serif",
+                    fontWeight: 500,
+                    width: "14px",
+                    height: "14px",
+                    left: "17px",
+                    top: "-6px",
+                  }}
+                >
                   {totalItems}
                 </span>
               )}
