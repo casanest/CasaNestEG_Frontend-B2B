@@ -183,7 +183,7 @@ export default function PackageDetailClient({ pkg, locale }: PackageDetailProps)
   return (
     <div className="bg-[#f8f9fa] w-full" dir={isRTL ? "rtl" : "ltr"}>
       {/* Header band */}
-      <div className="flex flex-col gap-4 md:gap-6 px-4 md:px-8 lg:px-[60px] py-11 md:py-10 w-full max-w-[1600px] mx-auto">
+      <div className="flex flex-col gap-4 md:gap-6 px-4 md:px-8 lg:px-[clamp(32px,4vw,60px)] py-11 md:py-10 w-full max-w-[1600px] mx-auto">
         {/* Breadcrumbs */}
         <div className="flex gap-1 md:gap-2 items-center text-[14px] whitespace-normal md:whitespace-nowrap font-satoshi overflow-hidden">
           <LocalizedClientLink
@@ -207,10 +207,10 @@ export default function PackageDetailClient({ pkg, locale }: PackageDetailProps)
 
         {/* Title + reassurance badge */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:flex-wrap md:gap-4">
-          <h1 className="font-satoshi font-bold leading-[1.3] md:leading-[1.18] text-[#17284a] text-[24px] md:text-[40px] whitespace-normal md:whitespace-nowrap">
+          <h1 className="font-satoshi font-bold leading-[1.3] md:leading-[1.18] text-[#17284a] text-[24px] md:text-[clamp(24px,3vw,40px)] whitespace-normal md:whitespace-nowrap">
             {name}
           </h1>
-          <div className="bg-[#051026] md:bg-[#141b34] flex items-center gap-1.5 md:gap-0 px-4 py-2 md:py-[6px] rounded-full shrink-0">
+          <div className="bg-[#051026] md:bg-[#141b34] flex items-center gap-1.5 md:gap-0 px-4 py-2 md:py-[clamp(4px,0.4vw,6px)] rounded-full shrink-0">
             <Check className="w-3.5 h-3.5 md:hidden text-white" strokeWidth={3} />
             <p className="font-satoshi font-bold text-[14px] text-white whitespace-normal md:whitespace-nowrap leading-[1.5]">
               {reassuranceBadge}
@@ -226,7 +226,7 @@ export default function PackageDetailClient({ pkg, locale }: PackageDetailProps)
       </div>
 
       {/* Columns wrapper */}
-      <div className="flex flex-col lg:flex-row gap-8 lg:gap-[40px] items-start px-4 md:px-8 lg:px-[60px] pt-0 pb-11 lg:pb-[60px] w-full max-w-[1600px] mx-auto">
+      <div className="flex flex-col lg:flex-row gap-8 lg:gap-[clamp(24px,3vw,40px)] items-start px-4 md:px-8 lg:px-[clamp(32px,4vw,60px)] pt-0 pb-11 lg:pb-[clamp(32px,4vw,60px)] w-full max-w-[1600px] mx-auto">
         {/* Left - category sections */}
         <div className="flex flex-col gap-9 min-w-0 lg:flex-1">
           {sortedTitles.map((title) => {
@@ -267,7 +267,7 @@ export default function PackageDetailClient({ pkg, locale }: PackageDetailProps)
         </div>
 
         {/* Right - summary card */}
-        <div className="lg:w-[440px] lg:shrink-0">
+        <div className="lg:w-[clamp(320px,32vw,440px)] lg:shrink-0">
           <SummaryCard
             locale={locale}
             packageName={name}

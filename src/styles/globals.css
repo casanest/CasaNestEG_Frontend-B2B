@@ -234,26 +234,28 @@ html[dir="rtl"] .animate-scroll-right {
   animation: scroll-left 30s linear infinite;
 }
 
-/* Dark navbar state (About Us page, not scrolled) — desktop only */
-@media (min-width: 768px) {
-  .nav-dark .text-black:not([class*="bg-"]) {
-    color: rgba(255, 255, 255, 0.9) !important;
-  }
+/* Dark navbar state (home page / About Us, not scrolled) */
+.nav-dark .text-black:not([class*="bg-"]) {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
 
-  .nav-dark .text-\[\#17284a\]:not([class*="bg-"]) {
-    color: rgba(255, 255, 255, 0.9) !important;
-  }
+.nav-dark .text-\[\#17284a\]:not([class*="bg-"]) {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
 
-  .nav-dark .hover\:text-\[\#17284a\]:hover:not([class*="bg-"]) {
-    color: rgba(255, 255, 255, 0.7) !important;
-  }
+.nav-dark .hover\:text-\[\#17284a\]:hover:not([class*="bg-"]) {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
 
-  .nav-dark img:not([style*="filter"]):not([class*="bg-"]) {
-    filter: brightness(0) invert(1) !important;
-  }
+.nav-dark img:not([style*="filter"]):not([class*="bg-"]) {
+  filter: brightness(0) invert(1) !important;
+}
 
-  /* Keep Quote List button original styling in dark navbar (About Us, before scroll) */
-  .nav-dark .bg-\[\#DCE3F0\] .text-black {
-    color: #000000 !important;
-  }
+/* Keep Quote List button original styling in dark navbar */
+.nav-dark .bg-\[\#DCE3F0\] .text-black {
+  color: #000000 !important;
+}
+
+.nav-dark .bg-\[\#cdd6e9\] .text-black {
+  color: #000000 !important;
 }

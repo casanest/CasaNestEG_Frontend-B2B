@@ -15,6 +15,7 @@ interface ProductFilters {
   price?: string
   q?: string
   handle?: string
+  homepage?: string
   // Collection and type filters
   collection_id?: string[] | string
   type_id?: string[]

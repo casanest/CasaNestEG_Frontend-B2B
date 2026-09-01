@@ -57,15 +57,15 @@ export default function WorkGalleryFan({ isRTL }: Props) {
 
   return (
     <section
-      className="bg-[#141b34] flex flex-col gap-5 lg:gap-16 items-start overflow-clip py-11 lg:py-20 relative w-full"
+      className="bg-[#141b34] flex flex-col gap-5 lg:gap-[clamp(24px,4vw,64px)] items-start overflow-clip py-11 lg:py-[clamp(28px,5vw,80px)] relative w-full"
       dir={isRTL ? "rtl" : "ltr"}
     >
-      <div className="content-container flex flex-col gap-5 lg:gap-16 items-start lg:items-center w-full">
-      <div className="flex flex-col gap-1.5 lg:gap-3 items-start lg:items-center">
+      <div className="content-container flex flex-col gap-5 lg:gap-[clamp(24px,4vw,64px)] items-start lg:items-center w-full">
+      <div className="flex flex-col gap-1.5 lg:gap-[clamp(8px,0.8vw,12px)] items-start lg:items-center">
         <p className="text-[#fdb022] text-[24px]" style={caveatStyle}>
           {isRTL ? "خلف الكواليس" : "Behind the Scenes"}
         </p>
-        <p className="text-white text-[24px] lg:text-[40px] lg:text-center" style={{ ...satoshiStyle, fontWeight: 700 }}>
+        <p className="text-white text-[24px] lg:text-[clamp(24px,2.8vw,40px)] lg:text-center" style={{ ...satoshiStyle, fontWeight: 700 }}>
           {isRTL ? "شاهد عملنا في الواقع" : "See Our Work in Action"}
         </p>
         <p className="text-white text-[18px] text-center opacity-70 max-w-[700px] hidden lg:block" style={satoshiStyle}>

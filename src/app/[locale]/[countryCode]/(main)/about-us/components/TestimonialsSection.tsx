@@ -11,18 +11,18 @@ export default function TestimonialsSection({ isRTL, testimonials }: OwnProps) {
 
   return (
     <section
-      className="bg-white flex flex-col gap-6 lg:gap-10 items-center py-11 lg:py-20 relative w-full"
+      className="bg-white flex flex-col gap-6 lg:gap-[clamp(24px,3vw,40px)] items-center py-11 lg:py-[clamp(28px,5vw,80px)] relative w-full"
       dir={isRTL ? "rtl" : "ltr"}
     >
-      <div className="content-container flex flex-col gap-6 lg:gap-10 items-center w-full">
-      <div className="flex flex-col gap-2 lg:gap-3 items-center text-center w-full">
+      <div className="content-container flex flex-col gap-6 lg:gap-[clamp(24px,3vw,40px)] items-center w-full">
+      <div className="flex flex-col gap-2 lg:gap-[clamp(8px,0.8vw,12px)] items-center text-center w-full">
         <p className="text-black text-[24px]" style={caveatStyle}>
           {isRTL ? "آراء العملاء" : "Testimonials"}
         </p>
-        <h2 className="text-[#17284a] text-[24px] lg:text-[40px] lg:text-[48px]" style={{ ...satoshiStyle, fontWeight: 700 }}>
+        <h2 className="text-[#17284a] text-[24px] lg:text-[clamp(24px,2.8vw,40px)] lg:text-[clamp(28px,3.5vw,48px)]" style={{ ...satoshiStyle, fontWeight: 700 }}>
           {isRTL ? "ماذا يقول عملاؤنا" : "What Our Clients Say"}
         </h2>
-        <p className="text-[#17284a] text-[16px] lg:text-[20px] max-w-[672px] opacity-80" style={satoshiStyle}>
+        <p className="text-[#17284a] text-[16px] lg:text-[clamp(14px,1.4vw,20px)] max-w-[672px] opacity-80" style={satoshiStyle}>
           {isRTL
             ? "موثوق به من قبل الشركات الرائدة في جميع أنحاء مصر."
             : "Trusted by leading businesses across Egypt."}

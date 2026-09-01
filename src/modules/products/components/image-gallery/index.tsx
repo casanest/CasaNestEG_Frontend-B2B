@@ -94,7 +94,7 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
 
     return (
         <>
-            <div className="flex flex-col gap-3 lg:gap-4 w-full select-none">
+            <div className="flex flex-col gap-3 lg:gap-[clamp(12px,1vw,16px)] w-full select-none">
                 {/* Main Image Container */}
                 <div
                     ref={mainRef}
@@ -147,13 +147,13 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
                 {display.length > 1 && (
                     <div className="relative w-full overflow-hidden">
                         <div className="overflow-hidden w-full" ref={thumbRef}>
-                            <div className="flex gap-2.5 lg:gap-3 overflow-x-auto scrollbar-hide py-1 justify-center">
+                            <div className="flex gap-2.5 lg:gap-[clamp(8px,0.8vw,12px)] overflow-x-auto scrollbar-hide py-1 justify-center">
                                 {display.map((img, i) => (
                                     <button
                                         key={img.id}
                                         onClick={() => scrollTo(i)}
                                         className={clx(
-                                            "relative flex-shrink-0 w-[88px] h-[88px] sm:w-[96px] sm:h-[96px] rounded-[10px] overflow-hidden bg-gray-50 transition-all duration-300",
+                                            "relative flex-shrink-0 w-[88px] h-[88px] sm:w-[clamp(80px,7vw,96px)] sm:h-[clamp(80px,7vw,96px)] rounded-[10px] overflow-hidden bg-gray-50 transition-all duration-300",
                                             i === selectedIndex
                                                 ? "border-2 border-[#17284a]"
                                                 : "border border-[#e5e7eb] opacity-70 hover:opacity-100"

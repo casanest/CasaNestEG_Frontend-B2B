@@ -103,7 +103,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
         data-testid="product-container"
       >
         {/* Breadcrumbs */}
-        <div className="flex flex-wrap items-center gap-1.5 px-4 lg:px-[60px] py-4 text-[12px] lg:text-[14px]">
+        <div className="flex flex-wrap items-center gap-1.5 px-4 lg:px-[clamp(32px,4vw,60px)] py-4 text-[12px] lg:text-[clamp(12px,1vw,14px)]">
           <LocalizedClientLink href="/" className="text-[#707176] hover:text-[#17284a] transition-colors">
             {isRTL ? "الرئيسية" : "Home"}
           </LocalizedClientLink>
@@ -127,9 +127,9 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
         </div>
 
         {/* Product Hero - 3 column on desktop, stacked on mobile */}
-        <div className="flex flex-col lg:flex-row gap-[24px] lg:gap-10 px-[16px] lg:px-[60px] pt-[44px] pb-[160px] lg:pt-5 lg:pb-[60px]">
+        <div className="flex flex-col lg:flex-row gap-[24px] lg:gap-[clamp(24px,2.5vw,40px)] px-[16px] lg:px-[clamp(32px,4vw,60px)] pt-[44px] pb-[160px] lg:pt-5 lg:pb-[clamp(32px,4vw,60px)]">
           {/* Gallery Column - Left on desktop */}
-          <div className="lg:w-[520px] shrink-0 lg:sticky lg:top-24 self-start w-full">
+          <div className="lg:w-[clamp(380px,36vw,520px)] shrink-0 lg:sticky lg:top-24 self-start w-full">
             <ImageGallery
               images={product?.images}
               fallbackImage={product?.thumbnail}
@@ -137,7 +137,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
           </div>
 
           {/* Info Column - Middle */}
-          <div className="flex-1 flex flex-col gap-[24px] lg:gap-6 min-w-0">
+          <div className="flex-1 flex flex-col gap-[24px] lg:gap-[clamp(20px,1.5vw,24px)] min-w-0">
             <ProductInfo product={product} description={description} />
 
             {/* Tabs: Specs / Description / Documents — desktop only, mobile renders after actions */}
@@ -151,7 +151,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
           </div>
 
           {/* Action Sidebar - Right on desktop, mobile sticky bar rendered inside */}
-          <div className="lg:w-[340px] shrink-0 w-full">
+          <div className="lg:w-[clamp(260px,24vw,340px)] shrink-0 w-full">
             <Suspense
               fallback={
                 <ProductActions
@@ -181,7 +181,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
 
       {/* Related Products — grey background */}
       <div className="bg-[#f3f4f6] w-full" dir={locale === "ar" ? "rtl" : "ltr"}>
-        <div className="px-[16px] lg:px-[60px] py-[44px] lg:py-16" data-testid="related-products-container">
+        <div className="px-[16px] lg:px-[clamp(32px,4vw,60px)] py-[44px] lg:py-[clamp(32px,4vw,64px)]" data-testid="related-products-container">
           <Suspense fallback={<SkeletonRelatedProducts />}>
             <RelatedProducts product={product} countryCode={countryCode} />
           </Suspense>
@@ -190,7 +190,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
 
       {/* Recently Viewed — white background */}
       <div className="bg-white w-full" dir={locale === "ar" ? "rtl" : "ltr"}>
-        <div className="px-[16px] lg:px-[60px] py-[44px] lg:py-16">
+        <div className="px-[16px] lg:px-[clamp(32px,4vw,60px)] py-[44px] lg:py-[clamp(32px,4vw,64px)]">
           <RecentlyViewedProducts
             region={region}
             countryCode={countryCode}

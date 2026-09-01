@@ -43,7 +43,7 @@ export default function ScrollHeader({
   const showBg = scrolled || cartOpen
 
   return (
-    <div className="sticky top-0 inset-x-0 z-[40] w-full">
+    <div className={`${isHomePage ? "fixed" : "sticky"} top-0 inset-x-0 z-[40] w-full`}>
       {topNav && (
         <div className={isAboutUsPage && !showBg ? "hidden md:block [&>div]:bg-transparent [&>div]:text-white" : ""}>
           {topNav}
@@ -58,7 +58,7 @@ export default function ScrollHeader({
             : showBg
               ? "bg-[#141b34] md:bg-white md:shadow-md md:border-b md:border-gray-200"
               : isHomePage
-                ? "bg-gradient-to-b from-black/40 to-transparent"
+                ? "bg-transparent nav-dark md:bg-gradient-to-b md:from-black/40 md:to-transparent"
                 : "bg-[#141b34] md:bg-transparent"
         }`}
       >

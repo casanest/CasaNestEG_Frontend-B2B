@@ -69,6 +69,7 @@ module.exports = {
           "Ubuntu",
           "sans-serif",
         ],
+        caveat: ["var(--font-caveat)", "cursive"],
       },
       keyframes: {
         ring: {

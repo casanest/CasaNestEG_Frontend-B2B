@@ -14,7 +14,7 @@ export default function PartnerLogo({
     logoColor,
 }: PartnerLogoProps) {
     return (
-        <div className="w-[140px] h-[70px] md:w-[220px] md:h-[100px] bg-transparent transition duration-300 flex items-center justify-center group cursor-pointer">
+        <div className="w-[clamp(100px,10vw,140px)] h-[clamp(50px,5vw,70px)] md:w-[clamp(160px,16vw,220px)] md:h-[clamp(72px,7vw,100px)] bg-transparent transition duration-300 flex items-center justify-center group cursor-pointer">
             <div className="relative w-full h-full flex items-center justify-center animate-float">
                 {/* Gray Logo */}
                 <Image

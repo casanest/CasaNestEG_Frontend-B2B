@@ -33,11 +33,11 @@ export default function TestimonialsCarousel({ testimonials, isRTL }: Props) {
         {testimonials.map((t) => (
           <div
             key={t.id}
-            className="bg-[#f3f4f6] border border-[#e5e7eb] border-solid flex flex-col gap-4 min-w-[270px] max-w-[270px] lg:min-w-[410px] lg:max-w-[410px] items-start justify-between overflow-clip p-5 lg:px-5 lg:py-7 relative rounded-xl shrink-0 snap-center"
+            className="bg-[#f3f4f6] border border-[#e5e7eb] border-solid flex flex-col gap-4 min-w-[270px] max-w-[270px] lg:min-w-[clamp(300px,30vw,410px)] lg:max-w-[clamp(300px,30vw,410px)] items-start justify-between overflow-clip p-5 lg:px-[clamp(18px,1.3vw,20px)] lg:py-[clamp(20px,1.8vw,28px)] relative rounded-xl shrink-0 snap-center"
             style={{ minHeight: "218px" }}
           >
             <div className="flex gap-3 items-center relative w-full">
-              <div className="relative rounded-full shrink-0 w-[44px] h-[44px] lg:w-[86px] lg:h-[86px] overflow-hidden">
+              <div className="relative rounded-full shrink-0 w-[44px] h-[44px] lg:w-[clamp(60px,6vw,86px)] lg:h-[clamp(60px,6vw,86px)] overflow-hidden">
                 {t.image_url ? (
                   <img
                     alt={isRTL ? t.name_ar : t.name_en}

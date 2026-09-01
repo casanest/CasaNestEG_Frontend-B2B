@@ -27,28 +27,28 @@ export default function ValuesV1({ isRTL }: Props) {
 
   return (
     <section
-      className="bg-[#faf8f5] flex flex-col gap-6 lg:gap-10 items-center py-11 lg:py-20 relative w-full"
+      className="bg-[#faf8f5] flex flex-col gap-6 lg:gap-[clamp(24px,3vw,40px)] items-center py-11 lg:py-[clamp(28px,5vw,80px)] relative w-full"
       dir={isRTL ? "rtl" : "ltr"}
     >
-      <div className="content-container flex flex-col gap-6 lg:gap-10 items-center w-full">
-      <div className="flex flex-col gap-1.5 lg:gap-3 items-center text-[#17284a]">
+      <div className="content-container flex flex-col gap-6 lg:gap-[clamp(24px,3vw,40px)] items-center w-full">
+      <div className="flex flex-col gap-1.5 lg:gap-[clamp(8px,0.8vw,12px)] items-center text-[#17284a]">
         <p className="text-[24px] text-center" style={caveatStyle}>
           {isRTL ? "أسس الرعاية" : "Foundations of Care"}
         </p>
-        <p className="text-[24px] lg:text-[40px] text-center" style={{ ...satoshiStyle, fontWeight: 700 }}>
+        <p className="text-[24px] lg:text-[clamp(24px,2.8vw,40px)] text-center" style={{ ...satoshiStyle, fontWeight: 700 }}>
           {isRTL ? "قيمنا الأساسية للشراء" : "Our Core Procurement Values"}
         </p>
       </div>
-      <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-stretch w-full">
+      <div className="flex flex-col lg:flex-row gap-4 lg:gap-[clamp(16px,1.5vw,24px)] items-stretch w-full">
         {values.map((val, i) => (
           <div
             key={i}
-            className="bg-white border border-[#e5e7eb] border-solid lg:border-none lg:drop-shadow-[0px_4px_8px_rgba(0,0,0,0.08)] flex flex-1 flex-col gap-2.5 lg:gap-4 items-start p-4 lg:p-8 rounded-xl w-full"
+            className="bg-white border border-[#e5e7eb] border-solid lg:border-none lg:drop-shadow-[0px_4px_8px_rgba(0,0,0,0.08)] flex flex-1 flex-col gap-2.5 lg:gap-[clamp(12px,1vw,16px)] items-start p-4 lg:p-[clamp(20px,2.5vw,32px)] rounded-xl w-full"
           >
-            <h4 className="text-[#17284a] text-[18px] lg:text-[24px]" style={{ ...satoshiStyle, fontWeight: 700 }}>
+            <h4 className="text-[#17284a] text-[18px] lg:text-[clamp(16px,1.6vw,24px)]" style={{ ...satoshiStyle, fontWeight: 700 }}>
               {isRTL ? val.titleAr : val.title}
             </h4>
-            <p className="text-[#5d5d61] lg:text-[#707176] text-[14px] lg:text-[16px] leading-[1.5]" style={satoshiStyle}>
+            <p className="text-[#5d5d61] lg:text-[#707176] text-[14px] lg:text-[clamp(13px,1.1vw,16px)] leading-[1.5]" style={satoshiStyle}>
               {isRTL ? val.descAr : val.desc}
             </p>
           </div>

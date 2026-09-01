@@ -13,22 +13,87 @@
     "contact": "Contact",
     "company": "Company"
   },
-  "home":{
+  "home": {
     "hero": {
-      "eyebrow": "Engineering Excellence",
-      "titleLead": "We Build",
-      "titleAccent": "Digital Experiences",
-      "titleTail": "with Enterprise-Grade Quality",
-      "description": "We deliver high-quality software solutions with enterprise precision. Our architectural approach ensures scalable growth and technical excellence for modern teams.",
-      "primaryCta": "Start Your Project",
-      "secondaryCta": "Explore Our Methodology"
+      "titleLine1": "We Equip Spaces,",
+      "titleLine2": "You Build What Matters.",
+      "description": "From furniture and technology to complete space solutions, Casanest helps businesses and institutions plan, equip, and deliver functional environments built around their needs.",
+      "primaryCta": "Discover Our Products",
+      "secondaryCta": "Schedule a Call",
+      "slideOf": "of"
+    },
+    "clients": {
+      "eyebrow": "Our Clients",
+      "title": "Teams That Build for the Future",
+      "description": "We work with organizations across business, education, hospitality, and institutional environments to deliver spaces that perform",
+      "aboutUsCta": "About Us"
+    },
+    "amenities": {
+      "badge": "Request Pricing - No Payment, No Obligation",
+      "title": "Everything You Need For Your Space",
+      "description": "Explore our selected products for professional environments — from everyday essentials to specialized project requirements.",
+      "exploreAllCta": "Explore All Products",
+      "addToQuote": "Add to Quote List",
+      "minOrder": "Min. Order Qty:",
+      "pcs": "pcs"
+    },
+    "solutions": {
+      "eyebrow": "Ready-Made Packages",
+      "title": "Pre-Curated Solutions for Every Space",
+      "description": "Save time with our expert-assembled packages — tailored for hotels, offices, schools, hospitals, and more. Each bundle is customizable to fit your project.",
+      "preCuratedBadge": "Pre-Curated",
+      "itemsIncluded": "items included in base bundle",
+      "viewPackage": "View Package",
+      "exploreAllCta": "Explore All Solutions"
+    },
+    "stats": {
+      "enterpriseClients": "Enterprise Clients",
+      "governorateCoverage": "Governorate Coverage",
+      "inMarket": "In the Egyptian Market"
     },
     "partners": {
-      "trustedBy": "Trusted By",
-      "title": "Our Partners and Clients",
-      "description": "We are proud of the trust of our partners and clients as we work together to deliver integrated solutions and services"
+      "eyebrow": "Our Partners",
+      "title": "More Than Products. A Partner for Your Project.",
+      "description": "From the first requirement to the final delivery, we bring products, expertise, and coordination together."
+    },
+    "ourWork": {
+      "eyebrow": "Our Work",
+      "title": "Spaces We've Helped Bring to Life",
+      "description": "Explore selected projects delivered for organizations across different industries and environments.",
+      "exploreAllCta": "Explore All Projects"
+    },
+    "proposal": {
+      "eyebrow": "Your Project Starts Here",
+      "title": "Build Your Proposal With Us",
+      "description": "Select the products you're interested in, add them to your proposal, and tell us what need. Our team will review your request.",
+      "step1Title": "Add Products",
+      "step1Desc": "Select the products you're interested in and add them to your proposal.",
+      "step2Title": "Tell Us About Your Project",
+      "step2Desc": "Share quantities, specifications, timelines, and requirements.",
+      "step3Title": "Customize The Quote",
+      "step3Desc": "Share quantities, specifications, timelines, and requirements.",
+      "step4Title": "Receive Your Proposal",
+      "step4Desc": "Our team reviews your request and prepares the next steps.",
+      "discoverCta": "Discover Our Products"
+    },
+    "testimonials": {
+      "eyebrow": "Testimonials",
+      "title": "What Our Clients Say",
+      "description": "Trusted by leading businesses across Egypt - hear from the teams who rely on Casanest for their workspace needs."
+    },
+    "faq": {
+      "eyebrow": "Support",
+      "title": "Frequently Asked Questions",
+      "description": "Get answers for questions before you contact us.",
+      "q1": "How does the inquiry process work?",
+      "a1": "Browse our catalog or choose a pre-assembled Solution Package, add items to your Quote List, and submit your inquiry. Our team reviews your request and sends detailed pricing — no payment is required upfront.",
+      "q2": "Can I visit a showroom before ordering?",
+      "a2": "Yes, we welcome showroom visits by appointment. Contact our team to schedule a visit at your convenience.",
+      "q3": "What payment methods do you accept?",
+      "a3": "We accept bank transfers, cheques, and corporate purchase orders. Payment terms are discussed during the proposal stage.",
+      "q4": "Do you handle large-scale procurement projects?",
+      "a4": "Absolutely. We specialize in bulk procurement and project-scale deliveries, with dedicated project managers to oversee every stage."
     }
-
   },
   "faq": {
     "supportCenter": "Support Center",

@@ -25,52 +25,43 @@ type PlatformVisual = {
   logo: string;
   logoWidth?: string;
   gradient: string;
-  cta: string;
 };
 
 const platformVisuals: Record<string, PlatformVisual> = {
   linkedin: {
     logo: "/contact/linkedin-logo.svg",
     gradient: "from-[#ebf0ff]",
-    cta: "Follow",
   },
   instagram: {
     logo: "/contact/instagram-logo.svg",
     gradient: "from-[#fff0eb]",
-    cta: "Follow",
   },
   twitter: {
     logo: "/contact/x-logo.svg",
     logoWidth: "w-[128px]",
     gradient: "from-[#f0f2f5]",
-    cta: "Follow",
   },
   facebook: {
     logo: "/contact/facebook-logo.svg",
     gradient: "from-[#e8ecff]",
-    cta: "Follow",
   },
   youtube: {
     logo: "/contact/youtube-logo.svg",
     gradient: "from-[#fff0eb]",
-    cta: "Follow",
   },
   tiktok: {
     logo: "/contact/tiktok-logo.svg",
     gradient: "from-[#f0f2f5]",
-    cta: "Follow",
   },
   whatsapp: {
     logo: "/contact/whatsapp-logo.svg",
     gradient: "from-[#ebf0ff]",
-    cta: "Follow",
   },
 };
 
 const defaultVisual: PlatformVisual = {
   logo: "/contact/facebook-logo.svg",
   gradient: "from-[#e8ecff]",
-  cta: "Follow",
 };
 
 export default async function ContactPage({ params }: PageProps) {
@@ -213,7 +204,7 @@ export default async function ContactPage({ params }: PageProps) {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`bg-gradient-to-r ${visual.gradient} to-white border border-[#e5e7eb] rounded-[16px] lg:rounded-[20px] flex flex-col items-center justify-between p-[16px] lg:px-[20px] lg:py-[24px] overflow-hidden hover:shadow-lg transition h-[233px] lg:h-[392px]`}
+                  className={`bg-gradient-to-r ${visual.gradient} to-white border border-[#e5e7eb] rounded-[16px] lg:rounded-[20px] flex flex-col items-center justify-between p-[16px] lg:px-[20px] lg:py-[24px] overflow-hidden hover:shadow-lg transition h-[233px] lg:h-[392px] w-full lg:flex-1`}
                 >
                   <div className="flex flex-col gap-[12px] items-center w-full">
                     <div className="w-[60px] h-[60px] lg:w-[64px] lg:h-[64px] flex items-center justify-center">
@@ -233,8 +224,8 @@ export default async function ContactPage({ params }: PageProps) {
                     </div>
                   </div>
                   <div className="border border-black rounded-[16px] px-[36px] py-[8px] lg:py-[16px] w-full h-[44px] lg:h-auto flex items-center justify-center gap-[8px] hover:bg-black hover:text-white transition">
-                    <span className="w-[6px] h-[6px] rounded-full bg-current shrink-0 lg:hidden"></span>
-                    <span className="text-[12px] lg:text-[16px] font-medium">{isRTL ? "تابع" : visual.cta}</span>
+                    <span className="w-[6px] h-[6px] rounded-full bg-current shrink-0"></span>
+                    <span className="text-[12px] lg:text-[16px] font-medium">{isRTL ? "تابعنا" : "Follow us"}</span>
                   </div>
                 </a>
               );

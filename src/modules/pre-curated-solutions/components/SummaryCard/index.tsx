@@ -49,7 +49,7 @@ export default function SummaryCard({
     <div className="bg-white border border-[#e5e7eb] border-solid flex flex-col gap-5 md:gap-6 items-start p-6 md:p-8 rounded-2xl w-full lg:sticky lg:top-[8rem] lg:mt-12">
       {/* Header */}
       <div className="flex flex-col gap-1 md:gap-2 items-start w-full whitespace-normal md:whitespace-nowrap">
-        <p className="font-satoshi font-bold leading-[1.4] md:leading-[1.3] text-[#17284a] text-[20px] md:text-[24px]">
+        <p className="font-satoshi font-bold leading-[1.4] md:leading-[1.3] text-[#17284a] text-[20px] md:text-[clamp(20px,1.7vw,24px)]">
           {yourPackageText}
         </p>
         <p className="font-satoshi font-medium md:font-bold leading-[1.5] text-[#707176] text-[16px]">

@@ -50,7 +50,7 @@ const ProductTabs = ({ specs, description, documentUrl }: ProductTabsProps) => {
       </div>
 
       {/* Tab Content */}
-      <div className="pt-[16px] lg:pt-[24px]">
+      <div className="pt-[16px] lg:pt-[clamp(16px,1.8vw,24px)]">
         {activeTab === "specs" && (
           <div className="flex flex-col">
             {visibleSpecs.length > 0 ? (

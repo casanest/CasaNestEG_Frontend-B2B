@@ -1,24 +1,22 @@
 import { Metadata } from "next"
 
-import { listCollections } from "@lib/data/collections"
 import { getRegion } from "@lib/data/regions"
-import { getParentCategories, listCategories } from "@lib/data/categories"
 import { listProducts } from "@lib/data/products"
-import CallToActionBanner from "@modules/home/components/call-to-action-banner"
-import HeroCarousel from "@modules/home/components/heroCarousel"
-import CategoryCarousel from "@modules/home/components/categoryCarousel"
-import PromotionBanner from "@modules/home/components/promotionBanner"
-import FeaturedProducts from "@modules/home/components/featured-products"
-import StoreFeatures from "@modules/home/components/storeFeatures"
-import ProductGrid from "@modules/home/components/productGrid"
-import PreviewPrice from "@modules/products/components/product-preview/price"
-import { getProductPrice } from "@lib/util/get-product-price"
-import FeaturedProductsSection from "@modules/home/components/featured-products-section"
-import Container from "@modules/home/components/shared/Container"
-import FeaturesStrip from "@modules/home/components/features/FeaturesStrip"
-import CategoriesGrid from "@modules/home/components/category-cards/CategoriesGrid"
-import DiscountBanner from "@modules/home/components/banners/DiscountBanner"
-import PartnersSection from "@/modules/home/components/partners/PartnersSection"
+import { listBanners } from "@lib/data/banners"
+import { listPackages } from "@lib/data/packages"
+import { listAllPortfolioProjects } from "@lib/data/portfolio"
+import { listTestimonials } from "@lib/data/testimonials"
+
+import HeroSection from "@modules/home/components/hero-section/HeroSection"
+import OurClients from "@modules/home/components/our-clients/OurClients"
+import Amenities from "@modules/home/components/amenities/Amenities"
+import PreCuratedSolutions from "@modules/home/components/pre-curated-solutions/PreCuratedSolutions"
+import StatsBar from "@modules/home/components/stats-bar/StatsBar"
+import OurPartners from "@modules/home/components/our-partners/OurPartners"
+import OurWork from "@modules/home/components/our-work/OurWork"
+import BuildProposal from "@modules/home/components/build-proposal/BuildProposal"
+import TestimonialsSection from "@modules/home/components/testimonials-section/TestimonialsSection"
+import FAQSection from "@modules/home/components/faq-section/FAQSection"
 
 // export const metadata: Metadata = {
 //   title: {
@@ -244,121 +242,56 @@ export default async function Home({
 }: {
   params: Promise<{ countryCode: string; locale: string }>
 }) {
-  // const { cheapestPrice } = getProductPrice({ product })
-
   const { countryCode, locale } = await params
+  const dir = locale === "ar" ? "rtl" : "ltr"
 
-  // Fetch all necessary data
-  // const region = await getRegion(countryCode)
-  // const { collections } = await listCollections({
-  //   fields: "id, handle, title, metadata",
-  // })
-  // const productCategories = await getParentCategories(await listCategories())
-
-  // // Fetch featured products for the product grid
-  // const { response: { products: featuredProducts } } = await listProducts({
-  //   pageParam: 1,
-  //   queryParams: { limit: 12 },
-  //   countryCode,
-  // })
-
-  const [
-    region,
-    // collectionsData,
-    categoriesData,
-    featuredData
-  ] = await Promise.all([
-    getRegion(countryCode),
-
-    // listCollections({
-    //   fields: "id, handle, title, metadata",
-    // }),
-
-    listCategories(),
-
-    listProducts({
-      pageParam: 1,
-      queryParams: {
-        limit: 12
-      },
-      countryCode,
-    })
-  ])
-
-
-  // const { collections } = collectionsData
-
-  const productCategories = await getParentCategories(categoriesData)
-
-  const {
-    response: {
-      products: featuredProducts
-    }
-  } = featuredData
-
+  const region = await getRegion(countryCode)
   if (!region) {
     return null
   }
-  // if (!collections || !region) {
-  //   return null
-  // }
 
-  // const collectionsWithProducts = await Promise.all(
-  //   collections.map(async (collection) => {
-  //     try {
-  //       const {
-  //         response: { products },
-  //       } = await listProducts({
-  //         regionId: region.id,
-  //         queryParams: {
-  //           collection_id: collection.id,
-  //           fields: "*variants.calculated_price",
-  //         },
-  //       })
+  // Fetch all data in parallel
+  const [
+    heroBanners,
+    clientBanners,
+    partnerBanners,
+    homepageProductsData,
+    homepagePackages,
+    portfolioData,
+    homepageTestimonials,
+  ] = await Promise.all([
+    listBanners("hero"),
+    listBanners("past_customer"),
+    listBanners("partners"),
+    listProducts({
+      pageParam: 1,
+      queryParams: {
+        limit: 100,
+      },
+      countryCode,
+    }),
+    listPackages(true),
+    listAllPortfolioProjects(true),
+    listTestimonials(true),
+  ])
 
-  //       return {
-  //         ...collection,
-  //         products,
-  //       }
-  //     } catch (error) {
-  //       console.error(
-  //         `Failed to load products for collection ${collection.id}:`,
-  //         error
-  //       )
-  //       return {
-  //         ...collection,
-  //         products: [],
-  //       }
-  //     }
-  //   })
-  // )
-
-  const dir = locale === "ar" ? "rtl" : "ltr"
+  const allProducts = homepageProductsData.response.products
+  const homepageProducts = allProducts.filter(
+    (p) => (p as any).is_in_homepage === true
+  )
 
   return (
- 
-
-   
-    <Container className="space-y-3 ">
-
-      <HeroCarousel locale={locale} dir={dir} />
-
-      <FeaturesStrip locale={locale} dir={dir} />
-
-      <CategoriesGrid locale={locale} dir={dir} />
-
-      <DiscountBanner locale={locale} dir={dir} />
-      {/* Categories Section */}
-      <section className=" bg-gradient-to-b from-white to-gray-50 overflow-hidden py-6">
-        <div className="content-container overflow-hidden mx-auto">
-          <CategoryCarousel locale={locale} dir={dir} productCategories={productCategories} />
-        </div>
-      </section>
-      {/* <CategoryCarousel locale={locale} dir={dir} productCategories={productCategories} /> */}
-
-      <PromotionBanner locale={locale} dir={dir} />
-
-      <PartnersSection />
-    </Container>
+    <>
+      <HeroSection banners={heroBanners} locale={locale} dir={dir} />
+      <OurClients banners={clientBanners} locale={locale} dir={dir} />
+      <Amenities products={homepageProducts} locale={locale} dir={dir} region={region} />
+      <PreCuratedSolutions packages={homepagePackages} locale={locale} dir={dir} />
+      <StatsBar dir={dir} />
+      <OurPartners banners={partnerBanners} dir={dir} />
+      <OurWork projects={portfolioData.projects} locale={locale} dir={dir} />
+      <BuildProposal dir={dir} />
+      <TestimonialsSection testimonials={homepageTestimonials} locale={locale} dir={dir} />
+      <FAQSection dir={dir} />
+    </>
   )
 }

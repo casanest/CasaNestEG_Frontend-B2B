@@ -166,7 +166,7 @@ export default function ProductActions({
     <>
       <div className="flex flex-col gap-6">
         {/* Boxed section: Options + Quantity + Price + Buttons + Trust Points — desktop only */}
-        <div className="hidden lg:flex flex-col gap-5 rounded-[16px] border border-[#e5e7eb] bg-[#f8f9fa] p-5">
+        <div className="hidden lg:flex flex-col gap-[clamp(16px,1.5vw,20px)] rounded-[clamp(12px,1.2vw,16px)] border border-[#e5e7eb] bg-[#f8f9fa] p-[clamp(16px,1.5vw,20px)]">
           {/* Options */}
           {(product.variants?.length ?? 0) > 1 && (
             <div className="flex flex-col gap-5">
@@ -196,7 +196,7 @@ export default function ProductActions({
               {isRTL ? "الكمية" : "Quantity"}
             </span>
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center gap-3 rounded-[8px] border border-[#e5e7eb] bg-white px-2 py-2 w-[100px]">
+              <div className="flex items-center justify-center gap-3 rounded-[8px] border border-[#e5e7eb] bg-white px-2 py-2 w-[clamp(80px,7vw,100px)]">
                 <button
                   type="button"
                   onClick={() => setQuantity((prev) => Math.max(minOrderQty, prev - 1))}
@@ -238,7 +238,7 @@ export default function ProductActions({
                 !isValidVariant
               }
               className={clx(
-                "w-full h-[56px] rounded-[16px] bg-[#17284a] text-white text-[12px] font-medium transition-all hover:bg-[#0f1d35] flex items-center justify-center gap-2",
+                "w-full h-[clamp(44px,4vw,56px)] rounded-[clamp(12px,1.2vw,16px)] bg-[#17284a] text-white text-[clamp(11px,0.9vw,12px)] font-medium transition-all hover:bg-[#0f1d35] flex items-center justify-center gap-2",
                 isRTL && "tracking-[0.05em]"
               )}
               data-testid="add-product-button"
@@ -252,7 +252,7 @@ export default function ProductActions({
             <button
               onClick={handleAddToQuoteList}
               disabled={!selectedVariant || !inStock || !isValidVariant || isAddingToList}
-              className={`w-full h-[56px] rounded-[16px] border text-[16px] font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed ${
+              className={`w-full h-[clamp(44px,4vw,56px)] rounded-[clamp(12px,1.2vw,16px)] border text-[clamp(14px,1.2vw,16px)] font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed ${
                 isAddingToList
                   ? "border-transparent text-white bg-[rgb(253,176,34)]"
                   : "border-black text-black hover:bg-black hover:text-white"

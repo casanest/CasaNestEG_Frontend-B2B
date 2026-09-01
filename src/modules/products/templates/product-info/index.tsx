@@ -39,7 +39,7 @@ const ProductInfo = async ({ product, description }: ProductInfoProps) => {
 
         {/* Title */}
         <h2
-          className="text-[24px] lg:text-[28px] font-bold leading-[1.3] lg:leading-[1.25] text-[#17284a] break-words"
+          className="text-[24px] lg:text-[clamp(24px,2vw,28px)] font-bold leading-[1.3] lg:leading-[1.25] text-[#17284a] break-words"
           data-testid="product-title"
         >
           {title}
@@ -47,7 +47,7 @@ const ProductInfo = async ({ product, description }: ProductInfoProps) => {
 
         {/* Short Description - first 2 lines */}
         {description && (
-          <p className="text-[14px] lg:text-[16px] leading-[1.5] text-[#5d5d61] lg:text-[#707176] lg:max-w-[424px] line-clamp-2">
+          <p className="text-[14px] lg:text-[clamp(14px,1.2vw,16px)] leading-[1.5] text-[#5d5d61] lg:text-[#707176] lg:max-w-[clamp(320px,30vw,424px)] line-clamp-2">
             {description}
           </p>
         )}

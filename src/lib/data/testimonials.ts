@@ -10,18 +10,25 @@ export type Testimonial = {
   position_en: string
   position_ar: string
   display_order: number
+  is_in_homepage?: boolean
 }
 
 export type TestimonialResponse = {
   testimonials: Testimonial[]
 }
 
-export async function listTestimonials(): Promise<Testimonial[]> {
+export async function listTestimonials(homepage?: boolean): Promise<Testimonial[]> {
   try {
+    const query: Record<string, string> = {}
+    if (homepage) {
+      query.homepage = "true"
+    }
+
     const response = await sdk.client.fetch<TestimonialResponse>(
       "/store/testimonials",
       {
         method: "GET",
+        query,
         cache: "no-store",
       }
     )

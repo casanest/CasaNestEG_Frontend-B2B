@@ -80,12 +80,12 @@ export default function ContactForm({ isRTL }: { isRTL: boolean }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!formData.name || !formData.email || !formData.message) {
+    if (!formData.name || !formData.email) {
       setSubmitStatus("error")
       setErrorMessage(
         isRTL
-          ? "يرجى ملء الاسم والبريد الإلكتروني والرسالة."
-          : "Please fill in your name, email, and message."
+          ? "يرجى ملء الاسم والبريد الإلكتروني."
+          : "Please fill in your name and email."
       )
       return
     }
@@ -149,38 +149,15 @@ export default function ContactForm({ isRTL }: { isRTL: boolean }) {
     }
   }
 
-  if (submitStatus === "success") {
-    return (
-      <div
-        dir={isRTL ? "rtl" : "ltr"}
-        className="bg-white border border-[#e5e7eb] rounded-[16px] p-[20px] lg:p-[24px] w-full flex flex-col gap-[20px] lg:gap-[28px] items-center text-center py-[40px]"
-      >
-        <div className="w-[64px] h-[64px] rounded-full bg-green-100 flex items-center justify-center">
-          <svg
-            className="w-8 h-8 text-green-600"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-        </div>
-        <div className="flex flex-col gap-[8px] items-center">
-          <h2 className="text-[24px] lg:text-[28px] font-bold text-[#17284a]">
-            {isRTL ? "تم استلام طلبك" : "Your request has been received"}
-          </h2>
-          <p className="text-[16px] text-[#5d5d61] max-w-[400px]">
-            {isRTL
-              ? "شكراً لتواصلك معنا. سيتواصل فريقنا معك قريباً."
-              : "Thank you for reaching out. Our team will get back to you shortly."}
-          </p>
-        </div>
-        <button
+  return (
+    <div
+      dir={isRTL ? "rtl" : "ltr"}
+      className="bg-white border border-[#e5e7eb] rounded-[16px] p-[20px] lg:p-[24px] w-full lg:max-w-[728px] flex flex-col gap-[20px] lg:gap-[28px] relative"
+    >
+      {/* Success Popup */}
+      {submitStatus === "success" && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
           onClick={() => {
             setSubmitStatus("idle")
             setFormData({
@@ -194,19 +171,58 @@ export default function ContactForm({ isRTL }: { isRTL: boolean }) {
             })
             setFiles([])
           }}
-          className="bg-[#17284a] text-white text-[16px] font-medium rounded-[12px] py-[14px] px-[28px] hover:bg-[#0f1d38] transition"
         >
-          {isRTL ? "إرسال طلب آخر" : "Send another request"}
-        </button>
-      </div>
-    )
-  }
+          <div
+            className="bg-white border border-[#e5e7eb] rounded-[16px] p-[20px] lg:p-[24px] w-[calc(100%-32px)] max-w-[440px] flex flex-col gap-[20px] lg:gap-[28px] items-center text-center py-[40px]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-[64px] h-[64px] rounded-full bg-green-100 flex items-center justify-center">
+              <svg
+                className="w-8 h-8 text-green-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
+            <div className="flex flex-col gap-[8px] items-center">
+              <h2 className="text-[24px] lg:text-[28px] font-bold text-[#17284a]">
+                {isRTL ? "تم استلام طلبك" : "Your request has been received"}
+              </h2>
+              <p className="text-[16px] text-[#5d5d61] max-w-[400px]">
+                {isRTL
+                  ? "شكراً لتواصلك معنا. سيتواصل فريقنا معك قريباً."
+                  : "Thank you for reaching out. Our team will get back to you shortly."}
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                setSubmitStatus("idle")
+                setFormData({
+                  name: "",
+                  location: "",
+                  email: "",
+                  phone: "",
+                  company: "",
+                  subject: "",
+                  message: "",
+                })
+                setFiles([])
+              }}
+              className="bg-[#17284a] text-white text-[16px] font-medium rounded-[12px] py-[14px] px-[28px] hover:bg-[#0f1d38] transition"
+            >
+              {isRTL ? "إرسال طلب آخر" : "Send another request"}
+            </button>
+          </div>
+        </div>
+      )}
 
-  return (
-    <div
-      dir={isRTL ? "rtl" : "ltr"}
-      className="bg-white border border-[#e5e7eb] rounded-[16px] p-[20px] lg:p-[24px] w-full lg:max-w-[728px] flex flex-col gap-[20px] lg:gap-[28px]"
-    >
       {submitStatus === "error" && (
         <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-4 py-3 w-full">
           <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
@@ -342,7 +358,6 @@ export default function ContactForm({ isRTL }: { isRTL: boolean }) {
           <textarea
             name="message"
             rows={4}
-            required
             value={formData.message}
             onChange={(e) => handleChange("message", e.target.value)}
             className="bg-[#f3f4f6] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] text-[16px] text-[#17284a] placeholder:text-[#5d5d61] focus:outline-none focus:ring-2 focus:ring-[#17284a]/20 resize-none"

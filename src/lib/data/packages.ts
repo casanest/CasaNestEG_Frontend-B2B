@@ -9,15 +9,22 @@ export type Package = {
   description_ar: string | null
   image_url: string | null
   item_count?: number | null
+  is_in_homepage?: boolean
 }
 
 export type PackagesResponse = {
   packages: Package[]
 }
 
-export async function listPackages(): Promise<Package[]> {
+export async function listPackages(homepage?: boolean): Promise<Package[]> {
+  const query: Record<string, string> = {}
+  if (homepage) {
+    query.homepage = "true"
+  }
+
   const response = await sdk.client.fetch<PackagesResponse>("/store/packages", {
     method: "GET",
+    query,
     cache: "no-store",
   })
 

@@ -37,13 +37,13 @@ export default function PackageItemCard({
 
   return (
     <div
-      className={`bg-white border border-[#e5e7eb] border-solid flex flex-col gap-3 md:gap-2 md:justify-between items-start p-3 md:pt-2 md:px-2 md:pb-3 rounded-2xl w-full md:h-[372px] transition-opacity ${
+      className={`bg-white border border-[#e5e7eb] border-solid flex flex-col gap-3 md:gap-2 md:justify-between items-start p-3 md:pt-2 md:px-2 md:pb-3 rounded-2xl w-full md:h-[clamp(280px,26vw,372px)] transition-opacity ${
         selected ? "" : "opacity-45 md:opacity-40"
       }`}
     >
       {/* Image area */}
       <div className="flex flex-col gap-1.5 items-start w-full">
-        <div className="relative h-[120px] md:h-[130px] rounded-lg overflow-hidden w-full bg-[#f3f4f6]">
+        <div className="relative h-[120px] md:h-[clamp(100px,9vw,130px)] rounded-lg overflow-hidden w-full bg-[#f3f4f6]">
           {product.thumbnail ? (
             <img
               src={product.thumbnail}
@@ -102,7 +102,7 @@ export default function PackageItemCard({
         </div>
 
         {/* Quantity box */}
-        <div className="bg-white border border-[#e5e7eb] border-solid flex gap-3 md:gap-3 items-center justify-center p-1.5 md:p-2 rounded-lg w-full md:w-[100px]">
+        <div className="bg-white border border-[#e5e7eb] border-solid flex gap-3 md:gap-3 items-center justify-center p-1.5 md:p-2 rounded-lg w-full md:w-[clamp(80px,7vw,100px)]">
           <button
             onClick={onDecrement}
             className="shrink-0 hover:text-[#17284a] transition-colors"

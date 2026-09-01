@@ -52,7 +52,7 @@ export default async function CtaSection({ locale }: CtaSectionProps) {
         <div className="flex flex-col gap-3">
           <LocalizedClientLink
             href="/store"
-            className="bg-[#cdd6e9] flex items-center justify-center gap-2 px-6 py-6 rounded-[16px] text-[16px] font-medium text-[#17284a] whitespace-nowrap transition-all hover:bg-[#b8c4dc] active:scale-[0.98]"
+            className="bg-[#cdd6e9] flex items-center justify-center gap-2 px-6 py-6 rounded-[16px] text-[16px] font-medium text-[#17284a] whitespace-nowrap transition-all hover:bg-[#17284a] hover:text-white active:scale-[0.98]"
           >
             {isRTL ? "اكتشف منتجاتنا" : "Discover Our Products"}
             <ArrowRight className="h-5 w-5" />
@@ -121,7 +121,7 @@ export default async function CtaSection({ locale }: CtaSectionProps) {
           <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 lg:gap-5">
             <LocalizedClientLink
               href="/store"
-              className="bg-[#cdd6e9] flex items-center justify-center gap-2 px-9 py-6 rounded-[16px] text-[16px] font-medium text-[#17284a] whitespace-nowrap transition-all hover:bg-[#b8c4dc] active:scale-[0.98]"
+              className="bg-[#cdd6e9] flex items-center justify-center gap-2 px-9 py-6 rounded-[16px] text-[16px] font-medium text-[#17284a] whitespace-nowrap transition-all hover:bg-[#17284a] hover:text-white active:scale-[0.98]"
             >
               {isRTL ? "اكتشف منتجاتنا" : "Discover Our Products"}
               <ArrowRight className="h-5 w-5" />

@@ -9,20 +9,20 @@ export default function StatsBar({ isRTL }: Props) {
 
   return (
     <section
-      className="bg-[#141b34] flex gap-4 lg:gap-0 items-center justify-between py-5 lg:py-[60px] relative w-full"
+      className="bg-[#141b34] flex gap-4 lg:gap-0 items-center justify-between py-5 lg:py-[clamp(16px,4vw,60px)] relative w-full"
       dir={isRTL ? "rtl" : "ltr"}
     >
       <div className="content-container flex gap-4 lg:gap-0 items-center justify-between w-full">
       {stats.map((s, i) => (
         <div key={i} className="flex flex-1 flex-col gap-2 items-center text-center">
           <p
-            className="text-[#fdb022] text-[24px] lg:text-[48px] whitespace-nowrap"
+            className="text-[#fdb022] text-[24px] lg:text-[clamp(20px,3.5vw,48px)] whitespace-nowrap"
             style={{ ...satoshiStyle, fontWeight: 700, lineHeight: 1.1 }}
           >
             {s.number}
           </p>
           <p
-            className="text-white text-[12px] lg:text-[16px] opacity-80 leading-snug"
+            className="text-white text-[12px] lg:text-[clamp(11px,1.1vw,16px)] opacity-80 leading-snug"
             style={{ ...satoshiStyle, fontWeight: 400, lineHeight: 1.4 }}
           >
             {s.label}

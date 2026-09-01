@@ -25,7 +25,7 @@ export default function SolutionCard({ package: pkg, locale }: SolutionCardProps
       className="group bg-white border border-[#e5e7eb] border-solid cursor-pointer flex flex-col sm:flex-row items-stretch overflow-hidden relative rounded-xl shadow-[0px_2px_8px_0px_rgba(0,0,0,0.06)] w-full hover:shadow-[0px_4px_16px_0px_rgba(0,0,0,0.1)] transition-shadow"
     >
       {/* Photo section */}
-      <div className="relative w-full sm:w-[280px] h-[220px] sm:h-auto shrink-0 overflow-hidden bg-[#f3f4f6]">
+      <div className="relative w-full sm:w-[clamp(220px,22vw,280px)] h-[220px] sm:h-auto shrink-0 overflow-hidden bg-[#f3f4f6]">
         {pkg.image_url ? (
           <img
             src={pkg.image_url}
@@ -63,15 +63,15 @@ export default function SolutionCard({ package: pkg, locale }: SolutionCardProps
         <div className="flex flex-col gap-3 sm:gap-4 items-center w-full mt-8 sm:mt-12">
           {/* Item count */}
           <div className="flex gap-2 items-center w-full">
-            <PackageIcon className="w-6 h-6 text-[#17284a] shrink-0" />
-            <p className="font-satoshi font-medium leading-[1.5] text-[#17284a] text-[14px] whitespace-normal md:whitespace-nowrap">
+            <PackageIcon className="w-6 h-6 sm:w-[clamp(20px,1.8vw,24px)] sm:h-[clamp(20px,1.8vw,24px)] text-[#17284a] shrink-0" />
+            <p className="font-satoshi font-medium leading-[1.5] text-[#17284a] text-[13px] sm:text-[clamp(11px,0.9vw,13px)] whitespace-normal md:whitespace-nowrap">
               {itemCountText}
             </p>
           </div>
 
           {/* Button */}
-          <div className="bg-[#17284a] flex items-center justify-center px-9 py-4 rounded-xl w-full">
-            <p className="font-satoshi font-medium leading-[1.5] text-[16px] text-center text-white whitespace-normal md:whitespace-nowrap">
+          <div className="bg-[#17284a] flex items-center justify-center px-9 py-4 sm:px-[clamp(28px,2.5vw,36px)] sm:py-[clamp(14px,1.2vw,16px)] rounded-xl w-full">
+            <p className="font-satoshi font-medium leading-[1.5] text-[16px] sm:text-[clamp(14px,1.2vw,16px)] text-center text-white whitespace-normal md:whitespace-nowrap">
               {buttonText}
             </p>
           </div>

@@ -235,7 +235,7 @@ export default function RequestQuoteForm({ pkg, locale }: RequestQuoteFormProps)
       <div className="bg-[#f8f9fa] w-full min-h-[60vh] flex flex-col items-center justify-center py-[80px] px-4" dir={isRTL ? "rtl" : "ltr"}>
         <div className="bg-white border border-[#e5e7eb] border-solid flex flex-col gap-8 items-center p-6 md:p-12 rounded-2xl max-w-[560px] w-full text-center">
           {/* 3D Hero Visual */}
-          <div className="h-[200px] md:h-[272px] w-full max-w-[342px] relative rounded-xl overflow-hidden shrink-0 mx-auto">
+          <div className="h-[200px] md:h-[clamp(200px,19vw,272px)] w-full max-w-[342px] relative rounded-xl overflow-hidden shrink-0 mx-auto">
             <img
               src="/rfq-success/hero-3d.webp"
               alt=""
@@ -252,7 +252,7 @@ export default function RequestQuoteForm({ pkg, locale }: RequestQuoteFormProps)
 
           {/* Text group */}
           <div className="flex flex-col gap-4 items-center text-center w-full">
-            <h2 className="font-satoshi font-medium text-[24px] md:text-[28px] text-[#17284a] leading-[1.25]">
+            <h2 className="font-satoshi font-medium text-[24px] md:text-[clamp(24px,2vw,28px)] text-[#17284a] leading-[1.25]">
               {successTitle}
             </h2>
             <p className="font-satoshi font-normal text-[16px] text-[#707176] leading-[1.5]">
@@ -278,7 +278,7 @@ export default function RequestQuoteForm({ pkg, locale }: RequestQuoteFormProps)
   return (
     <div className="bg-[#f8f9fa] w-full" dir={isRTL ? "rtl" : "ltr"}>
       {/* Header band */}
-      <div className="flex flex-col gap-4 md:gap-6 px-4 md:px-8 lg:px-[60px] py-11 md:py-10 w-full max-w-[1600px] mx-auto">
+      <div className="flex flex-col gap-4 md:gap-6 px-4 md:px-8 lg:px-[clamp(32px,4vw,60px)] py-11 md:py-10 w-full max-w-[1600px] mx-auto">
         {/* Breadcrumbs */}
         <div className="flex gap-1.5 md:gap-2 items-center text-[14px] whitespace-normal md:whitespace-nowrap font-satoshi overflow-hidden">
           <LocalizedClientLink
@@ -309,7 +309,7 @@ export default function RequestQuoteForm({ pkg, locale }: RequestQuoteFormProps)
 
         {/* Title + reassurance badge */}
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:flex-wrap md:gap-4">
-          <h1 className="font-satoshi font-bold leading-[1.3] md:leading-[1.18] text-[#17284a] text-[24px] md:text-[40px] whitespace-normal md:whitespace-nowrap">
+          <h1 className="font-satoshi font-bold leading-[1.3] md:leading-[1.18] text-[#17284a] text-[24px] md:text-[clamp(24px,3vw,40px)] whitespace-normal md:whitespace-nowrap">
             {titleText}
           </h1>
           <div className="bg-[#141b34] flex items-center px-4 py-[6px] rounded-full shrink-0">
@@ -326,12 +326,12 @@ export default function RequestQuoteForm({ pkg, locale }: RequestQuoteFormProps)
       </div>
 
       {/* Columns wrapper */}
-      <div className="flex flex-col lg:flex-row gap-8 lg:gap-[40px] items-start px-4 md:px-8 lg:px-[60px] pt-11 lg:pt-0 pb-11 lg:pb-[60px] w-full max-w-[1600px] mx-auto">
+      <div className="flex flex-col lg:flex-row gap-8 lg:gap-[clamp(24px,3vw,40px)] items-start px-4 md:px-8 lg:px-[clamp(32px,4vw,60px)] pt-11 lg:pt-0 pb-11 lg:pb-[clamp(32px,4vw,60px)] w-full max-w-[1600px] mx-auto">
         {/* Left - Form card */}
-        <div className="bg-white border border-[#e5e7eb] border-solid flex flex-col gap-6 lg:gap-7 items-start p-6 md:p-10 rounded-2xl w-full order-2 lg:order-1 lg:flex-1 lg:max-w-[912px]">
+        <div className="bg-white border border-[#e5e7eb] border-solid flex flex-col gap-6 lg:gap-7 items-start p-6 md:p-10 rounded-2xl w-full order-2 lg:order-1 lg:flex-1 lg:max-w-[clamp(600px,65vw,912px)]">
           {/* Card heading */}
           <div className="flex flex-col gap-2 items-start w-full">
-            <p className="font-satoshi font-bold leading-[1.3] text-[#17284a] text-[20px] md:text-[24px] w-full">
+            <p className="font-satoshi font-bold leading-[1.3] text-[#17284a] text-[20px] md:text-[clamp(20px,1.7vw,24px)] w-full">
               {cardHeading}
             </p>
             <p className="font-satoshi font-normal leading-[1.5] text-[#5d5d61] text-[16px] w-full">
@@ -469,7 +469,7 @@ export default function RequestQuoteForm({ pkg, locale }: RequestQuoteFormProps)
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
-                className={`bg-[#f9fafb] border border-dashed flex flex-col gap-3 h-[150px] md:h-[160px] items-center justify-center rounded-xl w-full cursor-pointer transition-colors ${
+                className={`bg-[#f9fafb] border border-dashed flex flex-col gap-3 h-[150px] md:h-[clamp(140px,11vw,160px)] items-center justify-center rounded-xl w-full cursor-pointer transition-colors ${
                   isDragging
                     ? "border-[#17284a] bg-[#17284a]/5"
                     : "border-[#e5e7eb] hover:border-[#17284a]/30"
@@ -543,7 +543,7 @@ export default function RequestQuoteForm({ pkg, locale }: RequestQuoteFormProps)
         </div>
 
         {/* Right - summary card */}
-        <div className="w-full order-1 lg:order-2 lg:w-[440px] lg:shrink-0">
+        <div className="w-full order-1 lg:order-2 lg:w-[clamp(320px,32vw,440px)] lg:shrink-0">
           <div className="bg-white border border-[#e5e7eb] border-solid flex flex-col gap-5 lg:gap-6 items-start p-6 md:px-8 md:py-10 rounded-2xl w-full lg:sticky lg:top-[8rem]">
             {/* Summary header */}
             <div className="flex flex-col gap-2 items-start w-full">

@@ -100,24 +100,29 @@ export async function listPortfolioCategories(): Promise<PortfolioCategory[]> {
 }
 
 export async function listProjectsByCategory(
-  slug: string
+  slug: string,
+  homepage?: boolean
 ): Promise<ProjectsByCategoryResponse> {
+  const params = new URLSearchParams({ limit: "100" })
+  if (homepage) {
+    params.set("homepage", "true")
+  }
   return sdk.client.fetch<ProjectsByCategoryResponse>(
-    `/store/portfolio/categories/${slug}/projects?limit=100`,
+    `/store/portfolio/categories/${slug}/projects?${params.toString()}`,
     {
       next: { revalidate: 3600 },
     }
   )
 }
 
-export async function listAllPortfolioProjects(): Promise<{
+export async function listAllPortfolioProjects(homepage?: boolean): Promise<{
   categories: PortfolioCategory[]
   projects: PortfolioProjectListItem[]
 }> {
   const categories = await listPortfolioCategories()
 
   const results = await Promise.all(
-    categories.map((cat) => listProjectsByCategory(cat.slug))
+    categories.map((cat) => listProjectsByCategory(cat.slug, homepage))
   )
 
   const projects: PortfolioProjectListItem[] = []
