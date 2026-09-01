@@ -107,8 +107,8 @@ export default function HeroSection({ banners, locale, dir }: HeroSectionProps) 
       </div>
 
       {/* Content overlay */}
-      <div className="absolute inset-0 flex flex-col justify-end p-[16px] md:p-[clamp(20px,4vw,60px)] pb-[16px] md:pb-[clamp(20px,3vw,40px)]">
-        <div className="flex flex-col gap-[16px] md:gap-[clamp(16px,2vw,24px)] max-w-[1392px]">
+      <div className="absolute inset-0 flex flex-col justify-end items-center p-[16px] md:px-[clamp(60px,8vw,100px)] md:pt-[clamp(20px,4vw,60px)] pb-[16px] md:pb-[clamp(20px,3vw,40px)]">
+        <div className="flex flex-col gap-[16px] md:gap-[clamp(16px,2vw,24px)] max-w-[1392px] w-full">
           {/* Heading */}
           <div className="flex flex-col gap-[8px] md:gap-[clamp(10px,1.2vw,16px)]">
             <h1 className="text-white text-[28px] md:text-[clamp(28px,4.5vw,56px)] leading-[1.1] font-normal">

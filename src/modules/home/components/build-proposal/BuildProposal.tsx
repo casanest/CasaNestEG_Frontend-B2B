@@ -41,7 +41,7 @@ export default function BuildProposal({ dir }: BuildProposalProps) {
         {/* Chair image - centered behind steps on desktop only */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none hidden md:block">
           <img
-            src="/chair.png"
+            src="/chair.webp"
             alt="Chair"
             className="w-[clamp(180px,32vw,680px)] h-[clamp(180px,32vw,680px)] object-contain -scale-x-100"
           />
@@ -73,7 +73,7 @@ export default function BuildProposal({ dir }: BuildProposalProps) {
                   {/* Chair image after step 02 on mobile */}
                   <div className="flex justify-center w-full md:hidden">
                     <img
-                      src="/chair.png"
+                      src="/chair.webp"
                       alt="Chair"
                       className="w-[200px] h-[200px] object-contain -scale-x-100"
                     />
