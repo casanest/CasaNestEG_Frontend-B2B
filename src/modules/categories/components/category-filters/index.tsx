@@ -1,7 +1,7 @@
 "use client"
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { ReactNode, useCallback, useEffect, useRef, useState } from "react"
+import { ReactNode, useCallback, useEffect, useState } from "react"
 import { SlidersHorizontal, X } from "lucide-react"
 import { Badge, Button, Checkbox, Text, clx } from "@medusajs/ui"
 import SortProducts, { SortOptions } from "@modules/store/components/refinement-list/sort-products"
@@ -42,6 +42,32 @@ const PRICE_PRESETS = [
   { value: "100-200", labelEn: "€100 - €200", labelAr: "100€ - 200€" },
   { value: "200+", labelEn: "Over €200", labelAr: "أكثر من 200€" },
 ] as const
+
+type CheckboxRowProps = {
+  id: string
+  label: string
+  checked: boolean
+  onCheckedChange: (checked: boolean) => void
+}
+
+const CheckboxRow = ({
+  id,
+  label,
+  checked,
+  onCheckedChange,
+}: CheckboxRowProps) => (
+  <label
+    htmlFor={id}
+    className="flex items-center gap-3 rounded-xl border border-ui-border-subtle bg-ui-bg-field px-3 py-2 text-sm text-ui-fg-subtle transition hover:border-ui-border-strong"
+  >
+    <Checkbox
+      id={id}
+      checked={checked}
+      onCheckedChange={(value) => onCheckedChange(Boolean(value))}
+    />
+    <span className="line-clamp-1">{label}</span>
+  </label>
+)
 
 const CategoryFilters = ({
   sortBy,
@@ -165,7 +191,7 @@ const CategoryFilters = ({
   }, [])
 
   const clearFilters = useCallback(() => {
-    setFilters({
+    const cleared = {
       inStock: false,
       onSale: false,
       price: "",
@@ -174,18 +200,27 @@ const CategoryFilters = ({
       colors: [],
       materials: [],
       sizes: [],
-    })
-  }, [])
-
-  const isFirstRender = useRef(true)
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
     }
+    setFilters(cleared)
+    updateURL(cleared)
+  }, [updateURL])
 
+  const applyFilters = useCallback(() => {
     updateURL(filters)
   }, [filters, updateURL])
+
+  // Check if local filters differ from URL
+  const activeFiltersFromURL = {
+    inStock: searchParams.get('inStock') === 'true',
+    onSale: searchParams.get('onSale') === 'true',
+    price: searchParams.get('price') || '',
+    collection_id: searchParams.get('collection_id')?.split(',').filter(Boolean) || [],
+    type_id: searchParams.get('type_id')?.split(',').filter(Boolean) || [],
+    colors: searchParams.get('colors')?.split(',').filter(Boolean) || [],
+    materials: searchParams.get('materials')?.split(',').filter(Boolean) || [],
+    sizes: searchParams.get('sizes')?.split(',').filter(Boolean) || [],
+  }
+  const hasPendingChanges = JSON.stringify(filters) !== JSON.stringify(activeFiltersFromURL)
 
   const hasActiveFilters = [
     filters.inStock,
@@ -225,30 +260,6 @@ const CategoryFilters = ({
       </div>
       <div className="mt-4 space-y-3">{children}</div>
     </div>
-  )
-
-  const CheckboxRow = ({
-    id,
-    label,
-    checked,
-    onCheckedChange,
-  }: {
-    id: string
-    label: string
-    checked: boolean
-    onCheckedChange: (checked: boolean) => void
-  }) => (
-    <label
-      htmlFor={id}
-      className="flex items-center gap-3 rounded-xl border border-ui-border-subtle bg-ui-bg-field px-3 py-2 text-sm text-ui-fg-subtle transition hover:border-ui-border-strong"
-    >
-      <Checkbox
-        id={id}
-        checked={checked}
-        onCheckedChange={(value) => onCheckedChange(Boolean(value))}
-      />
-      <span className="line-clamp-1">{label}</span>
-    </label>
   )
 
   const renderFilterContent = (variant: "inline" | "drawer") => (
@@ -505,6 +516,31 @@ const CategoryFilters = ({
             )}
           </div>
           {renderFilterContent("inline")}
+          {/* Apply + Clear buttons for inline desktop */}
+          <div className="flex flex-col gap-2 mt-4">
+            <button
+              type="button"
+              onClick={applyFilters}
+              disabled={!hasPendingChanges}
+              className={clx(
+                "w-full bg-[#17284a] text-white rounded-[12px] py-3 px-6 text-[15px] font-medium transition-all hover:bg-[#0f1d38] active:scale-[0.98]",
+                !hasPendingChanges && "opacity-40 cursor-not-allowed hover:bg-[#17284a]"
+              )}
+            >
+              {isRTL ? "تطبيق الفلاتر" : "Apply Filters"}
+            </button>
+            <button
+              type="button"
+              onClick={clearFilters}
+              disabled={!hasActiveFilters}
+              className={clx(
+                "w-full bg-[#DCE3F2] text-[#17284a] rounded-[12px] py-3 px-6 text-[15px] font-medium transition-all hover:bg-[#CED5E8] active:scale-[0.98]",
+                !hasActiveFilters && "opacity-50 cursor-not-allowed"
+              )}
+            >
+              {isRTL ? "مسح جميع الفلاتر" : "Clear All Filters"}
+            </button>
+          </div>
         </div>
       )}
 
@@ -540,7 +576,7 @@ const CategoryFilters = ({
                   {isRTL ? "مسح" : "Reset"}
                 </Button>
                 <DrawerClose asChild>
-                  <Button className="flex-1">{isRTL ? "عرض النتائج" : "Show results"}</Button>
+                  <Button className="flex-1" onClick={applyFilters} disabled={!hasPendingChanges}>{isRTL ? "تطبيق الفلاتر" : "Apply Filters"}</Button>
                 </DrawerClose>
               </DrawerFooter>
             </div>

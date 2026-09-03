@@ -10,6 +10,7 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
+  DrawerTitle,
 } from "@modules/common/components/ui/drawer"
 import MobileFilterBar from "./mobile-filter-bar"
 
@@ -18,7 +19,66 @@ type CategoryOption = {
   name_en: string
   name_ar: string
   parent_category_id?: string | null
+  metadata?: any
+  category_children?: CategoryOption[]
+  products?: any[]
 }
+
+type CategoryTree = {
+  byId: Map<string, CategoryOption & { children: CategoryOption[] }>
+  roots: CategoryOption[]
+}
+
+type CheckboxRowProps = {
+  id: string
+  label: string
+  checked: boolean
+  onCheckedChange: (checked: boolean) => void
+  count?: number
+}
+
+const CheckboxRow = ({
+  id,
+  label,
+  checked,
+  onCheckedChange,
+  count,
+}: CheckboxRowProps) => (
+  <label
+    htmlFor={id}
+    className="flex items-center justify-between cursor-pointer w-full gap-3"
+  >
+    <span className="flex items-center gap-3 min-w-0">
+      <span
+        className={clx(
+          "flex items-center justify-center h-[18px] w-[18px] rounded-[4px] border-[1.5px] transition-all flex-shrink-0",
+          checked
+            ? "bg-[#17284a] border-[#17284a]"
+            : "bg-white border-[#ccc] hover:border-[#17284a]/50"
+        )}
+      >
+        {checked && (
+          <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+          </svg>
+        )}
+      </span>
+      <input
+        id={id}
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onCheckedChange(e.target.checked)}
+        className="sr-only"
+      />
+      <span className={clx("text-[14px] line-clamp-1", checked ? "font-bold text-[#1c1b1c]" : "text-[#1c1b1c]")}>
+        {label}
+      </span>
+    </span>
+    {count !== undefined && (
+      <span className="text-[14px] text-[#707176] flex-shrink-0">({count})</span>
+    )}
+  </label>
+)
 
 type RefinementListProps = {
   sortBy: SortOptions
@@ -124,7 +184,6 @@ const PriceRangeFilter = ({ isRTL, initialPrice, onApply, minPrice, maxPrice, va
             value={minInput}
             onChange={(e) => handleInputChange("min", e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter") handleApply() }}
-            onBlur={variant === "drawer" ? handleApply : undefined}
             placeholder={isRTL ? "الأدنى" : "Min"}
             className="w-full bg-transparent text-[12px] font-bold text-[#1c1b1c] outline-none border-none min-w-0"
           />
@@ -141,7 +200,6 @@ const PriceRangeFilter = ({ isRTL, initialPrice, onApply, minPrice, maxPrice, va
             value={maxInput}
             onChange={(e) => handleInputChange("max", e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter") handleApply() }}
-            onBlur={variant === "drawer" ? handleApply : undefined}
             placeholder={isRTL ? "الأعلى" : "Max"}
             className="w-full bg-transparent text-[12px] font-bold text-[#1c1b1c] outline-none border-none min-w-0"
           />
@@ -171,21 +229,10 @@ const PriceRangeFilter = ({ isRTL, initialPrice, onApply, minPrice, maxPrice, va
         </div>
       )}
 
-      {/* Apply Button - inline variant only */}
-      {variant === "inline" && (
-        <button
-          type="button"
-          onClick={handleApply}
-          className="flex flex-row justify-center items-center gap-2 w-full h-14 bg-[#17284a] rounded-2xl text-white transition-colors hover:bg-[#0f1d38]"
-        >
-          {isRTL ? "تطبيق" : "Apply"}
-        </button>
-      )}
-
       {/* Bottom Divider - inline variant only */}
-      {variant === "inline" && (
+      {/* {variant === "inline" && (
         <div className="border-b border-gray-100 mt-4" />
-      )}
+      )} */}
     </div>
   )
 }
@@ -216,7 +263,8 @@ const RefinementList = ({
     productCategories: [],
   })
 
-  const filters = useMemo(() => {
+  // Active filters = committed to URL
+  const activeFilters = useMemo(() => {
     const readList = (key: string) =>
       (searchParams.get(key) || "")
         .split(",")
@@ -237,6 +285,17 @@ const RefinementList = ({
     }
   }, [searchParams])
 
+  // Pending filters = local state, not yet committed to URL
+  const [pendingFilters, setPendingFilters] = useState(activeFilters)
+
+  // Sync pending filters when URL changes (e.g. from Clear or external navigation)
+  useEffect(() => {
+    setPendingFilters(activeFilters)
+  }, [activeFilters])
+
+  // The filters we render = pending (what user sees in UI)
+  const filters = pendingFilters
+
   // Load filter options on component mount
   useEffect(() => {
     const loadFilterOptions = async () => {
@@ -246,7 +305,7 @@ const RefinementList = ({
     loadFilterOptions()
   }, [countryCode, currentCategoryId])
 
-  const updateURL = useCallback((newFilters: typeof filters) => {
+  const commitFilters = useCallback((newFilters: typeof activeFilters) => {
     const params = new URLSearchParams(searchParams.toString())
 
     // Reset pagination to page 1 when filters change
@@ -276,24 +335,39 @@ const RefinementList = ({
     router.push(`${pathname}?${params.toString()}`, { scroll: false })
   }, [pathname, router, searchParams])
 
-  const handleFilterChange = useCallback((key: keyof typeof filters, value: any) => {
-    updateURL({
-      ...filters,
+  // Apply = commit pending filters to URL
+  const applyFilters = useCallback(() => {
+    commitFilters(pendingFilters)
+  }, [commitFilters, pendingFilters])
+
+  // Check if pending filters differ from active (committed) filters
+  const hasPendingChanges = useMemo(() => {
+    const a = JSON.stringify(activeFilters)
+    const p = JSON.stringify(pendingFilters)
+    return a !== p
+  }, [activeFilters, pendingFilters])
+
+  // Local-only handlers: update pending state without URL push
+  const handleFilterChange = useCallback((key: keyof typeof pendingFilters, value: any) => {
+    setPendingFilters(prev => ({
+      ...prev,
       [key]: value,
-    })
-  }, [filters, updateURL])
+    }))
+  }, [])
 
-  const handleArrayFilterChange = useCallback((key: keyof typeof filters, value: string, checked: boolean) => {
-    const current = filters[key] as string[]
-    const nextArray = checked
-      ? [...current, value]
-      : current.filter((item) => item !== value)
+  const handleArrayFilterChange = useCallback((key: keyof typeof pendingFilters, value: string, checked: boolean) => {
+    setPendingFilters(prev => {
+      const current = prev[key] as string[]
+      const nextArray = checked
+        ? [...current, value]
+        : current.filter((item) => item !== value)
 
-    updateURL({
-      ...filters,
-      [key]: nextArray,
+      return {
+        ...prev,
+        [key]: nextArray,
+      }
     })
-  }, [filters, updateURL])
+  }, [])
 
   const handleSortChange = useCallback((name: string, value: SortOptions) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -304,10 +378,11 @@ const RefinementList = ({
   }, [pathname, router, searchParams])
 
   const clearFilters = useCallback(() => {
-    updateURL({
-      ...filters,
+    const cleared = {
+      ...activeFilters,
       inStock: false,
       onSale: false,
+      madeToOrder: false,
       price: "",
       collection_id: [],
       type_id: [],
@@ -315,8 +390,10 @@ const RefinementList = ({
       materials: [],
       sizes: [],
       category_id: [],
-    })
-  }, [filters, updateURL])
+    }
+    setPendingFilters(cleared)
+    commitFilters(cleared)
+  }, [activeFilters, commitFilters])
 
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
     new Set()
@@ -460,16 +537,16 @@ const RefinementList = ({
     )
   }
   const hasActiveFilters =
-    filters.inStock ||
-    filters.onSale ||
-    filters.madeToOrder ||
-    filters.price ||
-    filters.collection_id.length > 0 ||
-    filters.type_id.length > 0 ||
-    filters.category_id.length > 0 ||
-    filters.colors.length > 0 ||
-    filters.materials.length > 0 ||
-    filters.sizes.length > 0
+    activeFilters.inStock ||
+    activeFilters.onSale ||
+    activeFilters.madeToOrder ||
+    activeFilters.price ||
+    activeFilters.collection_id.length > 0 ||
+    activeFilters.type_id.length > 0 ||
+    activeFilters.category_id.length > 0 ||
+    activeFilters.colors.length > 0 ||
+    activeFilters.materials.length > 0 ||
+    activeFilters.sizes.length > 0
 
   const SectionCard = ({
     title,
@@ -511,55 +588,6 @@ const RefinementList = ({
       </details>
     )
   }
-
-  const CheckboxRow = ({
-    id,
-    label,
-    checked,
-    onCheckedChange,
-    count,
-  }: {
-    id: string
-    label: string
-    checked: boolean
-    onCheckedChange: (checked: boolean) => void
-    count?: number
-  }) => (
-    <label
-      htmlFor={id}
-      className="flex items-center justify-between cursor-pointer w-full gap-3"
-    >
-      <span className="flex items-center gap-3 min-w-0">
-        <span
-          className={clx(
-            "flex items-center justify-center h-[18px] w-[18px] rounded-[4px] border-[1.5px] transition-all flex-shrink-0",
-            checked
-              ? "bg-[#17284a] border-[#17284a]"
-              : "bg-white border-[#ccc] hover:border-[#17284a]/50"
-          )}
-        >
-          {checked && (
-            <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-            </svg>
-          )}
-        </span>
-        <input
-          id={id}
-          type="checkbox"
-          checked={checked}
-          onChange={(e) => onCheckedChange(e.target.checked)}
-          className="sr-only"
-        />
-        <span className={clx("text-[14px] line-clamp-1", checked ? "font-bold text-[#1c1b1c]" : "text-[#1c1b1c]")}>
-          {label}
-        </span>
-      </span>
-      {count !== undefined && (
-        <span className="text-[14px] text-[#707176] flex-shrink-0">({count})</span>
-      )}
-    </label>
-  )
 
   const [showAllCollections, setShowAllCollections] = useState(false)
   const [showAllTypes, setShowAllTypes] = useState(false)
@@ -621,7 +649,7 @@ const RefinementList = ({
                         return (
                           <CheckboxRow
                             key={childId}
-                            id={`category-${childId}`}
+                            id={`${variant}-category-${childId}`}
                             label={childLabel}
                             checked={filters.category_id.includes(childId)}
                             onCheckedChange={(checked) =>
@@ -633,7 +661,7 @@ const RefinementList = ({
                       })
                   ) : (
                     <CheckboxRow
-                      id={`category-${rootId}`}
+                      id={`${variant}-category-${rootId}`}
                       label={rootLabel}
                       checked={filters.category_id.includes(rootId)}
                       onCheckedChange={(checked) =>
@@ -658,7 +686,7 @@ const RefinementList = ({
               {visibleCollections.map((collection) => (
                 <CheckboxRow
                   key={collection.id}
-                  id={`collection-${collection.id}`}
+                  id={`${variant}-collection-${collection.id}`}
                   label={collection.title}
                   checked={filters.collection_id.includes(collection.id)}
                   onCheckedChange={(checked) =>
@@ -683,7 +711,7 @@ const RefinementList = ({
               {visibleTypes.map((type) => (
                 <CheckboxRow
                   key={type.id}
-                  id={`type-${type.id}`}
+                  id={`${variant}-type-${type.id}`}
                   label={type.value}
                   checked={filters.type_id.includes(type.id)}
                   onCheckedChange={(checked) =>
@@ -708,7 +736,7 @@ const RefinementList = ({
               {visibleColors.map((color) => (
                 <CheckboxRow
                   key={color}
-                  id={`color-${color}`}
+                  id={`${variant}-color-${color}`}
                   label={color}
                   checked={filters.colors.includes(color)}
                   onCheckedChange={(checked) =>
@@ -733,7 +761,7 @@ const RefinementList = ({
               {visibleMaterials.map((material) => (
                 <CheckboxRow
                   key={material}
-                  id={`material-${material}`}
+                  id={`${variant}-material-${material}`}
                   label={material}
                   checked={filters.materials.includes(material)}
                   onCheckedChange={(checked) =>
@@ -819,7 +847,7 @@ const RefinementList = ({
             return (
               <label
                 key={opt.key}
-                htmlFor={`availability-${opt.key}`}
+                htmlFor={`${variant}-availability-${opt.key}`}
                 className="flex items-center gap-3 cursor-pointer w-full"
               >
                 <span
@@ -835,17 +863,17 @@ const RefinementList = ({
                   )}
                 </span>
                 <input
-                  id={`availability-${opt.key}`}
+                  id={`${variant}-availability-${opt.key}`}
                   type="radio"
-                  name="availability"
+                  name={`${variant}-availability`}
                   checked={isSelected}
                   onChange={() => {
                     if (opt.value === "all") {
-                      updateURL({ ...filters, inStock: false, onSale: false, madeToOrder: false })
+                      setPendingFilters(prev => ({ ...prev, inStock: false, onSale: false, madeToOrder: false }))
                     } else if (opt.value === "inStock") {
-                      updateURL({ ...filters, inStock: true, onSale: false, madeToOrder: false })
+                      setPendingFilters(prev => ({ ...prev, inStock: true, onSale: false, madeToOrder: false }))
                     } else if (opt.value === "madeToOrder") {
-                      updateURL({ ...filters, inStock: false, onSale: false, madeToOrder: true })
+                      setPendingFilters(prev => ({ ...prev, inStock: false, onSale: false, madeToOrder: true }))
                     }
                   }}
                   className="sr-only"
@@ -859,19 +887,32 @@ const RefinementList = ({
         </div>
       </SectionCard>
 
-      {/* Clear All Filters - Only for inline (desktop sidebar) */}
+      {/* Apply + Clear - inline (desktop sidebar) */}
       {variant === "inline" && (
-        <button
-          type="button"
-          onClick={clearFilters}
-          className={clx(
-            "w-full bg-[#DCE3F2] text-[#17284a] rounded-[12px] py-3 px-6 text-[15px] font-medium transition-all hover:bg-[#CED5E8] active:scale-[0.98] mt-2",
-            !hasActiveFilters && "opacity-50 cursor-not-allowed"
-          )}
-          disabled={!hasActiveFilters}
-        >
-          {isRTL ? "مسح جميع الفلاتر" : "Clear All Filters"}
-        </button>
+        <div className="flex flex-col gap-2 mt-2">
+          <button
+            type="button"
+            onClick={applyFilters}
+            disabled={!hasPendingChanges}
+            className={clx(
+              "w-full bg-[#17284a] text-white rounded-[12px] py-3 px-6 text-[15px] font-medium transition-all hover:bg-[#0f1d38] active:scale-[0.98]",
+              !hasPendingChanges && "opacity-40 cursor-not-allowed hover:bg-[#17284a]"
+            )}
+          >
+            {isRTL ? "تطبيق الفلاتر" : "Apply Filters"}
+          </button>
+          <button
+            type="button"
+            onClick={clearFilters}
+            className={clx(
+              "w-full bg-[#DCE3F2] text-[#17284a] rounded-[12px] py-3 px-6 text-[15px] font-medium transition-all hover:bg-[#CED5E8] active:scale-[0.98]",
+              !hasActiveFilters && "opacity-50 cursor-not-allowed"
+            )}
+            disabled={!hasActiveFilters}
+          >
+            {isRTL ? "مسح جميع الفلاتر" : "Clear All Filters"}
+          </button>
+        </div>
       )}
     </div>
   )
@@ -985,9 +1026,9 @@ const RefinementList = ({
             <div className="flex h-full flex-col overflow-hidden">
               {/* Header */}
               <div className="flex flex-row items-center justify-between px-4 pt-3 pb-4">
-                <h2 className="text-[24px] font-bold text-[#17284a] leading-[1.25]">
+                <DrawerTitle className="text-[24px] font-bold text-[#17284a] leading-[1.25]">
                   {isRTL ? "الفلاتر" : "Filters"}
-                </h2>
+                </DrawerTitle>
                 <DrawerClose asChild>
                   <button
                     className="flex items-center justify-center h-[36px] w-[36px] rounded-full bg-[#f3f4f6] hover:bg-gray-200 transition-colors"
@@ -1007,7 +1048,12 @@ const RefinementList = ({
               <div className="sticky bottom-0 flex flex-col gap-3 border-t border-[#e5e7eb] bg-white p-4">
                 <DrawerClose asChild>
                   <button
-                    className="w-full bg-[#17284a] text-white rounded-[16px] py-4 px-9 text-[14px] font-bold text-center transition-all hover:bg-[#0f1d38] active:scale-[0.98]"
+                    onClick={applyFilters}
+                    disabled={!hasPendingChanges}
+                    className={clx(
+                      "w-full bg-[#17284a] text-white rounded-[16px] py-4 px-9 text-[14px] font-bold text-center transition-all hover:bg-[#0f1d38] active:scale-[0.98]",
+                      !hasPendingChanges && "opacity-40 cursor-not-allowed hover:bg-[#17284a]"
+                    )}
                   >
                     {isRTL ? "تطبيق الفلاتر" : "Apply Filters"}
                   </button>
