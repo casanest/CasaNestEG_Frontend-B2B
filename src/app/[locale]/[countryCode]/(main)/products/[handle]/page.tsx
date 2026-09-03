@@ -5,15 +5,18 @@ import { listProducts } from "@lib/data/products"
 import { getRegion, listRegions } from "@lib/data/regions"
 import ProductTemplate from "@modules/products/templates"
 
+export const dynamic = "force-dynamic"
+
 type Props = {
   params: Promise<{ countryCode: string; handle: string }>
 }
 
 const getProductByHandle = cache(async (countryCode: string, handle: string) => {
-  return listProducts({
+  const { response } = await listProducts({
     countryCode,
     queryParams: { handle },
-  }).then(({ response }) => response.products[0])
+  })
+  return response.products[0]
 })
 
 export async function generateStaticParams() {
@@ -38,10 +41,11 @@ export async function generateStaticParams() {
     // Use the first available country code instead of hardcoded "US"
     const firstCountryCode = countryCodes[0]
     
-    const products = await listProducts({
+    const { response } = await listProducts({
       countryCode: firstCountryCode,
       queryParams: { fields: "handle" },
-    }).then(({ response }) => response.products)
+    })
+    const products = response.products
 
     if (!products || products.length === 0) {
       console.warn("No products found during static generation")
