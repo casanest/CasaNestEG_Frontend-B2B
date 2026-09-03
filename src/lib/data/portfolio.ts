@@ -119,31 +119,22 @@ export async function listAllPortfolioProjects(homepage?: boolean): Promise<{
   categories: PortfolioCategory[]
   projects: PortfolioProjectListItem[]
 }> {
-  const categories = await listPortfolioCategories()
+  const params = homepage ? "?homepage=true" : ""
+  const data = await sdk.client.fetch<{
+    categories: PortfolioCategory[]
+    projects: PortfolioProjectListItem[]
+  }>(`/store/portfolio/projects${params}`, {
+    next: { revalidate: 3600 },
+  })
 
-  const results = await Promise.all(
-    categories.map((cat) => listProjectsByCategory(cat.slug, homepage))
-  )
-
-  const projects: PortfolioProjectListItem[] = []
-
-  for (const result of results) {
-    for (const project of result.projects) {
-      projects.push({
-        ...project,
-        category_slug: result.category.slug,
-        category_name_en: result.category.name_en,
-        category_name_ar: result.category.name_ar,
-      })
-    }
-  }
+  const projects: PortfolioProjectListItem[] = (data.projects || []).slice()
 
   projects.sort(
     (a, b) =>
       new Date(b.project_date).getTime() - new Date(a.project_date).getTime()
   )
 
-  return { categories, projects }
+  return { categories: data.categories || [], projects }
 }
 
 interface ProjectDetailResponse {

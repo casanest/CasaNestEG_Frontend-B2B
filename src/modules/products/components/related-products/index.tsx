@@ -1,4 +1,3 @@
-import { getRegion } from "@lib/data/regions"
 import { HttpTypes } from "@medusajs/types"
 import { getLocale } from "next-intl/server"
 import { sdk } from "@lib/config"
@@ -7,14 +6,13 @@ import RelatedProductsCarousel from "./carousel"
 
 type RelatedProductsProps = {
   product: HttpTypes.StoreProduct
-  countryCode: string
+  region: HttpTypes.StoreRegion
 }
 
 export default async function RelatedProducts({
   product,
-  countryCode,
+  region,
 }: RelatedProductsProps) {
-  const region = await getRegion(countryCode)
   const locale = await getLocale()
 
   if (!region) {

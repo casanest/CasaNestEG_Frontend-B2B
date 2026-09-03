@@ -2,10 +2,7 @@ import { Metadata } from "next"
 
 import { getRegion } from "@lib/data/regions"
 import { listProducts } from "@lib/data/products"
-import { listBanners } from "@lib/data/banners"
-import { listPackages } from "@lib/data/packages"
-import { listAllPortfolioProjects } from "@lib/data/portfolio"
-import { listTestimonials } from "@lib/data/testimonials"
+import { getHomepageData } from "@lib/data/homepage"
 
 import HeroSection from "@modules/home/components/hero-section/HeroSection"
 import OurClients from "@modules/home/components/our-clients/OurClients"
@@ -250,19 +247,9 @@ export default async function Home({
     return null
   }
 
-  // Fetch all data in parallel
-  const [
-    heroBanners,
-    clientBanners,
-    partnerBanners,
-    homepageProductsData,
-    homepagePackages,
-    portfolioData,
-    homepageTestimonials,
-  ] = await Promise.all([
-    listBanners("hero"),
-    listBanners("past_customer"),
-    listBanners("partners"),
+  // Fetch homepage content data and products in parallel
+  const [homepageData, homepageProductsData] = await Promise.all([
+    getHomepageData(),
     listProducts({
       pageParam: 1,
       queryParams: {
@@ -270,9 +257,6 @@ export default async function Home({
       },
       countryCode,
     }),
-    listPackages(true),
-    listAllPortfolioProjects(true),
-    listTestimonials(true),
   ])
 
   const allProducts = homepageProductsData.response.products
@@ -282,15 +266,15 @@ export default async function Home({
 
   return (
     <>
-      <HeroSection banners={heroBanners} locale={locale} dir={dir} />
-      <OurClients banners={clientBanners} locale={locale} dir={dir} />
+      <HeroSection banners={homepageData.banners.hero} locale={locale} dir={dir} />
+      <OurClients banners={homepageData.banners.past_customer} locale={locale} dir={dir} />
       <Amenities products={homepageProducts} locale={locale} dir={dir} region={region} />
-      <PreCuratedSolutions packages={homepagePackages} locale={locale} dir={dir} />
+      <PreCuratedSolutions packages={homepageData.packages} locale={locale} dir={dir} />
       <StatsBar dir={dir} />
-      <OurPartners banners={partnerBanners} dir={dir} />
-      <OurWork projects={portfolioData.projects} locale={locale} dir={dir} />
+      <OurPartners banners={homepageData.banners.partners} dir={dir} />
+      <OurWork projects={homepageData.portfolio.projects} locale={locale} dir={dir} />
       <BuildProposal dir={dir} />
-      <TestimonialsSection testimonials={homepageTestimonials} locale={locale} dir={dir} />
+      <TestimonialsSection testimonials={homepageData.testimonials} locale={locale} dir={dir} />
       <FAQSection dir={dir} />
     </>
   )

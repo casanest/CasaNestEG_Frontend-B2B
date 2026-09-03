@@ -1,15 +1,20 @@
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
+import { cache } from "react"
 import { listProducts } from "@lib/data/products"
 import { getRegion, listRegions } from "@lib/data/regions"
 import ProductTemplate from "@modules/products/templates"
 
-export const dynamic = "force-dynamic"
-export const revalidate = 0
-
 type Props = {
   params: Promise<{ countryCode: string; handle: string }>
 }
+
+const getProductByHandle = cache(async (countryCode: string, handle: string) => {
+  return listProducts({
+    countryCode,
+    queryParams: { handle },
+  }).then(({ response }) => response.products[0])
+})
 
 export async function generateStaticParams() {
   try {
@@ -107,10 +112,7 @@ export async function generateMetadata(
     notFound()
   }
 
-  const product = await listProducts({
-    countryCode,
-    queryParams: { handle },
-  }).then(({ response }) => response.products[0])
+  const product = await getProductByHandle(countryCode, handle)
 
   if (!product) {
     notFound()
@@ -185,10 +187,7 @@ export default async function ProductPage(props: Props) {
     notFound()
   }
 
-  const pricedProduct = await listProducts({
-    countryCode: params.countryCode,
-    queryParams: { handle: params.handle },
-  }).then(({ response }) => response.products[0])
+  const pricedProduct = await getProductByHandle(params.countryCode, params.handle)
 
   if (!pricedProduct) {
     notFound()

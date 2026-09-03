@@ -412,103 +412,27 @@ export const listProductsWithSort = async ({
  */
 export const getProductFilterOptions = async (countryCode: string, categoryId?: string) => {
   try {
-    // Fetch products - either all products or category-specific
-    // Use a higher limit to ensure we get all available filter options
-    const queryParams: { limit: number; category_id?: string[] } = { limit: 1000 }
+    const query: Record<string, string> = {}
     if (categoryId) {
-      queryParams.category_id = [categoryId]
+      query.category_id = categoryId
     }
 
-    const { response } = await listProducts({
-      pageParam: 1,
-      queryParams,
-      countryCode,
+    const response = await sdk.client.fetch<{
+      collections: { id: string; title: string; handle: string }[]
+      types: { id: string; value: string }[]
+      colors: string[]
+      materials: string[]
+      sizes: string[]
+      priceRange: { min: number; max: number }
+      totalProducts: number
+      productCategories: { id: string; name: string; parent_category_id: string | null; count: number }[]
+    }>("/store/product-filters", {
+      method: "GET",
+      query,
+      next: { revalidate: 300 },
     })
 
-    const { products } = response
-
-    // Extract unique filter options
-    const collectionsMap = new Map<string, {id: string, title: string, handle: string}>()
-    const typesMap = new Map<string, {id: string, value: string}>()
-    const colors = new Set<string>()
-    const materials = new Set<string>()
-    const sizes = new Set<string>()
-    const priceRanges = new Set<number>()
-    const productCategoriesMap = new Map<string, { id: string; name: string; parent_category_id: string | null; count: number }>()
-
-    products.forEach(product => {
-      // Collections
-      if (product.collection) {
-        collectionsMap.set(product.collection.id, {
-          id: product.collection.id,
-          title: product.collection.title,
-          handle: product.collection.handle
-        })
-      }
-
-      // Product types
-      if (product.type) {
-        typesMap.set(product.type.id, {
-          id: product.type.id,
-          value: product.type.value
-        })
-      }
-
-      // Product categories - collect all categories from products
-      if (product.categories && Array.isArray(product.categories)) {
-        product.categories.forEach((cat: any) => {
-          const catId = cat.id
-          const existing = productCategoriesMap.get(catId)
-          if (existing) {
-            existing.count++
-          } else {
-            productCategoriesMap.set(catId, {
-              id: catId,
-              name: cat.name || cat.metadata?.localizations?.en?.name || catId,
-              parent_category_id: cat.parent_category_id || null,
-              count: 1,
-            })
-          }
-        })
-      }
-      
-      // Variant options (colors, materials, sizes, etc.)
-      product.variants?.forEach(variant => {
-        // Add price for price range calculation (API returns currency units, not cents)
-        if (variant.calculated_price?.calculated_amount) {
-          priceRanges.add(variant.calculated_price.calculated_amount)
-        }
-        
-        variant.options?.forEach(option => {
-          const optionTitle = option.option?.title?.toLowerCase()
-          const optionValue = option.value
-          
-          if (optionTitle === 'color') {
-            colors.add(optionValue)
-          } else if (optionTitle === 'material') {
-            materials.add(optionValue)
-          } else if (optionTitle === 'size') {
-            sizes.add(optionValue)
-          }
-        })
-      })
-    })
-    
-    // Calculate price ranges based on actual prices
-    const priceArray = Array.from(priceRanges).sort((a, b) => a - b)
-    const minPrice = priceArray[0] || 0
-    const maxPrice = priceArray.length > 0 ? priceArray[priceArray.length - 1] : 0
-
-    return {
-      collections: Array.from(collectionsMap.values()),
-      types: Array.from(typesMap.values()),
-      colors: Array.from(colors).sort(),
-      materials: Array.from(materials).sort(),
-      sizes: Array.from(sizes).sort(),
-      priceRange: { min: minPrice, max: maxPrice },
-      totalProducts: products.length,
-      productCategories: Array.from(productCategoriesMap.values()),
-    }
+    return response
   } catch (error) {
     console.error("Error fetching filter options:", error)
     return {

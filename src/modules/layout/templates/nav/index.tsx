@@ -10,25 +10,53 @@ import { FilePlus } from "lucide-react"
 import ScrollHeader from "./ScrollHeader"
 import ProductsDropdown from "./ProductsDropdown"
 import MobileCartButton from "@modules/layout/components/mobile-cart-button"
-import { listCategories, Category } from "@lib/data/categories"
-import { listCollections } from "@lib/data/collections"
-import { listPackages } from "@lib/data/packages"
-import { listAllPortfolioProjects } from "@lib/data/portfolio"
+import { Category } from "@lib/data/categories"
+import { getSiteLayout } from "@lib/data/site-layout"
 import { getLocale } from "next-intl/server"
+
+function buildCategoryTree(flat: any[]): Category[] {
+  const normalized: Category[] = flat.map((cat) => ({
+    id: cat.id,
+    name_en: cat.name_en,
+    name_ar: cat.name_ar,
+    description_en: cat.description_en || "",
+    description_ar: cat.description_ar || "",
+    handle_en: cat.handle_en,
+    handle_ar: cat.handle_ar,
+    image_url: cat.image_url || null,
+    available_languages: cat.available_languages || [],
+    parent_category_id: cat.parent_category_id || null,
+    parent_category: null,
+    category_children: [],
+  }))
+
+  const map = new Map<string, Category>()
+  normalized.forEach((cat) => map.set(cat.id, cat))
+
+  const roots: Category[] = []
+  normalized.forEach((cat) => {
+    if (cat.parent_category_id && map.has(cat.parent_category_id)) {
+      map.get(cat.parent_category_id)!.category_children.push(cat)
+    } else {
+      roots.push(cat)
+    }
+  })
+
+  return roots
+}
 
 export default async function Nav() {
   const locale = await getLocale()
   const isRTL = locale === "ar"
-  const [productCategories, { collections }, packages, portfolioData] = await Promise.all([
-    listCategories(),
-    listCollections(),
-    listPackages().catch(() => []),
-    listAllPortfolioProjects().catch(() => ({ categories: [], projects: [] }))
-  ])
-  const projectGroups = portfolioData.categories
+
+  const layoutData = await getSiteLayout()
+
+  const productCategories = buildCategoryTree(layoutData.categories)
+  const packages = layoutData.packages
+  const projectGroups = layoutData.portfolio.categories
     .map((cat) => ({
       category: cat,
-      projects: portfolioData.projects.filter((p) => p.category_slug === cat.slug),
+      projects: layoutData.portfolio.projects.filter((p) => p.category_slug === cat.slug),
     }))
     .filter((g) => g.projects.length > 0)
 

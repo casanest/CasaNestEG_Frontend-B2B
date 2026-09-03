@@ -1,6 +1,5 @@
-import { getParentCategories, listCategories } from "@lib/data/categories";
-import { getCollectionsLocal } from "@lib/data/collections";
-import { listSocialMedia } from "@lib/data/social-media";
+import { getParentCategories } from "@lib/data/categories";
+import { getSiteLayout } from "@lib/data/site-layout";
 import Footer from "./Footer";
 
 type FooterServerProps = {
@@ -8,21 +7,15 @@ type FooterServerProps = {
 };
 
 export default async function FooterServer({ locale }: FooterServerProps) {
-    const [categoriesRes, collectionsRes, socialMediaLinks] = await Promise.all([
-        listCategories(),
-        getCollectionsLocal(),
-        listSocialMedia()
-    ]);
+    const layoutData = await getSiteLayout();
 
-    const categories = Array.isArray(categoriesRes)
-        ? categoriesRes
-        : (categoriesRes as any)?.categories ?? [];
+    const rootCategories = layoutData.categories.filter(
+        (c) => !c.parent_category_id
+    );
+    const collections = layoutData.collections;
 
-    const collections = (Array.isArray((collectionsRes as any)?.collections)
-        ? (collectionsRes as any).collections
-        : []) as any;
-
-    const parentCategories = await getParentCategories(categories);
+    const parentCategories = getParentCategories(rootCategories as any);
+    const socialMediaLinks = layoutData.social_media;
 
     return (
         <Footer

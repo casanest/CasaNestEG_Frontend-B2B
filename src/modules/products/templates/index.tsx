@@ -9,7 +9,6 @@ import ProductInfo from "@modules/products/templates/product-info"
 import ProductTabs from "@modules/products/components/product-tabs"
 import SkeletonRelatedProducts from "@modules/skeletons/templates/skeleton-related-products"
 import { notFound } from "next/navigation"
-import ProductActionsWrapper from "./product-actions-wrapper"
 import { HttpTypes } from "@medusajs/types"
 import { getLocale } from "next-intl/server"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
@@ -152,17 +151,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
 
           {/* Action Sidebar - Right on desktop, mobile sticky bar rendered inside */}
           <div className="lg:w-[clamp(260px,24vw,340px)] shrink-0 w-full">
-            <Suspense
-              fallback={
-                <ProductActions
-                  disabled={true}
-                  product={product}
-                  region={region}
-                />
-              }
-            >
-              <ProductActionsWrapper id={product.id} region={region} />
-            </Suspense>
+            <ProductActions product={product} region={region} />
           </div>
 
           {/* Tabs — mobile only, rendered after actions to match Figma flow */}
@@ -183,7 +172,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
       <div className="bg-[#f3f4f6] w-full" dir={locale === "ar" ? "rtl" : "ltr"}>
         <div className="px-[16px] lg:px-[clamp(32px,4vw,60px)] py-[44px] lg:py-[clamp(32px,4vw,64px)]" data-testid="related-products-container">
           <Suspense fallback={<SkeletonRelatedProducts />}>
-            <RelatedProducts product={product} countryCode={countryCode} />
+            <RelatedProducts product={product} region={region} />
           </Suspense>
         </div>
       </div>
