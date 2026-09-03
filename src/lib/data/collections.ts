@@ -40,8 +40,7 @@ export const retrieveCollection = async (id: string) => {
     .fetch<{ collection: HttpTypes.StoreCollection }>(
       `/store/collections/${id}`,
       {
-        next,
-        cache: "no-store",
+        next: { revalidate: 300, ...next },
       }
     )
     .then(({ collection }) => collection)
@@ -62,8 +61,7 @@ export const listCollections = async (
       "/store/collections",
       {
         query: queryParams,
-        next,
-        cache: "no-store",
+        next: { revalidate: 300, ...next },
       }
     )
     .then(({ collections }) => ({ collections, count: collections.length }))
@@ -93,8 +91,7 @@ export const getCollectionsLocal = async (
       ...queryParams,
       // يمكنك إضافة حقول أخرى مطلوبة هنا، مثل metadata أو products إذا لزم الأمر
     },
-    next,
-    cache: "no-store",
+    next: { revalidate: 300, ...next },
   });
 
   const collections = response.collections.map((col) => {
@@ -126,8 +123,7 @@ export const getCollectionByHandle = async (
   return sdk.client
     .fetch<HttpTypes.StoreCollectionListResponse>(`/store/collections`, {
       query: { handle, fields: "*products" },
-      next,
-      cache: "no-store",
+      next: { revalidate: 300, ...next },
     })
     .then(({ collections }) => collections[0])
 }

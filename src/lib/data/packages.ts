@@ -25,7 +25,7 @@ export async function listPackages(homepage?: boolean): Promise<Package[]> {
   const response = await sdk.client.fetch<PackagesResponse>("/store/packages", {
     method: "GET",
     query,
-    cache: "no-store",
+    next: { revalidate: 300 },
   })
 
   if (!response || !response.packages) {
@@ -75,7 +75,7 @@ export async function getPackageBySlug(slug: string): Promise<PackageDetail | nu
       `/store/packages/${slug}`,
       {
         method: "GET",
-        cache: "no-store",
+        next: { revalidate: 300 },
       }
     )
 

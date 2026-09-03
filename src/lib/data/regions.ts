@@ -71,6 +71,7 @@ import { sdk } from "@lib/config"
 import medusaError from "@lib/util/medusa-error"
 import { HttpTypes } from "@medusajs/types"
 import { getCacheOptions } from "./cookies"
+import { cache } from "react"
 
 export const listRegions = async () => {
   const next = {
@@ -82,8 +83,7 @@ export const listRegions = async () => {
       "/store/regions",
       {
         method: "GET",
-        next,
-        cache: "no-store",
+        next: { revalidate: 3600, ...next },
       }
     )
     .then(({ regions }) => regions)
@@ -103,8 +103,7 @@ export const retrieveRegion = async (id: string) => {
       `/store/regions/${id}`,
       {
         method: "GET",
-        next,
-        cache: "no-store",
+        next: { revalidate: 3600, ...next },
       }
     )
     .then(({ region }) => region)
@@ -116,7 +115,7 @@ export const retrieveRegion = async (id: string) => {
 
 const regionMap = new Map<string, HttpTypes.StoreRegion>()
 
-export const getRegion = async (
+export const getRegion = cache(async (
   countryCode: string
 ): Promise<HttpTypes.StoreRegion | null> => {
   try {
@@ -126,23 +125,13 @@ export const getRegion = async (
       .toLowerCase()
       .trim()
 
-    console.log(
-      "GET REGION COUNTRY CODE:",
-      normalizedCountryCode
-    )
-
     if (regionMap.has(normalizedCountryCode)) {
-      console.log(
-        "REGION FROM CACHE:",
-        normalizedCountryCode
-      )
       return regionMap.get(normalizedCountryCode) || null
     }
 
     const regions = await listRegions()
 
     if (!regions?.length) {
-      console.error("NO REGIONS FOUND")
       return null
     }
 
@@ -165,11 +154,9 @@ export const getRegion = async (
       regionMap.get("eg") ||
       null
 
-    console.log("FOUND REGION:", region)
-
     return region
   } catch (error) {
     console.error("GET REGION ERROR:", error)
     return null
   }
-}
+})

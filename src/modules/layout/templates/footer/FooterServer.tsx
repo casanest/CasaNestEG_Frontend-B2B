@@ -8,19 +8,21 @@ type FooterServerProps = {
 };
 
 export default async function FooterServer({ locale }: FooterServerProps) {
-    const categoriesRes: any = await listCategories();
-    const collectionsRes: any = await getCollectionsLocal();
+    const [categoriesRes, collectionsRes, socialMediaLinks] = await Promise.all([
+        listCategories(),
+        getCollectionsLocal(),
+        listSocialMedia()
+    ]);
 
     const categories = Array.isArray(categoriesRes)
         ? categoriesRes
-        : categoriesRes?.categories ?? [];
+        : (categoriesRes as any)?.categories ?? [];
 
-    const collections = (Array.isArray(collectionsRes?.collections)
-        ? collectionsRes.collections
+    const collections = (Array.isArray((collectionsRes as any)?.collections)
+        ? (collectionsRes as any).collections
         : []) as any;
 
     const parentCategories = await getParentCategories(categories);
-    const socialMediaLinks = await listSocialMedia();
 
     return (
         <Footer

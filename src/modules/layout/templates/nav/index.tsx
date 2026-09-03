@@ -19,13 +19,12 @@ import { getLocale } from "next-intl/server"
 export default async function Nav() {
   const locale = await getLocale()
   const isRTL = locale === "ar"
-  const productCategories: Category[] = await listCategories()
-
-  const { collections } = await listCollections()
-
-  const packages = await listPackages().catch(() => [])
-
-  const portfolioData = await listAllPortfolioProjects().catch(() => ({ categories: [], projects: [] }))
+  const [productCategories, { collections }, packages, portfolioData] = await Promise.all([
+    listCategories(),
+    listCollections(),
+    listPackages().catch(() => []),
+    listAllPortfolioProjects().catch(() => ({ categories: [], projects: [] }))
+  ])
   const projectGroups = portfolioData.categories
     .map((cat) => ({
       category: cat,

@@ -138,13 +138,9 @@ export const listProducts = async ({
       method: "GET",
       query: baseQuery,
       headers,
-      next,
-      cache: "no-store",
+      next: { revalidate: 300, ...next },
     })
-    console.log("API response for products:", next)
-    console.log("++++++++++++++++++++++++++++++++++:", response)
 
-    
     if (!response || !response.products) {
       return {
         response: { products: [], count: 0 },
@@ -277,21 +273,47 @@ export const listProductsWithSort = async ({
   // Separate API-supported parameters from client-side filters
   const { inStock, onSale, madeToOrder, price, colors, materials, sizes, ...apiParams } = queryParams || {}
 
-  // Fetch products with a larger limit for sorting, using only API-supported parameters
+  const hasClientFilters = !!(inStock || onSale || madeToOrder || price || colors?.length || materials?.length || sizes?.length)
+
+  // Fast path: when sorting by created_at (API-native) and no client-side filters,
+  // fetch only the needed page directly from the API instead of 100 products
+  if (sortBy === "created_at" && !hasClientFilters) {
+    const {
+      response: { products, count },
+    } = await listProducts({
+      pageParam: page,
+      queryParams: {
+        ...apiParams,
+        limit,
+        order: "created_at",
+      },
+      countryCode,
+    })
+
+    const nextPage = count > page * limit ? page + 1 : null
+
+    return {
+      response: { products, count },
+      nextPage,
+      queryParams,
+    }
+  }
+
+  // Slow path: fetch 100 products for client-side sorting/filtering
   const {
     response: { products },
   } = await listProducts({
       pageParam: 1,
       queryParams: {
       ...apiParams,
-      limit: 100, // Fetch more for sorting
+      limit: 100,
       },
       countryCode,
   })
 
   // Apply client-side filtering
   let filteredProducts = products
-  if (inStock || onSale || madeToOrder || price || colors?.length || materials?.length || sizes?.length) {
+  if (hasClientFilters) {
     filteredProducts = products.filter(product => {
       // In Stock filtering - products with a price
       if (inStock === 'true') {

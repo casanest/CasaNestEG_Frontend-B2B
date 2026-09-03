@@ -35,6 +35,7 @@ export default async function PaginatedProducts({
   productsIds,
   countryCode,
   searchParams,
+  isRTL,
 }: {
   sortBy?: SortOptions
   page: number
@@ -43,6 +44,7 @@ export default async function PaginatedProducts({
   productsIds?: string[]
   countryCode: string
   searchParams?: { [key: string]: string | string[] | undefined }
+  isRTL?: boolean
 }) {
   const queryParams: PaginatedProductsParams = {
     limit: PRODUCT_LIMIT,
@@ -133,6 +135,14 @@ export default async function PaginatedProducts({
   const locale = await getLocale()
   return (
     <>
+      {/* Count Badge */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex-shrink-0 bg-[#f8f9fa] small:bg-white border border-[#e5e7eb] rounded-[8px] px-4 py-2">
+          <span className="text-[14px] small:text-[15px] font-bold small:font-medium text-[#17284a] whitespace-nowrap">
+            {count} {isRTL ? "منتج" : "Products"}
+          </span>
+        </div>
+      </div>
       <ul
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-5 gap-y-8"
         data-testid="products-list"

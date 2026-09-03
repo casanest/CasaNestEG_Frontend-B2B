@@ -6,8 +6,6 @@ import { SortOptions } from "@modules/store/components/refinement-list/sort-prod
 import { getLocale } from "next-intl/server"
 import PaginatedProducts from "./paginated-products"
 import { Category, listCategories } from "@lib/data/categories"
-import { listProductsWithSort } from "@lib/data/products"
-import { getRegion } from "@lib/data/regions"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import CategoryChipsBar from "@modules/categories/components/category-chips-bar"
 
@@ -55,25 +53,6 @@ const StoreTemplate = async ({
     handle_ar: cat.handle_ar,
   }))
 
-  // Fetch product count
-  let productCount = 0
-  try {
-    const region = await getRegion(countryCode)
-    if (region) {
-      const { response: { count } } = await listProductsWithSort({
-        page: 1,
-        queryParams: {
-          limit: 1,
-        },
-        sortBy: sort,
-        countryCode,
-      })
-      productCount = count
-    }
-  } catch (e) {
-    // Fallback: count stays 0
-  }
-
   return (
     <div
       dir={isRTL ? "rtl" : "ltr"}
@@ -93,7 +72,7 @@ const StoreTemplate = async ({
           </span>
         </nav>
 
-        {/* Title + Subtitle + Count Badge */}
+        {/* Title + Subtitle */}
         <div className="flex flex-col small:flex-row small:items-end small:justify-between gap-4">
           <div className="flex flex-col gap-2">
             <h1 className="text-[24px] small:text-[36px] font-bold tracking-tight text-[#17284a] leading-tight">
@@ -102,12 +81,6 @@ const StoreTemplate = async ({
             <p className="text-[14px] small:text-[16px] text-[#707176] max-w-2xl">
               {isRTL ? "تصفح مجموعتنا الكاملة من المنتجات" : "Browse our complete collection of products"}
             </p>
-          </div>
-          {/* Count Badge */}
-          <div className="flex-shrink-0 bg-[#f8f9fa] small:bg-white border border-[#e5e7eb] rounded-[8px] px-4 py-2 self-start small:self-auto">
-            <span className="text-[14px] small:text-[15px] font-bold small:font-medium text-[#17284a] whitespace-nowrap">
-              {productCount} {isRTL ? "منتج" : "Products"}
-            </span>
           </div>
         </div>
       </section>
@@ -119,7 +92,7 @@ const StoreTemplate = async ({
         isRTL={isRTL}
         locale={locale}
         sort={sort}
-        productCount={productCount}
+        productCount={0}
       />
 
       {/* Mobile Filter Bar (Filters + Sort) */}
@@ -157,6 +130,7 @@ const StoreTemplate = async ({
                 page={pageNumber}
                 countryCode={countryCode}
                 searchParams={searchParams}
+                isRTL={isRTL}
               />
             </Suspense>
           </main>

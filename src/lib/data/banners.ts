@@ -17,7 +17,7 @@ export async function listBanners(type?: string): Promise<Banner[]> {
       "/store/banners",
       {
         method: "GET",
-        cache: "no-store",
+        next: { revalidate: 300 },
       }
     )
 

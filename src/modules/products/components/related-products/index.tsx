@@ -45,26 +45,14 @@ export default async function RelatedProducts({
           fields: "*variants.calculated_price,+metadata,*variants,*variants.options,*options,*options.values,*images,*tags,*categories,",
         },
         headers,
-        next,
-        cache: "no-store",
+        next: { revalidate: 300, ...next },
       }
     )
     if (response?.products?.length) {
-      console.log("[RelatedProducts] Fetched with pricing:", JSON.stringify({
-        count: response.products.length,
-        sample: response.products[0] ? {
-          id: response.products[0].id,
-          title: response.products[0].title,
-          hasVariants: !!response.products[0].variants?.length,
-          firstVariantCalculatedPrice: response.products[0].variants?.[0]?.calculated_price,
-        } : null,
-      }, null, 2))
       const orderMap = new Map(rawRelated.map((p: any, i: number) => [p.id, i]))
       products = response.products.sort(
         (a, b) => (Number(orderMap.get(a.id)) || 0) - (Number(orderMap.get(b.id)) || 0)
       )
-    } else {
-      console.log("[RelatedProducts] API returned no products. Response:", JSON.stringify(response, null, 2))
     }
   } catch (error) {
     console.error("Failed to fetch related products with pricing:", error)
