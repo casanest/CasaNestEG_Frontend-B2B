@@ -19,8 +19,25 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: yarn
+          node-version: 22
+
+      - name: Enable Corepack
+        # Must run AFTER setup-node (so it applies to the node version we just
+        # installed) and BEFORE any yarn command. The project pins
+        # "packageManager": "yarn@3.2.3" in package.json, and the plain yarn
+        # binary on the runner is a Corepack shim that refuses to act until
+        # Corepack is explicitly enabled to fetch/use that pinned version.
+        run: corepack enable
+
+      - name: Cache Yarn dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            .yarn/cache
+            .yarn/install-state.gz
+          key: yarn-berry-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            yarn-berry-${{ runner.os }}-
 
       - name: Install dependencies
         run: yarn install --immutable
