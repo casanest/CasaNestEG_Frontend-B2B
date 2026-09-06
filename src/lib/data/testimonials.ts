@@ -29,7 +29,7 @@ export async function listTestimonials(homepage?: boolean): Promise<Testimonial[
       {
         method: "GET",
         query,
-        next: { revalidate: 300 },
+        next: { revalidate: 300, tags: ["testimonials"] },
       }
     )
 
