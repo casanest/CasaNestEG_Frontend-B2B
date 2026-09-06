@@ -74,10 +74,10 @@ export default function SideMenu({ productCategories, packages = [], projectGrou
   }
 
   const navItems = [
-    { href: '/', labelEn: 'Homepage', labelAr: 'الرئيسية', showArrow: false },
-    { action: 'submenu' as const, submenuView: 'solutions' as const, labelEn: 'Curated Solutions', labelAr: 'الحلول المتكاملة' },
-    { action: 'submenu' as const, submenuView: 'products' as const, labelEn: 'Products', labelAr: 'المنتجات' },
-    { action: 'submenu' as const, submenuView: 'projects' as const, labelEn: 'Projects', labelAr: 'المشاريع' },
+    { href: '/', labelEn: 'Home', labelAr: 'الرئيسية', showArrow: false },
+    { action: 'submenu' as const, submenuView: 'solutions' as const, labelEn: 'Integrated Solutions', labelAr: 'الحلول المتكاملة' },
+    { action: 'submenu' as const, submenuView: 'products' as const, labelEn: 'Products & Systems', labelAr: 'الأنظمة والتجهيزات' },
+    { action: 'submenu' as const, submenuView: 'projects' as const, labelEn: 'Portfolio', labelAr: 'سابقة الأعمال' },
     { href: '/about-us', labelEn: 'About Us', labelAr: 'من نحن', showArrow: false },
     { href: '/contact', labelEn: 'Contact Us', labelAr: 'تواصل معنا', showArrow: false },
     { href: '/faq', labelEn: 'FAQs', labelAr: 'الأسئلة الشائعة', showArrow: false },
@@ -98,13 +98,13 @@ export default function SideMenu({ productCategories, packages = [], projectGrou
   const isSolutionsActive = pathname.includes('/pre-curated-solutions')
   const isProjectsActive = pathname.includes('/our-services')
 
-  const productsText = isRTL ? 'المنتجات' : 'Products'
-  const solutionsText = isRTL ? 'الحلول المتكاملة' : 'Curated Solutions'
-  const projectsText = isRTL ? 'المشاريع' : 'Projects'
+  const productsText = isRTL ? 'الأنظمة والتجهيزات' : 'Products & Systems'
+  const solutionsText = isRTL ? 'الحلول المتكاملة' : 'Integrated Solutions'
+  const projectsText = isRTL ? 'سابقة الأعمال' : 'Portfolio'
   const viewAllProductsText = isRTL ? 'عرض كل المنتجات' : 'View All Products'
   const viewAllSolutionsText = isRTL ? 'عرض كل الحلول' : 'View All Solutions'
   const viewAllProjectsText = isRTL ? 'عرض كل المشاريع' : 'View All Projects'
-  const quoteListText = isRTL ? 'قائمة الأسعار' : 'Quote List'
+  const quoteListText = isRTL ? 'طلب عرض سعر' : 'Request a Quote'
   const languageText = isRTL ? 'اللغة' : 'Language'
   const requestQuoteText = isRTL ? 'اطلب عرض سعر' : 'Request a Quote'
   const viewAllCatText = isRTL ? 'عرض الكل' : 'View All'

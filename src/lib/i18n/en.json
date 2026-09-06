@@ -15,51 +15,52 @@
   },
   "home": {
     "hero": {
-      "titleLine1": "We Equip Spaces,",
-      "titleLine2": "You Build What Matters.",
-      "description": "From furniture and technology to complete space solutions, Casanest helps businesses and institutions plan, equip, and deliver functional environments built around their needs.",
+      "titleLine1": "We Equip Workspaces,",
+      "titleLine2": "You Lead Your Business.",
+      "description": "With over 25 years of experience, CasaNest is your strategic partner for turnkey fit-outs. From premium furniture and electrical appliances to advanced IT infrastructure, we save you the hassle of coordinating multiple vendors by delivering smart, fully integrated workspaces.",
       "primaryCta": "Discover Our Products",
       "secondaryCta": "Schedule a Call",
       "slideOf": "of"
     },
     "clients": {
       "eyebrow": "Our Clients",
-      "title": "Teams That Build for the Future",
-      "description": "We work with organizations across business, education, hospitality, and institutional environments to deliver spaces that perform",
+      "title": "Trusted by Leading National and Private Entities",
+      "description": "We take pride in our 25+ years of experience serving top-tier organizations. We go beyond supplying; we deliver high-performance, integrated environments built for long-term impact.",
       "aboutUsCta": "About Us"
     },
     "amenities": {
-      "badge": "Request Pricing - No Payment, No Obligation",
-      "title": "Everything You Need For Your Space",
-      "description": "Explore our selected products for professional environments — from everyday essentials to specialized project requirements.",
+      "badge": "Request a Custom Quote – Zero Obligation",
+      "title": "Turnkey Solutions for Your Corporate Environment.",
+      "description": "Explore our integrated suite tailored for professional workspaces. From premium executive furniture and electrical appliances to advanced technological infrastructure, we deliver complete solutions designed to meet your project specifications.",
       "exploreAllCta": "Explore All Products",
       "addToQuote": "Add to Quote List",
       "minOrder": "Min. Order Qty:",
       "pcs": "pcs"
     },
     "solutions": {
-      "eyebrow": "Ready-Made Packages",
-      "title": "Pre-Curated Solutions for Every Space",
-      "description": "Save time with our expert-assembled packages — tailored for hotels, offices, schools, hospitals, and more. Each bundle is customizable to fit your project.",
+      "eyebrow": "Sectors We Serve",
+      "title": "Comprehensive Fit-Outs Across All Sectors",
+      "description": "Whether you represent the government, public, or private sector, we have the operational capacity to fully equip all facilities. Our solutions cover corporate offices and startups, hospitals and healthcare complexes, universities, schools and nurseries, hotels and resorts, political headquarters, theaters, and cultural centers.",
       "preCuratedBadge": "Pre-Curated",
       "itemsIncluded": "items included in base bundle",
       "viewPackage": "View Package",
       "exploreAllCta": "Explore All Solutions"
     },
     "stats": {
-      "enterpriseClients": "Enterprise Clients",
-      "governorateCoverage": "Governorate Coverage",
-      "inMarket": "In the Egyptian Market"
+      "headline": "CasaNest at a Glance",
+      "yearsExperience": "25+ Years of Experience",
+      "trustedEnterprises": "Trusted by 500+ Enterprises",
+      "executionExcellence": "100% Execution Excellence"
     },
     "partners": {
       "eyebrow": "Our Partners",
-      "title": "More Than Products. A Partner for Your Project.",
-      "description": "From the first requirement to the final delivery, we bring products, expertise, and coordination together."
+      "title": "Trusted by Leading National and Private Entities",
+      "description": "We take pride in our 25+ years of experience serving top-tier organizations. We go beyond supplying; we deliver high-performance, integrated environments built for long-term impact."
     },
     "ourWork": {
       "eyebrow": "Our Work",
-      "title": "Spaces We've Helped Bring to Life",
-      "description": "Explore selected projects delivered for organizations across different industries and environments.",
+      "title": "High-Performance Environments We've Delivered.",
+      "description": "Explore a curated selection of turnkey projects executed for leading organizations across various sectors. At CasaNest, we transform strategic blueprints into fully operational facilities.",
       "exploreAllCta": "Explore All Projects"
     },
     "proposal": {
@@ -85,14 +86,14 @@
       "eyebrow": "Support",
       "title": "Frequently Asked Questions",
       "description": "Get answers for questions before you contact us.",
-      "q1": "How does the inquiry process work?",
-      "a1": "Browse our catalog or choose a pre-assembled Solution Package, add items to your Quote List, and submit your inquiry. Our team reviews your request and sends detailed pricing — no payment is required upfront.",
-      "q2": "Can I visit a showroom before ordering?",
-      "a2": "Yes, we welcome showroom visits by appointment. Contact our team to schedule a visit at your convenience.",
-      "q3": "What payment methods do you accept?",
-      "a3": "We accept bank transfers, cheques, and corporate purchase orders. Payment terms are discussed during the proposal stage.",
-      "q4": "Do you handle large-scale procurement projects?",
-      "a4": "Absolutely. We specialize in bulk procurement and project-scale deliveries, with dedicated project managers to oversee every stage."
+      "q1": "How does the Request for Quote process work?",
+      "a1": "Browse our catalog and add the items you need. Our engineering team will review your project scope and provide a detailed, zero-obligation commercial proposal.",
+      "q2": "What types of sectors and facilities do you equip?",
+      "a2": "We cover the government, public, and private sectors. We fully equip all types of turnkey projects including corporate offices, hospitals, universities, schools, hotels, theaters, and cultural centers.",
+      "q3": "Can our procurement team inspect the products prior to contracting?",
+      "a3": "Absolutely. We welcome your engineering and procurement teams to visit our showrooms to physically inspect our premium furniture and appliances before finalizing any agreement.",
+      "q4": "Do you have the capacity to handle mega-scale or national projects?",
+      "a4": "Yes. Backed by over 25 years of experience, we possess the financial stability and logistical infrastructure to execute the largest turnkey projects, ensuring strict adherence to delivery timelines."
     }
   },
   "faq": {

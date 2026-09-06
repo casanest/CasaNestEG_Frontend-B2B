@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { useCartStore, QuoteItem } from "@lib/store/useCartStore"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Thumbnail from "@modules/products/components/thumbnail"
-import { CloudUpload, X, AlertCircle, Loader2, ArrowRight, Minus, Plus, Trash2 } from "lucide-react"
+import { CloudUpload, X, AlertCircle, Loader2, ArrowRight, Minus, Plus, Trash2, ChevronDown } from "lucide-react"
 import { useLocale } from "next-intl"
 import { convertToLocale } from "@lib/util/money"
 
@@ -14,6 +14,36 @@ type QuoteFormProps = {
 }
 
 type SubmitStatus = "idle" | "loading" | "success" | "error"
+
+const governorates = [
+  { en: "Cairo", ar: "القاهرة" },
+  { en: "Giza", ar: "الجيزة" },
+  { en: "Alexandria", ar: "الإسكندرية" },
+  { en: "Dakahlia", ar: "الدقهلية" },
+  { en: "Red Sea", ar: "البحر الأحمر" },
+  { en: "Beheira", ar: "البحيرة" },
+  { en: "Faiyum", ar: "الفيوم" },
+  { en: "Gharbia", ar: "الغربية" },
+  { en: "Ismailia", ar: "الإسماعيلية" },
+  { en: "Menofia", ar: "المنوفية" },
+  { en: "Minya", ar: "المنيا" },
+  { en: "Qalyubia", ar: "القليوبية" },
+  { en: "New Valley", ar: "الوادي الجديد" },
+  { en: "Suez", ar: "السويس" },
+  { en: "Aswan", ar: "أسوان" },
+  { en: "Asyut", ar: "أسيوط" },
+  { en: "Beni Suef", ar: "بني سويف" },
+  { en: "Port Said", ar: "بورسعيد" },
+  { en: "Damietta", ar: "دمياط" },
+  { en: "Sharqia", ar: "الشرقية" },
+  { en: "South Sinai", ar: "جنوب سيناء" },
+  { en: "Kafr El Sheikh", ar: "كفر الشيخ" },
+  { en: "Matrouh", ar: "مطروح" },
+  { en: "Luxor", ar: "الأقصر" },
+  { en: "Qena", ar: "قنا" },
+  { en: "North Sinai", ar: "شمال سيناء" },
+  { en: "Sohag", ar: "سوهاج" },
+]
 
 export default function QuoteForm({ locale }: QuoteFormProps) {
   const isRTL = locale === "ar"
@@ -56,18 +86,19 @@ export default function QuoteForm({ locale }: QuoteFormProps) {
     : "Fill out the required information to assign an account manager to your order."
 
   const fullNameLabel = isRTL ? "الاسم الكامل" : "Full Name"
-  const fullNamePlaceholder = isRTL ? "مثال: علي" : "e.g. Aly"
-  const cityLabel = isRTL ? "المدينة" : "City"
+  const fullNamePlaceholder = isRTL ? "مثال: علي احمد ابراهيم" : "e.g. Aly"
+  const cityLabel = isRTL ? "المحافظة" : "Governorate"
   const cityPlaceholder = isRTL ? "مثال: المنصورة" : "e.g. Mansoura"
   const addressLabel = isRTL ? "العنوان" : "Address"
   const addressPlaceholder = isRTL ? "مثال: ١٢٣ الشارع الرئيسي، المنصورة" : "e.g. 123 Main St, Mansoura"
-  const emailLabel = isRTL ? "البريد الإلكتروني" : "Email Address"
-  const emailPlaceholder = isRTL ? "مثال: علي@company.com" : "e.g. aly@company.com"
+  const emailLabel = isRTL ? "البريد الإلكتروني (اختياري)" : "Email Address (Optional)"
+  const emailPlaceholder = isRTL ? "مثال: aliAhmed123@gmail.com" : "e.g. aly@company.com"
   const phoneLabel = isRTL ? "رقم الهاتف" : "Phone Number"
-  const phonePlaceholder = isRTL ? "مثال: +20 100 123 4567" : "e.g. +20 100 123 4567"
+  const phonePlaceholder = isRTL ? "مثال: +201001234567" : "e.g. +201001234567"
+
   const companyLabel = isRTL ? "اسم الشركة" : "Company Name"
   const companyPlaceholder = isRTL ? "مثال: شركاء تطوير القاهرة" : "e.g. Cairo Development Partners"
-  const messageLabel = isRTL ? "الرسالة" : "Message"
+  const messageLabel = isRTL ? "الرسالة (اختياري)" : "Message (Optional)"
   const messagePlaceholder = isRTL
     ? "أخبرنا عن متطلبات مشروعك، الكميات، والجداول الزمنية..."
     : "Tell us about your project requirements, quantities, and timelines..."
@@ -159,9 +190,9 @@ export default function QuoteForm({ locale }: QuoteFormProps) {
   }
 
   const handleSubmit = async () => {
-    if (!formData.fullName || !formData.email || !formData.phone || !formData.message) {
+    if (!formData.fullName || !formData.phone) {
       setSubmitStatus("error")
-      setErrorMessage(isRTL ? "يرجى ملء جميع الحقول المطلوبة." : "Please fill in all required fields.")
+      setErrorMessage(isRTL ? "يرجى ملء الاسم ورقم الهاتف." : "Please fill in your name and phone number.")
       return
     }
 
@@ -174,8 +205,13 @@ export default function QuoteForm({ locale }: QuoteFormProps) {
 
       const formPayload = new FormData()
       formPayload.append("customer_name", formData.fullName)
-      formPayload.append("customer_email", formData.email)
       formPayload.append("customer_phone", formData.phone)
+      if (formData.email) {
+        formPayload.append("customer_email", formData.email)
+      }
+      if (formData.message) {
+        formPayload.append("message", formData.message)
+      }
       if (formData.company) {
         formPayload.append("company_name", formData.company)
       }
@@ -185,7 +221,6 @@ export default function QuoteForm({ locale }: QuoteFormProps) {
       if (formData.address) {
         formPayload.append("address", formData.address)
       }
-      formPayload.append("message", formData.message)
 
       const rfqItems = items.map((item) => ({
         product_id: item.productId,
@@ -357,13 +392,27 @@ export default function QuoteForm({ locale }: QuoteFormProps) {
                 <p className="font-satoshi font-medium leading-[1.5] text-[#17284a] text-[14px] w-full">
                   {cityLabel}
                 </p>
-                <input
-                  type="text"
-                  value={formData.city}
-                  onChange={(e) => handleChange("city", e.target.value)}
-                  placeholder={cityPlaceholder}
-                  className="bg-[#f3f4f6] h-[52px] px-4 py-[14px] rounded-lg w-full font-satoshi font-normal leading-[1.5] text-[#1c1b1c] text-[16px] placeholder:text-[#5d5d61] focus:outline-none focus:ring-2 focus:ring-[#17284a]/20 transition"
-                />
+                <div className="relative w-full">
+                  <select
+                    value={formData.city}
+                    onChange={(e) => handleChange("city", e.target.value)}
+                    className="bg-[#f3f4f6] h-[52px] px-4 py-[14px] rounded-lg w-full font-satoshi font-normal leading-[1.5] text-[#1c1b1c] text-[16px] appearance-none focus:outline-none focus:ring-2 focus:ring-[#17284a]/20 transition cursor-pointer"
+                    defaultValue=""
+                  >
+                    <option value="" disabled>
+                      {isRTL ? "اختر المحافظة" : "Select a governorate"}
+                    </option>
+                    {governorates.map((gov) => (
+                      <option key={gov.en} value={gov.en}>
+                        {isRTL ? gov.ar : gov.en}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown
+                    size={20}
+                    className={`absolute top-1/2 -translate-y-1/2 text-[#17284a] pointer-events-none ${isRTL ? "left-4" : "right-4"}`}
+                  />
+                </div>
               </div>
             </div>
 
@@ -392,7 +441,7 @@ export default function QuoteForm({ locale }: QuoteFormProps) {
                   value={formData.email}
                   onChange={(e) => handleChange("email", e.target.value)}
                   placeholder={emailPlaceholder}
-                  className="bg-[#f3f4f6] h-[52px] px-4 py-[14px] rounded-lg w-full font-satoshi font-normal leading-[1.5] text-[#1c1b1c] text-[16px] placeholder:text-[#5d5d61] focus:outline-none focus:ring-2 focus:ring-[#17284a]/20 transition"
+                  className={`bg-[#f3f4f6] h-[52px] px-4 py-[14px] rounded-lg w-full font-satoshi font-normal leading-[1.5] text-[#1c1b1c] text-[16px] placeholder:text-[#5d5d61] focus:outline-none focus:ring-2 focus:ring-[#17284a]/20 transition ${isRTL ? "text-right" : ""}`}
                 />
               </div>
               <div className="flex flex-col gap-2 items-start w-full sm:flex-1">
@@ -404,7 +453,7 @@ export default function QuoteForm({ locale }: QuoteFormProps) {
                   value={formData.phone}
                   onChange={(e) => handleChange("phone", e.target.value)}
                   placeholder={phonePlaceholder}
-                  className="bg-[#f3f4f6] h-[52px] px-4 py-[14px] rounded-lg w-full font-satoshi font-normal leading-[1.5] text-[#1c1b1c] text-[16px] placeholder:text-[#5d5d61] focus:outline-none focus:ring-2 focus:ring-[#17284a]/20 transition"
+                  className={`bg-[#f3f4f6] h-[52px] px-4 py-[14px] rounded-lg w-full font-satoshi font-normal leading-[1.5] text-[#1c1b1c] text-[16px] placeholder:text-[#5d5d61] focus:outline-none focus:ring-2 focus:ring-[#17284a]/20 transition ${isRTL ? "text-right" : ""}`}
                 />
               </div>
             </div>

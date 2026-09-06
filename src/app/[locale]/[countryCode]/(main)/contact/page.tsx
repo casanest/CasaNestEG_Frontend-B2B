@@ -143,7 +143,7 @@ export default async function ContactPage({ params }: PageProps) {
                 </div>
                 {/* Row 3 - Location (full width, horizontal on mobile) */}
                 <a
-                  href="https://www.google.com/maps/place/Raneen+-+Faiyum/@29.3227053,30.8412534,20z/data=!4m6!3m5!1s0x145979f19890b951:0xdda9dba3c918178!8m2!3d29.3226987!4d30.8416217!16s%2Fg%2F11sbfgr1wf?entry=ttu&g_ep=EgoyMDI2MDgyNi4wIKXMDSoASAFQAw%3D%3D"
+                  href="https://www.google.com/maps/search/%D8%B4%D8%A7%D8%B1%D8%B9+%D8%A7%D8%AD%D9%85%D8%AF+%D8%B4%D9%88%D9%82%D9%8A+%D8%A7%D9%85%D8%AA%D8%AF%D8%A7%D8%AF+%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D9%81%D8%B8+%E2%80%93+%D8%A7%D8%A8%D8%B1%D8%A7%D8%AC+%D8%B1%D9%88%D9%8A%D8%A7%D9%84+%D8%B3%D9%8A%D8%AA%D9%8A+%D8%A7%D9%84%D8%A8%D8%B1%D8%AC+%D8%A7%D9%84%D8%AA%D8%A7%D9%86%D9%8A+%D8%A7%D9%84%D8%AF%D9%88%D8%B1+%D8%A7%D9%84%D9%88%D9%84++%E2%80%93+%D8%A7%D8%B9%D9%84%D9%8A+%D8%B1%D9%86%D9%8A%D9%86+%E2%80%93+%D8%A7%D9%84%D9%81%D9%8A%D9%88%D9%85%E2%80%AD/@29.3226553,30.8439463,723m/data=!3m2!1e3!4b1?entry=tts&g_ep=EgoyMDI2MDgzMS4wIPu8ASoASAFQAw%3D%3D&skid=e460d804-0ff0-4b41-89a0-d690d5d90716"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-white border border-[#e5e7eb] rounded-[12px] p-[16px] lg:p-[20px] w-full lg:flex-1 flex flex-row lg:flex-col gap-[16px] items-center lg:items-start hover:shadow-lg transition"
@@ -157,8 +157,28 @@ export default async function ContactPage({ params }: PageProps) {
                     </p>
                     <p className="text-[14px] lg:text-[16px] font-bold text-[#17284a]">
                       {isRTL
-                        ? "شارع أحمد شوكي، أبراج المدينة الملكية، فوق رنين، البرج الثاني، الطابق الأول العلوي"
+                        ? "شارع احمد شوقي امتداد المحافظ – ابراج رويال سيتي – اعلي رنين – الفيوم"
                         : "Ahmed Shawki st. Royal City towers, above Ranin, second tower, first upper floor"}
+                    </p>
+                  </div>
+                </a>
+                                <a
+                  href="https://www.google.com/maps/place/30%C2%B003'34.8%22N+31%C2%B011'43.9%22E/@30.0596581,31.1929455,17z/data=!3m1!4b1!4m4!3m3!8m2!3d30.0596581!4d31.1955204?hl=en&entry=ttu&g_ep=EgoyMDI2MDkwMS4wIKXMDSoASAFQAw%3D%3D"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-white border border-[#e5e7eb] rounded-[12px] p-[16px] lg:p-[20px] w-full lg:flex-1 flex flex-row lg:flex-col gap-[16px] items-center lg:items-start hover:shadow-lg transition"
+                >
+                  <div className="w-[40px] h-[40px] lg:w-[44px] lg:h-[44px] rounded-full bg-[#f3f4f6] flex items-center justify-center shrink-0">
+                    <MapPin size={20} className="text-[#17284a]" />
+                  </div>
+                  <div className="flex flex-col gap-[2px] lg:gap-[4px]">
+                    <p className="text-[14px] font-medium text-[#5d5d61]">
+                      {isRTL ? "الموقع" : "Location"}
+                    </p>
+                    <p className="text-[14px] lg:text-[16px] font-bold text-[#17284a]">
+                      {isRTL
+                        ? "عماره 5 – شارع البرج – الدور الخامس – ميدان لبنان – المهندسين"
+                        : "Building 5 – Al Burj Street – Fifth Floor – Lebanon Square – Mohandessin"}
                     </p>
                   </div>
                 </a>
@@ -187,7 +207,7 @@ export default async function ContactPage({ params }: PageProps) {
             </h2>
             <p className="text-[16px] lg:text-[18px] leading-[1.5] text-[#5d5d61] max-w-[900px]">
               {isRTL
-                ? "تابع كاسانيست عبر قنواتنا الاجتماعية لأحدث المشاريع والمنتجات والرؤى الصناعية."
+                ? "تابع كازانيست عبر قنواتنا الاجتماعية لأحدث المشاريع والمنتجات والرؤى الصناعية."
                 : "Follow Casanest across our social channels for the latest projects, products, and industry insights."}
             </p>
           </div>
@@ -244,37 +264,77 @@ export default async function ContactPage({ params }: PageProps) {
               className="text-[24px] leading-[1.2] text-[#17284a]"
               style={{ fontFamily: "var(--font-caveat), cursive" }}
             >
-              {isRTL ? "مكتبنا" : "Our Office"}
+              {isRTL ? "مكاتبنا" : "Our Offices"}
             </p>
             <h2 className="text-[24px] font-bold leading-[1.3] text-[#17284a]">
-              {isRTL ? "زر مكتبنا" : "Visit Our Office"}
+              {isRTL ? "زر مكاتبنا" : "Visit Our Offices"}
             </h2>
-            <p className="text-[16px] leading-[1.5] text-[#5d5d61]">
-              {isRTL
-                ? "مقر كاسانيست، القاهرة بزنس بارك، القاهرة الجديدة، مصر"
-                : "Casanest Headquarters, Cairo Business Park, New Cairo, Egypt"}
-            </p>
           </div>
-          {/* Map Container */}
-          <a
-            href="https://www.google.com/maps/place/Raneen+-+Faiyum/@29.3227053,30.8412534,20z/data=!4m6!3m5!1s0x145979f19890b951:0xdda9dba3c918178!8m2!3d29.3226987!4d30.8416217!16s%2Fg%2F11sbfgr1wf?entry=ttu&g_ep=EgoyMDI2MDgyNi4wIKXMDSoASAFQAw%3D%3D"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="relative bg-[#e5e7eb] rounded-[16px] overflow-hidden h-[280px] lg:h-[429px] w-full block hover:shadow-lg transition"
-          >
-            <img
-              src="/contact/map.webp"
-              alt="Office location map"
-              className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-            />
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[76px] h-[76px] lg:w-[102px] lg:h-[102px]">
-              <img
-                src="/contact/map-pin-bubble.svg"
-                alt="Map pin"
-                className="w-full h-full"
-              />
+          {/* Two Maps Side by Side (desktop) / Stacked (mobile) */}
+          <div className="flex flex-col lg:flex-row gap-[20px] lg:gap-[32px] w-full">
+            {/* Map 1 - Faiyum */}
+            <div className="flex flex-col gap-[12px] w-full lg:flex-1">
+              <div className="flex items-start gap-[10px]">
+                <div className="w-[36px] h-[36px] rounded-full bg-[#f3f4f6] flex items-center justify-center shrink-0">
+                  <MapPin size={18} className="text-[#17284a]" />
+                </div>
+                <div className="flex flex-col gap-[2px]">
+                  <p className="text-[14px] font-medium text-[#5d5d61]">
+                    {isRTL ? "فرع الفيوم" : "Faiyum Branch"}
+                  </p>
+                  <p className="text-[14px] lg:text-[16px] font-bold text-[#17284a]">
+                    {isRTL
+                      ? "شارع احمد شوقي امتداد المحافظ – ابراج رويال سيتي – اعلي رنين – الفيوم"
+                      : "Ahmed Shawki st. Royal City towers, above Ranin, second tower, first upper floor"}
+                  </p>
+                </div>
+              </div>
+              <a
+                href="https://www.google.com/maps/search/%D8%B4%D8%A7%D8%B1%D8%B9+%D8%A7%D8%AD%D9%85%D8%AF+%D8%B4%D9%88%D9%82%D9%8A+%D8%A7%D9%85%D8%AA%D8%AF%D8%A7%D8%AF+%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D9%81%D8%B8+%E2%80%93+%D8%A7%D8%A8%D8%B1%D8%A7%D8%AC+%D8%B1%D9%88%D9%8A%D8%A7%D9%84+%D8%B3%D9%8A%D8%AA%D9%8A+%D8%A7%D9%84%D8%A8%D8%B1%D8%AC+%D8%A7%D9%84%D8%AA%D8%A7%D9%86%D9%8A+%D8%A7%D9%84%D8%AF%D9%88%D8%B1+%D8%A7%D9%84%D9%88%D9%84++%E2%80%93+%D8%A7%D8%B9%D9%84%D9%8A+%D8%B1%D9%86%D9%8A%D9%86+%E2%80%93+%D8%A7%D9%84%D9%81%D9%8A%D9%88%D9%85%E2%80%AD/@29.3226553,30.8439463,723m/data=!3m2!1e3!4b1?entry=tts&g_ep=EgoyMDI2MDgzMS4wIPu8ASoASAFQAw%3D%3D&skid=e460d804-0ff0-4b41-89a0-d690d5d90716"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative bg-[#e5e7eb] rounded-[16px] overflow-hidden h-[280px] lg:h-[400px] w-full block hover:shadow-lg transition"
+              >
+                <iframe
+                  src="https://maps.google.com/maps?q=29.3226553,30.8439463&z=15&output=embed"
+                  className="absolute inset-0 w-full h-full border-0 pointer-events-none"
+                  loading="lazy"
+                  title="Faiyum office map"
+                />
+              </a>
             </div>
-          </a>
+            {/* Map 2 - Mohandessin */}
+            <div className="flex flex-col gap-[12px] w-full lg:flex-1">
+              <div className="flex items-start gap-[10px]">
+                <div className="w-[36px] h-[36px] rounded-full bg-[#f3f4f6] flex items-center justify-center shrink-0">
+                  <MapPin size={18} className="text-[#17284a]" />
+                </div>
+                <div className="flex flex-col gap-[2px]">
+                  <p className="text-[14px] font-medium text-[#5d5d61]">
+                    {isRTL ? "فرع المهندسين" : "Mohandessin Branch"}
+                  </p>
+                  <p className="text-[14px] lg:text-[16px] font-bold text-[#17284a]">
+                    {isRTL
+                      ? "عماره 5 – شارع البرج – الدور الخامس – ميدان لبنان – المهندسين"
+                      : "Building 5 – Al Burj Street – Fifth Floor – Lebanon Square – Mohandessin"}
+                  </p>
+                </div>
+              </div>
+              <a
+                href="https://www.google.com/maps/place/30%C2%B003'34.8%22N+31%C2%B011'43.9%22E/@30.0596581,31.1929455,17z/data=!3m1!4b1!4m4!3m3!8m2!3d30.0596581!4d31.1955204?hl=en&entry=ttu&g_ep=EgoyMDI2MDkwMS4wIKXMDSoASAFQAw%3D%3D"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative bg-[#e5e7eb] rounded-[16px] overflow-hidden h-[280px] lg:h-[400px] w-full block hover:shadow-lg transition"
+              >
+                <iframe
+                  src="https://maps.google.com/maps?q=30.0596581,31.1955204&z=15&output=embed"
+                  className="absolute inset-0 w-full h-full border-0 pointer-events-none"
+                  loading="lazy"
+                  title="Mohandessin office map"
+                />
+              </a>
+            </div>
+          </div>
         </div>
       </section>
     </main>

@@ -44,9 +44,9 @@ export default function Footer({ productCategories, collections, locale, socialM
   const isRTL = locale === "ar";
 
   const casanestLinks = [
-    { href: "/", label: isRTL ? "الرئيسية" : "Homepage" },
-    { href: "/our-services", label: isRTL ? "المشاريع" : "Projects" },
-    { href: "/store", label: isRTL ? "الحلول المنتقاة" : "Curated Solutions" },
+    { href: "/", label: isRTL ? "الرئيسية" : "Home" },
+    { href: "/our-services", label: isRTL ? "سابقة الأعمال" : "Portfolio" },
+    { href: "/store", label: isRTL ? "الحلول المتكاملة" : "Integrated Solutions" },
     { href: "/about-us", label: isRTL ? "من نحن" : "About Us" },
   ];
 

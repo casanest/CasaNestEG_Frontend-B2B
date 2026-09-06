@@ -11,12 +11,42 @@ import {
 } from "lucide-react"
 
 const subjectOptions = [
-  "General Inquiry",
-  "Product Question",
-  "Solution Package",
-  "Procurement Project",
-  "Partnership",
-  "Support",
+  { en: "General Inquiry", ar: "استفسار عام" },
+  { en: "Product Question", ar: "استفسار عن منتج" },
+  { en: "Solution Package", ar: "باقة حلول" },
+  { en: "Procurement Project", ar: "مشروع مشتريات" },
+  { en: "Partnership", ar: "شراكة" },
+  { en: "Support", ar: "دعم فني" },
+]
+
+const governorates = [
+  { en: "Cairo", ar: "القاهرة" },
+  { en: "Giza", ar: "الجيزة" },
+  { en: "Alexandria", ar: "الإسكندرية" },
+  { en: "Dakahlia", ar: "الدقهلية" },
+  { en: "Red Sea", ar: "البحر الأحمر" },
+  { en: "Beheira", ar: "البحيرة" },
+  { en: "Faiyum", ar: "الفيوم" },
+  { en: "Gharbia", ar: "الغربية" },
+  { en: "Ismailia", ar: "الإسماعيلية" },
+  { en: "Menofia", ar: "المنوفية" },
+  { en: "Minya", ar: "المنيا" },
+  { en: "Qalyubia", ar: "القليوبية" },
+  { en: "New Valley", ar: "الوادي الجديد" },
+  { en: "Suez", ar: "السويس" },
+  { en: "Aswan", ar: "أسوان" },
+  { en: "Asyut", ar: "أسيوط" },
+  { en: "Beni Suef", ar: "بني سويف" },
+  { en: "Port Said", ar: "بورسعيد" },
+  { en: "Damietta", ar: "دمياط" },
+  { en: "Sharqia", ar: "الشرقية" },
+  { en: "South Sinai", ar: "جنوب سيناء" },
+  { en: "Kafr El Sheikh", ar: "كفر الشيخ" },
+  { en: "Matrouh", ar: "مطروح" },
+  { en: "Luxor", ar: "الأقصر" },
+  { en: "Qena", ar: "قنا" },
+  { en: "North Sinai", ar: "شمال سيناء" },
+  { en: "Sohag", ar: "سوهاج" },
 ]
 
 type SubmitStatus = "idle" | "loading" | "success" | "error"
@@ -80,12 +110,12 @@ export default function ContactForm({ isRTL }: { isRTL: boolean }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!formData.name || !formData.email) {
+    if (!formData.name) {
       setSubmitStatus("error")
       setErrorMessage(
         isRTL
-          ? "يرجى ملء الاسم والبريد الإلكتروني."
-          : "Please fill in your name and email."
+          ? "يرجى ملء الاسم."
+          : "Please fill in your name."
       )
       return
     }
@@ -102,8 +132,12 @@ export default function ContactForm({ isRTL }: { isRTL: boolean }) {
 
       const formPayload = new FormData()
       formPayload.append("customer_name", formData.name)
-      formPayload.append("customer_email", formData.email)
-      formPayload.append("customer_phone", formData.phone)
+      if (formData.email) {
+        formPayload.append("customer_email", formData.email)
+      }
+      if (formData.phone) {
+        formPayload.append("customer_phone", formData.phone)
+      }
       if (formData.location) {
         formPayload.append("customer_address", formData.location)
       }
@@ -113,7 +147,9 @@ export default function ContactForm({ isRTL }: { isRTL: boolean }) {
       if (formData.subject) {
         formPayload.append("subject", formData.subject)
       }
-      formPayload.append("notes", formData.message)
+      if (formData.message) {
+        formPayload.append("notes", formData.message)
+      }
 
       files.forEach((file) => {
         formPayload.append("files", file)
@@ -251,20 +287,35 @@ export default function ContactForm({ isRTL }: { isRTL: boolean }) {
               value={formData.name}
               onChange={(e) => handleChange("name", e.target.value)}
               className="h-[44px] lg:h-[52px] bg-[#f3f4f6] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] text-[16px] text-[#17284a] placeholder:text-[#5d5d61] focus:outline-none focus:ring-2 focus:ring-[#17284a]/20"
-              placeholder={isRTL ? "مثال: علي" : "e.g. Aly"}
+              placeholder={isRTL ? "مثال: علي احمد ابراهيم" : "e.g. Aly"}
             />
           </div>
           <div className="flex-1 flex flex-col gap-[6px] lg:gap-[8px]">
             <label className="text-[14px] font-medium text-[#17284a]">
-              {isRTL ? "الموقع" : "Location"}
+              {isRTL ? "المحافظة" : "Governorate"}
             </label>
-            <input
-              name="location"
-              value={formData.location}
-              onChange={(e) => handleChange("location", e.target.value)}
-              className="h-[44px] lg:h-[52px] bg-[#f3f4f6] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] text-[16px] text-[#17284a] placeholder:text-[#5d5d61] focus:outline-none focus:ring-2 focus:ring-[#17284a]/20"
-              placeholder={isRTL ? "مثال: المنصورة" : "e.g. Mansoura"}
-            />
+            <div className="relative">
+              <select
+                name="location"
+                value={formData.location}
+                onChange={(e) => handleChange("location", e.target.value)}
+                className="h-[44px] lg:h-[52px] w-full bg-[#f3f4f6] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] text-[16px] text-[#17284a] appearance-none focus:outline-none focus:ring-2 focus:ring-[#17284a]/20 cursor-pointer"
+                defaultValue=""
+              >
+                <option value="" disabled>
+                  {isRTL ? "اختر المحافظة" : "Select a governorate"}
+                </option>
+                {governorates.map((gov) => (
+                  <option key={gov.en} value={gov.en}>
+                    {isRTL ? gov.ar : gov.en}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                size={20}
+                className={`absolute top-1/2 -translate-y-1/2 text-[#17284a] pointer-events-none ${isRTL ? "left-[14px] lg:left-[16px]" : "right-[14px] lg:right-[16px]"}`}
+              />
+            </div>
           </div>
         </div>
 
@@ -272,17 +323,16 @@ export default function ContactForm({ isRTL }: { isRTL: boolean }) {
         <div className="flex gap-[16px] flex-col lg:flex-row">
           <div className="flex-1 flex flex-col gap-[6px] lg:gap-[8px]">
             <label className="text-[14px] font-medium text-[#17284a]">
-              {isRTL ? "البريد الإلكتروني" : "Email Address"}
+              {isRTL ? "البريد الإلكتروني (اختياري)" : "Email Address (Optional)"}
             </label>
             <input
               name="email"
               type="email"
-              required
               value={formData.email}
               onChange={(e) => handleChange("email", e.target.value)}
-              className="h-[44px] lg:h-[52px] bg-[#f3f4f6] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] text-[16px] text-[#17284a] placeholder:text-[#5d5d61] focus:outline-none focus:ring-2 focus:ring-[#17284a]/20"
+              className={`h-[44px] lg:h-[52px] bg-[#f3f4f6] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] text-[16px] text-[#17284a] placeholder:text-[#5d5d61] focus:outline-none focus:ring-2 focus:ring-[#17284a]/20 ${isRTL ? "text-right" : ""}`}
               placeholder={
-                isRTL ? "مثال: علي@شركة.com" : "e.g. aly@company.com"
+                isRTL ? "مثال: aliAhmed123@gmail.com" : "e.g. aly@company.com"
               }
             />
           </div>
@@ -295,9 +345,10 @@ export default function ContactForm({ isRTL }: { isRTL: boolean }) {
               type="tel"
               value={formData.phone}
               onChange={(e) => handleChange("phone", e.target.value)}
-              className="h-[44px] lg:h-[52px] bg-[#f3f4f6] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] text-[16px] text-[#17284a] placeholder:text-[#5d5d61] focus:outline-none focus:ring-2 focus:ring-[#17284a]/20"
+              className={`h-[44px] lg:h-[52px] bg-[#f3f4f6] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] text-[16px] text-[#17284a] placeholder:text-[#5d5d61] focus:outline-none focus:ring-2 focus:ring-[#17284a]/20 ${isRTL ? "text-right" : ""}`}
               placeholder={
-                isRTL ? "مثال: +20 100 123 4567" : "e.g. +20 100 123 4567"
+                isRTL ? "مثال: +201001234567" : "e.g. +201001234567"
+
               }
             />
           </div>
@@ -338,14 +389,14 @@ export default function ContactForm({ isRTL }: { isRTL: boolean }) {
                 {isRTL ? "اختر موضوعاً" : "Select a topic"}
               </option>
               {subjectOptions.map((opt) => (
-                <option key={opt} value={opt}>
-                  {opt}
+                <option key={opt.en} value={opt.en}>
+                  {isRTL ? opt.ar : opt.en}
                 </option>
               ))}
             </select>
             <ChevronDown
               size={20}
-              className="absolute right-[14px] lg:right-[16px] top-1/2 -translate-y-1/2 text-[#17284a] pointer-events-none"
+              className={`absolute top-1/2 -translate-y-1/2 text-[#17284a] pointer-events-none ${isRTL ? "left-[14px] lg:left-[16px]" : "right-[14px] lg:right-[16px]"}`}
             />
           </div>
         </div>
@@ -353,7 +404,7 @@ export default function ContactForm({ isRTL }: { isRTL: boolean }) {
         {/* Message */}
         <div className="flex flex-col gap-[6px] lg:gap-[8px]">
           <label className="text-[14px] font-medium text-[#17284a]">
-            {isRTL ? "الرسالة" : "Message"}
+            {isRTL ? "الرسالة (اختياري)" : "Message (Optional)"}
           </label>
           <textarea
             name="message"

@@ -28,8 +28,8 @@ export default function AboutOverviewBento({ isRTL }: Props) {
           </div>
           <p className="text-[#423f38] text-[14px] leading-[1.5]" style={satoshiStyle}>
             {isRTL
-              ? "كازانيست مدفوعة برؤية متطلعة للأمام والتزام قوي بالجودة، بهدف إعادة تعريف مستقبل المساحات المهنية في مصر."
-              : "Casanest is driven by a forward-thinking vision and strong commitment to quality. Redefining professional spaces in Egypt with humans at the center of productivity."}
+              ? "كازانيست مدفوعة برؤية استراتيجية والتزام قوي بالجودة، بهدف إعادة تعريف مستقبل المساحات المهنية في مصر."
+              : "CasaNest is driven by a strategic vision and a strong commitment to quality, aiming to redefine the future of professional spaces in Egypt."}
           </p>
         </div>
         {/* Card 2: Enterprise Clients */}
@@ -38,12 +38,12 @@ export default function AboutOverviewBento({ isRTL }: Props) {
             500+
           </p>
           <p className="text-[#051026] text-[20px]" style={{ ...satoshiStyle, fontWeight: 700 }}>
-            {isRTL ? "عملاء مؤسسيون" : "Enterprise Clients"}
+            {isRTL ? "ثقة المؤسسات" : "Trusted Enterprises"}
           </p>
           <p className="text-[#2c2e35] text-[14px]" style={satoshiStyle}>
             {isRTL
-              ? "موثوق به من قبل الشركات الرائدة في القاهرة والإسكندرية والغردقة."
-              : "Trusted across Cairo, Alexandria, and Hurghada."}
+              ? "موثوق من قبل كبرى المؤسسات القومية والخاصة في مصر."
+              : "Trusted by leading national and private entities across Egypt."}
           </p>
         </div>
         {/* Card 3: Satisfaction */}
@@ -52,7 +52,7 @@ export default function AboutOverviewBento({ isRTL }: Props) {
             100%
           </p>
           <p className="text-[#051026] text-[12px]" style={satoshiStyle}>
-            {isRTL ? "معدل رضا العملاء" : "Client Satisfaction Rate"}
+            {isRTL ? "تميز في التنفيذ" : "Execution Excellence"}
           </p>
           <div className="relative rounded-lg w-full h-[120px] overflow-hidden">
             <img
@@ -81,8 +81,8 @@ export default function AboutOverviewBento({ isRTL }: Props) {
         </div>
         <p className="text-[#423f38] text-[18px] lg:text-[clamp(14px,1.4vw,20px)] leading-[1.4] flex-1" style={satoshiStyle}>
           {isRTL
-            ? "كازانيست مدفوعة برؤية متطلعة للأمام والتزام قوي بالجودة، بهدف إعادة تعريف مستقبل المساحات المهنية في مصر. نؤمن بأن البيئات الرائعة تبدأ بفهم الأشخاص الذين سيعيشون فيها، وأن التأثيث هو في النهاية حوار بين المساحة وإنتاجية الإنسان."
-            : "Casanest is driven by a forward-thinking vision and a strong commitment to quality, aiming to redefine the future of professional spaces in Egypt. We believe that great environments begin with understanding the people who will inhabit them, and that furnishing is ultimately a conversation between space and human productivity."}
+            ? "كازانيست مدفوعة برؤية استراتيجية والتزام قوي بالجودة، بهدف إعادة تعريف مستقبل المساحات المهنية في مصر. نؤمن بأن البيئات الرائعة تبدأ بفهم الأشخاص الذين سيعيشون فيها، وأن التأثيث هو في النهاية حوار بين المساحة وإنتاجية الإنسان."
+            : "CasaNest is driven by a strategic vision and a strong commitment to quality, aiming to redefine the future of professional spaces in Egypt. We believe that great environments begin with understanding the people who will inhabit them, and that furnishing is ultimately a conversation between space and human productivity."}
         </p>
       </div>
 
@@ -95,12 +95,12 @@ export default function AboutOverviewBento({ isRTL }: Props) {
           </p>
           <div className="flex flex-col gap-2 items-start w-full">
             <p className="text-[#141b34] text-[20px]" style={{ ...satoshiStyle, fontWeight: 700 }}>
-              {isRTL ? "عملاء مؤسسيون" : "Enterprise Clients"}
+              {isRTL ? "ثقة المؤسسات" : "Trusted Enterprises"}
             </p>
             <p className="text-[#2c2e35] text-[14px]" style={satoshiStyle}>
               {isRTL
-                ? "موثوق به من قبل الشركات الرائدة في القاهرة والإسكندرية والغردقة."
-                : "Trusted by leading businesses across Cairo, Alexandria, and Hurghada."}
+                ? "موثوق من قبل كبرى المؤسسات القومية والخاصة في مصر."
+                : "Trusted by leading national and private entities across Egypt."}
             </p>
           </div>
         </div>
@@ -120,12 +120,12 @@ export default function AboutOverviewBento({ isRTL }: Props) {
             </div>
             <div className="flex flex-col gap-3 items-start text-white">
               <p className="text-[24px] lg:text-[clamp(18px,2vw,28px)]" style={{ ...satoshiStyle, lineHeight: 1.25 }}>
-                {isRTL ? "نبني مساحات العمل، أنت تبني الأعمال" : "We Build Workspaces, You Build Business"}
+                {isRTL ? "نهيئ بيئات العمل المتكاملة، لتتفرغ أنت لقيادة أعمالك" : "We Equip Workspaces, You Lead Your Business"}
               </p>
               <p className="text-[16px]" style={{ ...satoshiStyle, lineHeight: 1.5 }}>
                 {isRTL
-                  ? "متخصصون في الأثاث ومعدات تكنولوجيا المعلومات والأجهزة وحلول مساحات العمل الكاملة في جميع أنحاء مصر."
-                  : "Specializing in furniture, IT equipment, appliances, and complete workspace solutions across Egypt."}
+                  ? "متخصصون في الأثاث والأجهزة الكهربائية والبنية التكنولوجية وحلول مساحات العمل المتكاملة في جميع أنحاء مصر."
+                  : "Specializing in furniture, electrical appliances, IT infrastructure, and complete workspace solutions across Egypt."}
               </p>
             </div>
           </div>
@@ -139,12 +139,12 @@ export default function AboutOverviewBento({ isRTL }: Props) {
             </p>
             <div className="flex flex-col gap-1 items-start w-full">
               <p className="text-[#141b34] text-[16px]" style={{ ...satoshiStyle, fontWeight: 700 }}>
-                {isRTL ? "معدل رضا العملاء" : "Client Satisfaction Rate"}
+                {isRTL ? "تميز في التنفيذ" : "Execution Excellence"}
               </p>
               <p className="text-[#423f38] text-[14px]" style={satoshiStyle}>
                 {isRTL
-                  ? "ضمان جودة شامل من التوريد إلى التسليم والتركيب."
-                  : "Comprehensive quality assurance from sourcing to delivery and installation."}
+                  ? "تميز شامل في التنفيذ من التوريد إلى التسليم والتركيب."
+                  : "Comprehensive execution excellence from sourcing to delivery and installation."}
               </p>
             </div>
           </div>

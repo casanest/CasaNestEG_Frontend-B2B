@@ -117,7 +117,7 @@ export default function ProductsDropdown({
         href="/store"
         className="flex items-center gap-1 text-[16px] font-medium text-black hover:text-[#17284a] transition-colors whitespace-nowrap"
       >
-        {isRTL ? "المنتجات" : "Products"}
+        {isRTL ? "الأنظمة والتجهيزات" : "Products & Systems"}
         <ChevronDown className="w-4 h-4" />
       </LocalizedClientLink>
 

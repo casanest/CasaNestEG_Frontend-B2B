@@ -53,7 +53,7 @@ const CartDropdown = ({
             className="relative flex items-center gap-2 bg-[#DCE3F0] px-4 py-2 rounded-xl text-[16px] font-medium text-black hover:bg-[#c9d4ea] transition-colors"
             style={{ fontFamily: "Satoshi, sans-serif", height: "40px" }}
           >
-            {isRTL ? "عروض الأسعار" : "Quote List"}
+            {isRTL ? "طلب عرض سعر" : "Request a Quote"}
             <div className="w-px h-[15px] bg-black opacity-20" />
             <div className="relative flex items-center">
               <FilePlus className="w-6 h-6 text-black" strokeWidth={1.5} />

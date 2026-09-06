@@ -61,12 +61,12 @@ export default async function Nav() {
     .filter((g) => g.projects.length > 0)
 
   const navLinksBefore = [
-    { href: "/", labelEn: "Homepage", labelAr: "الرئيسية" },
-    { href: "/pre-curated-solutions", labelEn: "Curated Solutions", labelAr: "الحلول المتكاملة" },
+    { href: "/", labelEn: "Home", labelAr: "الرئيسية" },
+    { href: "/pre-curated-solutions", labelEn: "Integrated Solutions", labelAr: "الحلول المتكاملة" },
   ]
 
   const navLinksAfter = [
-    { href: "/our-services", labelEn: "Projects", labelAr: "المشاريع" },
+    { href: "/our-services", labelEn: "Portfolio", labelAr: "سابقة الأعمال" },
     { href: "/about-us", labelEn: "About Us", labelAr: "من نحن" },
   ]
 
@@ -149,7 +149,7 @@ export default async function Nav() {
                     data-testid="nav-cart-link"
                     className="flex items-center gap-2 bg-[#dce3f0] px-4 py-2 rounded-xl text-[16px] font-medium text-black hover:bg-[#c9d4ea] transition-colors"
                   >
-                    {isRTL ? "قائمة الأسعار" : "Quote List"}
+                    {isRTL ? "طلب عرض سعر" : "Request a Quote"}
                     <FilePlus className="w-5 h-5" />
                   </LocalizedClientLink>
                 }

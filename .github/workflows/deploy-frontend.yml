@@ -1,0 +1,101 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+# Prevent overlapping deploys if two pushes land close together
+concurrency:
+  group: deploy-frontend
+  cancel-in-progress: false
+
+jobs:
+  build-check:
+    name: Build & sanity-check on GitHub runner
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build (fails on known silent-failure patterns)
+        run: |
+          set -o pipefail
+          yarn build 2>&1 | tee build.log
+
+          # Next.js can log a generateStaticParams/cookies() error and still
+          # exit 0. Catch that specific failure mode explicitly so CI fails
+          # loudly instead of shipping a build with zero prebuilt product pages.
+          if grep -qi "used \`cookies()\` inside \`generateStaticParams\`" build.log; then
+            echo "::error::generateStaticParams is calling cookies() at build time — static generation silently produced 0 pages. Fix src/lib/data/products.ts before deploying."
+            exit 1
+          fi
+
+          if grep -qi "No products found during static generation" build.log; then
+            echo "::error::Static generation produced no products — see build.log above."
+            exit 1
+          fi
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
+          retention-days: 7
+
+  deploy:
+    name: Deploy to VPS
+    needs: build-check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          # If a step fails, ssh-action returns non-zero and the job fails —
+          # no need for extra error handling here beyond `set -e` in the script.
+          script: |
+            set -e
+            cd /root/CASA_NEST_FRONT
+
+            echo ">>> Recording current commit for possible rollback"
+            PREV_COMMIT=$(git rev-parse HEAD)
+            echo "$PREV_COMMIT" > /root/.last_good_frontend_commit
+
+            echo ">>> Syncing to origin/main (reset, never merge/rebase on this box)"
+            git fetch origin main
+            git reset --hard origin/main
+
+            echo ">>> Installing dependencies"
+            yarn install --immutable
+
+            echo ">>> Building"
+            yarn build
+
+            echo ">>> Restarting PM2"
+            pm2 restart casa-nest-front --update-env
+
+            echo ">>> Health check"
+            sleep 5
+            if ! curl -fsS --max-time 10 http://localhost:3000/ -o /dev/null; then
+              echo "!!! Health check failed — rolling back to $PREV_COMMIT"
+              git reset --hard "$PREV_COMMIT"
+              yarn install --immutable
+              yarn build
+              pm2 restart casa-nest-front --update-env
+              echo "!!! Rolled back. Deploy failed."
+              exit 1
+            fi
+
+            echo ">>> Deploy succeeded, now at $(git rev-parse HEAD)"

@@ -266,7 +266,9 @@ export default async function Home({
 
   return (
     <>
-      <HeroSection banners={homepageData.banners.hero} locale={locale} dir={dir} />
+      <div className="-mt-[58px] md:-mt-[112px]">
+        <HeroSection banners={homepageData.banners.hero} locale={locale} dir={dir} />
+      </div>
       <OurClients banners={homepageData.banners.past_customer} locale={locale} dir={dir} />
       <Amenities products={homepageProducts} locale={locale} dir={dir} region={region} />
       <PreCuratedSolutions packages={homepageData.packages} locale={locale} dir={dir} />

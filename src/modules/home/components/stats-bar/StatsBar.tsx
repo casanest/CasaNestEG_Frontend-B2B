@@ -8,9 +8,9 @@ export default function StatsBar({ dir }: StatsBarProps) {
   const t = useTranslations("home.stats")
 
   const stats = [
-    { value: "500+", label: t("enterpriseClients") },
-    { value: "27", label: t("governorateCoverage") },
-    { value: "25+ Years", label: t("inMarket") },
+    { value: "25+ Years", label: t("yearsExperience") },
+    { value: "500+", label: t("trustedEnterprises") },
+    { value: "100%", label: t("executionExcellence") },
   ]
 
   return (

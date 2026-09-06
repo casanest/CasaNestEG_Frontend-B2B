@@ -12,14 +12,14 @@ export default function HeroSplit({ isRTL, locale }: Props) {
           style={{ ...satoshiStyle, fontWeight: 700 }}
         >
           {isRTL
-            ? "حلول مساحات العمل التي كنت تبحث عنها"
-            : "The Workspace Solutions You've Been Searching For"}
+            ? "شريكك الاستراتيجي لتجهيز المقرات بنظام تسليم المفتاح"
+            : "Your Strategic Partner for Turnkey Fit-Outs"}
         </h1>
         <div className="flex flex-col gap-6 lg:gap-[clamp(16px,1.2vw,32px)] items-start max-w-[689px] w-full">
           <p className="text-[#a8b8cc] text-[14px] lg:text-[clamp(13px,1.3vw,18px)] leading-[1.5]" style={{ ...satoshiStyle, fontWeight: 300 }}>
             {isRTL
-              ? "نحن نبسط تجهيز المساحات التجارية من خلال تنظيم احتياجات مساحة عملك. من أجهزة المطبخ الثقيلة والأثاث التنفيذي الحديث إلى أجهزة الشبكات القوية، نساعد الشركات على الاختيار والتخصيص وطلب عروض الأسعار على نطاق واسع."
-              : "We streamline commercial fit-outs by organizing your workspace essentials. From heavy kitchen appliances and modern executive furniture to powerful networking hardware, we help businesses select, customize, and quote at scale."}
+              ? "بخبرة تمتد لأكثر من 25 عاما، كازانيست هي شريكك الاستراتيجي لتجهيز كافة المقرات بنظام تسليم المفتاح. من الأثاث الإداري والأجهزة الكهربائية إلى البنية التكنولوجية، نوفر عليك عناء التنسيق مع جهات مختلفة، لنخلق مساحات عمل ذكية تلبي تطلعاتك وتوفر وقت وميزانية شركتك."
+              : "With over 25 years of experience, CasaNest is your strategic partner for turnkey fit-outs. From premium furniture and electrical appliances to advanced IT infrastructure, we save you the hassle of coordinating multiple vendors by delivering smart, fully integrated workspaces."}
           </p>
           <a
             href={`/${locale}/products`}
