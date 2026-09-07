@@ -17,7 +17,7 @@ type ProductCardProps = {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
-    const { cheapestPrice } = getProductPrice({ product })
+    const { cheapestPrice } = getProductPrice({ product, locale })
     const [isAdding, setIsAdding] = useState(false)
     const [showSuccess, setShowSuccess] = useState(false)
     const [imageFailed, setImageFailed] = useState(false)

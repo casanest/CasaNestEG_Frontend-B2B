@@ -19,18 +19,18 @@ export default function PreCuratedSolutions({
 
   return (
     <section
-      className="bg-white flex flex-col gap-[24px] md:gap-[clamp(30px,4vw,40px)] items-start md:items-center px-[16px] md:px-[clamp(16px,4vw,60px)] py-[44px] md:py-[clamp(40px,5vw,80px)] w-full"
+      className="bg-white flex flex-col gap-[24px] md:gap-[clamp(30px,4vw,40px)] items-start md:items-center justify-center min-h-[100svh] px-[16px] md:px-[clamp(16px,4vw,60px)] py-[44px] md:py-[clamp(40px,5vw,80px)] w-full"
       dir={dir}
     >
       {/* Header */}
       <div className="flex flex-col gap-[8px] md:gap-[clamp(10px,1vw,16px)] items-center text-center w-full">
-        <p className="font-caveat text-[#17284a] text-[24px] md:text-[clamp(16px,1.5vw,24px)] leading-[1.2]">
+        <p className="font-caveat text-[#17284a] text-[32px] md:text-[clamp(28px,2.5vw,40px)] leading-[1.2]">
           {t("eyebrow")}
         </p>
         <h2 className="text-[#17284a] text-[24px] md:text-[clamp(24px,2.8vw,40px)] leading-[1.18] font-medium">
           {t("title")}
         </h2>
-        <p className="text-black/80 text-[16px] md:text-[clamp(14px,1.6vw,24px)] leading-[1.3] max-w-[840px]">
+        <p className="text-black/80 text-[16px] md:text-[clamp(14px,1.6vw,24px)] leading-[1.3] max-w-[840px] md:line-clamp-2">
           {t("description")}
         </p>
       </div>
@@ -47,7 +47,7 @@ export default function PreCuratedSolutions({
           />
         ))}
       </div>
-      <div className="hidden md:flex flex-col gap-[clamp(16px,1.5vw,20px)] w-full max-w-[1392px]">
+      <div className="hidden md:flex flex-col gap-[clamp(16px,1.5vw,20px)] w-full max-w-[calc(63vw+389px)]">
         {packages.length > 0 && (
           <>
             <div className="flex gap-[clamp(16px,1.5vw,20px)] w-full">
@@ -81,10 +81,10 @@ export default function PreCuratedSolutions({
         href="/pre-curated-solutions"
         className="group border border-black flex gap-[8px] items-center justify-center px-[20px] md:px-[clamp(20px,2.5vw,36px)] py-[20px] md:py-[clamp(16px,1.6vw,24px)] rounded-[16px] w-full md:w-[clamp(160px,16vw,240px)] hover:bg-[#17284a] hover:text-white hover:border-[#17284a] transition-colors"
       >
-        <span className="text-black text-[16px] md:text-[clamp(13px,1.1vw,16px)] font-medium group-hover:text-white">
+        <span className="text-black text-[16px] md:text-[clamp(13px,1vw,14px)] font-medium group-hover:text-white">
           {t("exploreAllCta")}
         </span>
-        <ArrowRight className="w-[20px] h-[20px] md:w-[clamp(16px,1.3vw,20px)] md:h-[clamp(16px,1.3vw,20px)] text-black group-hover:text-white" />
+        <ArrowRight className={`w-[20px] h-[20px] md:w-[clamp(16px,1.3vw,20px)] md:h-[clamp(16px,1.3vw,20px)] text-black group-hover:text-white ${isRTL ? "rotate-180" : ""}`} />
       </LocalizedClientLink>
     </section>
   )
@@ -109,10 +109,10 @@ function PackageCard({
     return (
       <LocalizedClientLink
         href={`/pre-curated-solutions/${pkg.slug}`}
-        className="bg-white border border-[#e5e7eb] flex flex-col w-[285px] shrink-0 snap-center overflow-hidden rounded-[12px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.06)] hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)] transition-shadow"
+        className="bg-white border border-[#e5e7eb] flex flex-col w-[256px] shrink-0 snap-center overflow-hidden rounded-[12px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.06)] hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)] transition-shadow"
       >
         {/* Image on top */}
-        <div className="relative w-full h-[220px] shrink-0">
+        <div className="relative w-full h-[198px] shrink-0">
           {pkg.image_url && (
             <img
               src={pkg.image_url}
@@ -160,10 +160,10 @@ function PackageCard({
   return (
     <LocalizedClientLink
       href={`/pre-curated-solutions/${pkg.slug}`}
-      className="bg-white border border-[#e5e7eb] flex flex-1 h-[clamp(180px,18vw,272px)] items-start overflow-hidden rounded-[12px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.06)] hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)] transition-shadow min-w-0"
+      className="bg-white border border-[#e5e7eb] flex flex-1 h-[clamp(162px,16.2vw,245px)] items-start overflow-hidden rounded-[12px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.06)] hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)] transition-shadow min-w-0"
     >
       {/* Image */}
-      <div className="relative w-[clamp(160px,18vw,280px)] h-full shrink-0">
+      <div className="relative w-[clamp(144px,16.2vw,252px)] h-full shrink-0">
         {pkg.image_url && (
           <img
             src={pkg.image_url}

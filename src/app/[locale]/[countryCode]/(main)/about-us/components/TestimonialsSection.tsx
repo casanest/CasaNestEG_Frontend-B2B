@@ -16,7 +16,7 @@ export default function TestimonialsSection({ isRTL, testimonials }: OwnProps) {
     >
       <div className="content-container flex flex-col gap-6 lg:gap-[clamp(24px,3vw,40px)] items-center w-full">
       <div className="flex flex-col gap-2 lg:gap-[clamp(8px,0.8vw,12px)] items-center text-center w-full">
-        <p className="text-black text-[24px]" style={caveatStyle}>
+        <p className="text-black text-[32px] lg:text-[clamp(28px,2.5vw,40px)]" style={caveatStyle}>
           {isRTL ? "آراء العملاء" : "Testimonials"}
         </p>
         <h2 className="text-[#17284a] text-[24px] lg:text-[clamp(24px,2.8vw,40px)] lg:text-[clamp(28px,3.5vw,48px)]" style={{ ...satoshiStyle, fontWeight: 700 }}>

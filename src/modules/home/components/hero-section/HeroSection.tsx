@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useTranslations, useLocale } from "next-intl"
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, ArrowRight, ArrowLeft } from "lucide-react"
 import { Banner } from "@lib/data/banners"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
@@ -79,7 +79,7 @@ export default function HeroSection({ banners, locale, dir }: HeroSectionProps) 
   }, [emblaRef, slideCount, isRTL])
 
   return (
-    <section className="relative w-full h-[70svh] min-h-[420px] max-h-[650px] md:h-[clamp(420px,65vw,900px)] overflow-hidden" dir={dir}>
+    <section className="relative w-full h-[100svh] min-h-[420px] overflow-hidden" dir={dir}>
       {/* Background slides */}
       <div
         ref={setEmblaRef}
@@ -108,10 +108,10 @@ export default function HeroSection({ banners, locale, dir }: HeroSectionProps) 
 
       {/* Content overlay */}
       <div className="absolute inset-0 flex flex-col justify-end items-center p-[16px] md:px-[clamp(60px,8vw,100px)] md:pt-[clamp(20px,4vw,60px)] pb-[16px] md:pb-[clamp(20px,3vw,40px)]">
-        <div className="flex flex-col gap-[16px] md:gap-[clamp(16px,2vw,24px)] max-w-[1392px] w-full">
+        <div className="flex flex-col gap-[16px] md:gap-[clamp(16px,2vw,24px)] max-w-[calc(70vw+432px)] w-full">
           {/* Heading */}
           <div className="flex flex-col gap-[8px] md:gap-[clamp(10px,1.2vw,16px)]">
-            <h1 className="text-white text-[28px] md:text-[clamp(28px,4.5vw,56px)] leading-[1.1] font-normal">
+            <h1 className="text-white text-[28px] md:text-[clamp(28px,4.5vw,56px)] leading-[1.25] font-normal">
               {t("titleLine1")}
               <br />
               {t("titleLine2")}
@@ -127,19 +127,19 @@ export default function HeroSection({ banners, locale, dir }: HeroSectionProps) 
               href="/store"
               className="bg-[#17284a] flex gap-[8px] items-center justify-center px-[20px] md:px-[clamp(20px,2.5vw,36px)] py-[20px] md:py-[clamp(16px,1.6vw,24px)] rounded-[16px] w-full md:w-[clamp(160px,16vw,250px)] hover:bg-[#0f1a2e] transition-colors"
             >
-              <span className="text-white text-[16px] md:text-[clamp(13px,1.1vw,16px)] font-medium text-center">
+              <span className="text-white text-[16px] md:text-[clamp(13px,1vw,14px)] font-medium text-center">
                 {t("primaryCta")}
               </span>
-              <ArrowRight className="w-[20px] h-[20px] md:w-[clamp(16px,1.3vw,20px)] md:h-[clamp(16px,1.3vw,20px)] text-white" />
+              {isRTL ? <ArrowLeft className="w-[20px] h-[20px] md:w-[clamp(16px,1.3vw,20px)] md:h-[clamp(16px,1.3vw,20px)] text-white" /> : <ArrowRight className="w-[20px] h-[20px] md:w-[clamp(16px,1.3vw,20px)] md:h-[clamp(16px,1.3vw,20px)] text-white" />}
             </LocalizedClientLink>
             <LocalizedClientLink
               href="/contact"
               className="bg-[#cdd6e9] flex gap-[8px] items-center justify-center px-[20px] md:px-[clamp(20px,2.5vw,36px)] py-[20px] md:py-[clamp(16px,1.6vw,24px)] rounded-[16px] w-full md:w-[clamp(160px,16vw,250px)] hover:bg-[#cdd6e9]/80 transition-colors"
             >
-              <span className="text-[#17284a] text-[16px] md:text-[clamp(13px,1.1vw,16px)] font-medium text-center">
+              <span className="text-[#17284a] text-[16px] md:text-[clamp(13px,1vw,14px)] font-medium text-center">
                 {t("secondaryCta")}
               </span>
-              <ArrowRight className="w-[20px] h-[20px] md:w-[clamp(16px,1.3vw,20px)] md:h-[clamp(16px,1.3vw,20px)] text-[#17284a]" />
+              {isRTL ? <ArrowLeft className="w-[20px] h-[20px] md:w-[clamp(16px,1.3vw,20px)] md:h-[clamp(16px,1.3vw,20px)] text-[#17284a]" /> : <ArrowRight className="w-[20px] h-[20px] md:w-[clamp(16px,1.3vw,20px)] md:h-[clamp(16px,1.3vw,20px)] text-[#17284a]" />}
             </LocalizedClientLink>
           </div>
 

@@ -44,7 +44,7 @@ const CheckoutSummary = async ({ cart }: { cart: any }) => {
                 {currentShippingMethod.amount && ` - ${convertToLocale({
                   amount: currentShippingMethod.amount / 100,
                   currency_code: cart?.currency_code || 'EUR',
-                  locale: locale === 'ar' ? 'ar-EG' : 'en-US'
+                  locale
                 })}`}
               </span>
             </div>

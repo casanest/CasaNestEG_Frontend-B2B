@@ -62,7 +62,7 @@ export default function WorkGalleryFan({ isRTL }: Props) {
     >
       <div className="content-container flex flex-col gap-5 lg:gap-[clamp(24px,4vw,64px)] items-start lg:items-center w-full">
       <div className="flex flex-col gap-1.5 lg:gap-[clamp(8px,0.8vw,12px)] items-start lg:items-center">
-        <p className="text-[#fdb022] text-[24px]" style={caveatStyle}>
+        <p className="text-[#fdb022] text-[32px] lg:text-[clamp(28px,2.5vw,40px)]" style={caveatStyle}>
           {isRTL ? "خلف الكواليس" : "Behind the Scenes"}
         </p>
         <p className="text-white text-[24px] lg:text-[clamp(24px,2.8vw,40px)] lg:text-center" style={{ ...satoshiStyle, fontWeight: 700 }}>

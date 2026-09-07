@@ -25,8 +25,9 @@ export default function TimelineCarousel({ milestones, isRTL }: Props) {
   const scroll = (direction: "left" | "right") => {
     if (!scrollRef.current) return
     const amount = 276
+    const sign = direction === "left" ? -1 : 1
     scrollRef.current.scrollBy({
-      left: direction === "left" ? -amount : amount,
+      left: isRTL ? -sign * amount : sign * amount,
       behavior: "smooth",
     })
   }
@@ -35,7 +36,7 @@ export default function TimelineCarousel({ milestones, isRTL }: Props) {
     <div className="w-full">
       <div
         ref={scrollRef}
-        className="flex gap-4 lg:gap-[clamp(16px,1.5vw,24px)] items-start overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2"
+        className="flex gap-4 lg:gap-[clamp(16px,1.5vw,24px)] items-stretch overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2"
         dir={isRTL ? "rtl" : "ltr"}
       >
         {milestones.map((m, i) => (
@@ -85,14 +86,14 @@ export default function TimelineCarousel({ milestones, isRTL }: Props) {
           className="bg-[#17284a] flex items-center justify-center p-2 rounded-full hover:opacity-80 transition-opacity"
           aria-label="Previous"
         >
-          <ChevronLeft size={24} color="white" />
+          {isRTL ? <ChevronRight size={24} color="white" /> : <ChevronLeft size={24} color="white" />}
         </button>
         <button
           onClick={() => scroll("right")}
           className="bg-[#17284a] flex items-center justify-center p-2 rounded-full hover:opacity-80 transition-opacity"
           aria-label="Next"
         >
-          <ChevronRight size={24} color="white" />
+          {isRTL ? <ChevronLeft size={24} color="white" /> : <ChevronRight size={24} color="white" />}
         </button>
       </div>
     </div>

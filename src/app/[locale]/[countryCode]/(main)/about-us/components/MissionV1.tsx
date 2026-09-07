@@ -8,7 +8,7 @@ export default function MissionV1({ isRTL }: Props) {
     >
       <div className="content-container flex flex-col gap-6 lg:flex-row lg:gap-[clamp(24px,4vw,60px)] items-start lg:items-center w-full">
       <div className="flex flex-1 flex-col gap-3 lg:gap-[clamp(16px,1.2vw,24px)] items-start">
-        <p className="text-[#17284a] text-[24px] lg:hidden" style={caveatStyle}>
+        <p className="text-[#17284a] text-[32px] lg:hidden" style={caveatStyle}>
           {isRTL ? "مهمتنا" : "Our Mission"}
         </p>
         <h2

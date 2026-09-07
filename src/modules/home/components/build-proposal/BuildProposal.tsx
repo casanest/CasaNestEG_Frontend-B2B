@@ -18,13 +18,13 @@ export default function BuildProposal({ dir }: BuildProposalProps) {
 
   return (
     <section
-      className="bg-white relative flex flex-col gap-[24px] md:gap-[clamp(30px,4vw,60px)] items-center justify-center px-[16px] md:px-[clamp(16px,4vw,60px)] py-[44px] md:py-[clamp(40px,5vw,80px)] w-full overflow-hidden"
+      className="bg-white relative flex flex-col gap-[24px] md:gap-[clamp(30px,4vw,60px)] items-center justify-center min-h-[100svh] px-[16px] md:px-[clamp(16px,4vw,60px)] py-[44px] md:py-[clamp(40px,5vw,80px)] w-full overflow-hidden"
       dir={dir}
     >
       {/* Header */}
       <div className="flex flex-col gap-[8px] md:gap-[clamp(10px,1vw,16px)] items-center text-center w-full">
         <div className="flex flex-col gap-[8px] md:gap-[clamp(6px,0.6vw,8px)] items-center">
-          <p className="font-caveat text-[#17284a] text-[24px] md:text-[clamp(16px,1.5vw,24px)] leading-[1.2]">
+          <p className="font-caveat text-[#17284a] text-[32px] md:text-[clamp(28px,2.5vw,40px)] leading-[1.2]">
             {t("eyebrow")}
           </p>
           <h2 className="text-black text-[24px] md:text-[clamp(24px,2.8vw,40px)] leading-[1.18] font-medium max-w-[900px]">
@@ -37,7 +37,7 @@ export default function BuildProposal({ dir }: BuildProposalProps) {
       </div>
 
       {/* Steps with centered chair image */}
-      <div className="relative flex flex-col md:flex-row w-full max-w-[1392px] items-start justify-between gap-[24px] md:gap-0">
+      <div className="relative flex flex-col md:flex-row w-full max-w-[calc(70vw+432px)] items-start justify-between gap-[24px] md:gap-0">
         {/* Chair image - centered behind steps on desktop only */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none hidden md:block">
           <img
@@ -75,7 +75,7 @@ export default function BuildProposal({ dir }: BuildProposalProps) {
                     <img
                       src="/chair.webp"
                       alt="Chair"
-                      className="w-[200px] h-[200px] object-contain -scale-x-100"
+                      className="w-[400px] h-[300px] object-contain -scale-x-100"
                     />
                   </div>
                 </>
@@ -112,12 +112,12 @@ export default function BuildProposal({ dir }: BuildProposalProps) {
       {/* CTA - full width on mobile */}
       <LocalizedClientLink
         href="/store"
-        className="bg-[#17284a] flex gap-[8px] items-center justify-center px-[24px] md:px-[clamp(24px,2.5vw,36px)] py-[20px] md:py-[clamp(18px,1.6vw,24px)] rounded-[16px] w-full md:w-[clamp(200px,16vw,250px)] hover:bg-[#0f1a2e] transition-colors"
+        className="bg-[#17284a] flex gap-[8px] items-center justify-center px-[24px] md:px-[clamp(24px,2.5vw,36px)] py-[20px] md:py-[clamp(18px,1.6vw,24px)] rounded-[16px] w-full md:w-[clamp(200px,16vw,250px)] hover:bg-[#0f1a2e] transition-colors mt-[15px]"
       >
         <span className="text-white text-[16px] md:text-[clamp(14px,1.1vw,16px)] font-medium text-center">
           {t("discoverCta")}
         </span>
-        <ArrowRight className="w-[20px] h-[20px] md:w-[clamp(16px,1.3vw,20px)] md:h-[clamp(16px,1.3vw,20px)] text-white" />
+        <ArrowRight className={`w-[20px] h-[20px] md:w-[clamp(16px,1.3vw,20px)] md:h-[clamp(16px,1.3vw,20px)] text-white ${dir === "rtl" ? "rotate-180" : ""}`} />
       </LocalizedClientLink>
     </section>
   )

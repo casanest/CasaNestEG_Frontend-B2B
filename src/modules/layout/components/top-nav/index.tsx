@@ -11,7 +11,7 @@ export default function TopNav() {
   const translations = {
     faqs: isRTL ? "الأسئلة الشائعة" : "FAQs",
     contactUs: isRTL ? "تواصل معنا" : "Contact Us",
-    phoneNumber: "9200 123 456"
+    phoneNumber: "01233365368"
   };
 
   return (
@@ -19,7 +19,7 @@ export default function TopNav() {
       className="hidden md:block w-full bg-[#c1cee8] overflow-hidden"
       dir={isRTL ? "rtl" : "ltr"}
     >
-      <div className="content-container mx-auto flex items-center justify-between md:justify-end gap-2 sm:gap-4 md:gap-7 py-1.5 overflow-hidden">
+      <div className="content-container mx-auto flex items-center justify-start gap-4 sm:gap-6 md:gap-12 py-1.5 overflow-hidden">
         <LocalizedClientLink
           href="/faq"
           className="text-[14px] font-medium text-black hover:text-[#17284a] transition-colors"
@@ -34,7 +34,7 @@ export default function TopNav() {
         >
           {translations.contactUs}
         </LocalizedClientLink>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" dir="ltr">
           <Phone className="w-5 h-5 text-[#17284a]" />
           <a
             href={`tel:${translations.phoneNumber.replace(/\s/g, "")}`}

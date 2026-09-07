@@ -79,7 +79,7 @@ export default async function ContactPage({ params }: PageProps) {
               {/* Heading Block */}
               <div className="flex flex-col gap-[8px] lg:gap-[16px]">
                 <p
-                  className="text-[24px] leading-[1.2] text-[#17284a]"
+                  className="text-[32px] lg:text-[clamp(28px,2.5vw,40px)] leading-[1.2] text-[#17284a]"
                   style={{ fontFamily: "var(--font-caveat), cursive" }}
                 >
                   {isRTL ? "تواصل معنا" : "Get in Touch"}
@@ -197,7 +197,7 @@ export default async function ContactPage({ params }: PageProps) {
           {/* Heading */}
           <div className="flex flex-col gap-[8px] lg:gap-[12px] items-center text-center">
             <p
-              className="text-[24px] leading-[1.2] text-[#17284a]"
+              className="text-[32px] lg:text-[clamp(28px,2.5vw,40px)] leading-[1.2] text-[#17284a]"
               style={{ fontFamily: "var(--font-caveat), cursive" }}
             >
               {isRTL ? "وسائل التواصل" : "Social Media"}
@@ -213,7 +213,7 @@ export default async function ContactPage({ params }: PageProps) {
           </div>
 
           {/* Social Cards */}
-          <div className="grid grid-cols-2 lg:flex gap-[16px]">
+          <div className="grid grid-cols-2 lg:flex lg:justify-center gap-[16px] lg:gap-[3vw]">
             {socialMediaLinks.map((link) => {
               const visual = platformVisuals[link.platform] || defaultVisual;
               const title = link.label || link.platform;
@@ -224,7 +224,7 @@ export default async function ContactPage({ params }: PageProps) {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`bg-gradient-to-r ${visual.gradient} to-white border border-[#e5e7eb] rounded-[16px] lg:rounded-[20px] flex flex-col items-center justify-between p-[16px] lg:px-[20px] lg:py-[24px] overflow-hidden hover:shadow-lg transition h-[233px] lg:h-[392px] w-full lg:flex-1`}
+                  className={`bg-gradient-to-r ${visual.gradient} to-white border border-[#e5e7eb] rounded-[16px] lg:rounded-[20px] flex flex-col items-center justify-between p-[16px] lg:px-[20px] lg:py-[24px] overflow-hidden hover:shadow-lg transition h-[233px] lg:h-[392px] w-full lg:w-[13vw] lg:flex-none`}
                 >
                   <div className="flex flex-col gap-[12px] items-center w-full">
                     <div className="w-[60px] h-[60px] lg:w-[64px] lg:h-[64px] flex items-center justify-center">
@@ -261,7 +261,7 @@ export default async function ContactPage({ params }: PageProps) {
           {/* Text Block */}
           <div className="flex flex-col gap-[8px]">
             <p
-              className="text-[24px] leading-[1.2] text-[#17284a]"
+              className="text-[32px] lg:text-[clamp(28px,2.5vw,40px)] leading-[1.2] text-[#17284a]"
               style={{ fontFamily: "var(--font-caveat), cursive" }}
             >
               {isRTL ? "مكاتبنا" : "Our Offices"}

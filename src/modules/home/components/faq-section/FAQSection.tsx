@@ -21,13 +21,13 @@ export default function FAQSection({ dir }: FAQSectionProps) {
 
   return (
     <section
-      className="bg-white flex flex-col gap-[24px] md:gap-[clamp(30px,4vw,40px)] items-start md:items-center px-[16px] md:px-[clamp(16px,4vw,60px)] py-[44px] md:py-[clamp(40px,5vw,80px)] w-full"
+      className="bg-white flex flex-col gap-[24px] md:gap-[clamp(30px,4vw,40px)] items-start md:items-center justify-center md:min-h-[100svh] px-[16px] md:px-[clamp(16px,4vw,60px)] py-[24px] md:py-[clamp(40px,5vw,80px)] w-full"
       dir={dir}
     >
       {/* Header */}
       <div className="flex flex-col gap-[8px] md:gap-[clamp(10px,1vw,16px)] items-center text-center w-full">
         <div className="flex flex-col gap-[8px] md:gap-[clamp(6px,0.6vw,8px)] items-center">
-          <p className="font-caveat text-[#17284a] text-[24px] md:text-[clamp(16px,1.5vw,24px)] leading-[1.2]">
+          <p className="font-caveat text-[#17284a] text-[32px] md:text-[clamp(28px,2.5vw,40px)] leading-[1.2]">
             {t("eyebrow")}
           </p>
           <h2 className="text-black text-[24px] md:text-[clamp(24px,2.8vw,40px)] leading-[1.18] font-medium">
@@ -78,7 +78,7 @@ export default function FAQSection({ dir }: FAQSectionProps) {
       </div>
 
       {/* Desktop FAQ items */}
-      <div className="hidden md:flex flex-col w-full max-w-[1296px] border-t border-[#17284a]/10">
+      <div className="hidden md:flex flex-col w-full max-w-[calc(70vw+432px)] border-t border-[#17284a]/10">
         {faqs.map((faq, idx) => {
           const isOpen = openIndex === idx
           return (

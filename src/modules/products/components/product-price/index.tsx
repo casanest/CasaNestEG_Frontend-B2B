@@ -18,6 +18,7 @@ export default function ProductPrice({
   const { cheapestPrice, variantPrice } = getProductPrice({
     product,
     variantId: variant?.id,
+    locale,
   })
 
   const selectedPrice = variant ? variantPrice : cheapestPrice
@@ -36,9 +37,6 @@ export default function ProductPrice({
   }
 
   const isSale = selectedPrice.price_type === "sale"
-  const mainNumber = selectedPrice.calculated_price_number
-  const formattedNumber = mainNumber.toLocaleString(isRTL ? "ar-EG" : "en-US")
-  const decimalPart = mainNumber % 1 === 0 ? ".00" : ""
 
   return (
     <div className="flex flex-col gap-1">
@@ -50,24 +48,20 @@ export default function ProductPrice({
       )}
 
       {/* Main Price */}
-      <div className="flex items-baseline gap-1 text-[#17284a]">
-        <span className="text-[14px] font-medium leading-[1.5]">
-          {isRTL ? "ج.م" : "EGP"}
-        </span>
+      <div className="flex items-baseline gap-2 text-[#17284a] tabular-nums" dir={isRTL ? "rtl" : "ltr"}>
         <span
-          className={clx("text-[24px] font-bold leading-[1.3]", isSale && "text-[#EF4444]")}
+          className={clx("text-[24px] font-bold leading-[1.3] tabular-nums", isSale && "text-[#EF4444]")}
           data-testid="product-price"
-          data-value={mainNumber}
+          data-value={selectedPrice.calculated_price_number}
         >
-          {formattedNumber}
+          {selectedPrice.calculated_price}
         </span>
-        <span className="text-[14px] font-medium leading-[1.5]">{decimalPart}</span>
       </div>
 
       {/* Compare price */}
       {isSale && (
         <span
-          className="text-[14px] text-[#707176] line-through"
+          className="text-[14px] text-[#707176] line-through tabular-nums"
           data-testid="original-product-price"
           data-value={selectedPrice.original_price_number}
         >

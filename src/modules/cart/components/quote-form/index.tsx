@@ -631,7 +631,7 @@ export default function QuoteForm({ locale }: QuoteFormProps) {
                     const currencyCode = item.currencyCode || "usd"
                     const itemTotal = item.unitPrice != null ? item.unitPrice * item.quantity : null
                     const priceText = itemTotal != null
-                      ? convertToLocale({ amount: itemTotal, currency_code: currencyCode })
+                      ? convertToLocale({ amount: itemTotal, currency_code: currencyCode, locale })
                       : (isRTL ? "السعر عند الطلب" : "Price on Request")
 
                     return (

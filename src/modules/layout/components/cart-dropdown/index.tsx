@@ -165,6 +165,7 @@ const CartDropdown = ({
                                   {convertToLocale({
                                     amount: item.unitPrice * item.quantity,
                                     currency_code: item.currencyCode,
+                                    locale,
                                   })}
                                 </span>
                               ) : (
@@ -209,6 +210,7 @@ const CartDropdown = ({
                         ? convertToLocale({
                             amount: subtotal,
                             currency_code: currencyCode,
+                            locale,
                           })
                         : isRTL ? "السعر عند الطلب" : "Price on Request"}
                     </span>

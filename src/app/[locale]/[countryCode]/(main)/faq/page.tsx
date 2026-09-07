@@ -134,7 +134,7 @@ export default async function FAQPage() {
     >
       {/* FAQ Header Section */}
       <section className="flex flex-col gap-4 items-center px-6 md:px-[60px] py-10 md:py-[40px] w-full">
-        <p className="text-[24px] leading-[1.25] text-[#17284a] font-normal"
+        <p className="text-[32px] md:text-[clamp(28px,2.5vw,40px)] leading-[1.25] text-[#17284a] font-normal"
            style={{ fontFamily: isRTL ? undefined : "Caveat, cursive" }}>
           {isRTL ? "مركز الدعم" : "Support Center"}
         </p>
@@ -175,7 +175,7 @@ export default async function FAQPage() {
             className="border border-white flex gap-2 items-center justify-center px-6 md:px-9 py-4 md:py-6 rounded-[16px] text-[16px] font-medium text-white hover:bg-white/10 transition-colors w-full sm:w-auto sm:w-[240px]"
           >
             <Phone className="w-5 h-5" />
-            <span>{isRTL ? "احجز مكالمة" : "Schedule a Call"}</span>
+            <span>{isRTL ? "تواصل مع احد ممثلينا" : "Contact one of our representatives"}</span>
             <ArrowRight className={isRTL ? "w-5 h-5 rotate-180" : "w-5 h-5"} />
           </LocalizedClientLink>
         </div>

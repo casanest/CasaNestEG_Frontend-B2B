@@ -113,7 +113,7 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
             <span className="text-[12px] text-[#707176]">{item.quantity}x</span>
             <span className="text-[14px] font-bold text-[#17284a]">
               {itemTotal != null
-                ? convertToLocale({ amount: itemTotal, currency_code: currencyCode })
+                ? convertToLocale({ amount: itemTotal, currency_code: currencyCode, locale })
                 : (isRTL ? "السعر عند الطلب" : "Price on Request")}
             </span>
           </div>
@@ -123,7 +123,7 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
   }
 
   const priceText = itemTotal != null
-    ? convertToLocale({ amount: itemTotal, currency_code: currencyCode })
+    ? convertToLocale({ amount: itemTotal, currency_code: currencyCode, locale })
     : (isRTL ? "السعر عند الطلب" : "Price on Request")
 
   return (

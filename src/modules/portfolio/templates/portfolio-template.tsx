@@ -46,7 +46,7 @@ export default function PortfolioTemplate({ categories, projects }: Props) {
             className="flex flex-col items-center gap-[16px] text-center"
           >
             <p
-              className="text-[24px] leading-[1.2] text-[#17284A]"
+              className="text-[32px] small:text-[clamp(28px,2.5vw,40px)] leading-[1.2] text-[#17284A]"
               style={{ fontFamily: "var(--font-caveat)" }}
             >
               {isRTL ? "معرض أعمالنا" : "Our Portfolio"}

@@ -184,6 +184,7 @@ const PriceRangeFilter = ({ isRTL, initialPrice, onApply, minPrice, maxPrice, va
             value={minInput}
             onChange={(e) => handleInputChange("min", e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter") handleApply() }}
+            onBlur={handleApply}
             placeholder={isRTL ? "الأدنى" : "Min"}
             className="w-full bg-transparent text-[12px] font-bold text-[#1c1b1c] outline-none border-none min-w-0"
           />
@@ -200,6 +201,7 @@ const PriceRangeFilter = ({ isRTL, initialPrice, onApply, minPrice, maxPrice, va
             value={maxInput}
             onChange={(e) => handleInputChange("max", e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter") handleApply() }}
+            onBlur={handleApply}
             placeholder={isRTL ? "الأعلى" : "Max"}
             className="w-full bg-transparent text-[12px] font-bold text-[#1c1b1c] outline-none border-none min-w-0"
           />
@@ -228,6 +230,15 @@ const PriceRangeFilter = ({ isRTL, initialPrice, onApply, minPrice, maxPrice, va
           </div>
         </div>
       )}
+
+      {/* Apply button for price range */}
+      <button
+        type="button"
+        onClick={handleApply}
+        className="self-start text-[12px] font-medium text-[#17284a] underline hover:text-[#0f1d38] mt-1"
+      >
+        {isRTL ? "تطبيق السعر" : "Apply price"}
+      </button>
 
       {/* Bottom Divider - inline variant only */}
       {/* {variant === "inline" && (

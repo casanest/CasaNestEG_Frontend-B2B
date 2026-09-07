@@ -12,8 +12,8 @@ const OrderSummary = ({ order }: OrderSummaryProps) => {
   const isRTL = locale === "ar"
 
   const getAmount = (amount?: number | null) => {
-    if (!amount) return convertToLocale({ amount: 0, currency_code: order.currency_code })
-    return convertToLocale({ amount, currency_code: order.currency_code })
+    if (!amount) return convertToLocale({ amount: 0, currency_code: order.currency_code, locale })
+    return convertToLocale({ amount, currency_code: order.currency_code, locale })
   }
 
   return (

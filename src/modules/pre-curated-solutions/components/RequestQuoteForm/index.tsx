@@ -303,7 +303,7 @@ export default function RequestQuoteForm({ pkg, locale }: RequestQuoteFormProps)
             <p className="font-satoshi font-medium text-[16px] text-white leading-[1.5]">
               {goToHomepageText}
             </p>
-            <ArrowRight className="w-5 h-5 text-white shrink-0" />
+            <ArrowRight className={`w-5 h-5 text-white shrink-0 ${isRTL ? "rotate-180" : ""}`} />
           </button>
         </div>
       </div>

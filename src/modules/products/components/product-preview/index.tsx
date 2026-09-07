@@ -28,7 +28,7 @@ export default function ProductPreview({
   const [isAdding, setIsAdding] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const { cheapestPrice } = getProductPrice({ product })
+  const { cheapestPrice } = getProductPrice({ product, locale })
   const isRTL = locale === "ar"
   const countryCode = useParams().countryCode as string
 
@@ -224,24 +224,24 @@ export default function ProductPreview({
           )}
 
           {/* Price / Price on Request */}
-          <div className="mt-2">
+          <div className="mt-2" dir={isRTL ? "rtl" : "ltr"}>
             {cheapestPrice ? (
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-baseline gap-2 flex-wrap tabular-nums">
                 {cheapestPrice.price_type === "sale" && (
-                  <span className="text-[14px] line-through text-[#707176]">
+                  <span className="text-[14px] line-through text-[#707176] tabular-nums">
                     {cheapestPrice.original_price}
                   </span>
                 )}
                 <span
                   className={clx(
-                    "text-[18px] font-bold",
+                    "text-[18px] font-bold tabular-nums",
                     cheapestPrice.price_type === "sale" ? "text-red-600" : "text-[#17284a]"
                   )}
                 >
                   {cheapestPrice.calculated_price}
                 </span>
                 {cheapestPrice?.price_type === 'sale' && (
-                  <span className="text-[10px] font-bold text-red-500">
+                  <span className="text-[10px] font-bold text-red-500 tabular-nums">
                     -{cheapestPrice.percentage_diff}%
                   </span>
                 )}

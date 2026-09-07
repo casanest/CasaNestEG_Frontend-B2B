@@ -72,7 +72,7 @@ const Summary = ({ items }: SummaryProps) => {
           </span>
           <span className="font-bold text-[20px] lg:text-[24px] leading-[1.3]">
             {hasPricedItems
-              ? convertToLocale({ amount: subtotal, currency_code: currencyCode })
+              ? convertToLocale({ amount: subtotal, currency_code: currencyCode, locale })
               : (isRTL ? "السعر عند الطلب" : "Price on Request")}
           </span>
         </div>

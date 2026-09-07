@@ -31,11 +31,11 @@ export default function Amenities({ products, locale, dir, region }: AmenitiesPr
 
   return (
     <section
-      className="bg-[#f3f1ef] flex flex-col gap-[24px] md:gap-[clamp(30px,4vw,40px)] items-start md:items-center px-[16px] md:px-[clamp(16px,4vw,60px)] py-[44px] md:py-[clamp(40px,5vw,80px)] w-full"
+      className="bg-[#f3f1ef] flex flex-col gap-[24px] md:gap-[clamp(30px,4vw,40px)] items-start md:items-center justify-center min-h-[80svh] px-[16px] md:px-[clamp(16px,4vw,60px)] py-[44px] md:py-[clamp(40px,5vw,80px)] w-full"
       dir={dir}
     >
       {/* Header */}
-      <div className="flex items-end justify-between w-full max-w-[1392px]">
+      <div className="flex items-end justify-between w-full max-w-[calc(70vw+432px)]">
         <div className="flex flex-col gap-[8px] md:gap-[clamp(10px,1vw,16px)]">
           <div className="flex flex-col items-start">
             <div className="bg-[#141b34] flex items-center justify-center px-[12px] md:px-[clamp(10px,1.2vw,16px)] py-[4px] md:py-[clamp(3px,0.3vw,4px)] rounded-[100px] -rotate-2 mb-[-9px]">
@@ -47,7 +47,7 @@ export default function Amenities({ products, locale, dir, region }: AmenitiesPr
               {t("title")}
             </h2>
           </div>
-          <p className="text-black/80 text-[16px] md:text-[clamp(14px,1.6vw,24px)] leading-[1.3] max-w-[734px]">
+          <p className="text-black/80 text-[16px] md:text-[clamp(14px,1.6vw,24px)] leading-[1.3] max-w-[734px] md:max-w-[1200px]">
             {t("description")}
           </p>
         </div>
@@ -56,7 +56,7 @@ export default function Amenities({ products, locale, dir, region }: AmenitiesPr
           href="/store"
           className="hidden md:flex group border border-black gap-[8px] items-center justify-center px-[clamp(20px,2.5vw,36px)] py-[clamp(16px,1.6vw,24px)] rounded-[16px] w-[clamp(160px,16vw,240px)] hover:bg-[#17284a] hover:text-white hover:border-[#17284a] transition-colors shrink-0"
         >
-          <span className="text-black text-[clamp(13px,1.1vw,16px)] font-medium group-hover:text-white">
+          <span className="text-black text-[clamp(13px,1vw,14px)] font-medium group-hover:text-white">
             {t("exploreAllCta")}
           </span>
           <ArrowRight className="w-[clamp(16px,1.3vw,20px)] h-[clamp(16px,1.3vw,20px)] text-black group-hover:text-white" />
@@ -64,7 +64,7 @@ export default function Amenities({ products, locale, dir, region }: AmenitiesPr
       </div>
 
       {/* Product cards with horizontal scroll */}
-      <div className="relative w-full max-w-[1392px]">
+      <div className="relative w-full max-w-[calc(70vw+432px)]">
         <div
           ref={scrollRef}
           className="flex gap-[12px] md:gap-[clamp(12px,1.5vw,20px)] overflow-x-auto scrollbar-hide snap-x pb-4"

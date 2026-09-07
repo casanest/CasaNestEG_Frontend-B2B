@@ -11,6 +11,7 @@ import {
 import { Button, clx } from "@medusajs/ui"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { useState } from "react"
+import { useLocale } from "next-intl"
 import { StoreFreeShippingPrice } from "types/global"
 
 const computeTarget = (
@@ -141,6 +142,7 @@ function FreeShippingInline({
     remaining_percentage: number
   }
 }) {
+  const locale = useLocale()
   return (
     <div className="bg-neutral-100 p-2 rounded-lg border">
       <div className="space-y-1.5">
@@ -166,6 +168,7 @@ function FreeShippingInline({
               {convertToLocale({
                 amount: price.target_remaining,
                 currency_code: cart.currency_code,
+                locale,
               })}
             </span>{" "}
             away
@@ -195,6 +198,7 @@ function FreeShippingPopup({
   cart: StoreCart
   price: StoreFreeShippingPrice
 }) {
+  const locale = useLocale()
   const [isClosed, setIsClosed] = useState(false)
 
   return (
@@ -242,6 +246,7 @@ function FreeShippingPopup({
                   {convertToLocale({
                     amount: price.target_remaining,
                     currency_code: cart.currency_code,
+                    locale,
                   })}
                 </span>{" "}
                 away

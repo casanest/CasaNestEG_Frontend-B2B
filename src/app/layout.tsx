@@ -6,6 +6,7 @@ import {
   Inter,
   JetBrains_Mono,
   Plus_Jakarta_Sans,
+  Playpen_Sans_Arabic,
 } from "next/font/google";
 import "@/styles/globals.css";
 
@@ -42,6 +43,12 @@ const caveat = Caveat({
   variable: "--font-caveat",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+})
+
+const playpenSansArabic = Playpen_Sans_Arabic({
+  variable: "--font-playpen-arabic",
+  subsets: ["arabic", "latin"],
+  weight: ["300"],
 })
 
 export const metadata: Metadata = {
@@ -118,7 +125,7 @@ export default function RootLayout({
      <html lang="ar" data-mode="light">
       {/* Provide the intl context */}
       {/* <NextIntlClientProvider locale={locale} messages={messages}> */}
-        <body className={`${cairo.variable} ${caveat.variable}`}>
+        <body className={`${cairo.variable} ${caveat.variable} ${playpenSansArabic.variable}`}>
           <main className="relative">{children}</main>
         </body>
       {/* </NextIntlClientProvider> */}

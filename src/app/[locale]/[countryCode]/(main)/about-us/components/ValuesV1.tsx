@@ -32,7 +32,7 @@ export default function ValuesV1({ isRTL }: Props) {
     >
       <div className="content-container flex flex-col gap-6 lg:gap-[clamp(24px,3vw,40px)] items-center w-full">
       <div className="flex flex-col gap-1.5 lg:gap-[clamp(8px,0.8vw,12px)] items-center text-[#17284a]">
-        <p className="text-[24px] text-center" style={caveatStyle}>
+        <p className="text-[32px] lg:text-[clamp(28px,2.5vw,40px)] text-center" style={caveatStyle}>
           {isRTL ? "أسس التميز" : "Foundations of Excellence"}
         </p>
         <p className="text-[24px] lg:text-[clamp(24px,2.8vw,40px)] text-center" style={{ ...satoshiStyle, fontWeight: 700 }}>

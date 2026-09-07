@@ -14,7 +14,7 @@ export default async function CtaSection({ locale }: CtaSectionProps) {
       <div className="small:hidden bg-[#2c2e35] rounded-[24px] p-5 flex flex-col gap-6">
         {/* Text */}
         <div className="flex flex-col gap-3 text-white">
-          <p className="text-[24px] leading-[1.2]" style={{ fontFamily: isRTL ? undefined : "var(--font-caveat), cursive" }}>
+          <p className="font-caveat text-[32px] leading-[1.2]" style={{ fontFamily: isRTL ? undefined : "var(--font-caveat), cursive" }}>
             {isRTL ? "جاهز للبدء؟" : "Ready to Get Started?"}
           </p>
           <p className="text-[24px] font-medium leading-[1.3]">
@@ -40,11 +40,11 @@ export default async function CtaSection({ locale }: CtaSectionProps) {
         </div>
 
         {/* CTA Image */}
-        <div className="relative h-[200px] rounded-[16px] overflow-hidden bg-gray-800">
+        <div className="relative w-[400px] h-[300px] rounded-[16px] overflow-hidden bg-gray-800 mx-auto">
           <img
             src="/cta-space.webp"
             alt="Have a Space to Build"
-            className="absolute inset-0 w-full h-full object-cover"
+            className="w-[400px] h-[300px] object-contain -scale-x-100"
           />
         </div>
 
@@ -55,15 +55,14 @@ export default async function CtaSection({ locale }: CtaSectionProps) {
             className="bg-[#cdd6e9] flex items-center justify-center gap-2 px-6 py-6 rounded-[16px] text-[16px] font-medium text-[#17284a] whitespace-nowrap transition-all hover:bg-[#17284a] hover:text-white active:scale-[0.98]"
           >
             {isRTL ? "اكتشف منتجاتنا" : "Discover Our Products"}
-            <ArrowRight className="h-5 w-5" />
+            <ArrowRight className={`h-5 w-5 ${isRTL ? "rotate-180" : ""}`} />
           </LocalizedClientLink>
           <LocalizedClientLink
             href="/contact"
             className="border border-white/30 flex items-center justify-center gap-2 px-6 py-6 rounded-[16px] text-[16px] font-medium text-white whitespace-nowrap transition-all hover:bg-white/10 active:scale-[0.98]"
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-white" />
-            {isRTL ? "احجز مكالمة" : "Schedule a Call"}
-            <ArrowRight className="h-5 w-5" />
+            {isRTL ? "تواصل مع احد ممثلينا" : "Contact one of our representatives"}
+            <ArrowRight className={`h-5 w-5 ${isRTL ? "rotate-180" : ""}`} />
           </LocalizedClientLink>
         </div>
       </div>
@@ -75,7 +74,7 @@ export default async function CtaSection({ locale }: CtaSectionProps) {
           {/* Heading */}
           <div className="flex flex-col gap-4 text-white">
             <div className="flex flex-col gap-2">
-              <p className="text-[24px] leading-[1.2]" style={{ fontFamily: isRTL ? undefined : "var(--font-caveat), cursive" }}>
+              <p className="font-caveat text-[32px] lg:text-[clamp(28px,2.5vw,40px)] leading-[1.2]" style={{ fontFamily: isRTL ? undefined : "var(--font-caveat), cursive" }}>
                 {isRTL ? "جاهز للبدء؟" : "Ready to Get Started?"}
               </p>
               <p className="text-[28px] lg:text-[40px] font-medium leading-[1.18]">
@@ -124,21 +123,20 @@ export default async function CtaSection({ locale }: CtaSectionProps) {
               className="bg-[#cdd6e9] flex items-center justify-center gap-2 px-9 py-6 rounded-[16px] text-[16px] font-medium text-[#17284a] whitespace-nowrap transition-all hover:bg-[#17284a] hover:text-white active:scale-[0.98]"
             >
               {isRTL ? "اكتشف منتجاتنا" : "Discover Our Products"}
-              <ArrowRight className="h-5 w-5" />
+              <ArrowRight className={`h-5 w-5 ${isRTL ? "rotate-180" : ""}`} />
             </LocalizedClientLink>
             <LocalizedClientLink
               href="/contact"
               className="border border-white/30 flex items-center justify-center gap-2 px-9 py-6 rounded-[16px] text-[16px] font-medium text-white whitespace-nowrap transition-all hover:bg-white/10 active:scale-[0.98]"
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-white" />
-              {isRTL ? "احجز مكالمة" : "Schedule a Call"}
-              <ArrowRight className="h-5 w-5" />
+              {isRTL ? "تواصل مع احد ممثلينا" : "Contact Our Representatives"}
+              <ArrowRight className={`h-5 w-5 ${isRTL ? "rotate-180" : ""}`} />
             </LocalizedClientLink>
           </div>
         </div>
 
         {/* Right: Image */}
-<div className="relative h-[200px] lg:h-[464px] w-full lg:w-[55%] rounded-[16px] lg:rounded-[20px] overflow-hidden bg-gray-800">
+<div className="relative h-[300px] lg:h-[564px] w-full lg:w-[55%] rounded-[16px] lg:rounded-[20px] overflow-hidden bg-gray-800">
           <img
             src="/cta-space-desktop.webp"
             alt="Have a Space to Build"

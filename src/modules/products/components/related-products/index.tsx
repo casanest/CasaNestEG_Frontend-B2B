@@ -63,7 +63,7 @@ export default async function RelatedProducts({
   return (
     <div dir={locale === "ar" ? "rtl" : "ltr"} className="w-full">
       <div className="flex flex-col items-start mb-6">
-        <span className="text-[24px] font-medium text-[#707176] mb-1" style={{ fontFamily: "Caveat, cursive" }}>
+        <span className="text-[32px] font-medium text-[#707176] mb-1" style={{ fontFamily: "Caveat, cursive" }}>
           {locale === "ar" ? "قد يعجبك أيضًا" : "You May Also Like"}
         </span>
         <p className="text-[28px] font-bold text-[#17284a]">

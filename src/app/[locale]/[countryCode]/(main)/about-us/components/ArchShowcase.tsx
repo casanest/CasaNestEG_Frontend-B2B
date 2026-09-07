@@ -21,7 +21,7 @@ export default function ArchShowcase({ isRTL }: Props) {
           <div className="hidden lg:flex items-center justify-center">
             <div className="-rotate-3">
               <div className="bg-[#fdb022] flex items-start px-[clamp(12px,1vw,16px)] py-[clamp(4px,0.4vw,8px)] rounded-full">
-                <span className="text-[#141b34] text-[clamp(16px,1.5vw,24px)]" style={caveatStyle}>
+                <span className="text-[#141b34] text-[clamp(24px,2vw,32px)]" style={caveatStyle}>
                   {isRTL ? "من نحن" : "About Us"}
                 </span>
               </div>

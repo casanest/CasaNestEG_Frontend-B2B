@@ -74,7 +74,7 @@ export default function TimelineHorizontal({ isRTL }: Props) {
     >
       <div className="content-container flex flex-col gap-5 lg:gap-[clamp(24px,4vw,56px)] items-start w-full">
       <div className="flex flex-col gap-1.5 lg:gap-[clamp(8px,0.8vw,12px)] items-start w-full">
-        <p className="text-[#17284a] text-[24px]" style={caveatStyle}>
+        <p className="text-[#17284a] text-[32px] lg:text-[clamp(28px,2.5vw,40px)]" style={caveatStyle}>
           {isRTL ? "رحلتنا" : "Our Journey"}
         </p>
         <h2 className="text-[#051026] text-[24px] lg:text-[clamp(24px,2.8vw,40px)]" style={{ ...satoshiStyle, fontWeight: 700 }}>

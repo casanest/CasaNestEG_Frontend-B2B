@@ -297,7 +297,7 @@ export default function SideMenu({ productCategories, packages = [], projectGrou
             <span className="font-satoshi font-bold text-[18px] text-[#051026] text-center">
               {requestQuoteText}
             </span>
-            <ArrowRight className="w-4 h-4 text-[#051026]" />
+            <ArrowRight className={`w-4 h-4 text-[#051026] ${isRTL ? "rotate-180" : ""}`} />
           </LocalizedClientLink>
         </div>
       </Fragment>

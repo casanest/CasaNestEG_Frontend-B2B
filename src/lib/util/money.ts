@@ -15,8 +15,12 @@ export const convertToLocale = ({
   maximumFractionDigits,
   locale = "en-US",
 }: ConvertToLocaleParams) => {
+  const formatLocale = locale.startsWith("ar")
+    ? "ar-EG-u-nu-latn"
+    : locale
+
   return currency_code && !isEmpty(currency_code)
-    ? new Intl.NumberFormat(locale, {
+    ? new Intl.NumberFormat(formatLocale, {
         style: "currency",
         currency: currency_code,
         minimumFractionDigits,

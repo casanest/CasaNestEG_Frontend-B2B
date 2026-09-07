@@ -37,12 +37,12 @@ export default function TestimonialsSection({
 
   return (
     <section
-      className="bg-[#f3f1ef] flex flex-col gap-[24px] md:gap-[clamp(30px,4vw,40px)] items-start md:items-center px-[16px] md:px-[clamp(16px,4vw,60px)] py-[44px] md:py-[clamp(40px,5vw,80px)] w-full"
+      className="bg-[#f3f1ef] flex flex-col gap-[24px] md:gap-[clamp(30px,4vw,40px)] items-start md:items-center justify-center md:min-h-[100svh] px-[16px] md:px-[clamp(16px,4vw,60px)] py-[24px] md:py-[clamp(40px,5vw,80px)] w-full"
       dir={dir}
     >
       {/* Header - centered on mobile, side-by-side with arrows on desktop */}
       <div className="flex flex-col gap-[8px] md:gap-[clamp(10px,1vw,16px)] items-center text-center w-full md:hidden">
-        <p className="font-caveat text-[#17284a] text-[24px] leading-[1.2]">
+        <p className="font-caveat text-[#17284a] text-[32px] leading-[1.2]">
           {t("eyebrow")}
         </p>
         <h2 className="text-black text-[24px] leading-[1.18] font-medium max-w-[734px]">
@@ -53,10 +53,10 @@ export default function TestimonialsSection({
         </p>
       </div>
 
-      <div className="hidden md:flex items-end justify-between w-full max-w-[1392px]">
+      <div className="hidden md:flex items-end justify-between w-full max-w-[calc(70vw+432px)]">
         <div className="flex flex-col gap-[clamp(10px,1vw,16px)]">
           <div className="flex flex-col gap-[clamp(6px,0.6vw,8px)]">
-            <p className="font-caveat text-[#17284a] text-[clamp(16px,1.5vw,24px)] leading-[1.2]">
+            <p className="font-caveat text-[#17284a] text-[clamp(28px,2.5vw,40px)] leading-[1.2]">
               {t("eyebrow")}
             </p>
             <h2 className="text-black text-[clamp(24px,2.8vw,40px)] leading-[1.18] font-medium max-w-[734px]">
@@ -90,7 +90,7 @@ export default function TestimonialsSection({
       {/* Testimonial cards */}
       <div
         ref={scrollRef}
-        className="flex gap-[16px] md:gap-[clamp(16px,1.8vw,24px)] overflow-x-auto scrollbar-hide w-full max-w-[1392px]"
+        className="flex gap-[16px] md:gap-[clamp(16px,1.8vw,24px)] overflow-x-auto scrollbar-hide w-full max-w-[calc(70vw+432px)]"
         style={{ scrollBehavior: "smooth" }}
       >
         {testimonials.map((testimonial, idx) => {

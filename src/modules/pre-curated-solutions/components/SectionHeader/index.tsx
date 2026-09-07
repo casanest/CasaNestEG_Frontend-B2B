@@ -14,7 +14,7 @@ export default function SectionHeader({ locale }: SectionHeaderProps) {
   return (
     <div className="flex flex-col items-center gap-4 px-4 py-11 text-center w-full" dir={isRTL ? "rtl" : "ltr"}>
       <p
-        className="font-normal leading-[1.2] text-[#17284a] text-[28px] whitespace-nowrap"
+        className="font-normal leading-[1.2] text-[#17284a] text-[36px] sm:text-[clamp(32px,2.8vw,44px)] whitespace-nowrap"
         style={{ fontFamily: "var(--font-caveat)" }}
       >
         {preHeadline}
