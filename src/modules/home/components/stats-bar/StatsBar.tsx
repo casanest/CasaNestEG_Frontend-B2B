@@ -8,7 +8,7 @@ export default function StatsBar({ dir }: StatsBarProps) {
   const t = useTranslations("home.stats")
 
   const stats = [
-    { value: "25+ Years", label: t("yearsExperience") },
+    { value: t("yearsValue"), label: t("yearsExperience") },
     { value: "500+", label: t("trustedEnterprises") },
     { value: "100%", label: t("executionExcellence") },
   ]

@@ -37,13 +37,13 @@ export default function BuildProposal({ dir }: BuildProposalProps) {
       </div>
 
       {/* Steps with centered chair image */}
-      <div className="relative flex flex-col md:flex-row w-full max-w-[calc(70vw+432px)] items-start justify-between gap-[24px] md:gap-0">
+      <div className="relative flex flex-col md:flex-row w-full max-w-[calc(70vw+216px)] items-start justify-between gap-[24px] md:gap-0">
         {/* Chair image - centered behind steps on desktop only */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none hidden md:block">
           <img
             src="/chair.webp"
             alt="Chair"
-            className="w-[clamp(180px,32vw,680px)] h-[clamp(180px,32vw,680px)] object-contain -scale-x-100"
+            className="w-[clamp(144px,25.6vw,544px)] h-[clamp(144px,25.6vw,544px)] object-contain -scale-x-100"
           />
         </div>
 
@@ -75,7 +75,7 @@ export default function BuildProposal({ dir }: BuildProposalProps) {
                     <img
                       src="/chair.webp"
                       alt="Chair"
-                      className="w-[400px] h-[300px] object-contain -scale-x-100"
+                      className="w-[320px] h-[240px] object-contain -scale-x-100"
                     />
                   </div>
                 </>
@@ -104,6 +104,9 @@ export default function BuildProposal({ dir }: BuildProposalProps) {
               {idx === 0 && (
                 <div className="w-full md:w-[clamp(180px,38vw,536px)] h-px bg-[#17284a]/20" />
               )}
+              {idx === 1 && (
+                <div className="w-full md:w-[clamp(180px,38vw,536px)] h-px bg-[#17284a]/20" />
+              )}
             </div>
           ))}
         </div>
@@ -114,7 +117,7 @@ export default function BuildProposal({ dir }: BuildProposalProps) {
         href="/store"
         className="bg-[#17284a] flex gap-[8px] items-center justify-center px-[24px] md:px-[clamp(24px,2.5vw,36px)] py-[20px] md:py-[clamp(18px,1.6vw,24px)] rounded-[16px] w-full md:w-[clamp(200px,16vw,250px)] hover:bg-[#0f1a2e] transition-colors mt-[15px]"
       >
-        <span className="text-white text-[16px] md:text-[clamp(14px,1.1vw,16px)] font-medium text-center">
+        <span className="text-white text-[16px] md:text-[clamp(12px,0.9vw,14px)] font-medium text-center">
           {t("discoverCta")}
         </span>
         <ArrowRight className={`w-[20px] h-[20px] md:w-[clamp(16px,1.3vw,20px)] md:h-[clamp(16px,1.3vw,20px)] text-white ${dir === "rtl" ? "rotate-180" : ""}`} />
