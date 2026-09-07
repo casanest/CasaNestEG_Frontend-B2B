@@ -17,12 +17,12 @@ export default function OurClients({ isRTL, banners }: OwnProps) {
   const renderMarqueeItem = (banner: Banner, idx: number) => (
     <div
       key={`${banner.id}-${idx}`}
-      className="flex shrink-0 h-[clamp(100px,11vw,170px)] w-[clamp(200px,22vw,340px)] items-center justify-center mx-[clamp(5px,0.75vw,10px)]"
+      className="flex shrink-0 h-[140px] w-[262px] items-center justify-center bg-[#F3F1EF] rounded-[12px] mx-[clamp(5px,0.75vw,10px)]"
     >
       <img
         alt="Client logo"
         src={banner.image_url}
-        className="max-h-[clamp(65px,8vw,130px)] max-w-[clamp(150px,20vw,280px)] object-contain"
+        className="w-[220px] h-[100px] object-contain"
       />
     </div>
   )
@@ -58,12 +58,12 @@ export default function OurClients({ isRTL, banners }: OwnProps) {
             {row1Doubled.map((banner, idx) => (
               <div
                 key={`${banner.id}-${idx}`}
-                className="flex shrink-0 h-[110px] w-[190px] items-center justify-center mx-[10px]"
+                className="flex shrink-0 h-[140px] w-[262px] items-center justify-center bg-[#F3F1EF] rounded-[12px] mx-[10px]"
               >
                 <img
                   alt="Client logo"
                   src={banner.image_url}
-                  className="max-h-[72px] max-w-[160px] object-contain"
+                  className="w-[220px] h-[100px] object-contain"
                 />
               </div>
             ))}
@@ -76,12 +76,12 @@ export default function OurClients({ isRTL, banners }: OwnProps) {
             {row2Doubled.map((banner, idx) => (
               <div
                 key={`${banner.id}-${idx}`}
-                className="flex shrink-0 h-[110px] w-[190px] items-center justify-center mx-[10px]"
+                className="flex shrink-0 h-[140px] w-[262px] items-center justify-center bg-[#F3F1EF] rounded-[12px] mx-[10px]"
               >
                 <img
                   alt="Client logo"
                   src={banner.image_url}
-                  className="max-h-[72px] max-w-[160px] object-contain"
+                  className="w-[220px] h-[100px] object-contain"
                 />
               </div>
             ))}
