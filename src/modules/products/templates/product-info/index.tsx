@@ -5,10 +5,9 @@ import { clx } from "@medusajs/ui"
 
 type ProductInfoProps = {
   product: HttpTypes.StoreProduct
-  description?: string
 }
 
-const ProductInfo = async ({ product, description }: ProductInfoProps) => {
+const ProductInfo = async ({ product }: ProductInfoProps) => {
   const locale = await getLocale()
   const isRTL = locale === "ar"
 
@@ -47,13 +46,6 @@ const ProductInfo = async ({ product, description }: ProductInfoProps) => {
         >
           {title}
         </h2>
-
-        {/* Short Description - first 2 lines */}
-        {description && (
-          <p className="text-[14px] lg:text-[clamp(14px,1.2vw,16px)] leading-[1.5] text-[#5d5d61] lg:text-[#707176] lg:max-w-[clamp(320px,30vw,424px)] line-clamp-2">
-            {description}
-          </p>
-        )}
 
       </div>
     </div>

@@ -17,12 +17,14 @@ type MobileActionsProps = {
   options: Record<string, string | undefined>
   updateOptions: (title: string, value: string) => void
   inStock?: boolean
+  isValidVariant?: boolean
   handleAddToCart: () => void
   isAdding?: boolean
   optionsDisabled: boolean
   quantity: number
   onQuantityChange: (q: number) => void
   minOrderQty: number
+  showPrice?: boolean
 }
 
 const MobileActions: React.FC<MobileActionsProps> = ({
@@ -31,12 +33,14 @@ const MobileActions: React.FC<MobileActionsProps> = ({
   options,
   updateOptions,
   inStock,
+  isValidVariant,
   handleAddToCart,
   isAdding,
   optionsDisabled,
   quantity,
   onQuantityChange,
   minOrderQty,
+  showPrice = true,
 }) => {
   const locale = useLocale()
   const isRTL = locale === "ar"
@@ -58,7 +62,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
     return cheapestPrice || null
   }, [price, variant])
 
-  const hasPrice = !!selectedPrice
+  const hasPrice = showPrice && !!selectedPrice
   const mainNumber = selectedPrice?.calculated_price_number ?? 0
   const formattedNumber = mainNumber.toLocaleString(isRTL ? "ar-EG" : "en-US")
   const decimalPart = mainNumber % 1 === 0 ? ".00" : ""
@@ -89,7 +93,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
             </>
           ) : (
             <span className="text-[14px] font-bold text-[#17284a] whitespace-nowrap">
-              {isRTL ? "اطلب عرض سعر" : "Request a Quote"}
+              {isRTL ? "السعر عند الطلب" : "Price on Request"}
             </span>
           )}
         </div>
@@ -118,19 +122,17 @@ const MobileActions: React.FC<MobileActionsProps> = ({
         {/* Request a Quote Button */}
         <button
           onClick={handleAddToCart}
-          disabled={!inStock || !variant}
+          disabled={!inStock || !variant || !isValidVariant}
           className={clx(
             "flex-1 rounded-[10px] bg-[#17284a] text-white font-medium flex items-center justify-center transition-colors hover:bg-[#0f1d35] py-[16px] px-[36px]",
-            !inStock && variant ? "text-[16px]" : "text-[13px]",
+            (!inStock || !isValidVariant) && variant ? "text-[16px]" : "text-[13px]",
             isRTL && "tracking-[0.05em]"
           )}
           data-testid="mobile-cart-button"
         >
-          {!variant
-            ? isRTL ? "اختر النوع" : "Select variant"
-            : !inStock
-              ? isRTL ? "غير متوفر" : "Out of stock"
-              : isRTL ? "اطلب عرض سعر" : "Request a Quote"}
+          {!inStock || !isValidVariant
+            ? isRTL ? "غير متوفر" : "Out of stock"
+            : isRTL ? "اطلب عرض سعر" : "Request a Quote"}
         </button>
       </div>
 

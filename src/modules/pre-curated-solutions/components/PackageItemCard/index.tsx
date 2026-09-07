@@ -25,11 +25,14 @@ export default function PackageItemCard({
 }: PackageItemCardProps) {
   const isRTL = locale === "ar"
   const moq = product.moq || 1
+  const productTitle = isRTL
+    ? (product.title_ar ?? product.title)
+    : product.title
   const minOrderQtyText = isRTL
     ? `الحد الأدنى : ${moq} قطعة`
     : `Min. Order Qty: ${moq} pcs`
 
-  const priceText = product.price
+  const priceText = product.price && product.show_price
     ? `${product.price.currency_code.toUpperCase()} ${product.price.amount.toLocaleString("en-US")}`
     : isRTL
       ? "السعر عند الطلب"
@@ -39,17 +42,17 @@ export default function PackageItemCard({
     <LocalizedClientLink
       href={`/products/${product.handle}`}
       locale={locale}
-      className={`bg-white border border-[#e5e7eb] border-solid flex flex-col gap-1.5 md:gap-1 md:justify-between items-start p-3 md:pt-2 md:px-2 md:pb-3 rounded-2xl w-full md:h-[clamp(280px,26vw,372px)] transition-opacity ${
+      className={`bg-white border border-[#e5e7eb] border-solid flex flex-col gap-1.5 md:gap-1 items-start p-3 md:pt-2 md:px-2 md:pb-3 rounded-2xl w-full transition-opacity ${
         selected ? "" : "opacity-45 md:opacity-40"
       }`}
     >
       {/* Image area */}
       <div className="flex flex-col gap-1.5 items-start w-full">
-        <div className="relative h-[120px] md:h-[clamp(100px,9vw,130px)] rounded-lg overflow-hidden w-full bg-[#f3f4f6]">
+        <div className="relative h-[156px] md:h-[clamp(130px,11.7vw,169px)] rounded-lg overflow-hidden w-full bg-[#f3f4f6]">
           {product.thumbnail ? (
             <img
               src={product.thumbnail}
-              alt={product.title}
+              alt={productTitle}
               className="absolute inset-0 w-full h-full object-cover rounded-lg"
             />
           ) : (
@@ -74,14 +77,14 @@ export default function PackageItemCard({
         </div>
 
         {/* Title */}
-        <p className="font-satoshi font-bold leading-[1.3] text-[#17284a] text-[16px] w-full">
-          {product.title}
+        <p className="font-satoshi font-bold leading-[1.3] text-[#17284a] text-[16px] w-full min-h-[42px] line-clamp-2 md:min-h-[42px] md:line-clamp-2">
+          {productTitle}
         </p>
 
       </div>
 
       {/* Price + Quantity controls */}
-      <div className="flex flex-col gap-2 items-center justify-center w-full">
+      <div className="flex flex-col gap-2 items-center justify-center w-full md:mt-[0.5vw]">
         {/* Min Order Qty */}
         <div className="flex gap-1 md:gap-1 items-center w-full">
           <PackageIcon className="w-3 h-3 md:w-4 md:h-4 text-[#5d5d61] shrink-0" />
@@ -97,23 +100,23 @@ export default function PackageItemCard({
         </div>
 
         {/* Quantity box */}
-        <div className="bg-white border border-[#e5e7eb] border-solid flex gap-3 md:gap-3 items-center justify-center p-1.5 md:p-2 rounded-lg w-full md:w-[clamp(80px,7vw,100px)]">
+        <div className="bg-white border border-[#e5e7eb] border-solid flex flex-row items-center justify-center p-1.5 md:p-2 gap-2 md:gap-3 rounded-lg w-full md:w-[100px] md:h-[37px] md:rounded-[8px] md:border-[1px]">
           <button
             onClick={(e) => { e.stopPropagation(); e.preventDefault(); onDecrement() }}
-            className="shrink-0 hover:text-[#17284a] transition-colors"
+            className="shrink-0 flex items-center justify-center"
             aria-label="Decrease quantity"
           >
-            <Minus className="w-3.5 h-3.5 md:w-5 md:h-5 text-[#1c1b1c]" />
+            <Minus className="w-3.5 h-3.5 md:w-5 md:h-5 text-[#141B34]" strokeWidth={1.5} />
           </button>
-          <p className="font-satoshi font-bold leading-[1.5] text-[#1c1b1c] text-[14px] whitespace-normal md:whitespace-nowrap">
+          <p className="font-satoshi font-bold leading-[1.5] text-[#1c1b1c] text-[14px] whitespace-nowrap">
             {quantity}
           </p>
           <button
             onClick={(e) => { e.stopPropagation(); e.preventDefault(); onIncrement() }}
-            className="shrink-0 hover:text-[#17284a] transition-colors"
+            className="shrink-0 flex items-center justify-center"
             aria-label="Increase quantity"
           >
-            <Plus className="w-3.5 h-3.5 md:w-5 md:h-5 text-[#1c1b1c]" />
+            <Plus className="w-3.5 h-3.5 md:w-5 md:h-5 text-[#141B34]" strokeWidth={1.5} />
           </button>
         </div>
       </div>

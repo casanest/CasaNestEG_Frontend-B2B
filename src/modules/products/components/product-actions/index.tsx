@@ -149,6 +149,7 @@ export default function ProductActions({
       allowBackorder: variant?.allow_backorder,
       inventoryQuantity: variant?.inventory_quantity,
       minOrderQty: minOrderQty > 1 ? minOrderQty : undefined,
+      showPrice: (product as any).show_price ?? false,
     })
 
     setIsAdding(false)
@@ -225,7 +226,7 @@ export default function ProductActions({
           </div>
 
           {/* Price Display */}
-          <ProductPrice product={product} variant={selectedVariant} />
+          <ProductPrice product={product} variant={selectedVariant} showPrice={(product as any).show_price ?? false} />
 
           {/* Action Buttons */}
           <div className="flex flex-col gap-2">
@@ -246,11 +247,9 @@ export default function ProductActions({
               )}
               data-testid="add-product-button"
             >
-              {!selectedVariant && !options
-                ? isRTL ? "اختر خيارًا" : "Select an option"
-                : !inStock || !isValidVariant
-                  ? isRTL ? "غير متوفر" : "Out of stock"
-                    : isRTL ? "اطلب عرض سعر" : "Request a Quote"}
+              {!inStock || !isValidVariant
+                ? isRTL ? "غير متوفر" : "Out of stock"
+                : isRTL ? "اطلب عرض سعر" : "Request a Quote"}
             </button>
             <button
               onClick={handleAddToQuoteList}
@@ -390,12 +389,14 @@ export default function ProductActions({
           options={options}
           updateOptions={setOptionValue}
           inStock={inStock}
+          isValidVariant={isValidVariant}
           handleAddToCart={handleRequestQuote}
           isAdding={false}
           optionsDisabled={!!disabled || isAdding}
           quantity={quantity}
           onQuantityChange={setQuantity}
           minOrderQty={minOrderQty}
+          showPrice={(product as any).show_price ?? false}
         />
       </div>
     </>

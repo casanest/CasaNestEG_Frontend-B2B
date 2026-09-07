@@ -140,7 +140,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
 
           {/* Info Column - Middle */}
           <div className="flex-1 flex flex-col gap-[24px] lg:gap-[clamp(20px,1.5vw,24px)] min-w-0">
-            <ProductInfo product={product} description={description} />
+            <ProductInfo product={product} />
 
             {/* Tabs: Specs / Description / Documents — desktop only, mobile renders after actions */}
             <div className="hidden lg:block">

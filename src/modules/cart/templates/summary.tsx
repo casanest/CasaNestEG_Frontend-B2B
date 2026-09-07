@@ -39,9 +39,9 @@ const Summary = ({ items }: SummaryProps) => {
 
   const itemCount = items.length
   const totalUnits = items.reduce((acc, item) => acc + item.quantity, 0)
-  const subtotal = items.reduce((acc, item) => acc + (item.unitPrice ?? 0) * item.quantity, 0)
+  const subtotal = items.reduce((acc, item) => acc + (item.showPrice !== false && item.unitPrice != null ? item.unitPrice * item.quantity : 0), 0)
   const currencyCode = items[0]?.currencyCode || "usd"
-  const hasPricedItems = items.some((item) => item.unitPrice != null)
+  const hasPricedItems = items.some((item) => item.unitPrice != null && item.showPrice !== false)
 
   return (
     <div

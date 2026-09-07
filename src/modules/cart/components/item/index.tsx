@@ -84,7 +84,7 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
     }
   }
 
-  const itemTotal = item.unitPrice != null ? item.unitPrice * item.quantity : null
+  const itemTotal = item.unitPrice != null && item.showPrice !== false ? item.unitPrice * item.quantity : null
 
   if (type === "preview") {
     return (

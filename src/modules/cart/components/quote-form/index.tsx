@@ -629,7 +629,7 @@ export default function QuoteForm({ locale }: QuoteFormProps) {
                       }
                     }
                     const currencyCode = item.currencyCode || "usd"
-                    const itemTotal = item.unitPrice != null ? item.unitPrice * item.quantity : null
+                    const itemTotal = item.unitPrice != null && item.showPrice !== false ? item.unitPrice * item.quantity : null
                     const priceText = itemTotal != null
                       ? convertToLocale({ amount: itemTotal, currency_code: currencyCode, locale })
                       : (isRTL ? "السعر عند الطلب" : "Price on Request")

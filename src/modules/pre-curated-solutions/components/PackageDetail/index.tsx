@@ -141,6 +141,7 @@ export default function PackageDetailClient({ pkg, locale }: PackageDetailProps)
         variantId: product.id,
         productHandle: product.handle,
         productTitle: product.title,
+        productTitleAr: product.title_ar ?? undefined,
         productDescription: isRTL ? product.description_en ?? undefined : product.description_en ?? undefined,
         productDescriptionAr: product.description_ar ?? undefined,
         thumbnail: product.thumbnail,
@@ -151,6 +152,7 @@ export default function PackageDetailClient({ pkg, locale }: PackageDetailProps)
         currencyCode: product.price?.currency_code ?? "usd",
         categoryName: titleName,
         minOrderQty: product.moq ?? undefined,
+        showPrice: product.show_price ?? false,
       })
     })
 

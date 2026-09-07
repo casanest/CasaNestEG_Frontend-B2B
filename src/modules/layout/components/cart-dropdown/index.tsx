@@ -28,8 +28,9 @@ const CartDropdown = ({
 
   const totalItems = items.reduce((acc, item) => acc + item.quantity, 0)
 
-  const subtotal = items.reduce((acc, item) => acc + (item.unitPrice ?? 0) * item.quantity, 0)
+  const subtotal = items.reduce((acc, item) => acc + (item.showPrice !== false && item.unitPrice != null ? item.unitPrice * item.quantity : 0), 0)
   const currencyCode = items[0]?.currencyCode || "usd"
+  const hasPricedItems = items.some((item) => item.unitPrice != null && item.showPrice !== false)
 
   const open = () => setCartDropdownOpen(true)
   const close = () => setCartDropdownOpen(false)
@@ -160,7 +161,7 @@ const CartDropdown = ({
                             </div>
 
                             <div className="text-right">
-                              {item.unitPrice != null ? (
+                              {item.unitPrice != null && item.showPrice !== false ? (
                                 <span className="text-sm font-semibold text-gray-900">
                                   {convertToLocale({
                                     amount: item.unitPrice * item.quantity,
@@ -206,7 +207,7 @@ const CartDropdown = ({
                       data-testid="cart-subtotal"
                       data-value={subtotal}
                     >
-                      {subtotal > 0
+                      {hasPricedItems
                         ? convertToLocale({
                             amount: subtotal,
                             currency_code: currencyCode,

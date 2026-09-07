@@ -89,8 +89,9 @@ export default function SingleProductQuoteForm({ product, region }: SingleProduc
   const categoryHandle = product.categories?.[0]?.handle || (product.collection ? `/collections/${product.collection.handle}` : "/products")
 
   // Price
+  const showPrice = (product as any).show_price ?? false
   const { cheapestPrice } = getProductPrice({ product })
-  const priceInfo = cheapestPrice
+  const priceInfo = showPrice ? cheapestPrice : null
   const mainNumber = priceInfo?.calculated_price_number ?? 0
   const formattedNumber = mainNumber.toLocaleString(isRTL ? "ar-EG" : "en-US")
   const decimalPart = mainNumber % 1 === 0 ? ".00" : ""
@@ -746,7 +747,7 @@ export default function SingleProductQuoteForm({ product, region }: SingleProduc
                     </>
                   ) : (
                     <span className="font-satoshi font-bold text-[18px] text-[#17284a]">
-                      {isRTL ? "اطلب عرض سعر" : "Request a Quote"}
+                      {isRTL ? "السعر عند الطلب" : "Price on Request"}
                     </span>
                   )}
                 </div>
@@ -799,7 +800,7 @@ export default function SingleProductQuoteForm({ product, region }: SingleProduc
                   {estimatedTotalText}
                 </p>
                 <p className="font-satoshi font-bold leading-[1.4] text-[#17284a] text-[20px]">
-                  {priceInfo ? `${currencyCode.toUpperCase()} ${formattedTotal}${totalDecimalPart}` : "—"}
+                  {priceInfo ? `${currencyCode.toUpperCase()} ${formattedTotal}${totalDecimalPart}` : (isRTL ? "السعر عند الطلب" : "Price on Request")}
                 </p>
               </div>
               <p className="font-satoshi font-medium leading-[1.5] text-[#707176] text-[14px]">

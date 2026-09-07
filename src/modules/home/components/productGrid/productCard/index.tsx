@@ -77,6 +77,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
                 allowBackorder: variant?.allow_backorder,
                 inventoryQuantity: variant?.inventory_quantity,
                 minOrderQty: minOrderQty > 1 ? minOrderQty : undefined,
+                showPrice: (product as any).show_price ?? false,
             })
             setShowSuccess(true)
             setTimeout(() => setShowSuccess(false), 2000)
@@ -166,10 +167,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
                         className="flex items-center justify-between"
                     >
                         <div className="flex items-center gap-2">
-                            {cheapestPrice ? (
+                            {cheapestPrice && (product as any).show_price ? (
                                 <PreviewPrice price={cheapestPrice} />
                             ) : (
-                                <div className="h-6" />
+                                <span className="text-[12px] font-medium text-[#0F172A]">
+                                    {isRTL ? "السعر عند الطلب" : "Price on Request"}
+                                </span>
                             )}
                         </div>
 

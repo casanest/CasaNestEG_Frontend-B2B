@@ -28,6 +28,7 @@ export interface QuoteItem {
   allowBackorder?: boolean
   inventoryQuantity?: number
   minOrderQty?: number
+  showPrice?: boolean
   createdAt: string
 }
 

@@ -115,6 +115,7 @@ export default function ProductPreview({
         allowBackorder: variant?.allow_backorder,
         inventoryQuantity: variant?.inventory_quantity,
         minOrderQty: minOrderQty ? parseInt(String(minOrderQty)) : undefined,
+        showPrice: (product as any).show_price ?? false,
       })
       setShowSuccess(true)
       setTimeout(() => setShowSuccess(false), 2000)
@@ -138,7 +139,7 @@ export default function ProductPreview({
         onMouseLeave={stopCycling}
       >
         {/* Image Section - full width, no horizontal margins per Figma */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-gray-50">
+        <div className="relative aspect-[5/4] sm:aspect-[4/3] overflow-hidden bg-gray-50">
           {currentImage ? (
             <Image
               src={currentImage}
@@ -204,20 +205,20 @@ export default function ProductPreview({
           {categoryName && (
             <div className="inline-flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-3 py-1.5 w-fit">
               <Tag className="h-3.5 w-3.5 text-[#1E293B]"/>
-              <span className="text-[13px] text-[#1E293B] whitespace-nowrap">
+              <span className="text-[15px] sm:text-[13px] text-[#1E293B] whitespace-nowrap">
                 {categoryName}
               </span>
             </div>
           )}
 
           {/* Title */}
-          <h3 className="text-[18px] font-bold text-[#0F172A] leading-snug line-clamp-2 min-h-[2.6rem] group-hover:text-[#17284a] transition-colors mt-1">
+          <h3 className="text-[22px] sm:text-[18px] font-bold text-[#0F172A] leading-snug line-clamp-2 min-h-[2.6rem] group-hover:text-[#17284a] transition-colors mt-1">
             {title}
           </h3>
 
           {/* Price / Price on Request */}
           <div className="mt-2" dir={isRTL ? "rtl" : "ltr"}>
-            {cheapestPrice ? (
+            {cheapestPrice && (product as any).show_price ? (
               <div className="flex items-baseline gap-2 flex-wrap tabular-nums">
                 {cheapestPrice.price_type === "sale" && (
                   <span className="text-[14px] line-through text-[#707176] tabular-nums">
@@ -226,7 +227,7 @@ export default function ProductPreview({
                 )}
                 <span
                   className={clx(
-                    "text-[18px] font-bold tabular-nums",
+                    "text-[20px] sm:text-[18px] font-bold tabular-nums",
                     cheapestPrice.price_type === "sale" ? "text-red-600" : "text-[#17284a]"
                   )}
                 >
@@ -241,7 +242,7 @@ export default function ProductPreview({
             ) : (
               <div className="inline-flex items-center gap-2 bg-[#F1F5F9] rounded-full px-4 py-2 w-fit">
                 <Tag className="h-4 w-4 text-[#0F172A]"/>
-                <span className="text-[14px] font-medium text-[#0F172A] whitespace-nowrap">
+                <span className="text-[16px] sm:text-[14px] font-medium text-[#0F172A] whitespace-nowrap">
                   {isRTL ? "السعر عند الطلب" : "Price on Request"}
                 </span>
               </div>
@@ -252,7 +253,7 @@ export default function ProductPreview({
           {minOrderQty && (
             <div className="flex items-center gap-2 mt-2 mb-2">
               <Package className="h-[18px] w-[18px] text-gray-500"/>
-              <span className="text-[14px] text-gray-500 whitespace-nowrap">
+              <span className="text-[16px] sm:text-[14px] text-gray-500 whitespace-nowrap">
                 {isRTL ? `الحد الأدنى للطلب: ${minOrderQty} قطعة` : `Min. Order Qty: ${minOrderQty} pcs`}
               </span>
             </div>
@@ -263,7 +264,7 @@ export default function ProductPreview({
             onClick={handleAddToQuote}
             disabled={isAdding}
             className={clx(
-              "mt-auto w-full h-12 rounded-xl flex items-center justify-center gap-2 text-[15px] font-medium transition-all duration-300 active:scale-[0.98]",
+              "mt-auto w-full h-12 rounded-xl flex items-center justify-center gap-2 text-[17px] sm:text-[15px] font-medium transition-all duration-300 active:scale-[0.98]",
               showSuccess
                 ? "bg-[rgb(253,176,34)] text-white"
                 : "bg-[#1E293B] text-white hover:bg-[#0F172A] hover:shadow-md"
