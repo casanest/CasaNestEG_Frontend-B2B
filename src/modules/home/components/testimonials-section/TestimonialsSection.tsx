@@ -138,23 +138,6 @@ export default function TestimonialsSection({
         })}
       </div>
 
-      {/* Mobile: centered arrow controls at bottom */}
-      <div className="flex md:hidden items-center justify-center gap-[12px] w-full">
-        <button
-          onClick={() => scroll("prev")}
-          className="bg-[#17284a] flex items-center justify-center w-[40px] h-[40px] rounded-[100px]"
-          aria-label="Previous"
-        >
-          {isRTL ? <ChevronRight className="w-[24px] h-[24px] text-white" /> : <ChevronLeft className="w-[24px] h-[24px] text-white" />}
-        </button>
-        <button
-          onClick={() => scroll("next")}
-          className="bg-[#17284a] flex items-center justify-center w-[40px] h-[40px] rounded-[100px]"
-          aria-label="Next"
-        >
-          {isRTL ? <ChevronLeft className="w-[24px] h-[24px] text-white" /> : <ChevronRight className="w-[24px] h-[24px] text-white" />}
-        </button>
-      </div>
     </section>
   )
 }

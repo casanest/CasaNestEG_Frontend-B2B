@@ -50,12 +50,12 @@ export default function FAQSection({ dir }: FAQSectionProps) {
             >
               <button
                 onClick={() => setOpenIndex(isOpen ? null : idx)}
-                className="flex items-center justify-between w-full text-left"
+                className="flex items-center justify-between w-full text-start"
               >
                 <span className="text-[#17284a] text-[14px] font-bold leading-[1.5]">
                   {faq.q}
                 </span>
-                <div className="shrink-0 ml-[12px]">
+                <div className="shrink-0 ms-[12px]">
                   {isOpen ? (
                     <div className="bg-[#17284a] flex items-center justify-center w-[20px] h-[20px] rounded-full">
                       <Minus className="w-[12px] h-[12px] text-white" />
@@ -88,12 +88,12 @@ export default function FAQSection({ dir }: FAQSectionProps) {
             >
               <button
                 onClick={() => setOpenIndex(isOpen ? null : idx)}
-                className="flex items-center justify-between w-full py-[clamp(16px,1.8vw,24px)] text-left"
+                className="flex items-center justify-between w-full py-[clamp(16px,1.8vw,24px)] text-start"
               >
                 <span className="text-black text-[clamp(16px,1.8vw,24px)] font-medium leading-[1.3]">
                   {faq.q}
                 </span>
-                <div className="shrink-0 ml-[clamp(12px,1.5vw,20px)]">
+                <div className="shrink-0 ms-[clamp(12px,1.5vw,20px)]">
                   {isOpen ? (
                     <div className="bg-[#17284a] flex items-center justify-center w-[clamp(32px,3vw,40px)] h-[clamp(32px,3vw,40px)] rounded-[100px]">
                       <Minus className="w-[clamp(16px,1.3vw,20px)] h-[clamp(16px,1.3vw,20px)] text-white" />
