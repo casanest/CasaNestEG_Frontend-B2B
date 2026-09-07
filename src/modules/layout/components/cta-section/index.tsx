@@ -1,5 +1,4 @@
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { ArrowRight } from "lucide-react"
 
 type CtaSectionProps = {
   locale: string
@@ -55,20 +54,18 @@ export default async function CtaSection({ locale }: CtaSectionProps) {
             className="bg-[#cdd6e9] flex items-center justify-center gap-2 px-6 py-6 rounded-[16px] text-[16px] font-medium text-[#17284a] whitespace-nowrap transition-all hover:bg-[#17284a] hover:text-white active:scale-[0.98]"
           >
             {isRTL ? "اكتشف منتجاتنا" : "Discover Our Products"}
-            <ArrowRight className={`h-5 w-5 ${isRTL ? "rotate-180" : ""}`} />
           </LocalizedClientLink>
           <LocalizedClientLink
             href="/contact"
             className="border border-white/30 flex items-center justify-center gap-2 px-6 py-6 rounded-[16px] text-[16px] font-medium text-white whitespace-nowrap transition-all hover:bg-white/10 active:scale-[0.98]"
           >
             {isRTL ? "تواصل مع احد ممثلينا" : "Contact one of our representatives"}
-            <ArrowRight className={`h-5 w-5 ${isRTL ? "rotate-180" : ""}`} />
           </LocalizedClientLink>
         </div>
       </div>
 
       {/* Desktop/Tablet Layout */}
-      <div className="hidden small:flex bg-[#2c2e35] rounded-[24px] lg:rounded-[40px] p-5 lg:p-10 flex-col lg:flex-row lg:items-center gap-6 lg:gap-[60px] max-w-[1344px] mx-auto">
+""      <div className="hidden small:flex bg-[#2c2e35] rounded-[24px] lg:rounded-[40px] p-5 lg:p-10 flex-col lg:flex-row lg:items-center gap-6 lg:gap-[30px] lg:w-[70%] max-w-[1344px] mx-auto">
         {/* Left: Text + Buttons */}
         <div className="flex-1 flex flex-col gap-6 lg:gap-10">
           {/* Heading */}
@@ -123,20 +120,18 @@ export default async function CtaSection({ locale }: CtaSectionProps) {
               className="bg-[#cdd6e9] flex items-center justify-center gap-2 px-9 py-6 rounded-[16px] text-[16px] font-medium text-[#17284a] whitespace-nowrap transition-all hover:bg-[#17284a] hover:text-white active:scale-[0.98]"
             >
               {isRTL ? "اكتشف منتجاتنا" : "Discover Our Products"}
-              <ArrowRight className={`h-5 w-5 ${isRTL ? "rotate-180" : ""}`} />
             </LocalizedClientLink>
             <LocalizedClientLink
               href="/contact"
               className="border border-white/30 flex items-center justify-center gap-2 px-9 py-6 rounded-[16px] text-[16px] font-medium text-white whitespace-nowrap transition-all hover:bg-white/10 active:scale-[0.98]"
             >
               {isRTL ? "تواصل مع احد ممثلينا" : "Contact Our Representatives"}
-              <ArrowRight className={`h-5 w-5 ${isRTL ? "rotate-180" : ""}`} />
             </LocalizedClientLink>
           </div>
         </div>
 
         {/* Right: Image */}
-<div className="relative h-[300px] lg:h-[564px] w-full lg:w-[55%] rounded-[16px] lg:rounded-[20px] overflow-hidden bg-gray-800">
+<div className="relative h-[180px] lg:h-[338px] w-full lg:w-[50%] rounded-[16px] lg:rounded-[20px] overflow-hidden bg-gray-800">
           <img
             src="/cta-space-desktop.webp"
             alt="Have a Space to Build"

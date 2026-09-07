@@ -214,7 +214,7 @@ export default function ProductCardFigma({
             {/* Description */}
             {description && (
               <p
-                className="font-normal text-[clamp(10px,0.9vw,14px)] leading-[150%] line-clamp-2 w-full"
+                className="font-normal text-[clamp(10px,1.9vw,14px)] leading-[150%] line-clamp-2 w-full"
                 style={{
                   color: "#707176",
                   fontFamily: "Satoshi, sans-serif",
@@ -255,7 +255,7 @@ export default function ProductCardFigma({
             <div className="flex flex-row items-center gap-[6px] w-full">
               <Package className="w-[clamp(12px,1vw,16px)] h-[clamp(12px,1vw,16px)] shrink-0" style={{ color: "#707176" }} />
               <span
-                className="font-normal text-[clamp(10px,0.9vw,14px)] leading-[150%]"
+                className="font-normal text-[clamp(10px,1.9vw,14px)] leading-[150%]"
                 style={{
                   color: "#707176",
                   fontFamily: "Satoshi, sans-serif",

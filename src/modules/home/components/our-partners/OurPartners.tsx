@@ -14,7 +14,7 @@ export default function OurPartners({ banners, dir }: OurPartnersProps) {
   const renderMarqueeItem = (banner: Banner, idx: number) => (
     <div
       key={`${banner.id}-${idx}`}
-      className="flex shrink-0 h-[clamp(80px,9vw,130px)] w-[clamp(170px,20vw,280px)] items-center justify-center mx-[clamp(5px,0.75vw,10px)]"
+      className="flex shrink-0 h-[clamp(80px,9vw,130px)] w-[clamp(170px,20vw,280px)] items-center justify-center mx-[clamp(6.5px,0.975vw,13px)]"
     >
       <img
         src={banner.image_url}

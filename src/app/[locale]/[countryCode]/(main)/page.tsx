@@ -264,16 +264,28 @@ export default async function Home({
     (p) => (p as any).is_in_homepage === true
   )
 
+  const sortByDisplayOrder = (
+    a: { display_order: number },
+    b: { display_order: number }
+  ) => (a.display_order ?? 0) - (b.display_order ?? 0)
+
+  const clientBanners = [...homepageData.banners.past_customer].sort(
+    sortByDisplayOrder
+  )
+  const partnerBanners = [...homepageData.banners.partners].sort(
+    sortByDisplayOrder
+  )
+
   return (
     <>
       <div className="-mt-[80px] md:-mt-[112px]">
         <HeroSection banners={homepageData.banners.hero} locale={locale} dir={dir} />
       </div>
-      <OurClients banners={homepageData.banners.past_customer} locale={locale} dir={dir} />
+      <OurClients banners={clientBanners} locale={locale} dir={dir} />
       <Amenities products={homepageProducts} locale={locale} dir={dir} region={region} />
       <PreCuratedSolutions packages={homepageData.packages} locale={locale} dir={dir} />
       <StatsBar dir={dir} />
-      <OurPartners banners={homepageData.banners.partners} dir={dir} />
+      <OurPartners banners={partnerBanners} dir={dir} />
       <OurWork projects={homepageData.portfolio.projects} locale={locale} dir={dir} />
       <BuildProposal dir={dir} />
       <TestimonialsSection testimonials={homepageData.testimonials} locale={locale} dir={dir} />

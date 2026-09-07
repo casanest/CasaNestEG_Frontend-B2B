@@ -64,7 +64,7 @@ export default function SolutionCard({ package: pkg, locale }: SolutionCardProps
           {/* Item count */}
           <div className="flex gap-2 items-center w-full">
             <PackageIcon className="w-6 h-6 sm:w-[clamp(20px,1.8vw,24px)] sm:h-[clamp(20px,1.8vw,24px)] text-[#17284a] shrink-0" />
-            <p className="font-satoshi font-medium leading-[1.5] text-[#17284a] text-[13px] sm:text-[clamp(11px,0.9vw,13px)] whitespace-normal md:whitespace-nowrap">
+            <p className="font-satoshi font-medium leading-[1.5] text-[#17284a] text-[13px] sm:text-[clamp(11px,1.9vw,13px)] whitespace-normal md:whitespace-nowrap">
               {itemCountText}
             </p>
           </div>

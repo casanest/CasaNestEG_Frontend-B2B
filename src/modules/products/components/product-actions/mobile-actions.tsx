@@ -120,7 +120,8 @@ const MobileActions: React.FC<MobileActionsProps> = ({
           onClick={handleAddToCart}
           disabled={!inStock || !variant}
           className={clx(
-            "flex-1 rounded-[10px] bg-[#17284a] text-white text-[13px] font-medium flex items-center justify-center transition-colors hover:bg-[#0f1d35] py-[16px] px-[36px]",
+            "flex-1 rounded-[10px] bg-[#17284a] text-white font-medium flex items-center justify-center transition-colors hover:bg-[#0f1d35] py-[16px] px-[36px]",
+            !inStock && variant ? "text-[16px]" : "text-[13px]",
             isRTL && "tracking-[0.05em]"
           )}
           data-testid="mobile-cart-button"

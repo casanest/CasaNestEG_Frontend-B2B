@@ -196,7 +196,7 @@ export default function SingleProductQuoteForm({ product, region }: SingleProduc
 
   const companyLabel = isRTL ? "اسم الشركة" : "Company Name"
   const companyPlaceholder = isRTL ? "مثال: شركاء تطوير القاهرة" : "e.g. Cairo Development Partners"
-  const subjectLabel = isRTL ? "الموضوع / مجال المشروع" : "Subject / Project Area"
+  const subjectLabel = isRTL ? "اسم المنتج" : "Product Name"
   const messageLabel = isRTL ? "متطلبات خاصة أو ملاحظات (اختياري)" : "Special Requirements or Notes (Optional)"
   const messagePlaceholder = isRTL
     ? "أخبرنا عن متطلبات مشروعك، تواريخ التركيب، أو تعديلات الكمية..."
@@ -531,17 +531,17 @@ export default function SingleProductQuoteForm({ product, region }: SingleProduc
               />
             </div>
 
-            {/* Subject / Project Area - dropdown showing product title */}
+            {/* Product Name - disabled input showing product title */}
             <div className="flex flex-col gap-2 items-start w-full">
               <p className="font-satoshi font-medium leading-[1.5] text-[#17284a] text-[14px] w-full">
                 {subjectLabel}
               </p>
-              <div className="bg-[#f3f4f6] flex items-center justify-between px-4 py-[14px] rounded-lg w-full h-[52px]">
-                <p className="font-satoshi font-normal leading-[1.5] text-[#17284a] text-[16px] truncate">
-                  {title}
-                </p>
-                <ChevronDown className="w-5 h-5 text-[#707176] shrink-0" />
-              </div>
+              <input
+                type="text"
+                value={title}
+                disabled
+                className="bg-[#f3f4f6] h-[52px] px-4 py-[14px] rounded-lg w-full font-satoshi font-normal leading-[1.5] text-[#17284a] text-[16px] truncate cursor-not-allowed opacity-80"
+              />
             </div>
 
             {/* Message */}
