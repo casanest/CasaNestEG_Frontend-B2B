@@ -116,7 +116,7 @@ export default function HeroSection({ banners, locale, dir }: HeroSectionProps) 
               <br />
               {t("titleLine2")}
             </h1>
-            <p className="text-white/80 text-[16px] md:text-[clamp(14px,1.6vw,20px)] leading-[1.4] max-w-[629px]">
+            <p className="text-white/80 text-[16px] md:text-[clamp(14px,1.6vw,20px)] leading-[1.4] max-w-[629px] md:max-w-[clamp(512px,45.5vw,720px)]">
               {t("description")}
             </p>
           </div>
@@ -125,18 +125,18 @@ export default function HeroSection({ banners, locale, dir }: HeroSectionProps) 
           <div className="flex flex-col gap-[12px] md:flex-row md:gap-[clamp(12px,1.5vw,20px)]">
             <LocalizedClientLink
               href="/store"
-              className="bg-[#17284a] flex gap-[8px] items-center justify-center px-[20px] md:px-[clamp(20px,2.5vw,36px)] py-[20px] md:py-[clamp(16px,1.6vw,24px)] rounded-[16px] w-full md:w-[clamp(160px,16vw,250px)] hover:bg-[#0f1a2e] transition-colors"
+              className="bg-[#17284a] flex gap-[8px] items-center justify-center px-[20px] md:px-[clamp(20px,2.5vw,36px)] py-[20px] md:py-[clamp(16px,1.6vw,24px)] rounded-[16px] w-full md:w-[clamp(220px,20vw,320px)] hover:bg-[#0f1a2e] transition-colors"
             >
-              <span className="text-white text-[16px] md:text-[clamp(13px,1vw,14px)] font-medium text-center">
+              <span className="text-white text-[16px] md:text-[clamp(15px,1.2vw,17px)] font-medium text-center whitespace-nowrap">
                 {t("primaryCta")}
               </span>
               {isRTL ? <ArrowLeft className="w-[20px] h-[20px] md:w-[clamp(16px,1.3vw,20px)] md:h-[clamp(16px,1.3vw,20px)] text-white" /> : <ArrowRight className="w-[20px] h-[20px] md:w-[clamp(16px,1.3vw,20px)] md:h-[clamp(16px,1.3vw,20px)] text-white" />}
             </LocalizedClientLink>
             <LocalizedClientLink
               href="/contact"
-              className="bg-[#cdd6e9] flex gap-[8px] items-center justify-center px-[20px] md:px-[clamp(20px,2.5vw,36px)] py-[20px] md:py-[clamp(16px,1.6vw,24px)] rounded-[16px] w-full md:w-[clamp(160px,16vw,250px)] hover:bg-[#cdd6e9]/80 transition-colors"
+              className="bg-[#cdd6e9] flex gap-[8px] items-center justify-center px-[20px] md:px-[clamp(20px,2.5vw,36px)] py-[20px] md:py-[clamp(16px,1.6vw,24px)] rounded-[16px] w-full md:w-[clamp(280px,24vw,380px)] hover:bg-[#cdd6e9]/80 transition-colors"
             >
-              <span className="text-[#17284a] text-[16px] md:text-[clamp(13px,1vw,14px)] font-medium text-center">
+              <span className="text-[#17284a] text-[16px] md:text-[clamp(15px,1.2vw,17px)] font-medium text-center whitespace-nowrap">
                 {t("secondaryCta")}
               </span>
               {isRTL ? <ArrowLeft className="w-[20px] h-[20px] md:w-[clamp(16px,1.3vw,20px)] md:h-[clamp(16px,1.3vw,20px)] text-[#17284a]" /> : <ArrowRight className="w-[20px] h-[20px] md:w-[clamp(16px,1.3vw,20px)] md:h-[clamp(16px,1.3vw,20px)] text-[#17284a]" />}
