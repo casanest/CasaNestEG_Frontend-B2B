@@ -183,7 +183,7 @@ export default function ProductPreview({
               </div>
             )}
             {cheapestPrice?.price_type === 'sale' && (
-              <div className="bg-red-500 text-white text-[9px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg self-start m-2">
+              <div className="bg-[#17284A] text-white text-[9px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg self-start m-2">
                 {isRTL ? "خصم" : "Sale"}
               </div>
             )}
@@ -228,13 +228,13 @@ export default function ProductPreview({
                 <span
                   className={clx(
                     "text-[20px] sm:text-[18px] font-bold tabular-nums",
-                    cheapestPrice.price_type === "sale" ? "text-red-600" : "text-[#17284a]"
+                    cheapestPrice.price_type === "sale" ? "text-[#17284A]" : "text-[#17284a]"
                   )}
                 >
                   {cheapestPrice.calculated_price}
                 </span>
                 {cheapestPrice?.price_type === 'sale' && (
-                  <span className="text-[10px] font-bold text-red-500 tabular-nums">
+                  <span className="text-[10px] font-bold text-[#17284A] tabular-nums">
                     -{cheapestPrice.percentage_diff}%
                   </span>
                 )}

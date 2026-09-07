@@ -143,23 +143,6 @@ export default function HeroSection({ banners, locale, dir }: HeroSectionProps) 
             </LocalizedClientLink>
           </div>
 
-          {/* Mobile: arrow controls below CTAs */}
-          <div className="flex md:hidden items-center justify-center gap-[12px]">
-            <button
-              onClick={scrollPrev}
-              className="bg-[#17284a] flex items-center justify-center w-[40px] h-[40px] rounded-[100px]"
-              aria-label="Previous slide"
-            >
-              {isRTL ? <ChevronRight className="w-[24px] h-[24px] text-white" /> : <ChevronLeft className="w-[24px] h-[24px] text-white" />}
-            </button>
-            <button
-              onClick={scrollNext}
-              className="bg-[#17284a] flex items-center justify-center w-[40px] h-[40px] rounded-[100px]"
-              aria-label="Next slide"
-            >
-              {isRTL ? <ChevronLeft className="w-[24px] h-[24px] text-white" /> : <ChevronRight className="w-[24px] h-[24px] text-white" />}
-            </button>
-          </div>
         </div>
 
         {/* Bottom carousel meta - desktop only */}

@@ -23518,13 +23518,13 @@ export default function ProductPrice({
     <div className="flex flex-col gap-3 text-ui-fg-base">
       <div className="flex flex-wrap items-center gap-3">
         {selectedPrice.price_type === "sale" && (
-          <span className="rounded-full bg-[#EF4444]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.15em] text-[#EF4444]">
+          <span className="rounded-full bg-[#17284A]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.15em] text-[#17284A]">
             {isRTL ? "خصم" : "Sale"}
           </span>
         )}
         <span
           className={clx("text-3xl font-semibold text-slate-900", {
-            "text-[#EF4444]": selectedPrice.price_type === "sale",
+            "text-[#17284A]": selectedPrice.price_type === "sale",
           })}
           data-testid="product-price"
           data-value={selectedPrice.calculated_price_number}

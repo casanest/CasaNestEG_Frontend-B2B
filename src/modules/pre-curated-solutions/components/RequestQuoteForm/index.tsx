@@ -68,7 +68,7 @@ export default function RequestQuoteForm({ pkg, locale }: RequestQuoteFormProps)
   const name = isRTL ? pkg.name_ar : pkg.name_en
 
   const homeText = isRTL ? "الرئيسية" : "Home"
-  const curatedSolutionsText = isRTL ? "الحلول المجاهزة" : "Curated Solutions"
+  const curatedSolutionsText = isRTL ? "حلول مجهزة" : "Curated Solutions"
   const requestQuoteText = isRTL ? "اطلب عرض السعر" : "Request Quote"
   const titleText = isRTL ? "اطلب باقتك" : "Request Your Package"
   const badgeText = isRTL ? "بدون دفع، بدون التزام" : "No Payment, No Obligation"

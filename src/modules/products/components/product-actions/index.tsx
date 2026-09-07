@@ -63,7 +63,7 @@ export default function ProductActions({
   }
 
   useEffect(() => {
-    if (product.variants?.length === 1) {
+    if (product.variants?.length) {
       const variantOptions = optionsAsKeymap(product.variants[0].options)
       setOptions(variantOptions ?? {})
     }
@@ -274,9 +274,9 @@ export default function ProductActions({
                 <span className="text-[14px] font-bold text-[#1c1b1c]">
                   {isRTL ? "توصيل سريع" : "Fast Delivery"}
                 </span>
-                <span className="text-[12px] text-[#707176]">
+                {/* <span className="text-[12px] text-[#707176]">
                   {isRTL ? "القاهرة والجيزة خلال 3-5 أيام عمل" : "Cairo & Giza within 3-5 business days"}
-                </span>
+                </span> */}
               </div>
             </div>
             {warrantyNum && (
@@ -322,11 +322,21 @@ export default function ProductActions({
 
           {/* Quantity Selector */}
           <div className="flex flex-col gap-[8px]">
-            <span className="text-[14px] font-bold text-[#1c1b1c]">
-              {isRTL ? "الكمية" : "Quantity"}
-            </span>
-            <div className="flex items-center gap-[16px]">
-              <div className="flex items-center justify-center gap-[12px] rounded-[8px] border border-[#e5e7eb] bg-white p-[8px] w-[110px]">
+            {/* Quantity label + MOQ on same line */}
+            <div className="flex items-center gap-[8px]">
+              <span className="text-[20px] font-bold text-[#1c1b1c]">
+                {isRTL ? "الكمية" : "Quantity"}
+              </span>
+              <span className="text-[17px] text-[#707176]">
+                {isRTL ? "الحد الأدنى: " : "Min. Order Qty: "}
+                <span className="font-bold text-[#1c1b1c]">
+                  {isRTL ? `${minOrderQty} قطعة` : `${minOrderQty} pcs`}
+                </span>
+              </span>
+            </div>
+            {/* +/- buttons + Add to Quote List button on same line */}
+            <div className="flex items-center gap-[12px]">
+              <div className="flex items-center justify-center gap-[12px] rounded-[8px] border border-[#e5e7eb] bg-white p-[8px] w-[110px] shrink-0">
                 <button
                   type="button"
                   onClick={() => setQuantity((prev) => Math.max(minOrderQty, prev - 1))}
@@ -345,12 +355,18 @@ export default function ProductActions({
                   <Plus className="w-6 h-6" />
                 </button>
               </div>
-              <span className="text-[12px] text-[#707176]">
-                {isRTL ? "الحد الأدنى: " : "Min. Order Qty: "}
-                <span className="font-bold text-[#1c1b1c]">
-                  {isRTL ? `${minOrderQty} قطعة` : `${minOrderQty} pcs`}
-                </span>
-              </span>
+              <button
+                onClick={handleAddToQuoteList}
+                disabled={!selectedVariant || !inStock || !isValidVariant || isAddingToList}
+                className={clx(
+                  "flex-1 h-[36px] rounded-[10px] bg-[#17284a] text-white font-medium flex items-center justify-center gap-2 transition-colors hover:bg-[#0f1d35] disabled:opacity-60 disabled:cursor-not-allowed text-[11px] px-[8px]",
+                  isRTL && "tracking-[0.05em]"
+                )}
+              >
+                {isAddingToList
+                  ? isRTL ? "تمت الإضافة ✓" : "Added ✓"
+                  : isRTL ? "اضافة لعرض طلب سعر" : "Add to Quote List"}
+              </button>
             </div>
           </div>
 

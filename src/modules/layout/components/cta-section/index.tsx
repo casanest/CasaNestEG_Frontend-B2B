@@ -39,11 +39,11 @@ export default async function CtaSection({ locale }: CtaSectionProps) {
         </div>
 
         {/* CTA Image */}
-        <div className="relative w-full max-w-[400px] h-[300px] rounded-[16px] overflow-hidden bg-gray-800 mx-auto">
+        <div className="relative w-full max-w-[400px] h-[220px] rounded-[16px] overflow-hidden bg-gray-800 mx-auto">
           <img
             src="/cta-space.webp"
             alt="Have a Space to Build"
-            className="w-full h-full object-contain -scale-x-100"
+            className="w-full h-full object-cover -scale-x-100"
           />
         </div>
 

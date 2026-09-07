@@ -110,7 +110,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
             {isRTL ? "الرئيسية" : "Home"}
           </LocalizedClientLink>
           <span className="text-[#707176]">/</span>
-          <LocalizedClientLink href="/products" className="text-[#707176] hover:text-[#17284a] transition-colors">
+          <LocalizedClientLink href="/store" className="text-[#707176] hover:text-[#17284a] transition-colors">
             {isRTL ? "المنتجات" : "Products"}
           </LocalizedClientLink>
           {categoryTitle && (
@@ -131,7 +131,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
         {/* Product Hero - 3 column on desktop, stacked on mobile */}
         <div className="flex flex-col lg:flex-row gap-[24px] lg:gap-[clamp(24px,2.5vw,40px)] px-[16px] lg:px-[clamp(32px,4vw,60px)] pt-[44px] pb-[160px] lg:pt-5 lg:pb-[clamp(32px,4vw,60px)]">
           {/* Gallery Column - Left on desktop */}
-          <div className="lg:w-[clamp(380px,36vw,520px)] shrink-0 lg:sticky lg:top-24 self-start w-full">
+          <div className="lg:w-[clamp(380px,36vw,520px)] shrink-0 self-start w-full">
             <ImageGallery
               images={product?.images}
               fallbackImage={product?.thumbnail}

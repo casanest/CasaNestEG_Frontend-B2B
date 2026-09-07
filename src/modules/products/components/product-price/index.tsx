@@ -41,7 +41,7 @@ export default function ProductPrice({
     <div className="flex flex-col gap-1">
       {/* Sale badge */}
       {isSale && (
-        <span className="rounded-full bg-[#EF4444]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.15em] text-[#EF4444] self-start mb-1">
+        <span className="rounded-full bg-[#17284A]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.15em] text-[#17284A] self-start mb-1">
           {isRTL ? "خصم" : "Sale"}
         </span>
       )}
@@ -49,7 +49,7 @@ export default function ProductPrice({
       {/* Main Price */}
       <div className="flex items-baseline gap-2 text-[#17284a] tabular-nums" dir={isRTL ? "rtl" : "ltr"}>
         <span
-          className={clx("text-[24px] font-bold leading-[1.3] tabular-nums", isSale && "text-[#EF4444]")}
+          className={clx("text-[24px] font-bold leading-[1.3] tabular-nums", isSale && "text-[#17284A]")}
           data-testid="product-price"
           data-value={selectedPrice.calculated_price_number}
         >

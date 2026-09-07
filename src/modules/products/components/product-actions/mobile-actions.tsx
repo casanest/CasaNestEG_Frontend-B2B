@@ -2,7 +2,7 @@ import { Dialog, Transition } from "@headlessui/react"
 import { clx } from "@medusajs/ui"
 import React, { Fragment, useMemo } from "react"
 import { useLocale } from "next-intl"
-import { Minus, Plus } from "lucide-react"
+import { Minus, Plus, Tag } from "lucide-react"
 
 import useToggleState from "@lib/hooks/use-toggle-state"
 import X from "@modules/common/icons/x"
@@ -71,9 +71,9 @@ const MobileActions: React.FC<MobileActionsProps> = ({
   return (
     <>
       {/* Fixed bottom bar — single row matching Figma mobile design */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-[#e5e7eb] shadow-[0_-4px_6px_rgba(0,0,0,0.05)] px-[16px] py-[12px] flex items-center gap-[16px]">
-        {/* Price Column */}
-        <div className="flex flex-col gap-[2px] shrink-0">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-[#e5e7eb] shadow-[0_-4px_6px_rgba(0,0,0,0.05)] px-[16px] py-[12px] flex items-center gap-[8px]">
+        {/* Price Column — 30% */}
+        <div className="flex-[3] flex flex-col gap-[2px] items-center justify-center">
           {hasPrice ? (
             <>
               <div className="flex items-baseline gap-[2px] text-[#17284a]">
@@ -92,14 +92,17 @@ const MobileActions: React.FC<MobileActionsProps> = ({
               )}
             </>
           ) : (
-            <span className="text-[14px] font-bold text-[#17284a] whitespace-nowrap">
-              {isRTL ? "السعر عند الطلب" : "Price on Request"}
-            </span>
+            <div className="flex flex-row justify-center items-center px-[12px] py-[4px] gap-[6px] h-[29px] bg-[#F3F4F6] rounded-[100px]">
+              <Tag className="w-[18px] h-[18px] text-[#141B34]" strokeWidth={1.5} />
+              <span className="text-[14px] font-medium text-[#17284A] leading-[21px] whitespace-nowrap">
+                {isRTL ? "السعر عند الطلب" : "Price on Request"}
+              </span>
+            </div>
           )}
         </div>
 
-        {/* Quantity Box */}
-        <div className="flex items-center gap-[12px] rounded-[8px] border border-[#e5e7eb] bg-white p-[8px] shrink-0">
+        {/* Quantity Box — 30% */}
+        <div className="flex-[3] flex items-center justify-center gap-[12px] rounded-[8px] border border-[#e5e7eb] bg-white p-[8px]">
           <button
             type="button"
             onClick={() => onQuantityChange(Math.max(minOrderQty, quantity - 1))}
@@ -119,13 +122,13 @@ const MobileActions: React.FC<MobileActionsProps> = ({
           </button>
         </div>
 
-        {/* Request a Quote Button */}
+        {/* Request a Quote Button — 40% */}
         <button
           onClick={handleAddToCart}
           disabled={!inStock || !variant || !isValidVariant}
           className={clx(
-            "flex-1 rounded-[10px] bg-[#17284a] text-white font-medium flex items-center justify-center transition-colors hover:bg-[#0f1d35] py-[16px] px-[36px]",
-            (!inStock || !isValidVariant) && variant ? "text-[16px]" : "text-[13px]",
+            "flex-[4] rounded-[10px] bg-[#17284a] text-white font-medium flex items-center justify-center transition-colors hover:bg-[#0f1d35] py-[10px] px-[8px]",
+            (!inStock || !isValidVariant) && variant ? "text-[14px]" : "text-[11px]",
             isRTL && "tracking-[0.05em]"
           )}
           data-testid="mobile-cart-button"

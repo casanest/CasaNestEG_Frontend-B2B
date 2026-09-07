@@ -42,7 +42,7 @@ export default function PackageDetailClient({ pkg, locale }: PackageDetailProps)
     : "Everything a hotel needs, pre-selected by our team. Remove anything you don't need, adjust quantities, then request a quote."
 
   const homeText = isRTL ? "الرئيسية" : "Home"
-  const curatedSolutionsText = isRTL ? "الحلول المجاهزة" : "Curated Solutions"
+  const curatedSolutionsText = isRTL ? "حلول مجهزة" : "Curated Solutions"
   const itemsPreSelectedText = isRTL ? "عناصر محددة مسبقاً" : "Items Pre-selected"
 
   const allProducts = useMemo(() => {
