@@ -39,8 +39,8 @@ export default function SummaryCard({
     ? "التسعير النهائي يرسله فريقنا بعد إرسالك للطلب."
     : "Final pricing sent by our team after you submit."
   const requestQuoteText = isRTL
-    ? "اطلب عرض سعر لهذه الباقة"
-    : "Request Quote for This Package"
+    ? "احصل علي هذه الباقه الاّن"
+    : "Get This Package now"
   const addToQuoteListText = isRTL
     ? "أضف إلى قائمة عروض السعر"
     : "Add to Quote List"

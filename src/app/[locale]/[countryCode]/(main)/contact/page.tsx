@@ -75,7 +75,7 @@ export default async function ContactPage({ params }: PageProps) {
       <section className="w-full">
         <div className="flex flex-col lg:flex-row gap-[32px] lg:gap-[60px] items-start px-[16px] lg:px-[60px] py-[44px] lg:py-[80px] max-w-[1512px] mx-auto">
             {/* Left Column - Info */}
-            <div className="flex-1 flex flex-col justify-between gap-[24px] lg:gap-[40px] py-0 lg:py-[40px] w-full lg:max-w-[604px]">
+            <div className="flex-1 flex flex-col justify-between gap-[24px] lg:gap-[40px] py-0 lg:py-[40px] w-full lg:order-2">
               {/* Heading Block */}
               <div className="flex flex-col gap-[8px] lg:gap-[16px]">
                 <p
@@ -109,7 +109,7 @@ export default async function ContactPage({ params }: PageProps) {
                       {isRTL ? "اتصل بنا" : "Call Us"}
                     </p>
                     <p className="text-[14px] lg:text-[16px] font-bold text-[#17284a]">
-                      +20 2 1234 5678
+                      01233365368
                     </p>
                   </div>
                   {/* Email Card */}
@@ -136,7 +136,7 @@ export default async function ContactPage({ params }: PageProps) {
                     </p>
                     <p className="text-[14px] lg:text-[16px] font-bold text-[#17284a]">
                       {isRTL
-                        ? "الأحد – الخميس: ٩:٠٠ ص – ٦:٠٠ م"
+                        ? "الأحد – الخميس: 9:00 ص – 6:00 م"
                         : "Sun – Thu: 9:00 AM – 6:00 PM"}
                     </p>
                   </div>
@@ -186,7 +186,9 @@ export default async function ContactPage({ params }: PageProps) {
             </div>
 
             {/* Right Column - Form Card */}
-            <ContactForm isRTL={isRTL} />
+            <div className="flex-1 lg:order-1 w-full">
+              <ContactForm isRTL={isRTL} />
+            </div>
           </div>
       </section>
 

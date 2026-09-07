@@ -12,7 +12,7 @@ import TeamShowcase from "./components/TeamShowcase"
 import AboutOverviewBento from "./components/AboutOverviewBento"
 import TimelineHorizontal from "./components/TimelineHorizontal"
 import WorkGalleryFan from "./components/WorkGalleryFan"
-import TestimonialsSection from "./components/TestimonialsSection"
+import HomeTestimonialsSection from "@modules/home/components/testimonials-section/TestimonialsSection"
 
 type Props = {
   params: Promise<{ locale: string; countryCode: string }>
@@ -41,7 +41,7 @@ export default async function AboutUsPage({ params }: Props) {
       <AboutOverviewBento isRTL={isRTL} locale={locale} />
       <TimelineHorizontal isRTL={isRTL} locale={locale} />
       <WorkGalleryFan isRTL={isRTL} locale={locale} />
-      <TestimonialsSection isRTL={isRTL} locale={locale} testimonials={testimonials} />
+      <HomeTestimonialsSection testimonials={testimonials} locale={locale} dir={isRTL ? "rtl" : "ltr"} />
     </div>
   )
 }

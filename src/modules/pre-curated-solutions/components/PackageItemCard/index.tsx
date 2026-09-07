@@ -1,6 +1,7 @@
 "use client"
 
 import { PackageDetail } from "@lib/data/packages"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { Check, Minus, Plus, Package as PackageIcon } from "lucide-react"
 
 type PackageItemCardProps = {
@@ -24,7 +25,6 @@ export default function PackageItemCard({
 }: PackageItemCardProps) {
   const isRTL = locale === "ar"
   const moq = product.moq || 1
-  const description = isRTL ? product.description_ar : product.description_en
   const minOrderQtyText = isRTL
     ? `الحد الأدنى : ${moq} قطعة`
     : `Min. Order Qty: ${moq} pcs`
@@ -36,8 +36,10 @@ export default function PackageItemCard({
       : "Price on Request"
 
   return (
-    <div
-      className={`bg-white border border-[#e5e7eb] border-solid flex flex-col gap-3 md:gap-2 md:justify-between items-start p-3 md:pt-2 md:px-2 md:pb-3 rounded-2xl w-full md:h-[clamp(280px,26vw,372px)] transition-opacity ${
+    <LocalizedClientLink
+      href={`/products/${product.handle}`}
+      locale={locale}
+      className={`bg-white border border-[#e5e7eb] border-solid flex flex-col gap-1.5 md:gap-1 md:justify-between items-start p-3 md:pt-2 md:px-2 md:pb-3 rounded-2xl w-full md:h-[clamp(280px,26vw,372px)] transition-opacity ${
         selected ? "" : "opacity-45 md:opacity-40"
       }`}
     >
@@ -57,7 +59,7 @@ export default function PackageItemCard({
           )}
           {/* Check / Uncheck icon */}
           <button
-            onClick={onToggle}
+            onClick={(e) => { e.stopPropagation(); e.preventDefault(); onToggle() }}
             className="absolute top-2 left-2 z-10"
             aria-label={selected ? "Deselect item" : "Select item"}
           >
@@ -72,16 +74,9 @@ export default function PackageItemCard({
         </div>
 
         {/* Title */}
-        <p className="font-satoshi font-bold leading-[1.5] text-[#17284a] text-[16px] w-full line-clamp-1 overflow-hidden text-ellipsis">
+        <p className="font-satoshi font-bold leading-[1.3] text-[#17284a] text-[16px] w-full">
           {product.title}
         </p>
-
-        {/* Description */}
-        {description && (
-          <p className="font-satoshi font-normal leading-[1.5] text-[#707176] text-[14px] w-full h-[42px] line-clamp-2 overflow-hidden text-ellipsis">
-            {description}
-          </p>
-        )}
 
       </div>
 
@@ -104,7 +99,7 @@ export default function PackageItemCard({
         {/* Quantity box */}
         <div className="bg-white border border-[#e5e7eb] border-solid flex gap-3 md:gap-3 items-center justify-center p-1.5 md:p-2 rounded-lg w-full md:w-[clamp(80px,7vw,100px)]">
           <button
-            onClick={onDecrement}
+            onClick={(e) => { e.stopPropagation(); e.preventDefault(); onDecrement() }}
             className="shrink-0 hover:text-[#17284a] transition-colors"
             aria-label="Decrease quantity"
           >
@@ -114,7 +109,7 @@ export default function PackageItemCard({
             {quantity}
           </p>
           <button
-            onClick={onIncrement}
+            onClick={(e) => { e.stopPropagation(); e.preventDefault(); onIncrement() }}
             className="shrink-0 hover:text-[#17284a] transition-colors"
             aria-label="Increase quantity"
           >
@@ -122,6 +117,6 @@ export default function PackageItemCard({
           </button>
         </div>
       </div>
-    </div>
+    </LocalizedClientLink>
   )
 }

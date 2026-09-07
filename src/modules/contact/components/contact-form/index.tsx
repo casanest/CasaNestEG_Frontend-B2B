@@ -188,7 +188,7 @@ export default function ContactForm({ isRTL }: { isRTL: boolean }) {
   return (
     <div
       dir={isRTL ? "rtl" : "ltr"}
-      className="bg-white border border-[#e5e7eb] rounded-[16px] p-[20px] lg:p-[24px] w-full lg:max-w-[728px] flex flex-col gap-[20px] lg:gap-[28px] relative"
+      className="bg-white border border-[#e5e7eb] rounded-[16px] p-[20px] lg:p-[24px] w-full flex flex-col gap-[20px] lg:gap-[28px] relative"
     >
       {/* Success Popup */}
       {submitStatus === "success" && (
@@ -347,7 +347,7 @@ export default function ContactForm({ isRTL }: { isRTL: boolean }) {
               onChange={(e) => handleChange("phone", e.target.value)}
               className={`h-[44px] lg:h-[52px] bg-[#f3f4f6] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] text-[16px] text-[#17284a] placeholder:text-[#5d5d61] focus:outline-none focus:ring-2 focus:ring-[#17284a]/20 ${isRTL ? "text-right" : ""}`}
               placeholder={
-                isRTL ? "مثال: +201001234567" : "e.g. +201001234567"
+                isRTL ? "مثال: 01001234567" : "e.g. 01001234567"
 
               }
             />

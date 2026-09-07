@@ -94,7 +94,7 @@ export default function QuoteForm({ locale }: QuoteFormProps) {
   const emailLabel = isRTL ? "البريد الإلكتروني (اختياري)" : "Email Address (Optional)"
   const emailPlaceholder = isRTL ? "مثال: aliAhmed123@gmail.com" : "e.g. aly@company.com"
   const phoneLabel = isRTL ? "رقم الهاتف" : "Phone Number"
-  const phonePlaceholder = isRTL ? "مثال: +201001234567" : "e.g. +201001234567"
+  const phonePlaceholder = isRTL ? "مثال: 01001234567" : "e.g. 01001234567"
 
   const companyLabel = isRTL ? "اسم الشركة" : "Company Name"
   const companyPlaceholder = isRTL ? "مثال: شركاء تطوير القاهرة" : "e.g. Cairo Development Partners"
