@@ -3,7 +3,7 @@ import { satoshiStyle, type Props } from "./styles"
 export default function HeroSplit({ isRTL, locale }: Props) {
   return (
     <section
-      className="bg-[#141b34] flex flex-col items-start overflow-clip relative w-full"
+      className="bg-[#141b34] flex flex-col items-start overflow-clip relative w-full justify-start"
       dir={isRTL ? "rtl" : "ltr"}
     >
       <div className="content-container flex flex-col gap-[32px] lg:flex-row items-start justify-between lg:pb-[clamp(28px,3vw,48px)] pb-12 pt-[44px] lg:pt-[clamp(28px,4vw,60px)] relative lg:gap-[clamp(20px,2.5vw,32px)]">
@@ -44,7 +44,7 @@ export default function HeroSplit({ isRTL, locale }: Props) {
         </div>
       </div>
       {/* Arch Row - Mobile: 2 arches, Desktop: 4 arches */}
-      <div className="content-container flex items-end relative">
+      <div className="content-container flex items-end relative lg:mt-[2.5vh]">
         <div className="bg-[#d8d2c8] flex flex-1 flex-col h-[220px] lg:h-[clamp(160px,30vw,420px)] items-start overflow-clip relative rounded-t-[100px] lg:rounded-t-[clamp(60px,13vw,180px)] rounded-b-[8px] lg:rounded-b-none mr-[-13px] lg:mr-[-16px] min-w-0">
           <div className="flex flex-1 flex-col items-start justify-end pb-7 pt-8 px-6 relative w-full">
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 rounded-2xl top-0 w-full max-w-[664px] overflow-hidden">

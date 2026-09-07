@@ -16,8 +16,11 @@ const ProductInfo = async ({ product, description }: ProductInfoProps) => {
     ? (product?.metadata?.localizations as any)?.ar?.title
     : product.title) || product.title
 
-  const categoryTitle = product.categories?.[0]?.name || product.collection?.title || ""
-  const categoryHandle = product.categories?.[0]?.handle || (product.collection ? `/collections/${product.collection.handle}` : "/products")
+  const firstCategory = product.categories?.[0] as any
+  const categoryTitle = (isRTL
+    ? firstCategory?.metadata?.localizations?.ar?.name
+    : firstCategory?.name) || firstCategory?.name || product.collection?.title || ""
+  const categoryHandle = firstCategory?.handle || (product.collection ? `/collections/${product.collection.handle}` : "/products")
 
   return (
     <div id="product-info" dir={isRTL ? "rtl" : "ltr"}>

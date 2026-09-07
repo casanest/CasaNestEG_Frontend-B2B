@@ -266,7 +266,7 @@ export default async function Home({
 
   return (
     <>
-      <div className="-mt-[58px] md:-mt-[112px]">
+      <div className="-mt-[80px] md:-mt-[112px]">
         <HeroSection banners={homepageData.banners.hero} locale={locale} dir={dir} />
       </div>
       <OurClients banners={homepageData.banners.past_customer} locale={locale} dir={dir} />

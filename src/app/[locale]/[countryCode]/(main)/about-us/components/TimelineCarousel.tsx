@@ -33,17 +33,33 @@ export default function TimelineCarousel({ milestones, isRTL }: Props) {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full relative">
+      {/* Left arrow - positioned on the outer left side */}
+      <button
+        onClick={() => scroll("left")}
+        className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-[#17284a] flex items-center justify-center p-2 rounded-full hover:opacity-80 transition-opacity hidden lg:flex"
+        aria-label="Previous"
+      >
+        {isRTL ? <ChevronRight size={24} color="white" /> : <ChevronLeft size={24} color="white" />}
+      </button>
+      {/* Right arrow - positioned on the outer right side */}
+      <button
+        onClick={() => scroll("right")}
+        className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-[#17284a] flex items-center justify-center p-2 rounded-full hover:opacity-80 transition-opacity hidden lg:flex"
+        aria-label="Next"
+      >
+        {isRTL ? <ChevronLeft size={24} color="white" /> : <ChevronRight size={24} color="white" />}
+      </button>
       <div
         ref={scrollRef}
-        className="flex gap-4 lg:gap-[clamp(16px,1.5vw,24px)] items-stretch overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2"
+        className="flex gap-4 lg:gap-[clamp(12px,1vw,18px)] items-stretch overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2 lg:px-12"
         dir={isRTL ? "rtl" : "ltr"}
       >
         {milestones.map((m, i) => (
           <div
             key={i}
             className={[
-              "bg-white border border-[#e5e7eb] border-solid flex flex-col gap-3 lg:gap-4 min-w-[260px] max-w-[260px] lg:min-w-[clamp(280px,28vw,380px)] lg:max-w-[clamp(280px,28vw,380px)] items-start p-4 lg:p-[clamp(16px,1.2vw,24px)] relative rounded-xl shrink-0 snap-center",
+              "bg-white border border-[#e5e7eb] border-solid flex flex-col gap-3 lg:gap-3 min-w-[260px] max-w-[260px] lg:min-w-[clamp(240px,24vw,320px)] lg:max-w-[clamp(240px,24vw,320px)] items-start p-4 lg:p-[clamp(12px,1vw,18px)] relative rounded-xl shrink-0 snap-center",
               m.highlight
                 ? "lg:border-[3px] lg:border-[#fdb022] lg:shadow-[0px_4px_8px_rgba(0,0,0,0.12)]"
                 : m.faded
@@ -52,7 +68,7 @@ export default function TimelineCarousel({ milestones, isRTL }: Props) {
             ].join(" ")}
             style={{ minHeight: "clamp(240px,25vw,340px)" }}
           >
-            <div className="h-[140px] lg:h-[clamp(100px,22vw,300px)] relative rounded-lg lg:rounded-xl w-full overflow-hidden">
+            <div className="h-[140px] lg:h-[clamp(80px,16vw,220px)] relative rounded-lg lg:rounded-xl w-full overflow-hidden">
               <img
                 alt={m.year}
                 src={m.image}
@@ -79,22 +95,6 @@ export default function TimelineCarousel({ milestones, isRTL }: Props) {
             </p>
           </div>
         ))}
-      </div>
-      <div className="hidden lg:flex gap-3 lg:gap-0 items-center justify-center w-full mt-3 lg:mt-6 lg:justify-between">
-        <button
-          onClick={() => scroll("left")}
-          className="bg-[#17284a] flex items-center justify-center p-2 rounded-full hover:opacity-80 transition-opacity"
-          aria-label="Previous"
-        >
-          {isRTL ? <ChevronRight size={24} color="white" /> : <ChevronLeft size={24} color="white" />}
-        </button>
-        <button
-          onClick={() => scroll("right")}
-          className="bg-[#17284a] flex items-center justify-center p-2 rounded-full hover:opacity-80 transition-opacity"
-          aria-label="Next"
-        >
-          {isRTL ? <ChevronLeft size={24} color="white" /> : <ChevronRight size={24} color="white" />}
-        </button>
       </div>
     </div>
   )

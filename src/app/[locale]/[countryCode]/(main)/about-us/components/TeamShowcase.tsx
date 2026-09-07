@@ -27,10 +27,10 @@ const teamMembers = [
 export default function TeamShowcase({ isRTL }: Props) {
   return (
     <section
-      className="bg-[#faf8f5] flex flex-col gap-6 lg:gap-[clamp(24px,3.5vw,48px)] items-start py-11 lg:py-[clamp(28px,5vw,80px)] relative w-full"
+      className="bg-[#faf8f5] flex flex-col gap-6 lg:gap-[clamp(24px,3.5vw,48px)] items-start py-11 lg:py-[clamp(60px,10vw,160px)] relative w-full lg:min-h-screen lg:justify-center"
       dir={isRTL ? "rtl" : "ltr"}
     >
-      <div className="content-container flex flex-col gap-6 lg:gap-[clamp(24px,3.5vw,48px)] items-start w-full">
+      <div className="content-container flex flex-col gap-6 lg:gap-[clamp(32px,5vw,72px)] items-start w-full">
       <div className="flex flex-col gap-2 lg:gap-[clamp(8px,0.8vw,12px)] items-start">
         <h2 className="text-[#17284a] text-[24px] lg:text-[clamp(24px,2.8vw,40px)]" style={{ ...satoshiStyle, fontWeight: 700 }}>
           {isRTL ? "تعرّف على قيادتنا" : "Meet Our Leadership"}
@@ -41,7 +41,7 @@ export default function TeamShowcase({ isRTL }: Props) {
             : "The procurement experts, architects, and technical professionals leading our divisions."}
         </p>
       </div>
-      <div className="flex flex-col lg:flex-row gap-4 lg:gap-[clamp(16px,1.5vw,24px)] items-start w-full">
+      <div className="flex flex-col lg:flex-row gap-4 lg:gap-[2vw] lg:justify-center items-start lg:items-center w-full">
         {teamMembers.map((member, i) => (
           <div
             key={i}

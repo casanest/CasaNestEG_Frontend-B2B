@@ -29,7 +29,7 @@ export default function OurClients({ isRTL, banners }: OwnProps) {
 
   return (
     <section
-      className="bg-white flex flex-col gap-6 lg:gap-0 items-center justify-center py-11 lg:py-[clamp(28px,5vw,80px)] relative w-full"
+      className="bg-white flex flex-col gap-6 lg:gap-0 items-center justify-center py-11 lg:py-[clamp(60px,10vw,160px)] lg:pt-[70px] relative w-full lg:min-h-screen"
       dir={isRTL ? "rtl" : "ltr"}
     >
       <div className="content-container flex flex-col gap-6 lg:gap-[clamp(24px,4vw,60px)] items-center justify-center w-full">

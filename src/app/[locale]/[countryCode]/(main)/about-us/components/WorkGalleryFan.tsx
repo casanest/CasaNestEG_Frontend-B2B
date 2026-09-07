@@ -11,8 +11,15 @@ const galleryItems = [
     labelAr: "تجهيز مكتب",
     color: "#17284a",
     textColor: "#fdb022",
-    rotate: "-15deg",
-    height: "240px",
+    rotate: -15,
+    cardWidth: 220,
+    cardHeight: 290,
+    imageHeight: 240,
+    left: 0,
+    top: 3.06,
+    shadow: "0px 12px 32px rgba(0,0,0,0.45)",
+    badgeLeft: 19.6,
+    badgeTop: 43.15,
   },
   {
     image: "/about-us/gallery-2.webp",
@@ -20,8 +27,15 @@ const galleryItems = [
     labelAr: "صالة عرض",
     color: "#ba5c12",
     textColor: "#ffffff",
-    rotate: "-7deg",
-    height: "252px",
+    rotate: -7,
+    cardWidth: 220,
+    cardHeight: 300,
+    imageHeight: 252,
+    left: 190,
+    top: -6.81,
+    shadow: "0px 12px 32px rgba(0,0,0,0.4)",
+    badgeLeft: 17.83,
+    badgeTop: 30.87,
   },
   {
     image: "/about-us/gallery-3.webp",
@@ -29,8 +43,15 @@ const galleryItems = [
     labelAr: "تجهيز تكنولوجيا",
     color: "#3472d8",
     textColor: "#ffffff",
-    rotate: "3deg",
-    height: "272px",
+    rotate: 3,
+    cardWidth: 240,
+    cardHeight: 320,
+    imageHeight: 272,
+    left: 373.25,
+    top: 0,
+    shadow: "0px 16px 40px rgba(0,0,0,0.5)",
+    badgeLeft: 30.53,
+    badgeTop: 16.82,
   },
   {
     image: "/about-us/gallery-4.webp",
@@ -38,8 +59,15 @@ const galleryItems = [
     labelAr: "تركيب",
     color: "#12823b",
     textColor: "#ffffff",
-    rotate: "8deg",
-    height: "240px",
+    rotate: 8,
+    cardWidth: 220,
+    cardHeight: 295,
+    imageHeight: 247,
+    left: 566.94,
+    top: 25,
+    shadow: "0px 12px 32px rgba(0,0,0,0.4)",
+    badgeLeft: 51.05,
+    badgeTop: 18.07,
   },
   {
     image: "/about-us/gallery-5.webp",
@@ -47,8 +75,15 @@ const galleryItems = [
     labelAr: "فريقنا",
     color: "#7c3aed",
     textColor: "#ffffff",
-    rotate: "15deg",
-    height: "240px",
+    rotate: 15,
+    cardWidth: 220,
+    cardHeight: 285,
+    imageHeight: 237,
+    left: 736.24,
+    top: 65,
+    shadow: "0px 12px 32px rgba(0,0,0,0.4)",
+    badgeLeft: 78.35,
+    badgeTop: 19.6,
   },
 ]
 
@@ -57,10 +92,10 @@ export default function WorkGalleryFan({ isRTL }: Props) {
 
   return (
     <section
-      className="bg-[#141b34] flex flex-col gap-5 lg:gap-[clamp(24px,4vw,64px)] items-start overflow-clip py-11 lg:py-[clamp(28px,5vw,80px)] relative w-full"
+      className="bg-[#141b34] flex flex-col gap-5 lg:gap-[clamp(16px,2vw,32px)] items-center overflow-clip py-11 lg:py-[clamp(16px,3vw,48px)] relative w-full lg:min-h-screen lg:justify-center"
       dir={isRTL ? "rtl" : "ltr"}
     >
-      <div className="content-container flex flex-col gap-5 lg:gap-[clamp(24px,4vw,64px)] items-start lg:items-center w-full">
+      <div className="content-container flex flex-col gap-5 lg:gap-[clamp(16px,2vw,32px)] items-center w-full">
       <div className="flex flex-col gap-1.5 lg:gap-[clamp(8px,0.8vw,12px)] items-start lg:items-center">
         <p className="text-[#fdb022] text-[32px] lg:text-[clamp(28px,2.5vw,40px)]" style={caveatStyle}>
           {isRTL ? "خلف الكواليس" : "Behind the Scenes"}
@@ -103,15 +138,23 @@ export default function WorkGalleryFan({ isRTL }: Props) {
           </div>
         ))}
       </div>
-      {/* Desktop: original fan layout */}
-      <div className="hidden lg:flex flex-wrap justify-center gap-6 items-center relative w-full max-w-[1020px]">
+      {/* Desktop: Figma-spec angled cards in absolute positions */}
+      <div className="hidden lg:block relative w-full max-w-[1020px] mx-auto" style={{ height: "405px" }}>
         {galleryItems.map((item, i) => (
           <div
             key={i}
-            className="bg-white drop-shadow-[0px_12px_16px_rgba(0,0,0,0.45)] flex flex-col gap-2 p-2 rounded-xl relative"
-            style={{ transform: `rotate(${item.rotate})`, width: "220px", transition: "transform 0.3s ease" }}
+            className="bg-white flex flex-col gap-2 p-2 rounded-xl absolute"
+            style={{
+              transform: `rotate(${item.rotate}deg)`,
+              width: `${item.cardWidth}px`,
+              height: `${item.cardHeight}px`,
+              left: `${item.left}px`,
+              top: `${item.top}px`,
+              boxShadow: item.shadow,
+              transition: "transform 0.3s ease",
+            }}
           >
-            <div className="relative rounded-lg overflow-hidden w-full" style={{ height: item.height }}>
+            <div className="relative rounded-lg overflow-hidden w-full" style={{ height: `${item.imageHeight}px` }}>
               <img
                 alt={item.label}
                 src={item.image}
@@ -119,8 +162,13 @@ export default function WorkGalleryFan({ isRTL }: Props) {
               />
             </div>
             <div
-              className="absolute flex items-start left-4 top-4 px-[10px] py-1 rounded-md"
-              style={{ backgroundColor: item.color }}
+              className="absolute flex items-center px-[10px] py-[4px] rounded-md"
+              style={{
+                backgroundColor: item.color,
+                left: `${item.badgeLeft}px`,
+                top: `${item.badgeTop}px`,
+                transform: `rotate(${item.rotate}deg)`,
+              }}
             >
               <p className="text-[12px] whitespace-nowrap" style={{ ...satoshiStyle, fontWeight: 700, color: item.textColor }}>
                 {isRTL ? item.labelAr : item.label}

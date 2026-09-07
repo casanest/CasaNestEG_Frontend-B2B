@@ -3,7 +3,7 @@ import { satoshiStyle, type Props } from "./styles"
 export default function DarkContent({ isRTL }: Props) {
   return (
     <section
-      className="bg-[#141b34] flex flex-col gap-6 lg:gap-[clamp(24px,3vw,40px)] items-center overflow-clip py-11 lg:py-[clamp(28px,5vw,80px)] relative w-full"
+      className="bg-[#141b34] flex flex-col gap-6 lg:gap-[clamp(16px,2vw,28px)] items-center overflow-clip py-11 lg:py-[clamp(16px,3vw,48px)] relative w-full lg:min-h-screen lg:justify-center"
       dir={isRTL ? "rtl" : "ltr"}
     >
       {/* bg glows */}
@@ -18,7 +18,7 @@ export default function DarkContent({ isRTL }: Props) {
         <img alt="" src="/about-us/bg-glow-1.svg" className="w-full h-full object-contain opacity-50" />
       </div>
 
-      <div className="content-container flex flex-col gap-6 lg:gap-[clamp(24px,3vw,40px)] items-center w-full relative z-10">
+      <div className="content-container flex flex-col gap-6 lg:gap-[clamp(16px,2vw,28px)] items-center w-full relative z-10">
         <div className="flex flex-col gap-2 lg:gap-[clamp(12px,1vw,16px)] items-center max-w-[920px]">
         <div className="relative">
           <div className="absolute bg-[#fdb022] h-[clamp(8px,0.8vw,12px)] left-0 right-0 bottom-[-4px] opacity-30 hidden lg:block" />
@@ -47,7 +47,7 @@ export default function DarkContent({ isRTL }: Props) {
       </div>
 
       {/* Hero visual */}
-      <div className="relative rounded-[28px] overflow-hidden w-full max-w-[920px] h-[360px] lg:h-[clamp(200px,38vw,520px)] shadow-[0px_18px_48px_-12px_rgba(0,0,0,0.2)] z-10">
+      <div className="relative rounded-[28px] overflow-hidden w-full max-w-[920px] h-[360px] lg:h-[clamp(180px,28vw,400px)] shadow-[0px_18px_48px_-12px_rgba(0,0,0,0.2)] z-10">
         <img
           alt=""
           src="/about-us/hero-visual.webp"

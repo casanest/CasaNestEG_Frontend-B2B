@@ -3,7 +3,7 @@ import { satoshiStyle, type Props } from "./styles"
 export default function AboutOverviewBento({ isRTL }: Props) {
   return (
     <section
-      className="relative flex flex-col gap-4 lg:gap-[clamp(16px,1.5vw,24px)] items-start overflow-clip py-11 lg:py-[clamp(28px,5vw,80px)] w-full"
+      className="relative flex flex-col gap-4 lg:gap-[clamp(12px,1vw,18px)] items-start overflow-clip py-11 lg:py-[clamp(16px,3vw,48px)] w-full lg:min-h-screen lg:justify-center"
       dir={isRTL ? "rtl" : "ltr"}
     >
       <div aria-hidden className="absolute inset-0 pointer-events-none">
@@ -11,7 +11,7 @@ export default function AboutOverviewBento({ isRTL }: Props) {
         <div className="absolute bg-[rgba(20,27,52,0.85)] lg:bg-[rgba(20,27,52,0.15)] inset-0" />
       </div>
 
-      <div className="content-container flex flex-col gap-4 lg:gap-[clamp(16px,1.5vw,24px)] items-start w-full">
+      <div className="content-container flex flex-col gap-4 lg:gap-[clamp(12px,1vw,18px)] items-start w-full">
       {/* Mobile: 3 stacked cards */}
       <div className="flex flex-col gap-4 items-start w-full z-10 lg:hidden">
         {/* Card 1: Who We Are */}
@@ -66,12 +66,12 @@ export default function AboutOverviewBento({ isRTL }: Props) {
 
       {/* Desktop: original layout */}
       {/* Top card */}
-      <div className="hidden lg:flex backdrop-blur-[15px] bg-[rgba(255,255,255,0.55)] border border-[rgba(255,255,255,0.3)] flex-col lg:flex-row gap-[clamp(24px,3vw,40px)] lg:gap-[clamp(40px,7vw,100px)] items-center px-[clamp(24px,3.5vw,48px)] py-[clamp(24px,3vw,40px)] relative rounded-xl w-full z-10">
+      <div className="hidden lg:flex backdrop-blur-[15px] bg-[rgba(255,255,255,0.55)] border border-[rgba(255,255,255,0.3)] flex-col lg:flex-row gap-[clamp(16px,2vw,28px)] lg:gap-[clamp(28px,5vw,72px)] items-center px-[clamp(20px,3vw,40px)] py-[clamp(16px,2vw,28px)] relative rounded-xl w-full z-10">
         <div className="flex flex-col gap-6 items-start w-full lg:w-[clamp(300px,30vw,409px)]">
           <h3 className="text-[#141b34] text-[32px] lg:text-[clamp(24px,2.8vw,40px)]" style={{ ...satoshiStyle, fontWeight: 500 }}>
             {isRTL ? "من نحن" : "Who We Are"}
           </h3>
-          <div className="relative rounded-xl w-full h-[200px] lg:h-[clamp(160px,18vw,260px)] overflow-hidden">
+          <div className="relative rounded-xl w-full h-[160px] lg:h-[clamp(120px,14vw,200px)] overflow-hidden">
             <img
               alt=""
               src="/about-us/bento-photo-1.webp"
@@ -89,8 +89,8 @@ export default function AboutOverviewBento({ isRTL }: Props) {
       {/* Bento Row 2 - Desktop only */}
       <div className="hidden lg:flex flex-col md:flex-row gap-[clamp(10px,1.5vw,20px)] items-start w-full z-10">
         {/* 500+ card */}
-        <div className="backdrop-blur-[15px] bg-[rgba(255,255,255,0.55)] border border-[rgba(255,255,255,0.3)] flex flex-col h-[clamp(360px,36vw,513px)] items-start justify-between p-[clamp(20px,2.5vw,32px)] rounded-xl w-full md:w-[clamp(260px,26vw,360px)]">
-          <p className="text-[#141b34] text-[64px] lg:text-[clamp(48px,5vw,72px)]" style={{ ...satoshiStyle, fontWeight: 700, lineHeight: 1.05 }}>
+        <div className="backdrop-blur-[15px] bg-[rgba(255,255,255,0.55)] border border-[rgba(255,255,255,0.3)] flex flex-col h-[clamp(280px,28vw,400px)] items-start justify-between p-[clamp(16px,2vw,28px)] rounded-xl w-full md:w-[clamp(240px,24vw,340px)]">
+          <p className="text-[#141b34] text-[56px] lg:text-[clamp(40px,4vw,60px)]" style={{ ...satoshiStyle, fontWeight: 700, lineHeight: 1.05 }}>
             500+
           </p>
           <div className="flex flex-col gap-2 items-start w-full">
@@ -106,7 +106,7 @@ export default function AboutOverviewBento({ isRTL }: Props) {
         </div>
 
         {/* Dark stat card */}
-        <div className="backdrop-blur-[25px] bg-[rgba(0,0,0,0.3)] flex flex-1 flex-col gap-5 h-[clamp(360px,36vw,513px)] items-start p-[clamp(20px,2.5vw,32px)] rounded-xl w-full">
+        <div className="backdrop-blur-[25px] bg-[rgba(0,0,0,0.3)] flex flex-1 flex-col gap-4 h-[clamp(280px,28vw,400px)] items-start p-[clamp(16px,2vw,28px)] rounded-xl w-full">
           <div className="relative rounded-lg w-full flex-1 overflow-hidden">
             <img
               alt=""
@@ -132,7 +132,7 @@ export default function AboutOverviewBento({ isRTL }: Props) {
         </div>
 
         {/* 100% card */}
-        <div className="backdrop-blur-[15px] bg-[rgba(255,255,255,0.55)] border border-[rgba(255,255,255,0.3)] flex flex-col h-[clamp(360px,36vw,513px)] items-start justify-between p-[clamp(20px,2.5vw,32px)] rounded-xl w-full md:w-[clamp(260px,26vw,360px)]">
+        <div className="backdrop-blur-[15px] bg-[rgba(255,255,255,0.55)] border border-[rgba(255,255,255,0.3)] flex flex-col h-[clamp(280px,28vw,400px)] items-start justify-between p-[clamp(20px,2.5vw,32px)] rounded-xl w-full md:w-[clamp(260px,26vw,360px)]">
           <div className="flex flex-col gap-5 items-start justify-center w-full">
             <p className="text-[#141b34] text-[48px] lg:text-[clamp(36px,4vw,56px)]" style={{ ...satoshiStyle, fontWeight: 700, lineHeight: 1.1 }}>
               100%
@@ -148,7 +148,7 @@ export default function AboutOverviewBento({ isRTL }: Props) {
               </p>
             </div>
           </div>
-          <div className="relative rounded-xl w-full h-[clamp(150px,15vw,213px)] overflow-hidden">
+          <div className="relative rounded-xl w-full h-[clamp(110px,11vw,160px)] overflow-hidden">
             <img
               alt=""
               src="/about-us/bento-photo-2.webp"

@@ -33,7 +33,6 @@ export default function ProductPreview({
   const countryCode = useParams().countryCode as string
 
   const title = (isRTL ? product?.metadata?.localizations?.ar?.title : product.title) || product.title
-  const description = (isRTL ? product?.metadata?.localizations?.ar?.description : product.description) || product.description
   const images = product.images || []
   const allImages = images.length
     ? images.filter((img) => Boolean(img?.url)).map((img) => ({ url: normalizeProductImageUrl(img.url) }))
@@ -215,13 +214,6 @@ export default function ProductPreview({
           <h3 className="text-[18px] font-bold text-[#0F172A] leading-snug line-clamp-2 min-h-[2.6rem] group-hover:text-[#17284a] transition-colors mt-1">
             {title}
           </h3>
-
-          {/* Description */}
-          {description && (
-            <p className="text-[14px] text-gray-500 leading-relaxed line-clamp-2 min-h-[2.5rem]">
-              {description}
-            </p>
-          )}
 
           {/* Price / Price on Request */}
           <div className="mt-2" dir={isRTL ? "rtl" : "ltr"}>

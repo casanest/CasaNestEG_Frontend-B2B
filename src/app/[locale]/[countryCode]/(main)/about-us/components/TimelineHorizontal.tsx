@@ -69,10 +69,10 @@ const milestones = [
 export default function TimelineHorizontal({ isRTL }: Props) {
   return (
     <section
-      className="bg-[#faf8f5] flex flex-col gap-5 lg:gap-[clamp(24px,4vw,56px)] items-start overflow-clip py-11 lg:py-[clamp(28px,6vw,100px)] relative w-full"
+      className="bg-[#faf8f5] flex flex-col gap-5 lg:gap-[clamp(16px,2vw,32px)] items-start overflow-clip py-11 lg:py-[clamp(16px,3vw,48px)] relative w-full lg:min-h-screen lg:justify-center"
       dir={isRTL ? "rtl" : "ltr"}
     >
-      <div className="content-container flex flex-col gap-5 lg:gap-[clamp(24px,4vw,56px)] items-start w-full">
+      <div className="content-container flex flex-col gap-5 lg:gap-[clamp(16px,2vw,32px)] items-start w-full">
       <div className="flex flex-col gap-1.5 lg:gap-[clamp(8px,0.8vw,12px)] items-start w-full">
         <p className="text-[#17284a] text-[32px] lg:text-[clamp(28px,2.5vw,40px)]" style={caveatStyle}>
           {isRTL ? "رحلتنا" : "Our Journey"}

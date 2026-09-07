@@ -158,11 +158,15 @@ export default function Footer({ productCategories, collections, locale, socialM
                     </div>
                     <div className="flex items-center gap-3 lg:gap-[12px] py-2">
                       <Phone className="w-5 h-5 lg:w-6 lg:h-6 text-white/80 flex-shrink-0" />
-                      <span>9200 123 456</span>
+                      <span>01233365368</span>
                     </div>
                     <div className="flex items-start gap-3 lg:gap-[12px] py-2">
                       <MapPin className="w-5 h-5 lg:w-6 lg:h-6 text-white/80 flex-shrink-0 mt-0.5" />
-                      <span>{isRTL ? "شارع أحمد شوقي، أبراج المدينة الملكية، فوق رانين، البرج الثاني، الطابق الأول العلوي" : "Ahmed Shawki st. Royal City towers, above Ranin, second tower, first upper floor"}</span>
+                      <span>{isRTL ? "عماره 5 – شارع البرج – الدور الخامس – ميدان لبنان – المهندسين" : "Building 5 – Al Burj Street – Fifth Floor – Lebanon Square – Mohandessin"}</span>
+                    </div>
+                    <div className="flex items-start gap-3 lg:gap-[12px] py-2">
+                      <MapPin className="w-5 h-5 lg:w-6 lg:h-6 text-white/80 flex-shrink-0 mt-0.5" />
+                      <span>{isRTL ? "شارع احمد شوقي امتداد المحافظ – ابراج رويال سيتي – اعلي رنين – الفيوم" : "Ahmed Shawki st. Royal City towers, above Ranin, second tower, first upper floor"}</span>
                     </div>
                   </div>
                 </li>
