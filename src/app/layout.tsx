@@ -1,5 +1,6 @@
 import { getBaseURL } from "@/lib/util/env";
 import type { Metadata } from "next";
+import Script from "next/script";
 import {
   Cairo,
   Caveat,
@@ -123,9 +124,32 @@ export default function RootLayout({
     //   </body>
     // </html>
      <html lang="ar" data-mode="light">
+      {/* Google Tag Manager */}
+      <Script
+        id="gtm-script"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NRQ89R45');`,
+        }}
+      />
+      {/* End Google Tag Manager */}
       {/* Provide the intl context */}
       {/* <NextIntlClientProvider locale={locale} messages={messages}> */}
         <body className={`${cairo.variable} ${caveat.variable} ${playpenSansArabic.variable}`}>
+          {/* Google Tag Manager (noscript) */}
+          <noscript>
+            <iframe
+              src="https://www.googletagmanager.com/ns.html?id=GTM-NRQ89R45"
+              height="0"
+              width="0"
+              style={{ display: "none", visibility: "hidden" }}
+            />
+          </noscript>
+          {/* End Google Tag Manager (noscript) */}
           <main className="relative">{children}</main>
         </body>
       {/* </NextIntlClientProvider> */}

@@ -121,10 +121,10 @@ function ProjectCard({
     return (
       <LocalizedClientLink
         href={`/our-services/projects/${project.slug}`}
-        className="flex flex-col gap-[8px] w-[256px] shrink-0 snap-center"
+        className="flex flex-col gap-[10px] w-[380px] shrink-0 snap-center"
       >
         {/* Image */}
-        <div className="bg-[#f3f1ef] border border-black/50 h-[180px] rounded-[12px] overflow-hidden relative">
+        <div className="bg-[#f3f1ef] border border-black/50 h-[340px] rounded-[16px] overflow-hidden relative">
           <img
             src={project.hero_image_url}
             alt={title || ""}
@@ -133,14 +133,14 @@ function ProjectCard({
         </div>
 
         {/* Info bar */}
-        <div className="bg-[#e5e7eb] flex items-center justify-between p-[8px] rounded-[8px]">
-          <span className="text-black text-[11px] font-medium leading-[1.3] truncate">
+        <div className="bg-[#e5e7eb] flex items-center justify-between p-[12px] rounded-[12px]">
+          <span className="text-black text-[14px] font-medium leading-[1.3] truncate">
             {title}
           </span>
-          <div className="flex gap-[4px] items-center opacity-80 shrink-0">
-            <span className="text-black text-[9px] truncate">{category}</span>
+          <div className="flex gap-[6px] items-center opacity-80 shrink-0">
+            <span className="text-black text-[11px] truncate">{category}</span>
             <span className="w-1 h-1 rounded-full bg-black shrink-0" />
-            <span className="text-black text-[9px] shrink-0">
+            <span className="text-black text-[11px] shrink-0">
               {formatDate(project.project_date)}
             </span>
           </div>
@@ -155,7 +155,7 @@ function ProjectCard({
       className="flex flex-col gap-[8px] flex-1 min-w-0"
     >
       {/* Image */}
-      <div className="bg-[#f3f1ef] border border-black/50 h-[clamp(180px,21.6vw,306px)] rounded-[12px] overflow-hidden relative">
+      <div className="bg-[#f3f1ef] border border-black/50 h-[clamp(340px,36vw,520px)] rounded-[16px] overflow-hidden relative">
         <img
           src={project.hero_image_url}
           alt={title || ""}
@@ -164,14 +164,14 @@ function ProjectCard({
       </div>
 
       {/* Info bar */}
-      <div className="bg-[#e5e7eb] flex items-center justify-between p-[clamp(10px,1vw,14px)] rounded-[8px]">
-        <span className="text-black text-[clamp(13px,1.3vw,18px)] font-medium leading-[1.3]">
+      <div className="bg-[#e5e7eb] flex items-center justify-between p-[clamp(14px,1.2vw,20px)] rounded-[12px]">
+        <span className="text-black text-[clamp(16px,1.5vw,22px)] font-medium leading-[1.3]">
           {title}
         </span>
-        <div className="flex gap-[6px] items-center opacity-80">
-          <span className="text-black text-[clamp(11px,1vw,14px)]">{category}</span>
+        <div className="flex gap-[8px] items-center opacity-80">
+          <span className="text-black text-[clamp(13px,1.1vw,16px)]">{category}</span>
           <span className="w-1 h-1 rounded-full bg-black" />
-          <span className="text-black text-[clamp(11px,1vw,14px)]">
+          <span className="text-black text-[clamp(13px,1.1vw,16px)]">
             {formatDate(project.project_date)}
           </span>
         </div>

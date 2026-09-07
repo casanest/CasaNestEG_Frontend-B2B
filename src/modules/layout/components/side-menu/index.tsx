@@ -529,7 +529,7 @@ export default function SideMenu({ productCategories, packages = [], projectGrou
       </button>
 
       <div
-        className={"fixed inset-0 z-[100] transition-all duration-300 " + (isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none')}
+        className={"side-menu-overlay fixed inset-0 z-[100] transition-all duration-300 " + (isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none')}
         style={{ visibility: isOpen ? 'visible' : 'hidden' }}
       >
         <div

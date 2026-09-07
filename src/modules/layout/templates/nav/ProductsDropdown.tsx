@@ -56,26 +56,16 @@ export default function ProductsDropdown({
     const margin = 16
     const dropdownWidth = Math.min(820, viewportWidth - margin * 2)
 
-    let dropdownLeftInViewport: number
+    // Center the dropdown on the trigger element
+    const triggerCenter = rect.left + rect.width / 2
+    let dropdownLeftInViewport = triggerCenter - dropdownWidth / 2
 
-    if (isRTL) {
-      // RTL: prefer left-aligning dropdown with trigger's left edge
-      dropdownLeftInViewport = rect.left
-      if (dropdownLeftInViewport + dropdownWidth > viewportWidth - margin) {
-        dropdownLeftInViewport = viewportWidth - margin - dropdownWidth
-      }
-      if (dropdownLeftInViewport < margin) {
-        dropdownLeftInViewport = margin
-      }
-    } else {
-      // LTR: prefer right-aligning dropdown with trigger's right edge
-      dropdownLeftInViewport = rect.right - dropdownWidth
-      if (dropdownLeftInViewport < margin) {
-        dropdownLeftInViewport = margin
-      }
-      if (dropdownLeftInViewport + dropdownWidth > viewportWidth - margin) {
-        dropdownLeftInViewport = viewportWidth - margin - dropdownWidth
-      }
+    // Clamp to viewport margins
+    if (dropdownLeftInViewport < margin) {
+      dropdownLeftInViewport = margin
+    }
+    if (dropdownLeftInViewport + dropdownWidth > viewportWidth - margin) {
+      dropdownLeftInViewport = viewportWidth - margin - dropdownWidth
     }
 
     // Convert viewport position to offset relative to container's left edge
@@ -128,7 +118,7 @@ export default function ProductsDropdown({
           onMouseEnter={handleEnter}
         >
           <div
-            className="flex gap-[24px] bg-white border border-[#e5e7eb] rounded-[24px] p-[20px] shadow-[0px_12px_32px_0px_rgba(0,0,0,0.06)]"
+            className="products-dropdown-panel flex gap-[24px] bg-white border border-[#e5e7eb] rounded-[24px] p-[20px] shadow-[0px_12px_32px_0px_rgba(0,0,0,0.06)]"
             style={{ width: "min(820px, calc(100vw - 32px))", minHeight: "auto" }}
           >
             {/* Left Panel — Category List */}
