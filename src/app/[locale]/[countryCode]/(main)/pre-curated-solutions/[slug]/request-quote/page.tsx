@@ -10,7 +10,8 @@ type Props = {
   }>
 }
 
-export const revalidate = 60
+export const dynamic = "force-dynamic"
+export const fetchCache = "force-no-store"
 
 export default async function RequestQuotePage({ params }: Props) {
   const { locale, slug } = await params

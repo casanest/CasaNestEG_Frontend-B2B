@@ -43,7 +43,7 @@ export default async function RelatedProducts({
           fields: "*variants.calculated_price,+metadata,*variants,*variants.options,*options,*options.values,*images,*tags,*categories,",
         },
         headers,
-        next: { revalidate: 300, ...next },
+        next: { revalidate: 0, ...next },
       }
     )
     if (response?.products?.length) {

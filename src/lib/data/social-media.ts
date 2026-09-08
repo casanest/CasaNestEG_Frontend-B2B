@@ -17,7 +17,7 @@ export async function listSocialMedia(): Promise<SocialMediaLink[]> {
   try {
     const response = await sdk.client.fetch<SocialMediaResponse>("/store/social-media", {
       method: "GET",
-      next: { revalidate: 3600 },
+      next: { revalidate: 0 },
     })
 
     if (!response || !response.socialMedia) {

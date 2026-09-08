@@ -93,7 +93,7 @@ export async function listPortfolioCategories(): Promise<PortfolioCategory[]> {
   const { categories } = await sdk.client.fetch<CategoriesResponse>(
     "/store/portfolio/categories",
     {
-      next: { revalidate: 3600, tags: ["portfolio"] },
+      next: { revalidate: 0, tags: ["portfolio"] },
     }
   )
   return categories
@@ -110,7 +110,7 @@ export async function listProjectsByCategory(
   return sdk.client.fetch<ProjectsByCategoryResponse>(
     `/store/portfolio/categories/${slug}/projects?${params.toString()}`,
     {
-      next: { revalidate: 3600, tags: ["portfolio"] },
+      next: { revalidate: 0, tags: ["portfolio"] },
     }
   )
 }
@@ -124,7 +124,7 @@ export async function listAllPortfolioProjects(homepage?: boolean): Promise<{
     categories: PortfolioCategory[]
     projects: PortfolioProjectListItem[]
   }>(`/store/portfolio/projects${params}`, {
-    next: { revalidate: 3600, tags: ["portfolio"] },
+    next: { revalidate: 0, tags: ["portfolio"] },
   })
 
   const projects: PortfolioProjectListItem[] = (data.projects || []).slice()
@@ -147,7 +147,7 @@ export async function getPortfolioProject(
   const { project } = await sdk.client.fetch<ProjectDetailResponse>(
     `/store/portfolio/projects/${slug}`,
     {
-      next: { revalidate: 3600, tags: ["portfolio"] },
+      next: { revalidate: 0, tags: ["portfolio"] },
     }
   )
   return project

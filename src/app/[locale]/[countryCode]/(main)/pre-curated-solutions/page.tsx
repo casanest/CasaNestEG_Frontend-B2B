@@ -9,7 +9,8 @@ type Props = {
   }>
 }
 
-export const revalidate = 60
+export const dynamic = "force-dynamic"
+export const fetchCache = "force-no-store"
 
 export default async function PreCuratedSolutionsPage({ params }: Props) {
   const { locale } = await params

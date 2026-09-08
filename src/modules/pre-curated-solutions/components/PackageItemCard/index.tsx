@@ -32,11 +32,20 @@ export default function PackageItemCard({
     ? `الحد الأدنى : ${moq} قطعة`
     : `Min. Order Qty: ${moq} pcs`
 
-  const priceText = product.price && product.show_price
-    ? `${product.price.currency_code.toUpperCase()} ${product.price.amount.toLocaleString("en-US")}`
-    : isRTL
-      ? "السعر عند الطلب"
-      : "Price on Request"
+  const showPrice = product.show_price && product.price
+  const isSale = showPrice && product.price?.price_type === "sale"
+  const currencyCode = showPrice ? product.price!.currency_code.toUpperCase() : ""
+  const calculatedPrice = showPrice ? product.price!.amount.toLocaleString("en-US") : ""
+  const originalPrice = showPrice && product.price?.original_amount
+    ? product.price!.original_amount!.toLocaleString("en-US")
+    : null
+  const percentageDiff = showPrice && product.price?.percentage_diff
+    ? product.price!.percentage_diff
+    : null
+
+  const priceText = !showPrice
+    ? (isRTL ? "السعر عند الطلب" : "Price on Request")
+    : null
 
   return (
     <LocalizedClientLink
@@ -94,29 +103,47 @@ export default function PackageItemCard({
         </div>
         {/* Price pill */}
         <div className="bg-[#f3f4f6] flex items-center justify-center px-2 md:px-3 py-1.5 rounded-md w-full">
-          <p className="font-satoshi font-bold leading-[1.5] text-[#17284a] text-[14px] whitespace-normal md:whitespace-nowrap">
-            {priceText}
-          </p>
+          {priceText ? (
+            <p className="font-satoshi font-bold leading-[1.5] text-[#17284a] text-[14px] whitespace-normal md:whitespace-nowrap">
+              {priceText}
+            </p>
+          ) : (
+            <div className="flex items-baseline gap-1.5 flex-wrap justify-center" dir={isRTL ? "rtl" : "ltr"}>
+              {isSale && originalPrice && (
+                <span className="font-satoshi font-normal text-[12px] line-through text-[#707176] tabular-nums">
+                  {currencyCode} {originalPrice}
+                </span>
+              )}
+              <span className={`font-satoshi font-bold leading-[1.5] text-[14px] tabular-nums ${isSale ? "text-[#17284A]" : "text-[#17284a]"}`}>
+                {currencyCode} {calculatedPrice}
+              </span>
+              {isSale && percentageDiff != null && (
+                <span className="font-satoshi font-bold text-[10px] text-[#17284A] tabular-nums">
+                  -{percentageDiff}%
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Quantity box */}
-        <div className="bg-white border border-[#e5e7eb] border-solid flex flex-row items-center justify-center p-1.5 md:p-2 gap-2 md:gap-3 rounded-lg w-full md:w-[100px] md:h-[37px] md:rounded-[8px] md:border-[1px]">
+        <div className="bg-white border border-[#E5E7EB] border-solid flex flex-row items-center justify-center p-[6px] md:p-2 gap-[12px] md:gap-3 rounded-[8px] w-[162px] md:w-[100px] h-[33px] md:h-[37px]">
           <button
             onClick={(e) => { e.stopPropagation(); e.preventDefault(); onDecrement() }}
-            className="shrink-0 flex items-center justify-center"
+            className="shrink-0 flex items-center justify-center w-[14px] h-[14px]"
             aria-label="Decrease quantity"
           >
-            <Minus className="w-3.5 h-3.5 md:w-5 md:h-5 text-[#141B34]" strokeWidth={1.5} />
+            <Minus className="w-[14px] h-[14px] md:w-5 md:h-5 text-[#17284A]" strokeWidth={2} />
           </button>
-          <p className="font-satoshi font-bold leading-[1.5] text-[#1c1b1c] text-[14px] whitespace-nowrap">
+          <p className="font-satoshi font-bold leading-[1.5] text-[#1C1B1C] text-[14px] whitespace-nowrap">
             {quantity}
           </p>
           <button
             onClick={(e) => { e.stopPropagation(); e.preventDefault(); onIncrement() }}
-            className="shrink-0 flex items-center justify-center"
+            className="shrink-0 flex items-center justify-center w-[14px] h-[14px]"
             aria-label="Increase quantity"
           >
-            <Plus className="w-3.5 h-3.5 md:w-5 md:h-5 text-[#141B34]" strokeWidth={1.5} />
+            <Plus className="w-[14px] h-[14px] md:w-5 md:h-5 text-[#17284A]" strokeWidth={2} />
           </button>
         </div>
       </div>

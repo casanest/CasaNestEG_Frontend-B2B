@@ -83,7 +83,7 @@ export const listRegions = async () => {
       "/store/regions",
       {
         method: "GET",
-        next: { revalidate: 3600, ...next },
+        next: { revalidate: 0, ...next },
       }
     )
     .then(({ regions }) => regions)
@@ -103,7 +103,7 @@ export const retrieveRegion = async (id: string) => {
       `/store/regions/${id}`,
       {
         method: "GET",
-        next: { revalidate: 3600, ...next },
+        next: { revalidate: 0, ...next },
       }
     )
     .then(({ region }) => region)

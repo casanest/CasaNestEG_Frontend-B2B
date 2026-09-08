@@ -138,7 +138,7 @@ export const listProducts = async ({
       method: "GET",
       query: baseQuery,
       headers,
-      next: { revalidate: 300, tags: ["products"], ...next },
+      next: { revalidate: 0, tags: ["products"], ...next },
     })
 
     if (!response || !response.products) {

@@ -148,7 +148,7 @@ export default function PackageDetailClient({ pkg, locale }: PackageDetailProps)
         images: [],
         quantity: state?.quantity ?? product.moq ?? 1,
         unitPrice: product.price?.amount ?? null,
-        originalPrice: product.price?.amount ?? null,
+        originalPrice: product.price?.original_amount ?? product.price?.amount ?? null,
         currencyCode: product.price?.currency_code ?? "usd",
         categoryName: titleName,
         minOrderQty: product.moq ?? undefined,

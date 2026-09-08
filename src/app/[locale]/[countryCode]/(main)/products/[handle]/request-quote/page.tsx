@@ -4,7 +4,7 @@ import { getRegion, listRegions } from "@lib/data/regions"
 import SingleProductQuoteForm from "@modules/products/components/single-product-quote-form"
 
 export const dynamic = "force-dynamic"
-export const revalidate = 0
+export const fetchCache = "force-no-store"
 
 type Props = {
   params: Promise<{ countryCode: string; handle: string }>
