@@ -152,10 +152,10 @@ function ProjectCard({
   return (
     <LocalizedClientLink
       href={`/our-services/projects/${project.slug}`}
-      className="flex flex-col gap-[8px] flex-1 min-w-0"
+      className="flex flex-col gap-[7px] flex-1 min-w-0"
     >
       {/* Image */}
-      <div className="bg-[#f3f1ef] border border-black/50 h-[clamp(340px,36vw,520px)] rounded-[16px] overflow-hidden relative">
+      <div className="bg-[#f3f1ef] border border-black/50 h-[clamp(238px,25.2vw,364px)] rounded-[16px] overflow-hidden relative">
         <img
           src={project.hero_image_url}
           alt={title || ""}
@@ -164,14 +164,14 @@ function ProjectCard({
       </div>
 
       {/* Info bar */}
-      <div className="bg-[#e5e7eb] flex items-center justify-between p-[clamp(14px,1.2vw,20px)] rounded-[12px]">
-        <span className="text-black text-[clamp(16px,1.5vw,22px)] font-medium leading-[1.3]">
+      <div className="bg-[#e5e7eb] flex items-center justify-between p-[clamp(12px,1.08vw,18px)] rounded-[12px]">
+        <span className="text-black text-[clamp(14px,1.35vw,20px)] font-medium leading-[1.3]">
           {title}
         </span>
         <div className="flex gap-[8px] items-center opacity-80">
-          <span className="text-black text-[clamp(13px,1.1vw,16px)]">{category}</span>
+          <span className="text-black text-[clamp(12px,1vw,14px)]">{category}</span>
           <span className="w-1 h-1 rounded-full bg-black" />
-          <span className="text-black text-[clamp(13px,1.1vw,16px)]">
+          <span className="text-black text-[clamp(12px,1vw,14px)]">
             {formatDate(project.project_date)}
           </span>
         </div>
