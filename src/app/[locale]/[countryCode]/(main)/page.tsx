@@ -117,8 +117,7 @@ type Props = {
     locale: string
   }>
 }
-export const dynamic = "force-dynamic"
-export const fetchCache = "force-no-store"
+export const revalidate = 60
 
 export async function generateMetadata({
   params,

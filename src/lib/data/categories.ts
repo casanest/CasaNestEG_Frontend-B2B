@@ -40,7 +40,7 @@ export type Category = {
 //       ...query,
 //     },
 //     next,
-//     cache: "no-store",
+//     cache: "force-cache",
 //   });
 
 //   // 🟢 Normalize and localize
@@ -143,7 +143,7 @@ export function getParentCategories(categories: Category[]) {
 //           handle,
 //         },
 //         next,
-//         cache: "no-store",
+//         cache: "force-cache",
 //       }
 //     )
 
@@ -207,7 +207,7 @@ export const listCategories = cache(async (query?: Record<string, any>): Promise
       ...query,
     }, 
     next,
-    cache: "no-store",
+    cache: "force-cache",
   })
 
   // Step 2: Normalize each category (children array starts empty)
@@ -267,7 +267,7 @@ export const getCategoryByHandle = async (
         limit: 100,
       },
       next,
-      cache: "no-store",
+      cache: "force-cache",
     })
 
     // Step 2: Normalize flat
@@ -335,7 +335,7 @@ export const getCategoryByHandle = async (
 //           handle,
 //         },
 //         next,
-//         cache: "no-store",
+//         cache: "force-cache",
 //       }
 //     );
 

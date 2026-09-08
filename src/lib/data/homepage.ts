@@ -78,7 +78,7 @@ export const getHomepageData = cache(async (): Promise<HomepageData> => {
     "/store/homepage",
     {
       method: "GET",
-      next: { revalidate: 0, tags: ["banners", "packages", "portfolio", "testimonials", "products"] },
+      next: { revalidate: 300, tags: ["banners", "packages", "portfolio", "testimonials", "products"] },
     }
   )
 

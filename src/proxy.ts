@@ -48,10 +48,10 @@ async function getRegionMap(cacheId: string) {
           "x-publishable-api-key": PUBLISHABLE_API_KEY,
         },
         next: {
-          revalidate: 0,
+          revalidate: 3600,
           tags: [`regions-${cacheId}`],
         },
-        cache: "no-store",
+        cache: "force-cache",
       })
 
       if (!response.ok) {
