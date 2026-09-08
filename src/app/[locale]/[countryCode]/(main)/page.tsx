@@ -15,6 +15,7 @@ import OurWork from "@modules/home/components/our-work/OurWork"
 import BuildProposal from "@modules/home/components/build-proposal/BuildProposal"
 import TestimonialsSection from "@modules/home/components/testimonials-section/TestimonialsSection"
 import FAQSection from "@modules/home/components/faq-section/FAQSection"
+import SkeletonProductGrid from "@modules/skeletons/templates/skeleton-product-grid"
 
 // export const metadata: Metadata = {
 //   title: {
@@ -268,7 +269,7 @@ export default async function Home({
         <HeroSection banners={homepageData.banners.hero} locale={locale} dir={dir} />
       </div>
       <OurClients banners={clientBanners} locale={locale} dir={dir} />
-      <Suspense fallback={<div className="w-full h-screen bg-gray-50 animate-pulse" />}>
+      <Suspense fallback={<SkeletonProductGrid numberOfProducts={5} />}>
         <HomepageAmenities countryCode={countryCode} locale={locale} dir={dir} region={region} />
       </Suspense>
       <PreCuratedSolutions packages={homepageData.packages} locale={locale} dir={dir} />

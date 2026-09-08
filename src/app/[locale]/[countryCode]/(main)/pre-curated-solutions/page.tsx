@@ -21,7 +21,18 @@ export default async function PreCuratedSolutionsPage({ params }: Props) {
       <SectionHeader locale={locale} />
 
       <div className="mt-6 md:mt-10 px-2 md:px-4 lg:px-[clamp(16px,2vw,30px)]">
-        <Suspense fallback={<div className="h-screen w-full bg-gray-50 flex items-center justify-center animate-pulse" />}>
+        <Suspense fallback={
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-x-5 md:gap-y-7">
+            {Array.from({ length: 4 }, (_, i) => (
+              <div key={i} className="flex flex-col gap-3">
+                <div className="w-full h-48 md:h-56 skeleton-shimmer rounded-2xl" />
+                <div className="h-6 w-3/4 skeleton-shimmer rounded" />
+                <div className="h-4 w-1/2 skeleton-shimmer rounded" />
+                <div className="h-10 w-full skeleton-shimmer rounded-xl" />
+              </div>
+            ))}
+          </div>
+        }>
           <PackagesList locale={locale} />
         </Suspense>
       </div>
