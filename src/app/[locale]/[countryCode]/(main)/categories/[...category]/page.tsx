@@ -8,9 +8,6 @@ import CategoryTemplate from "@modules/categories/templates"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import { getLocale } from "next-intl/server"
 
-export const dynamic = "force-dynamic"
-export const revalidate = 0
-
 type Props = {
   params: Promise<{ category: string[]; countryCode: string }>
   searchParams: Promise<{
@@ -30,7 +27,7 @@ export async function generateStaticParams() {
     }
 
     const regions = await listRegions()
-    
+
     if (!regions || regions.length === 0) {
       console.warn("No regions found during static generation")
       return []
@@ -62,8 +59,7 @@ export async function generateStaticParams() {
     return staticParams
   } catch (error) {
     console.error(
-      `Failed to generate static paths for category pages: ${
-        error instanceof Error ? error.message : "Unknown error"
+      `Failed to generate static paths for category pages: ${error instanceof Error ? error.message : "Unknown error"
       }.`
     )
     return []
@@ -107,7 +103,7 @@ export default async function CategoryPage(props: Props) {
 
   // Handle URL encoding - decode the category handle
   const decodedCategory = params.category.map(segment => decodeURIComponent(segment))
-  
+
   // Get category by handle (with fallback to name search)
   const productCategory = await getCategoryByHandle(decodedCategory)
 

@@ -5,6 +5,7 @@ import { listProducts } from "@lib/data/products"
 import { getHomepageData } from "@lib/data/homepage"
 
 import HeroSection from "@modules/home/components/hero-section/HeroSection"
+import { Suspense } from "react"
 import OurClients from "@modules/home/components/our-clients/OurClients"
 import Amenities from "@modules/home/components/amenities/Amenities"
 import PreCuratedSolutions from "@modules/home/components/pre-curated-solutions/PreCuratedSolutions"
@@ -247,22 +248,7 @@ export default async function Home({
     return null
   }
 
-  // Fetch homepage content data and products in parallel
-  const [homepageData, homepageProductsData] = await Promise.all([
-    getHomepageData(),
-    listProducts({
-      pageParam: 1,
-      queryParams: {
-        limit: 100,
-      },
-      countryCode,
-    }),
-  ])
-
-  const allProducts = homepageProductsData.response.products
-  const homepageProducts = allProducts.filter(
-    (p) => (p as any).is_in_homepage === true
-  )
+  const homepageData = await getHomepageData()
 
   const sortByDisplayOrder = (
     a: { display_order: number },
@@ -282,7 +268,9 @@ export default async function Home({
         <HeroSection banners={homepageData.banners.hero} locale={locale} dir={dir} />
       </div>
       <OurClients banners={clientBanners} locale={locale} dir={dir} />
-      <Amenities products={homepageProducts} locale={locale} dir={dir} region={region} />
+      <Suspense fallback={<div className="w-full h-screen bg-gray-50 animate-pulse" />}>
+        <HomepageAmenities countryCode={countryCode} locale={locale} dir={dir} region={region} />
+      </Suspense>
       <PreCuratedSolutions packages={homepageData.packages} locale={locale} dir={dir} />
       <StatsBar dir={dir} />
       <OurPartners banners={partnerBanners} dir={dir} />
@@ -292,4 +280,21 @@ export default async function Home({
       <FAQSection dir={dir} />
     </>
   )
+}
+
+async function HomepageAmenities({ countryCode, locale, dir, region }: { countryCode: string, locale: string, dir: string, region: any }) {
+  const homepageProductsData = await listProducts({
+    pageParam: 1,
+    queryParams: {
+      limit: 100,
+    },
+    countryCode,
+  })
+
+  const allProducts = homepageProductsData.response.products
+  const homepageProducts = allProducts.filter(
+    (p) => (p as any).is_in_homepage === true
+  )
+
+  return <Amenities products={homepageProducts} locale={locale} dir={dir} region={region} />
 }

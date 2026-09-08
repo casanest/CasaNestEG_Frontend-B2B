@@ -7,9 +7,6 @@ import { StoreCollection, StoreRegion } from "@medusajs/types"
 import CollectionTemplate from "@modules/collections/templates"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 
-export const dynamic = "force-dynamic"
-export const revalidate = 0
-
 type Props = {
   params: Promise<{ handle: string; countryCode: string }>
   searchParams: Promise<{
@@ -32,7 +29,7 @@ export async function generateStaticParams() {
     }
 
     const regions = await listRegions()
-    
+
     if (!regions || regions.length === 0) {
       console.warn("No regions found during static generation")
       return []
@@ -64,8 +61,7 @@ export async function generateStaticParams() {
     return staticParams
   } catch (error) {
     console.error(
-      `Failed to generate static paths for collection pages: ${
-        error instanceof Error ? error.message : "Unknown error"
+      `Failed to generate static paths for collection pages: ${error instanceof Error ? error.message : "Unknown error"
       }.`
     )
     return []

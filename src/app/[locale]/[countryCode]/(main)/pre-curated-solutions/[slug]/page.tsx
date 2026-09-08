@@ -10,9 +10,6 @@ type Props = {
   }>
 }
 
-export const dynamic = "force-dynamic"
-export const fetchCache = "force-no-store"
-
 export default async function SinglePackagePage({ params }: Props) {
   const { locale, slug } = await params
   const pkg = await getPackageBySlug(slug)

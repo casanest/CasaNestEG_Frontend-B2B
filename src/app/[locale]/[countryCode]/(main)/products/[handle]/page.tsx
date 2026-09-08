@@ -5,8 +5,6 @@ import { listProducts } from "@lib/data/products"
 import { getRegion, listRegions } from "@lib/data/regions"
 import ProductTemplate from "@modules/products/templates"
 
-export const dynamic = "force-dynamic"
-export const fetchCache = "force-no-store"
 
 type Props = {
   params: Promise<{ countryCode: string; handle: string }>
@@ -23,7 +21,7 @@ const getProductByHandle = cache(async (countryCode: string, handle: string) => 
 export async function generateStaticParams() {
   try {
     const regions = await listRegions()
-    
+
     if (!regions || regions.length === 0) {
       console.warn("No regions found during static generation")
       return []
@@ -41,7 +39,7 @@ export async function generateStaticParams() {
 
     // Use the first available country code instead of hardcoded "US"
     const firstCountryCode = countryCodes[0]
-    
+
     const { response } = await listProducts({
       countryCode: firstCountryCode,
       queryParams: { fields: "handle" },
@@ -64,16 +62,15 @@ export async function generateStaticParams() {
       .filter((param) => param.handle)
   } catch (error) {
     console.error(
-      `Failed to generate static paths for product pages: ${
-        error instanceof Error ? error.message : "Unknown error"
+      `Failed to generate static paths for product pages: ${error instanceof Error ? error.message : "Unknown error"
       }.`
     )
     return []
   }
 }
-  // const title = (isRTL ? product?.metadata?.localizations?.ar?.title : product.title) || product.title
-  // const description = (isRTL ? product?.metadata?.localizations?.ar?.description : product.description) || product.description
-  // const images = product.images || []
+// const title = (isRTL ? product?.metadata?.localizations?.ar?.title : product.title) || product.title
+// const description = (isRTL ? product?.metadata?.localizations?.ar?.description : product.description) || product.description
+// const images = product.images || []
 
 // export async function generateMetadata(props: Props): Promise<Metadata> {
 //   const params = await props.params
