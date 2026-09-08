@@ -113,7 +113,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
                 {/* Discount badge */}
                 {cheapestPrice?.price_type === "sale" && cheapestPrice.percentage_diff && (
                     <div className={`absolute top-3 ${isRTL ? "left-3" : "right-3"} z-10`}>
-                        <span className="bg-gradient-to-r from-rose-500 to-pink-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md">
+                        <span className="inline-flex items-center justify-center px-2 py-[2px] h-[22px] bg-[#F3F4F6] border border-[#CCCCCC] rounded-full font-satoshi font-medium text-[12px] leading-[150%] text-[#17284A] tabular-nums whitespace-nowrap">
                             -{cheapestPrice.percentage_diff}%
                         </span>
                     </div>

@@ -234,7 +234,7 @@ export default function ProductPreview({
                   {cheapestPrice.calculated_price}
                 </span>
                 {cheapestPrice?.price_type === 'sale' && (
-                  <span className="text-[10px] font-bold text-[#17284A] tabular-nums">
+                  <span className="inline-flex items-center justify-center px-2 py-[2px] h-[22px] bg-[#F3F4F6] border border-[#CCCCCC] rounded-full font-satoshi font-medium text-[12px] leading-[150%] text-[#17284A] tabular-nums whitespace-nowrap">
                     -{cheapestPrice.percentage_diff}%
                   </span>
                 )}
