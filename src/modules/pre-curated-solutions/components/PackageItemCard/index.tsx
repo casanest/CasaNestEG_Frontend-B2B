@@ -117,20 +117,15 @@ export default function PackageItemCard({
               <span className={`font-satoshi font-bold leading-[1.5] text-[14px] tabular-nums ${isSale ? "text-[#17284A]" : "text-[#17284a]"}`}>
                 {currencyCode} {calculatedPrice}
               </span>
-              {isSale && percentageDiff != null && (
-                <span className="inline-flex items-center justify-center px-2 py-[2px] h-[22px] bg-[#F3F4F6] border border-[#CCCCCC] rounded-full font-satoshi font-medium text-[12px] leading-[150%] text-[#17284A] tabular-nums whitespace-nowrap">
-                  -{percentageDiff}%
-                </span>
-              )}
             </div>
           )}
         </div>
 
         {/* Quantity box */}
-        <div className="bg-white border border-[#E5E7EB] border-solid flex flex-row items-center justify-center p-[6px] md:p-2 gap-[12px] md:gap-3 rounded-[8px] w-[162px] md:w-[100px] h-[33px] md:h-[37px]">
+        <div className="bg-white border border-[#E5E7EB] border-solid flex flex-row items-center justify-center p-[6px] md:p-2 gap-[24px] md:gap-3 rounded-[8px] w-[162px] md:w-[100px] h-[33px] md:h-[37px]">
           <button
             onClick={(e) => { e.stopPropagation(); e.preventDefault(); onDecrement() }}
-            className="shrink-0 flex items-center justify-center w-[14px] h-[14px]"
+            className="shrink-0 flex items-center justify-center w-[32px] h-[32px] md:w-5 md:h-5"
             aria-label="Decrease quantity"
           >
             <Minus className="w-[14px] h-[14px] md:w-5 md:h-5 text-[#17284A]" strokeWidth={2} />
@@ -140,7 +135,7 @@ export default function PackageItemCard({
           </p>
           <button
             onClick={(e) => { e.stopPropagation(); e.preventDefault(); onIncrement() }}
-            className="shrink-0 flex items-center justify-center w-[14px] h-[14px]"
+            className="shrink-0 flex items-center justify-center w-[32px] h-[32px] md:w-5 md:h-5"
             aria-label="Increase quantity"
           >
             <Plus className="w-[14px] h-[14px] md:w-5 md:h-5 text-[#17284A]" strokeWidth={2} />

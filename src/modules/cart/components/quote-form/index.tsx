@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useCallback, useEffect } from "react"
+import { useState, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useCartStore, QuoteItem } from "@lib/store/useCartStore"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
@@ -263,12 +263,6 @@ export default function QuoteForm({ locale }: QuoteFormProps) {
       setErrorMessage(err instanceof Error ? err.message : errorText)
     }
   }
-
-  useEffect(() => {
-    if (submitStatus === "success") {
-      window.scrollTo({ top: 0, behavior: "smooth" })
-    }
-  }, [submitStatus])
 
   if (submitStatus === "success") {
     return (
