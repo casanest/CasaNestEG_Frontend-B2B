@@ -111,7 +111,8 @@ export const listProducts = async ({
     }
 
     const headers = await getAuthHeaders()
-    const next = await getCacheOptions("products")
+    const cacheOpts = await getCacheOptions("products")
+    const next = { ...cacheOpts, tags: ["products", ...("tags" in cacheOpts ? cacheOpts.tags : [])] }
 
     // Separate API-supported parameters from client-side filters
     const { inStock, onSale, madeToOrder, price, colors, materials, sizes, ...apiParams } = queryParams || {}
@@ -138,7 +139,7 @@ export const listProducts = async ({
       method: "GET",
       query: baseQuery,
       headers,
-      next: { revalidate: 300, tags: ["products"], ...next },
+      next: { revalidate: 300, ...next },
     })
 
     if (!response || !response.products) {

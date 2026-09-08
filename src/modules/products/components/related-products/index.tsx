@@ -31,7 +31,8 @@ export default async function RelatedProducts({
 
   try {
     const headers = await getAuthHeaders()
-    const next = await getCacheOptions("products")
+    const cacheOpts = await getCacheOptions("products")
+    const next = { ...cacheOpts, tags: ["products", ...("tags" in cacheOpts ? cacheOpts.tags : [])] }
     const response = await sdk.client.fetch<{ products: HttpTypes.StoreProduct[]; count: number }>(
       `/store/products`,
       {

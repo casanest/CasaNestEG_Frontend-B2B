@@ -194,7 +194,8 @@ const normalizeCategory = (cat: any): Category => {
  * 🧩 Recursive normalizer to handle localization and nested children
  */
 export const listCategories = cache(async (query?: Record<string, any>): Promise<Category[]> => {
-  const next = { ...(await getCacheOptions("categories")) }
+  const cacheOpts = await getCacheOptions("categories")
+  const next = { ...cacheOpts, tags: ["categories", ...(("tags" in cacheOpts ? cacheOpts.tags : []) || [])] }
 
   // Step 1: Fetch ALL categories flat — no parent filter
   const { product_categories } = await sdk.client.fetch<{
@@ -254,7 +255,8 @@ export const getCategoryByHandle = async (
   categoryHandle: string[]
 ): Promise<Category | null> => {
   const handle = categoryHandle[categoryHandle.length - 1]
-  const next = await getCacheOptions("categories")
+  const cacheOpts = await getCacheOptions("categories")
+  const next = { ...cacheOpts, tags: ["categories", ...(("tags" in cacheOpts ? cacheOpts.tags : []) || [])] }
 
   try {
     // Step 1: Fetch ALL categories flat (same approach as listCategories)

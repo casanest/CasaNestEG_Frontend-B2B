@@ -32,9 +32,8 @@ export type Collection = {
 }
 
 export const retrieveCollection = async (id: string) => {
-  const next = {
-    ...(await getCacheOptions("collections")),
-  }
+  const cacheOpts = await getCacheOptions("collections")
+  const next = { ...cacheOpts, tags: ["collections", ...("tags" in cacheOpts ? cacheOpts.tags : [])] }
 
   return sdk.client
     .fetch<{ collection: HttpTypes.StoreCollection }>(
@@ -49,9 +48,8 @@ export const retrieveCollection = async (id: string) => {
 export const listCollections = async (
   queryParams: Record<string, string> = {}
 ): Promise<{ collections: HttpTypes.StoreCollection[]; count: number }> => {
-  const next = {
-    ...(await getCacheOptions("collections")),
-  }
+  const cacheOpts = await getCacheOptions("collections")
+  const next = { ...cacheOpts, tags: ["collections", ...("tags" in cacheOpts ? cacheOpts.tags : [])] }
 
   queryParams.limit = queryParams.limit || "100"
   queryParams.offset = queryParams.offset || "0"
@@ -74,9 +72,8 @@ export const listCollections = async (
 export const getCollectionsLocal = async (
   queryParams: Record<string, any> = {}
 ): Promise<{ collections: Collection[]; count: number }> => {
-  const next = {
-    ...(await getCacheOptions("collections")),
-  };
+  const cacheOpts = await getCacheOptions("collections")
+  const next = { ...cacheOpts, tags: ["collections", ...("tags" in cacheOpts ? cacheOpts.tags : [])] };
 
   const limit = queryParams.limit || 100;
   let offset = queryParams.offset || 0;
@@ -116,9 +113,8 @@ export const getCollectionsLocal = async (
 export const getCollectionByHandle = async (
   handle: string
 ): Promise<HttpTypes.StoreCollection> => {
-  const next = {
-    ...(await getCacheOptions("collections")),
-  }
+  const cacheOpts = await getCacheOptions("collections")
+  const next = { ...cacheOpts, tags: ["collections", ...("tags" in cacheOpts ? cacheOpts.tags : [])] }
 
   return sdk.client
     .fetch<HttpTypes.StoreCollectionListResponse>(`/store/collections`, {

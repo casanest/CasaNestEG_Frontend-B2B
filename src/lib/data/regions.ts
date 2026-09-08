@@ -74,9 +74,8 @@ import { getCacheOptions } from "./cookies"
 import { cache } from "react"
 
 export const listRegions = async () => {
-  const next = {
-    ...(await getCacheOptions("regions")),
-  }
+  const cacheOpts = await getCacheOptions("regions")
+  const next = { ...cacheOpts, tags: ["regions", ...("tags" in cacheOpts ? cacheOpts.tags : [])] }
 
   return sdk.client
     .fetch<{ regions: HttpTypes.StoreRegion[] }>(
@@ -94,9 +93,8 @@ export const listRegions = async () => {
 }
 
 export const retrieveRegion = async (id: string) => {
-  const next = {
-    ...(await getCacheOptions(`regions-${id}`)),
-  }
+  const cacheOpts = await getCacheOptions(`regions-${id}`)
+  const next = { ...cacheOpts, tags: ["regions", ...("tags" in cacheOpts ? cacheOpts.tags : [])] }
 
   return sdk.client
     .fetch<{ region: HttpTypes.StoreRegion }>(
