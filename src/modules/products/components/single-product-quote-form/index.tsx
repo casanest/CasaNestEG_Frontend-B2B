@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useCallback, useMemo } from "react"
+import { useState, useRef, useCallback, useMemo, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
@@ -93,15 +93,15 @@ export default function SingleProductQuoteForm({ product, region }: SingleProduc
   const { cheapestPrice } = getProductPrice({ product })
   const priceInfo = showPrice ? cheapestPrice : null
   const mainNumber = priceInfo?.calculated_price_number ?? 0
-  const formattedNumber = mainNumber.toLocaleString(isRTL ? "ar-EG" : "en-US")
-  const decimalPart = mainNumber % 1 === 0 ? ".00" : ""
+  const formattedNumber = mainNumber.toLocaleString("en-US", { maximumFractionDigits: 0 })
+  const decimalPart = ""
   const isSale = priceInfo?.price_type === "sale"
   const currencyCode = priceInfo?.currency_code || "usd"
 
   // Estimated total
   const estimatedTotal = mainNumber * quantity
-  const formattedTotal = estimatedTotal.toLocaleString(isRTL ? "ar-EG" : "en-US")
-  const totalDecimalPart = estimatedTotal % 1 === 0 ? ".00" : ""
+  const formattedTotal = estimatedTotal.toLocaleString("en-US", { maximumFractionDigits: 0 })
+  const totalDecimalPart = ""
 
   // Specs — matches the product template extraction logic
   const specs = useMemo(() => {
@@ -230,7 +230,7 @@ export default function SingleProductQuoteForm({ product, region }: SingleProduc
   const minOrderText = isRTL ? "الحد الأدنى: " : "Min. Order Qty: "
   const estimatedTotalText = isRTL ? "الإجمالي التقديري" : "Estimated Total"
   const finalPricingText = isRTL ? "يتم تأكيد التسعير النهائي بعد المراجعة من قبل فريقنا." : "Final pricing confirmed after review by our team."
-  const goToHomepageText = isRTL ? "الذهاب إلى الرئيسية" : "Go to Homepage"
+  const goToHomepageText = isRTL ? "الذهاب إلى الصفحة الرئيسية" : "Go to Homepage"
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -331,6 +331,12 @@ export default function SingleProductQuoteForm({ product, region }: SingleProduc
     }
   }
 
+  useEffect(() => {
+    if (submitStatus === "success") {
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    }
+  }, [submitStatus])
+
   if (submitStatus === "success") {
     return (
       <div className="bg-[#f8f9fa] w-full min-h-[60vh] flex flex-col items-center justify-center py-[80px] px-4" dir={isRTL ? "rtl" : "ltr"}>
@@ -409,7 +415,7 @@ export default function SingleProductQuoteForm({ product, region }: SingleProduc
           <h1 className="font-satoshi font-bold leading-[1.18] text-[#17284a] text-[24px] md:text-[40px]">
             {titleText}
           </h1>
-          <div className="bg-[#141b34] inline-flex self-start items-center px-[12px] py-[6px] rounded-full shrink-0">
+          <div className="bg-[#141b34] inline-flex self-start items-center px-[12px] py-[6px] rounded-full shrink-0 w-fit">
             <p className="font-satoshi font-bold text-[14px] text-white whitespace-nowrap leading-[1.5]">
               {badgeText}
             </p>

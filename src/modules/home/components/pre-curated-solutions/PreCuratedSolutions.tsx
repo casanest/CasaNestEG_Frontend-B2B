@@ -148,7 +148,7 @@ function PackageCard({
             </div>
             <div className="bg-[#17284a] flex gap-[8px] items-center justify-center px-[36px] py-[16px] rounded-[12px] w-full">
               <span className="text-white text-[16px] font-medium text-center">
-                {t("viewPackage")} →
+                {t("viewPackage")}
               </span>
             </div>
           </div>
@@ -199,7 +199,7 @@ function PackageCard({
           </div>
           <div className="bg-[#17284a] flex gap-[8px] items-center justify-center px-[clamp(20px,2.5vw,36px)] py-[clamp(12px,1.2vw,16px)] rounded-[12px] w-full">
             <span className="text-white text-[clamp(13px,1.1vw,16px)] font-medium text-center">
-              {t("viewPackage")} →
+              {t("viewPackage")}
             </span>
           </div>
         </div>

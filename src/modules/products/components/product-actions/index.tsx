@@ -359,7 +359,7 @@ export default function ProductActions({
                 onClick={handleAddToQuoteList}
                 disabled={!selectedVariant || !inStock || !isValidVariant || isAddingToList}
                 className={clx(
-                  "flex-1 h-[36px] rounded-[10px] bg-[#17284a] text-white font-medium flex items-center justify-center gap-2 transition-colors hover:bg-[#0f1d35] disabled:opacity-60 disabled:cursor-not-allowed text-[11px] px-[8px]",
+                  "flex-[4] rounded-[10px] bg-[#17284a] text-white font-medium flex items-center justify-center transition-colors hover:bg-[#0f1d35] py-[6px] px-[4px] text-[14px]",
                   isRTL && "tracking-[0.05em]"
                 )}
               >

@@ -85,6 +85,8 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
   }
 
   const itemTotal = item.unitPrice != null && item.showPrice !== false ? item.unitPrice * item.quantity : null
+  const originalItemTotal = item.originalPrice != null && item.showPrice !== false ? item.originalPrice * item.quantity : null
+  const hasDiscount = originalItemTotal != null && itemTotal != null && originalItemTotal > itemTotal
 
   if (type === "preview") {
     return (
@@ -111,6 +113,11 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
           </p>
           <div className={clx("flex items-center gap-2", { "flex-row-reverse": isRTL })}>
             <span className="text-[12px] text-[#707176]">{item.quantity}x</span>
+            {hasDiscount && (
+              <span className="text-[12px] text-[#707176] line-through">
+                {convertToLocale({ amount: originalItemTotal!, currency_code: currencyCode, locale })}
+              </span>
+            )}
             <span className="text-[14px] font-bold text-[#17284a]">
               {itemTotal != null
                 ? convertToLocale({ amount: itemTotal, currency_code: currencyCode, locale })
@@ -125,6 +132,9 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
   const priceText = itemTotal != null
     ? convertToLocale({ amount: itemTotal, currency_code: currencyCode, locale })
     : (isRTL ? "السعر عند الطلب" : "Price on Request")
+  const originalPriceText = originalItemTotal != null
+    ? convertToLocale({ amount: originalItemTotal, currency_code: currencyCode, locale })
+    : null
 
   return (
     <>
@@ -208,12 +218,19 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
               <Plus className="size-6" />
             </button>
           </div>
-          <p
-            className="font-bold text-[18px] leading-[1.5] text-[#17284a] whitespace-nowrap"
-            data-testid="product-price"
-          >
-            {priceText}
-          </p>
+          <div className="flex flex-col items-end gap-[2px]">
+            {hasDiscount && originalPriceText && (
+              <span className="text-[12px] text-[#707176] line-through leading-[1.5]">
+                {originalPriceText}
+              </span>
+            )}
+            <p
+              className="font-bold text-[18px] leading-[1.5] text-[#17284a] whitespace-nowrap"
+              data-testid="product-price"
+            >
+              {priceText}
+            </p>
+          </div>
         </div>
 
         {updating && (
@@ -302,12 +319,19 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
         </div>
 
         {/* Price */}
-        <p
-          className="font-bold text-[clamp(13px,1.3vw,18px)] leading-[1.5] text-[#17284a] text-right w-[clamp(90px,14vw,180px)] shrink-0"
-          data-testid="product-price"
-        >
-          {priceText}
-        </p>
+        <div className="flex flex-col items-end gap-[2px] w-[clamp(90px,14vw,180px)] shrink-0">
+          {hasDiscount && originalPriceText && (
+            <span className="text-[12px] text-[#707176] line-through leading-[1.5] text-right">
+              {originalPriceText}
+            </span>
+          )}
+          <p
+            className="font-bold text-[clamp(13px,1.3vw,18px)] leading-[1.5] text-[#17284a] text-right"
+            data-testid="product-price"
+          >
+            {priceText}
+          </p>
+        </div>
 
         {/* Delete Button */}
         <button

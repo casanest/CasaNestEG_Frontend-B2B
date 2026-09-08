@@ -64,8 +64,8 @@ const MobileActions: React.FC<MobileActionsProps> = ({
 
   const hasPrice = showPrice && !!selectedPrice
   const mainNumber = selectedPrice?.calculated_price_number ?? 0
-  const formattedNumber = mainNumber.toLocaleString(isRTL ? "ar-EG" : "en-US")
-  const decimalPart = mainNumber % 1 === 0 ? ".00" : ""
+  const formattedNumber = mainNumber.toLocaleString("en-US", { maximumFractionDigits: 0 })
+  const decimalPart = ""
   const isSale = selectedPrice?.price_type === "sale"
 
   return (
@@ -127,8 +127,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
           onClick={handleAddToCart}
           disabled={!inStock || !variant || !isValidVariant}
           className={clx(
-            "flex-[4] rounded-[10px] bg-[#17284a] text-white font-medium flex items-center justify-center transition-colors hover:bg-[#0f1d35] py-[10px] px-[8px]",
-            (!inStock || !isValidVariant) && variant ? "text-[14px]" : "text-[11px]",
+            "flex-[4] rounded-[10px] bg-[#17284a] text-white font-medium flex items-center justify-center transition-colors hover:bg-[#0f1d35] py-[6px] px-[4px] text-[14px]",
             isRTL && "tracking-[0.05em]"
           )}
           data-testid="mobile-cart-button"

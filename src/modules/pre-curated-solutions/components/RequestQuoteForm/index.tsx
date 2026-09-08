@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useRef, useCallback } from "react"
+import { useState, useMemo, useRef, useCallback, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { PackageDetail } from "@lib/data/packages"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
@@ -134,7 +134,7 @@ export default function RequestQuoteForm({ pkg, locale }: RequestQuoteFormProps)
     ? "لا يوجد التزام أو دفعة مقدمة مطلوبة في هذه المرحلة."
     : "No commitment or down payment required at this stage."
 
-  const goToHomepageText = isRTL ? "الذهاب إلى الرئيسية" : "Go to Homepage"
+  const goToHomepageText = isRTL ? "الذهاب إلى الصفحة الرئيسية" : "Go to Homepage"
 
   const totalItems = items.length
 
@@ -265,6 +265,12 @@ export default function RequestQuoteForm({ pkg, locale }: RequestQuoteFormProps)
     }
   }
 
+  useEffect(() => {
+    if (submitStatus === "success") {
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    }
+  }, [submitStatus])
+
   if (submitStatus === "success") {
     return (
       <div className="bg-[#f8f9fa] w-full min-h-[60vh] flex flex-col items-center justify-center py-[80px] px-4" dir={isRTL ? "rtl" : "ltr"}>
@@ -347,8 +353,8 @@ export default function RequestQuoteForm({ pkg, locale }: RequestQuoteFormProps)
           <h1 className="font-satoshi font-bold leading-[1.3] md:leading-[1.18] text-[#17284a] text-[24px] md:text-[clamp(24px,3vw,40px)] whitespace-normal md:whitespace-nowrap">
             {titleText}
           </h1>
-          <div className="bg-[#141b34] flex items-center px-4 py-[6px] rounded-full shrink-0">
-            <p className="font-satoshi font-bold text-[14px] text-white whitespace-normal md:whitespace-nowrap leading-[1.5]">
+          <div className="bg-[#141b34] inline-flex items-center px-4 py-[6px] rounded-full shrink-0 w-fit">
+            <p className="font-satoshi font-bold text-[14px] text-white whitespace-nowrap leading-[1.5]">
               {badgeText}
             </p>
           </div>

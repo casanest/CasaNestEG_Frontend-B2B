@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useCallback } from "react"
+import { useState, useRef, useCallback, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useCartStore, QuoteItem } from "@lib/store/useCartStore"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
@@ -264,6 +264,12 @@ export default function QuoteForm({ locale }: QuoteFormProps) {
     }
   }
 
+  useEffect(() => {
+    if (submitStatus === "success") {
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    }
+  }, [submitStatus])
+
   if (submitStatus === "success") {
     return (
       <div className="bg-[#f8f9fa] w-full min-h-[60vh] flex flex-col items-center justify-center py-[80px] px-4" dir={isRTL ? "rtl" : "ltr"}>
@@ -335,8 +341,8 @@ export default function QuoteForm({ locale }: QuoteFormProps) {
           <h1 className="font-satoshi font-bold leading-[1.3] md:leading-[1.18] text-[#17284a] text-[24px] md:text-[40px] whitespace-normal md:whitespace-nowrap">
             {titleText}
           </h1>
-          <div className="bg-[#141b34] flex items-center px-4 py-[6px] rounded-full shrink-0">
-            <p className="font-satoshi font-bold text-[14px] text-white whitespace-normal md:whitespace-nowrap leading-[1.5]">
+          <div className="bg-[#141b34] inline-flex items-center px-4 py-[6px] rounded-full shrink-0 w-fit">
+            <p className="font-satoshi font-bold text-[14px] text-white whitespace-nowrap leading-[1.5]">
               {badgeText}
             </p>
           </div>
@@ -630,9 +636,14 @@ export default function QuoteForm({ locale }: QuoteFormProps) {
                     }
                     const currencyCode = item.currencyCode || "usd"
                     const itemTotal = item.unitPrice != null && item.showPrice !== false ? item.unitPrice * item.quantity : null
+                    const originalItemTotal = item.originalPrice != null && item.showPrice !== false ? item.originalPrice * item.quantity : null
+                    const hasDiscount = originalItemTotal != null && itemTotal != null && originalItemTotal > itemTotal
                     const priceText = itemTotal != null
                       ? convertToLocale({ amount: itemTotal, currency_code: currencyCode, locale })
                       : (isRTL ? "السعر عند الطلب" : "Price on Request")
+                    const originalPriceText = originalItemTotal != null
+                      ? convertToLocale({ amount: originalItemTotal, currency_code: currencyCode, locale })
+                      : null
 
                     return (
                       <div
@@ -695,9 +706,16 @@ export default function QuoteForm({ locale }: QuoteFormProps) {
                                 <Plus className="size-4" />
                               </button>
                             </div>
-                            <p className="font-satoshi font-bold text-[13px] leading-[1.5] text-[#17284a] whitespace-nowrap">
-                              {priceText}
-                            </p>
+                            <div className="flex flex-col items-end gap-[2px]">
+                              {hasDiscount && originalPriceText && (
+                                <span className="text-[11px] text-[#707176] line-through leading-[1.5]">
+                                  {originalPriceText}
+                                </span>
+                              )}
+                              <p className="font-satoshi font-bold text-[13px] leading-[1.5] text-[#17284a] whitespace-nowrap">
+                                {priceText}
+                              </p>
+                            </div>
                           </div>
                         </div>
 

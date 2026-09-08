@@ -35,9 +35,9 @@ export default function PackageItemCard({
   const showPrice = product.show_price && product.price
   const isSale = showPrice && product.price?.price_type === "sale"
   const currencyCode = showPrice ? product.price!.currency_code.toUpperCase() : ""
-  const calculatedPrice = showPrice ? product.price!.amount.toLocaleString("en-US") : ""
+  const calculatedPrice = showPrice ? product.price!.amount.toLocaleString("en-US", { maximumFractionDigits: 0 }) : ""
   const originalPrice = showPrice && product.price?.original_amount
-    ? product.price!.original_amount!.toLocaleString("en-US")
+    ? product.price!.original_amount!.toLocaleString("en-US", { maximumFractionDigits: 0 })
     : null
   const percentageDiff = showPrice && product.price?.percentage_diff
     ? product.price!.percentage_diff

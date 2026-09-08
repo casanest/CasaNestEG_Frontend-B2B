@@ -40,6 +40,8 @@ const Summary = ({ items }: SummaryProps) => {
   const itemCount = items.length
   const totalUnits = items.reduce((acc, item) => acc + item.quantity, 0)
   const subtotal = items.reduce((acc, item) => acc + (item.showPrice !== false && item.unitPrice != null ? item.unitPrice * item.quantity : 0), 0)
+  const originalSubtotal = items.reduce((acc, item) => acc + (item.showPrice !== false && item.originalPrice != null ? item.originalPrice * item.quantity : 0), 0)
+  const hasDiscount = originalSubtotal > subtotal
   const currencyCode = items[0]?.currencyCode || "usd"
   const hasPricedItems = items.some((item) => item.unitPrice != null && item.showPrice !== false)
 
@@ -66,6 +68,16 @@ const Summary = ({ items }: SummaryProps) => {
 
       {/* Price Display */}
       <div className="flex flex-col gap-3 items-start w-full">
+        {hasPricedItems && hasDiscount && (
+          <div className="flex items-baseline justify-between w-full whitespace-nowrap text-[#707176]">
+            <span className="font-medium text-[14px] leading-[1.5]">
+              {isRTL ? "السعر الأصلي:" : "Original Price:"}
+            </span>
+            <span className="font-medium text-[14px] leading-[1.5] line-through">
+              {convertToLocale({ amount: originalSubtotal, currency_code: currencyCode, locale })}
+            </span>
+          </div>
+        )}
         <div className="flex items-baseline justify-between w-full whitespace-nowrap text-[#17284a]">
           <span className="font-bold text-[16px] leading-[1.5]">
             {t.estimatedSubtotal}
