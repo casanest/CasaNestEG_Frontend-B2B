@@ -8,6 +8,7 @@ import {
   MapPin,
 } from "lucide-react";
 import ContactForm from "@modules/contact/components/contact-form";
+import { getPlatformLabel } from "@modules/common/components/social-media-links";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -215,39 +216,42 @@ export default async function ContactPage({ params }: PageProps) {
           </div>
 
           {/* Social Cards */}
-          <div className="grid grid-cols-2 lg:flex lg:justify-center gap-[16px] lg:gap-[3vw]">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 w-full">
             {socialMediaLinks.map((link) => {
               const visual = platformVisuals[link.platform] || defaultVisual;
-              const title = link.label || link.platform;
-              const desc = link.description || "";
+              const title = link.label || getPlatformLabel(link.platform);
+              const handle = link.description || "@casanesteg";
               return (
                 <a
                   key={link.id}
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`bg-gradient-to-r ${visual.gradient} to-white border border-[#e5e7eb] rounded-[16px] lg:rounded-[20px] flex flex-col items-center justify-between p-[16px] lg:px-[20px] lg:py-[24px] overflow-hidden hover:shadow-lg transition h-[233px] lg:h-[392px] w-full lg:w-[13vw] lg:flex-none`}
+                  className={`bg-gradient-to-r ${visual.gradient} to-white border border-[#e5e7eb] rounded-2xl shadow-sm flex flex-row items-center justify-between px-6 py-8 lg:px-[1vw] lg:py-[2vw] hover:shadow-md transition w-full`}
                 >
-                  <div className="flex flex-col gap-[12px] items-center w-full">
-                    <div className="w-[60px] h-[60px] lg:w-[64px] lg:h-[64px] flex items-center justify-center">
+                  {/* Left: Icon + Title/Handle */}
+                  <div className="flex flex-row items-center gap-4 min-w-0">
+                    <div className="w-16 h-16 lg:w-20 lg:h-20 flex items-center justify-center shrink-0">
                       <img
                         src={visual.logo}
                         alt={link.platform}
                         className="max-w-full max-h-full"
                       />
                     </div>
-                    <div className="flex flex-col gap-[4px] items-center text-center">
-                      <p className="text-[16px] lg:text-[32px] font-bold leading-[1.5] lg:leading-[1.2] text-[#17284a]">
+                    <div className="flex flex-col gap-1 min-w-0">
+                      <p className="text-[22px] lg:text-[28px] font-bold leading-tight text-[#17284a]">
                         {title}
                       </p>
-                      <p className="text-[11px] lg:text-[16px] font-medium leading-[14px] lg:leading-[1.5] text-[#707176]">
-                        {desc}
+                      <p className="text-[16px] lg:text-[20px] font-medium leading-tight text-[#707176] truncate">
+                        {handle}
                       </p>
                     </div>
                   </div>
-                  <div className="border border-black rounded-[16px] px-[36px] py-[8px] lg:py-[16px] w-full h-[44px] lg:h-auto flex items-center justify-center gap-[8px] hover:bg-black hover:text-white transition">
-                    <span className="w-[6px] h-[6px] rounded-full bg-current shrink-0"></span>
-                    <span className="text-[12px] lg:text-[16px] font-medium">{isRTL ? "تابعنا" : "Follow us"}</span>
+                  {/* Right: CTA Pill */}
+                  <div className="flex items-center gap-2 rounded-full bg-[#043364] px-5 py-4 lg:px-[0.8vw] lg:py-[0.8vw] shrink-0">
+                    <span className="text-[15px] lg:text-[20px] font-medium text-white whitespace-nowrap">
+                      {isRTL ? "تابعنا" : "Follow"}
+                    </span>
                   </div>
                 </a>
               );
@@ -259,9 +263,9 @@ export default async function ContactPage({ params }: PageProps) {
 
       {/* Map Section */}
       <section className="w-full">
-        <div className="flex flex-col gap-[24px] lg:gap-[32px] px-[16px] lg:px-[60px] py-[44px] lg:py-[80px] max-w-[1512px] mx-auto">
+        <div className="flex flex-col gap-6 lg:gap-8 px-4 md:px-8 py-[44px] lg:py-[80px] w-full max-w-[86rem] mx-auto">
           {/* Text Block */}
-          <div className="flex flex-col gap-[8px]">
+          <div className="flex flex-col gap-[8px] items-center text-center">
             <p
               className="text-[32px] lg:text-[clamp(28px,2.5vw,40px)] leading-[1.2] text-[#17284a]"
               style={{ fontFamily: "var(--font-caveat), cursive" }}
@@ -272,30 +276,31 @@ export default async function ContactPage({ params }: PageProps) {
               {isRTL ? "زر مكاتبنا" : "Visit Our Offices"}
             </h2>
           </div>
-          {/* Two Maps Side by Side (desktop) / Stacked (mobile) */}
-          <div className="flex flex-col lg:flex-row gap-[20px] lg:gap-[32px] w-full">
-            {/* Map 1 - Faiyum */}
-            <div className="flex flex-col gap-[12px] w-full lg:flex-1">
-              <div className="flex items-start gap-[10px]">
-                <div className="w-[36px] h-[36px] rounded-full bg-[#f3f4f6] flex items-center justify-center shrink-0">
-                  <MapPin size={18} className="text-[#17284a]" />
+          {/* Office Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 w-full">
+            {/* Office 1 - Faiyum */}
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
+              <div className="p-5 lg:p-6 flex items-start gap-[14px]">
+                <div className="w-[48px] h-[48px] rounded-full bg-[#f3f4f6] flex items-center justify-center shrink-0">
+                  <MapPin size={24} className="text-[#17284a]" />
                 </div>
-                <div className="flex flex-col gap-[2px]">
-                  <p className="text-[14px] font-medium text-[#5d5d61]">
+                <div className={`flex flex-col gap-[4px] ${isRTL ? "text-right" : ""}`}>
+                  <p className="text-[18px] font-medium text-[#5d5d61]">
                     {isRTL ? "فرع الفيوم" : "Faiyum Branch"}
                   </p>
-                  <p className="text-[14px] lg:text-[16px] font-bold text-[#17284a]">
+                  <p className="text-[18px] lg:text-[22px] font-bold text-[#17284a]">
                     {isRTL
                       ? "شارع احمد شوقي امتداد المحافظ – ابراج رويال سيتي – اعلي رنين – الفيوم"
                       : "Ahmed Shawki st. Royal City towers, above Ranin, second tower, first upper floor"}
                   </p>
                 </div>
               </div>
+              <hr className="border-slate-200 my-0" />
               <a
                 href="https://www.google.com/maps/search/%D8%B4%D8%A7%D8%B1%D8%B9+%D8%A7%D8%AD%D9%85%D8%AF+%D8%B4%D9%88%D9%82%D9%8A+%D8%A7%D9%85%D8%AA%D8%AF%D8%A7%D8%AF+%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D9%81%D8%B8+%E2%80%93+%D8%A7%D8%A8%D8%B1%D8%A7%D8%AC+%D8%B1%D9%88%D9%8A%D8%A7%D9%84+%D8%B3%D9%8A%D8%AA%D9%8A+%D8%A7%D9%84%D8%A8%D8%B1%D8%AC+%D8%A7%D9%84%D8%AA%D8%A7%D9%86%D9%8A+%D8%A7%D9%84%D8%AF%D9%88%D8%B1+%D8%A7%D9%84%D9%88%D9%84++%E2%80%93+%D8%A7%D8%B9%D9%84%D9%8A+%D8%B1%D9%86%D9%8A%D9%86+%E2%80%93+%D8%A7%D9%84%D9%81%D9%8A%D9%88%D9%85%E2%80%AD/@29.3226553,30.8439463,723m/data=!3m2!1e3!4b1?entry=tts&g_ep=EgoyMDI2MDgzMS4wIPu8ASoASAFQAw%3D%3D&skid=e460d804-0ff0-4b41-89a0-d690d5d90716"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative bg-[#e5e7eb] rounded-[16px] overflow-hidden h-[280px] lg:h-[400px] w-full block hover:shadow-lg transition"
+                className="relative bg-[#e5e7eb] overflow-hidden h-[320px] w-full block hover:shadow-lg transition"
               >
                 <iframe
                   src="https://maps.google.com/maps?q=29.3226553,30.8439463&z=15&output=embed"
@@ -305,28 +310,29 @@ export default async function ContactPage({ params }: PageProps) {
                 />
               </a>
             </div>
-            {/* Map 2 - Mohandessin */}
-            <div className="flex flex-col gap-[12px] w-full lg:flex-1">
-              <div className="flex items-start gap-[10px]">
-                <div className="w-[36px] h-[36px] rounded-full bg-[#f3f4f6] flex items-center justify-center shrink-0">
-                  <MapPin size={18} className="text-[#17284a]" />
+            {/* Office 2 - Mohandessin */}
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
+              <div className="p-5 lg:p-6 flex items-start gap-[14px]">
+                <div className="w-[48px] h-[48px] rounded-full bg-[#f3f4f6] flex items-center justify-center shrink-0">
+                  <MapPin size={24} className="text-[#17284a]" />
                 </div>
-                <div className="flex flex-col gap-[2px]">
-                  <p className="text-[14px] font-medium text-[#5d5d61]">
+                <div className={`flex flex-col gap-[4px] ${isRTL ? "text-right" : ""}`}>
+                  <p className="text-[18px] font-medium text-[#5d5d61]">
                     {isRTL ? "فرع المهندسين" : "Mohandessin Branch"}
                   </p>
-                  <p className="text-[14px] lg:text-[16px] font-bold text-[#17284a]">
+                  <p className="text-[18px] lg:text-[22px] font-bold text-[#17284a]">
                     {isRTL
                       ? "عماره 5 – شارع البرج – الدور الخامس – ميدان لبنان – المهندسين"
                       : "Building 5 – Al Burj Street – Fifth Floor – Lebanon Square – Mohandessin"}
                   </p>
                 </div>
               </div>
+              <hr className="border-slate-200 my-0" />
               <a
                 href="https://www.google.com/maps/place/30%C2%B003'34.8%22N+31%C2%B011'43.9%22E/@30.0596581,31.1929455,17z/data=!3m1!4b1!4m4!3m3!8m2!3d30.0596581!4d31.1955204?hl=en&entry=ttu&g_ep=EgoyMDI2MDkwMS4wIKXMDSoASAFQAw%3D%3D"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative bg-[#e5e7eb] rounded-[16px] overflow-hidden h-[280px] lg:h-[400px] w-full block hover:shadow-lg transition"
+                className="relative bg-[#e5e7eb] overflow-hidden h-[320px] w-full block hover:shadow-lg transition"
               >
                 <iframe
                   src="https://maps.google.com/maps?q=30.0596581,31.1955204&z=15&output=embed"

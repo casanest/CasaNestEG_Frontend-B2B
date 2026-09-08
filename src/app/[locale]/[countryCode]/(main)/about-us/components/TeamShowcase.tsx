@@ -27,7 +27,7 @@ const teamMembers = [
 export default function TeamShowcase({ isRTL }: Props) {
   return (
     <section
-      className="bg-[#faf8f5] flex flex-col gap-6 lg:gap-[clamp(24px,3.5vw,48px)] items-start py-11 lg:py-[clamp(60px,10vw,160px)] relative w-full lg:min-h-screen lg:justify-center"
+      className="bg-[#faf8f5] flex flex-col gap-6 lg:gap-[clamp(24px,3.5vw,48px)] items-start py-11 lg:pt-[3vw] lg:pb-[3vw] relative w-full"
       dir={isRTL ? "rtl" : "ltr"}
     >
       <div className="content-container flex flex-col gap-6 lg:gap-[clamp(32px,5vw,72px)] items-start w-full">

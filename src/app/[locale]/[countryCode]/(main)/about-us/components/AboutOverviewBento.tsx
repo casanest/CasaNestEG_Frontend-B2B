@@ -3,7 +3,7 @@ import { satoshiStyle, type Props } from "./styles"
 export default function AboutOverviewBento({ isRTL }: Props) {
   return (
     <section
-      className="relative flex flex-col gap-4 lg:gap-[clamp(12px,1vw,18px)] items-start overflow-clip py-11 lg:py-[clamp(16px,3vw,48px)] w-full lg:min-h-screen lg:justify-center"
+      className="relative flex flex-col gap-4 lg:gap-[clamp(12px,1vw,18px)] items-start overflow-clip py-11 lg:pt-[3vw] lg:pb-[clamp(16px,3vw,48px)] w-full"
       dir={isRTL ? "rtl" : "ltr"}
     >
       <div aria-hidden className="absolute inset-0 pointer-events-none">

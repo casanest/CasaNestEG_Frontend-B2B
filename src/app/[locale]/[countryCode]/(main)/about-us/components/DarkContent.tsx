@@ -3,7 +3,7 @@ import { satoshiStyle, type Props } from "./styles"
 export default function DarkContent({ isRTL }: Props) {
   return (
     <section
-      className="bg-[#141b34] flex flex-col gap-6 lg:gap-[clamp(16px,2vw,28px)] items-center overflow-clip py-11 lg:py-[clamp(16px,3vw,48px)] relative w-full lg:min-h-screen lg:justify-center"
+      className="bg-[#141b34] flex flex-col gap-6 lg:gap-[clamp(16px,2vw,28px)] items-center overflow-clip py-11 lg:pt-[clamp(16px,3vw,48px)] lg:pb-[2vw] relative w-full"
       dir={isRTL ? "rtl" : "ltr"}
     >
       {/* bg glows */}

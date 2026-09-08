@@ -37,7 +37,7 @@ export default function TestimonialsSection({
 
   return (
     <section
-      className="bg-[#f3f1ef] flex flex-col gap-[24px] md:gap-[clamp(30px,4vw,40px)] items-start md:items-center justify-center md:min-h-[100svh] px-[16px] md:px-[clamp(16px,4vw,60px)] py-[24px] md:py-[clamp(40px,5vw,80px)] w-full"
+      className="bg-[#f3f1ef] flex flex-col gap-[24px] md:gap-[clamp(30px,4vw,40px)] items-start md:items-center px-[16px] md:px-[clamp(16px,4vw,60px)] py-[24px] md:pt-[3vw] md:pb-[3vw] w-full"
       dir={dir}
     >
       {/* Header - centered on mobile, side-by-side with arrows on desktop */}

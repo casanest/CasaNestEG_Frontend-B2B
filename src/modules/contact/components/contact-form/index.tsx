@@ -382,7 +382,7 @@ export default function ContactForm({ isRTL }: { isRTL: boolean }) {
               name="subject"
               value={formData.subject}
               onChange={(e) => handleChange("subject", e.target.value)}
-              className="h-[44px] lg:h-[52px] w-full bg-[#f3f4f6] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] text-[16px] text-[#17284a] appearance-none focus:outline-none focus:ring-2 focus:ring-[#17284a]/20 cursor-pointer"
+              className="h-[53px] lg:h-[52px] w-full bg-[#f3f4f6] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] text-[16px] text-[#17284a] appearance-none focus:outline-none focus:ring-2 focus:ring-[#17284a]/20 cursor-pointer"
               defaultValue=""
             >
               <option value="" disabled>

@@ -10,6 +10,7 @@ import { useParams } from "next/navigation"
 import { getPricesForVariant } from "@lib/util/get-product-price"
 import { normalizeProductImageUrl } from "@lib/util/product-image-url"
 import PlaceholderImage from "@modules/common/icons/placeholder-image"
+import { clx } from "@medusajs/ui"
 
 type ProductCardProps = {
     product: HttpTypes.StoreProduct
@@ -112,8 +113,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
 
                 {/* Discount badge */}
                 {cheapestPrice?.price_type === "sale" && cheapestPrice.percentage_diff && (
-                    <div className={`absolute top-3 ${isRTL ? "left-3" : "right-3"} z-10`}>
-                        <span className="inline-flex items-center justify-center px-2 py-[2px] h-[22px] bg-[#F3F4F6] border border-[#CCCCCC] rounded-full font-satoshi font-medium text-[12px] leading-[150%] text-[#17284A] tabular-nums whitespace-nowrap">
+                    <div className={clx("absolute top-0 z-10 bg-[#17284A] text-white px-4 py-1.5", isRTL ? "right-0 rounded-bl-[12px]" : "left-0 rounded-br-[12px]")}>
+                        <span className="text-[12px] font-bold whitespace-nowrap tabular-nums">
                             -{cheapestPrice.percentage_diff}%
                         </span>
                     </div>

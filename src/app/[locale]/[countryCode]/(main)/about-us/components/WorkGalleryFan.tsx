@@ -92,7 +92,7 @@ export default function WorkGalleryFan({ isRTL }: Props) {
 
   return (
     <section
-      className="bg-[#141b34] flex flex-col gap-5 lg:gap-[clamp(16px,2vw,32px)] items-center overflow-clip py-11 lg:py-[clamp(16px,3vw,48px)] relative w-full lg:min-h-screen lg:justify-center"
+      className="bg-[#141b34] flex flex-col gap-5 lg:gap-[clamp(16px,2vw,32px)] items-center overflow-clip py-11 lg:pt-[3vw] lg:pb-0 relative w-full"
       dir={isRTL ? "rtl" : "ltr"}
     >
       <div className="content-container flex flex-col gap-5 lg:gap-[clamp(16px,2vw,32px)] items-center w-full">

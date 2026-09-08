@@ -27,7 +27,7 @@ export default function ValuesV1({ isRTL }: Props) {
 
   return (
     <section
-      className="bg-[#faf8f5] flex flex-col gap-6 lg:gap-[clamp(24px,3vw,40px)] items-center py-11 lg:py-[clamp(28px,5vw,80px)] relative w-full"
+      className="bg-[#faf8f5] flex flex-col gap-6 lg:gap-[clamp(24px,3vw,40px)] items-center py-11 lg:pt-[2vw] lg:pb-[clamp(28px,5vw,80px)] relative w-full"
       dir={isRTL ? "rtl" : "ltr"}
     >
       <div className="content-container flex flex-col gap-6 lg:gap-[clamp(24px,3vw,40px)] items-center w-full">

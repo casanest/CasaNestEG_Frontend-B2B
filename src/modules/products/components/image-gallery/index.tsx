@@ -98,7 +98,8 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
                 {/* Main Image Container */}
                 <div
                     ref={mainRef}
-                    className="group relative w-full aspect-square rounded-[16px] overflow-hidden border border-[#e5e7eb] bg-gray-50 cursor-zoom-in transition-transform duration-500 ease-out"
+                    className="group relative w-full rounded-[16px] overflow-hidden border border-[#e5e7eb] bg-gray-50 cursor-zoom-in transition-transform duration-500 ease-out"
+                    style={{ aspectRatio: "4 / 3" }}
                     onTouchStart={handleTouchStart}
                     onTouchEnd={handleTouchEnd}
                     onClick={() => setLightboxOpen(true)}
@@ -113,7 +114,7 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
                                     fill
                                     priority
                                     sizes="(max-width: 768px) 100vw, 50vw"
-                                    className="object-contain object-center transition-transform duration-700 group-hover:scale-105"
+                                    className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
                                     unoptimized={shouldUseUnoptimizedImage(selected.url)}
                                 />
                             </div>

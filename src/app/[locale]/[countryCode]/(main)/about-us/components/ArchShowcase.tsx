@@ -3,7 +3,7 @@ import { satoshiStyle, caveatStyle, type Props } from "./styles"
 export default function ArchShowcase({ isRTL }: Props) {
   return (
     <section
-      className="bg-[#141b34] flex flex-col gap-6 lg:gap-[clamp(24px,4vw,56px)] items-start overflow-clip py-11 lg:py-[clamp(60px,10vw,160px)] relative w-full lg:min-h-screen"
+      className="bg-[#141b34] flex flex-col gap-6 lg:gap-[clamp(24px,4vw,56px)] items-start overflow-clip py-11 lg:pt-[3vw] lg:pb-[3vw] relative w-full"
       dir={isRTL ? "rtl" : "ltr"}
     >
       <div className="content-container flex flex-col lg:flex-row gap-6 lg:gap-[clamp(24px,4vw,56px)] items-start lg:items-center w-full">

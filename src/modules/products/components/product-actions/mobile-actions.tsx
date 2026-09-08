@@ -94,7 +94,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
           ) : (
             <div className="flex flex-row justify-center items-center px-[12px] py-[4px] gap-[6px] h-[29px] bg-[#F3F4F6] rounded-[100px]">
               <Tag className="w-[18px] h-[18px] text-[#141B34]" strokeWidth={1.5} />
-              <span className="text-[14px] font-medium text-[#17284A] leading-[21px] whitespace-nowrap">
+              <span className="text-[11px] font-medium text-[#17284A] leading-[21px] whitespace-nowrap text-center">
                 {isRTL ? "السعر عند الطلب" : "Price on Request"}
               </span>
             </div>
@@ -127,7 +127,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
           onClick={handleAddToCart}
           disabled={!inStock || !variant || !isValidVariant}
           className={clx(
-            "flex-[4] rounded-[10px] bg-[#17284a] text-white font-medium flex items-center justify-center transition-colors hover:bg-[#0f1d35] py-[6px] px-[4px] text-[14px]",
+            "flex-[4] rounded-[10px] bg-[#17284a] text-white font-medium flex items-center justify-center transition-colors hover:bg-[#0f1d35] py-[6px] px-[4px] text-[11px]",
             isRTL && "tracking-[0.05em]"
           )}
           data-testid="mobile-cart-button"

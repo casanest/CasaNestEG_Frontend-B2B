@@ -28,7 +28,7 @@ export default function ProductPrice({
   if (!showPrice || !selectedPrice) {
     return (
       <div className="flex flex-col gap-1">
-        <span className="text-[18px] font-bold text-[#17284a]">
+        <span className="text-[11px] lg:text-[18px] font-bold text-[#17284a] text-center">
           {isRTL ? "السعر عند الطلب" : "Price on Request"}
         </span>
       </div>

@@ -174,23 +174,25 @@ export default function ProductPreview({
             </div>
           )}
 
-          {/* Badges - top left */}
-          <div className={clx("absolute top-0 flex flex-col gap-2 z-10", isRTL ? "left-0" : "right-0")}>
-            {isFeatured && (
-              <div className="bg-white/70 backdrop-blur-md text-black text-[9px] font-bold uppercase tracking-[0.15em] px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5 border border-white/40 m-2">
-                <Sparkles className="h-3 w-3 text-amber-500" />
-                {isRTL ? "حصري" : "Bestseller"}
-              </div>
-            )}
-            {cheapestPrice?.price_type === 'sale' && (
-              <div className="bg-[#17284A] text-white text-[9px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg self-start m-2">
+          {/* Bestseller Badge - top left */}
+          {isFeatured && (
+            <div className={clx("absolute top-0 z-10 bg-white/70 backdrop-blur-md text-black text-[9px] font-bold uppercase tracking-[0.15em] px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5 border border-white/40 m-2", isRTL ? "left-0" : "right-0")}>
+              <Sparkles className="h-3 w-3 text-amber-500" />
+              {isRTL ? "حصري" : "Bestseller"}
+            </div>
+          )}
+
+          {/* Sale Badge - top left corner (matches code badge style) */}
+          {cheapestPrice?.price_type === 'sale' && (
+            <div className={clx("absolute top-0 z-10 bg-[#17284A] text-white px-4 py-1.5", isRTL ? "right-0 rounded-bl-[12px]" : "left-0 rounded-br-[12px]")}>
+              <span className="text-[12px] font-bold whitespace-nowrap">
                 {isRTL ? "خصم" : "Sale"}
-              </div>
-            )}
-          </div>
+              </span>
+            </div>
+          )}
 
           {/* Product Code Badge - top right (amber) */}
-          {productCode && (
+          {productCode && cheapestPrice?.price_type !== 'sale' && (
             <div className="absolute top-0 right-0 z-10 bg-[#fdb022] px-4 py-1.5 rounded-bl-[12px]">
               <span className="text-[12px] font-bold text-[#17284a] whitespace-nowrap">
                 {productCode}

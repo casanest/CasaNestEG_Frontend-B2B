@@ -22,7 +22,7 @@ export default function HeroSplit({ isRTL, locale }: Props) {
               : "With over 25 years of experience, CasaNest is your strategic partner for turnkey fit-outs. From premium furniture and electrical appliances to advanced IT infrastructure, we save you the hassle of coordinating multiple vendors by delivering smart, fully integrated workspaces."}
           </p>
           <a
-            href={`/${locale}/products`}
+            href={`/${locale}/store`}
             className="bg-[#cdd6e9] flex gap-2 items-center justify-center px-9 py-4 lg:py-[clamp(14px,1.6vw,24px)] rounded-2xl hover:opacity-90 transition-opacity w-full lg:w-auto"
           >
             <span

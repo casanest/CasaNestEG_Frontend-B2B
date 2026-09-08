@@ -65,7 +65,7 @@ export default async function CtaSection({ locale }: CtaSectionProps) {
       </div>
 
       {/* Desktop/Tablet Layout */}
-""      <div className="hidden small:flex bg-[#2c2e35] rounded-[24px] lg:rounded-[40px] p-5 lg:p-10 flex-col lg:flex-row lg:items-center gap-6 lg:gap-[30px] lg:w-[70%] max-w-[1344px] mx-auto">
+      <div className="hidden small:flex bg-[#2c2e35] rounded-[24px] lg:rounded-[40px] p-5 lg:p-10 flex-col lg:flex-row lg:items-center gap-6 lg:gap-[30px] lg:w-[70%] max-w-[1344px] mx-auto">
         {/* Left: Text + Buttons */}
         <div className="flex-1 flex flex-col gap-6 lg:gap-10">
           {/* Heading */}
