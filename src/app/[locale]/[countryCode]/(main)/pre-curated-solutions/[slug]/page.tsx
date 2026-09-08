@@ -2,6 +2,9 @@ import { getPackageBySlug } from "@lib/data/packages"
 import PackageDetailClient from "@modules/pre-curated-solutions/components/PackageDetail"
 import { notFound } from "next/navigation"
 
+export const dynamic = "force-dynamic"
+export const fetchCache = "force-no-store"
+
 type Props = {
   params: Promise<{
     countryCode: string
