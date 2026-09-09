@@ -8,6 +8,7 @@ import { usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl'
 import Image from 'next/image'
 import { useCartStore } from '@lib/store/useCartStore'
+import SearchBar from '@modules/layout/components/search-bar'
 
 type Package = {
   id: string
@@ -185,6 +186,9 @@ export default function SideMenu({ productCategories, packages = [], projectGrou
             <X className="w-5 h-5 text-white" />
           </button>
         </div>
+
+        {/* Search */}
+        <SearchBar variant="mobile" onResultSelect={handleClose} />
 
         {/* Body */}
         <div className="flex flex-1 flex-col gap-8 overflow-y-auto px-4">

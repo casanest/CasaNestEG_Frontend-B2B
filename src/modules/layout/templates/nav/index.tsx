@@ -10,6 +10,7 @@ import { FilePlus } from "lucide-react"
 import ScrollHeader from "./ScrollHeader"
 import ProductsDropdown from "./ProductsDropdown"
 import MobileCartButton from "@modules/layout/components/mobile-cart-button"
+import SearchBar from "@modules/layout/components/search-bar"
 import { Category } from "@lib/data/categories"
 import { getSiteLayout } from "@lib/data/site-layout"
 import { getLocale } from "next-intl/server"
@@ -136,6 +137,7 @@ export default async function Nav() {
                   {isRTL ? link.labelAr : link.labelEn}
                 </LocalizedClientLink>
               ))}
+              <SearchBar />
             </div>
 
             {/* Desktop: Right side - Language + Quote List */}

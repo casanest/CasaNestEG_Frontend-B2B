@@ -320,6 +320,24 @@ body {
   filter: none !important;
 }
 
+/* Reset nav-dark overrides inside the Search dropdown panel
+   so text and images render normally on the white panel */
+.nav-dark .search-dropdown-panel .text-black {
+  color: #000000 !important;
+}
+
+.nav-dark .search-dropdown-panel .text-\[\#17284a\] {
+  color: #17284a !important;
+}
+
+.nav-dark .search-dropdown-panel .hover\:text-\[\#17284a\]:hover {
+  color: #17284a !important;
+}
+
+.nav-dark .search-dropdown-panel img:not([style*="filter"]):not([class*="bg-"]) {
+  filter: none !important;
+}
+
 /* Reset nav-dark image filter inside the mobile SideMenu overlay
    so category, package, and project thumbnails render normally */
 .nav-dark .side-menu-overlay img:not([style*="filter"]):not([class*="bg-"]) {

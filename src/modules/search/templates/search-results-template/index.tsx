@@ -1,19 +1,12 @@
-import React, { Suspense } from 'react'
-import { listProducts, listProductsWithSort } from '@lib/data/products'
+import { Suspense } from 'react'
 import { safeDecodeURIComponent } from '@lib/util/safe-decode-uri'
-import { StoreRegion } from '@medusajs/types'
-import { Box } from '@modules/common/components/box'
-import { Container } from '@modules/common/components/container'
-import { Heading } from '@modules/common/components/heading'
-import { Text } from '@modules/common/components/text'
-import { search } from '@modules/search/actions'
 import SkeletonProductGrid from '@modules/skeletons/templates/skeleton-product-grid'
 import PaginatedProducts from '@modules/store/templates/paginated-products'
-import { SearchResultsIcon } from '@modules/common/icons/search-results'
 import { getLocale } from 'next-intl/server'
 import RefinementList from '@modules/store/components/refinement-list'
-import { getParentCategories, listCategories } from '@lib/data/categories'
-import { ProductsToolbar } from '@modules/categories/components/productsToolbar'
+import { listCategories } from '@lib/data/categories'
+import CategoryChipsBar from '@modules/categories/components/category-chips-bar'
+import LocalizedClientLink from '@modules/common/components/localized-client-link'
 
 export const runtime = 'edge'
 
@@ -21,10 +14,6 @@ type SearchResultsTemplateProps = {
   query: string
   sortBy?: string
   page?: string
-  collection?: string[]
-  type?: string[]
-  material?: string[]
-  price?: string[]
   currency_code: string
   countryCode: string
 }
@@ -33,137 +22,128 @@ export default async function SearchResultsTemplate({
   query,
   sortBy,
   page,
-  collection,
-  type,
-  material,
-  price,
   currency_code,
   countryCode,
 }: SearchResultsTemplateProps) {
   const pageNumber = page ? parseInt(page) : 1
   const locale = await getLocale()
   const sort = sortBy || 'created_at'
-  const isRTL = locale === "ar"
+  const isRTL = locale === 'ar'
+  const decodedQuery = safeDecodeURIComponent(query)
 
-  const { results, count } = await search({
-    currency_code: currency_code,
-    query,
-    order: sortBy,
-    page: pageNumber,
-  })
-
-  const {
-    response: { products: recommendedProducts },
-  } = await listProducts({
-    pageParam: 0,
-    queryParams: {
-      limit: 9,
-    },
-    countryCode: countryCode,
-  })
   const categoryTree = await listCategories()
-  const parentCategories = getParentCategories(categoryTree).map((category) => ({
+
+  const topLevelCategories = (categoryTree || []).map((cat) => ({
+    id: cat.id,
+    name_en: cat.name_en,
+    name_ar: cat.name_ar,
+    handle_en: cat.handle_en,
+    handle_ar: cat.handle_ar,
+  }))
+
+  const flatList: typeof categoryTree = []
+  const flatten = (cats: typeof categoryTree) => {
+    for (const cat of cats) {
+      flatList.push(cat)
+      if (cat.category_children?.length) {
+        flatten(cat.category_children)
+      }
+    }
+  }
+  flatten(categoryTree)
+
+  const allCategories = flatList.map((category) => ({
     id: category.id,
     name_en: category.name_en,
     name_ar: category.name_ar,
+    parent_category_id: category.parent_category_id ?? null,
   }))
 
+  const searchParams = { q: query }
+
   return (
-    <div className="content-container py-6  ">
-      <div
-        dir={isRTL ? "rtl" : "ltr"}
-        className="flex flex-col small:flex-row small:items-start gap-x-6 "
-      >
-        {/* Desktop Sidebar - Hidden on mobile */}
-        {results && results.length > 0 && (
-          // <div className="hidden small:block w-full small:w-72 small:sticky small:top-6">
-          //   <RefinementList
-          //     locale={locale}
-          //     sortBy={sort}
-          //     countryCode={countryCode}
-          //     categories={parentCategories}
-          //     inline
-          //   />
-          // </div>
-          <aside dir={isRTL ? "rtl" : "ltr"} className="hidden small:block w-full small:w-72 flex-shrink-0 small:sticky small:top-24 mb-8 small:mb-0">
-            <div className="rounded-2xl bg-gray-50 dark:bg-gray-900/50 p-6 border border-gray-100 dark:border-gray-800">
-              {/* <h2 className="text-lg font-bold text-gray-950 dark:text-white mb-5">
-                        {isRTL ? "الاقسام" : "Categories"}
-                      </h2> */}
+    <div
+      dir={isRTL ? 'rtl' : 'ltr'}
+      className="w-full"
+      data-testid="search-results-container"
+    >
+      {/* Page Title Band */}
+      <section className="w-full bg-white px-4 sm:px-6 lg:px-[60px] pt-11 small:pt-10 pb-6">
+        {/* Breadcrumbs */}
+        <nav className="flex items-center gap-2 text-[14px] mb-4" aria-label="Breadcrumb">
+          <LocalizedClientLink href="/" className="text-[#707176] hover:text-[#17284a] transition-colors">
+            {isRTL ? 'الرئيسية' : 'Home'}
+          </LocalizedClientLink>
+          <span className="text-[#707176]">/</span>
+          <span className="text-[#17284a] font-medium">
+            {isRTL ? 'البحث' : 'Search'}
+          </span>
+        </nav>
+
+        {/* Title + Subtitle */}
+        <div className="flex flex-col small:flex-row small:items-end small:justify-between gap-4">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-[24px] small:text-[36px] font-bold tracking-tight text-[#17284a] leading-tight">
+              {isRTL ? `نتائج البحث: "${decodedQuery}"` : `Search results: "${decodedQuery}"`}
+            </h1>
+            <p className="text-[14px] small:text-[16px] text-[#707176] max-w-2xl">
+              {isRTL ? 'تصفح المنتجات المطابقة لبحثك' : 'Browse products matching your search'}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Horizontal Filter Bar - Category Chips + Sort */}
+      <CategoryChipsBar
+        categories={topLevelCategories}
+        currentCategoryId={undefined}
+        isRTL={isRTL}
+        locale={locale}
+        sort={sort as any}
+        productCount={0}
+      />
+
+      {/* Mobile Filter Bar (Filters + Sort) */}
+      <RefinementList
+        locale={locale}
+        sortBy={sort as any}
+        countryCode={countryCode}
+        categories={allCategories || []}
+      />
+
+      {/* Main Content Layout: Sidebar + Product Grid */}
+      <div className="w-full bg-[#fefefe] px-4 sm:px-6 lg:px-[60px] py-8">
+        <div className="flex flex-col small:flex-row small:items-start gap-8">
+          {/* Sidebar Filters */}
+          <aside
+            dir={isRTL ? 'rtl' : 'ltr'}
+            className="hidden small:block w-full small:w-[280px] flex-shrink-0"
+          >
+            <div className="sticky top-[220px]">
               <RefinementList
                 locale={locale}
-                sortBy={sort}
+                sortBy={sort as any}
                 countryCode={countryCode}
-                categories={parentCategories}
-                inline // This will render it as a tree menu
+                categories={allCategories || []}
+                inline
               />
             </div>
           </aside>
-        )}
-        {/* Sidebar Filters */}
-        {/* <div className={`hidden small:block w-full small:w-72  `}>
-          <RefinementList
-            locale={locale}
-            sortBy={sort}
-            data-testid="sort-by-container"
-          />
-        </div> */}
 
-        {/* Main Content */}
-        <div className="flex-1 w-full">
-          {results && results.length > 0 ? (
-            <>
-              <Box className="flex flex-col gap-4 mb-8">
-                <Heading
-                  as="h1"
-                  className={`text-3xl sm:text-4xl font-semibold text-gray-900 ${isRTL ? 'text-right' : 'text-left'}`}
-                >
-                  &quot;{safeDecodeURIComponent(query)}&quot;
-                </Heading>
-                {/* <Text className={`text-sm sm:text-md text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>
-                  {count === 1 ? `${count} ${isRTL ? 'منتج' : 'product'}` : `${count} ${isRTL ? 'منتجات' : 'products'}`}
-                </Text> */}
-              </Box>
-              <ProductsToolbar
-                productCount={results.length}
-                sort={sort} 
-                isRTL={isRTL}
-                locale={locale}
+          {/* Main Content Area - Product Grid */}
+          <main className="flex-1 min-w-0">
+            <Suspense fallback={<SkeletonProductGrid numberOfProducts={4} />}>
+              <PaginatedProducts
+                sortBy={sort as any}
+                page={pageNumber}
                 countryCode={countryCode}
+                searchParams={searchParams}
+                isRTL={isRTL}
               />
-
-              <Suspense fallback={<SkeletonProductGrid />}>
-                <PaginatedProducts
-                  productsIds={results.map((p) => p.id)}
-                  page={pageNumber}
-                  countryCode={countryCode}
-                />
-              </Suspense>
-            </>
-          ) : (
-            <Box className="flex flex-col items-center gap-6 py-12 sm:py-16">
-              <div className="w-24 h-24 text-gray-300">
-                <SearchResultsIcon />
-              </div>
-              <Box className={`flex flex-col items-center gap-2 ${isRTL ? 'text-right' : 'text-left'}`}>
-                <Heading as="h3" className="text-xl sm:text-2xl font-medium text-gray-900">
-                  {isRTL ? 'لا توجد نتائج لـ' : 'No results for'} &quot;{safeDecodeURIComponent(query)}&quot;
-                </Heading>
-                <p className="text-center text-sm sm:text-md text-gray-500 max-w-md">
-                  {isRTL ? 'الرجاء المحاولة مرة أخرى باستخدام كلمات مختلفة أو عبارة أخرى' : 'Please try again using a different spelling or phrase'}
-                </p>
-              </Box>
-            </Box>
-          )}
+            </Suspense>
+          </main>
         </div>
       </div>
-
-      {/* Mobile Filters Button - You might want to implement this */}
-      {/* <div className="small:hidden fixed bottom-6 left-1/2 transform -translate-x-1/2">
-        <button className="bg-gray-900 text-white px-6 py-3 rounded-full shadow-lg text-sm font-medium">
-          {isRTL ? 'تصفية' : 'Filters'}
-        </button>
-      </div> */}
     </div>
   )
 }
