@@ -122,7 +122,7 @@ export default function HeroSection({ banners, locale, dir }: HeroSectionProps) 
           </div>
 
           {/* CTAs - stacked on mobile, side-by-side on desktop */}
-          <div className="flex flex-col gap-[12px] md:flex-row md:gap-[clamp(12px,1.5vw,20px)]">
+          <div className="flex flex-col gap-[12px] md:flex-row md:gap-[clamp(12px,1vw,20px)] mt-[0vw]">
             <LocalizedClientLink
               href="/store"
               className="bg-[#17284a] flex gap-[8px] items-center justify-center px-[20px] md:px-[clamp(20px,2.5vw,36px)] py-[20px] md:py-[clamp(16px,1.6vw,24px)] rounded-[16px] w-full md:w-[clamp(220px,20vw,320px)] hover:bg-[#0f1a2e] transition-colors"
@@ -146,7 +146,7 @@ export default function HeroSection({ banners, locale, dir }: HeroSectionProps) 
         </div>
 
         {/* Bottom carousel meta - desktop only */}
-        <div className="hidden md:flex items-center justify-between w-full mt-[clamp(24px,3vw,40px)]">
+        <div className="hidden md:flex items-center justify-between w-full mt-[clamp(24px,2vw,40px)]">
           {/* Slide dots */}
           <div className="flex gap-[8px]">
             {Array.from({ length: slideCount }).map((_, idx) => (

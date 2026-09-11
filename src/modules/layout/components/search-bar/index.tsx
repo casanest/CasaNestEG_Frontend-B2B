@@ -38,7 +38,7 @@ export default function SearchBar({ variant = "desktop", onResultSelect }: Searc
   const isRTL = locale === "ar"
   const router = useRouter()
 
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(variant === "mobile")
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<SearchedProduct[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -87,7 +87,13 @@ export default function SearchBar({ variant = "desktop", onResultSelect }: Searc
         router.push(`/results/${encodeURIComponent(query.trim())}`)
       }
     } else if (e.key === "Escape") {
-      collapse()
+      if (variant === "mobile") {
+        setQuery("")
+        setResults([])
+        inputRef.current?.blur()
+      } else {
+        collapse()
+      }
     }
   }
 
@@ -106,7 +112,12 @@ export default function SearchBar({ variant = "desktop", onResultSelect }: Searc
 
   const handleResultClick = () => {
     if (variant === "mobile" && onResultSelect) onResultSelect()
-    collapse()
+    if (variant === "mobile") {
+      setQuery("")
+      setResults([])
+    } else {
+      collapse()
+    }
   }
 
   useEffect(() => {
@@ -187,19 +198,12 @@ export default function SearchBar({ variant = "desktop", onResultSelect }: Searc
     return (
       <div ref={containerRef} className="relative w-full px-4 pb-2">
         <div
-          className={cn(
-            "search-bar relative flex items-center h-[50px] rounded-full border-2 overflow-hidden transition-all duration-500 ease-in-out",
-            isExpanded ? "search-bar-expanded w-full border-[#cdd6e9] bg-white" : "w-[50px] border-slate-200 bg-transparent"
-          )}
+          className="search-bar relative flex items-center h-[50px] rounded-full border-2 overflow-hidden transition-all duration-500 ease-in-out search-bar-expanded w-full border-[#cdd6e9] bg-white"
           dir={isRTL ? "rtl" : "ltr"}
         >
-          <button
-            onClick={isExpanded ? collapse : handleExpand}
-            className="flex items-center justify-center w-[50px] h-[50px] shrink-0"
-            aria-label={isExpanded ? (isRTL ? "إغلاق" : "Close") : (isRTL ? "بحث" : "Search")}
-          >
-            <MorphingIcon expanded={isExpanded} />
-          </button>
+          <div className="flex items-center justify-center w-[50px] h-[50px] shrink-0">
+            <Search className="w-5 h-5 text-[#17284a]" />
+          </div>
           <input
             ref={inputRef}
             type="text"
@@ -213,10 +217,6 @@ export default function SearchBar({ variant = "desktop", onResultSelect }: Searc
               "flex-1 min-w-0 bg-transparent border-none outline-none text-[14px] text-[#17284a] placeholder:text-slate-400",
               isRTL ? "pl-4" : "pr-4"
             )}
-            style={{
-              opacity: isExpanded ? 1 : 0,
-              transition: "opacity 0.3s ease 0.15s",
-            }}
           />
         </div>
         {renderDropdown("left-4 right-4")}
@@ -229,7 +229,7 @@ export default function SearchBar({ variant = "desktop", onResultSelect }: Searc
       <div
         className={cn(
           "search-bar relative flex items-center h-[50px] rounded-full border-2 overflow-hidden transition-all duration-500 ease-in-out",
-          isExpanded ? "search-bar-expanded border-[#cdd6e9] bg-white" : "border-slate-200 bg-transparent"
+          isExpanded ? "search-bar-expanded border-[#cdd6e9] bg-white" : "border-transparent bg-transparent"
         )}
         style={{
           width: isExpanded ? "320px" : "50px",

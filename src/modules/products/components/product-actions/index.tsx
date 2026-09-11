@@ -240,16 +240,14 @@ export default function ProductActions({
               }
               className={clx(
                 "w-full h-[clamp(44px,4vw,56px)] rounded-[clamp(12px,1.2vw,16px)] bg-[#17284a] text-white font-medium transition-all hover:bg-[#0f1d35] flex items-center justify-center gap-2",
-                (!inStock || !isValidVariant) && selectedVariant
-                  ? "text-[clamp(14px,1.9vw,16px)]"
-                  : "text-[clamp(11px,1.9vw,12px)]",
+                "text-[clamp(14px,1.2vw,16px)]",
                 isRTL && "tracking-[0.05em]"
               )}
               data-testid="add-product-button"
             >
               {!inStock || !isValidVariant
                 ? isRTL ? "غير متوفر" : "Out of stock"
-                : isRTL ? "اطلب عرض سعر" : "Request a Quote"}
+                : isRTL ? "اطلب عرض سعر الآن" : "Request a Quote now"}
             </button>
             <button
               onClick={handleAddToQuoteList}

@@ -28,7 +28,8 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
   const removeItem = useCartStore((state) => state.removeItem)
 
   const changeQuantity = async (quantity: number) => {
-    if (quantity < 1) return
+    const minQty = item.minOrderQty || 1
+    if (quantity < minQty) return
     setError(null)
     setUpdating(true)
 
@@ -47,8 +48,7 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
     setDeleting(false)
   }
 
-  const maxQtyFromInventory = 10
-  const maxQuantity = item.manageInventory ? 10 : maxQtyFromInventory
+  const maxQuantity = 999
 
   const productTitle = isRTL
     ? item.productTitleAr ?? item.productTitle
@@ -199,7 +199,7 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
             <button
               onClick={() => changeQuantity(item.quantity - 1)}
               className="text-[#707176] hover:text-[#17284a] transition-colors disabled:opacity-30"
-              disabled={updating || item.quantity <= 1}
+              disabled={updating || item.quantity <= (item.minOrderQty || 1)}
               data-testid="product-decrease-quantity"
               aria-label="Decrease quantity"
             >
@@ -291,7 +291,7 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
             <button
               onClick={() => changeQuantity(item.quantity - 1)}
               className="text-[#707176] hover:text-[#17284a] transition-colors disabled:opacity-30"
-              disabled={updating || item.quantity <= 1}
+              disabled={updating || item.quantity <= (item.minOrderQty || 1)}
               data-testid="product-decrease-quantity"
               aria-label="Decrease quantity"
             >

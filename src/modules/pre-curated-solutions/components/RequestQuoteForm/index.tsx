@@ -95,7 +95,7 @@ export default function RequestQuoteForm({ pkg, locale }: RequestQuoteFormProps)
   const phonePlaceholder = isRTL ? "مثال: 01001234567" : "e.g. 01001234567"
 
   const companyLabel = isRTL ? "اسم الشركة" : "Company Name"
-  const companyPlaceholder = isRTL ? "مثال: شركاء تطوير القاهرة" : "e.g. Cairo Development Partners"
+  const companyPlaceholder = isRTL ? "مثال: شركة الحمد للتجاره" : "e.g. Cairo Development Partners"
   const messageLabel = isRTL ? "الرسالة (اختياري)" : "Message (Optional)"
   const messagePlaceholder = isRTL
     ? "أخبرنا عن متطلبات مشروعك، الكميات، والجداول الزمنية..."

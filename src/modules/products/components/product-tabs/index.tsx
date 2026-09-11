@@ -4,6 +4,20 @@ import { useState } from "react"
 import { useLocale } from "next-intl"
 import { FileText } from "lucide-react"
 
+const BULLET_SPLIT_RE = /([•‣◦●▪∙⋅‧◆■□►▶○◇])/g
+const BULLET_TEST_RE = /[•‣◦●▪∙⋅‧◆■□►▶○◇]/
+
+const renderWithStyledBullets = (text: string) => {
+  const parts = text.split(BULLET_SPLIT_RE)
+  return parts.map((part, i) =>
+    BULLET_TEST_RE.test(part) ? (
+      <span key={i} className="font-[Arial,sans-serif]">{part}</span>
+    ) : (
+      part
+    )
+  )
+}
+
 type SpecItem = {
   label: string
   value: string
@@ -81,8 +95,8 @@ const ProductTabs = ({ specs, description, documentUrl }: ProductTabsProps) => {
         {activeTab === "description" && (
           <div className="py-2">
             {description ? (
-              <p className="text-[14px] leading-[1.5] text-[#5d5d61] whitespace-pre-line">
-                {description.replace(/^[\s\u200e\u200f\u202a-\u202e]*[-*‣◦▪●◆■□►▶○◇∙⋅‧–—]/gm, "•")}
+              <p className="text-[20px] leading-[1.5] text-[#505055] whitespace-pre-line">
+                {renderWithStyledBullets(description.replace(/^[\s\u200e\u200f\u202a-\u202e]*[-*‣◦▪●◆■□►▶○◇∙⋅‧–—]/gm, "•"))}
               </p>
             ) : (
               <p className="text-[14px] text-[#707176]">

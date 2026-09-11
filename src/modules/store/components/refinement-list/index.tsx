@@ -237,7 +237,7 @@ const PriceRangeFilter = ({ isRTL, initialPrice, onApply, minPrice, maxPrice, va
         onClick={handleApply}
         className="self-start text-[12px] font-medium text-[#17284a] underline hover:text-[#0f1d38] mt-1"
       >
-        {isRTL ? "تطبيق السعر" : "Apply price"}
+        {/* {isRTL ? "تطبيق السعر" : "Apply price"} */}
       </button>
 
       {/* Bottom Divider - inline variant only */}
@@ -845,8 +845,8 @@ const RefinementList = ({
         <div className="flex flex-col gap-3">
           {[
             { value: "all", label: isRTL ? "الكل" : "All", key: "all" },
-            { value: "inStock", label: isRTL ? "متوفر في المخزون" : "In Stock", key: "inStock" },
-            { value: "madeToOrder", label: isRTL ? "حسب الطلب" : "Made to Order", key: "madeToOrder" },
+            { value: "inStock", label: isRTL ? "بالسعر" : "With Price", key: "inStock" },
+            { value: "madeToOrder", label: isRTL ? "السعر عند الطلب" : "Price on Request", key: "madeToOrder" },
           ].map((opt) => {
             const isSelected = opt.value === "all"
               ? !filters.inStock && !filters.onSale && !filters.madeToOrder

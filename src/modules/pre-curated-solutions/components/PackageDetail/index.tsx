@@ -82,7 +82,7 @@ export default function PackageDetailClient({ pkg, locale }: PackageDetailProps)
       ...prev,
       [productId]: {
         ...prev[productId],
-        quantity: prev[productId].quantity + 1,
+        quantity: Math.min(999, prev[productId].quantity + 1),
       },
     }))
   }
@@ -269,7 +269,7 @@ export default function PackageDetailClient({ pkg, locale }: PackageDetailProps)
         </div>
 
         {/* Right - summary card */}
-        <div className="lg:w-[clamp(320px,32vw,440px)] lg:shrink-0">
+        <div className="lg:w-[clamp(320px,32vw,440px)] lg:shrink-0 lg:self-stretch">
           <SummaryCard
             locale={locale}
             packageName={name}

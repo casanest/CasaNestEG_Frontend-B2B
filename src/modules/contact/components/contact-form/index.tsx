@@ -366,7 +366,7 @@ export default function ContactForm({ isRTL }: { isRTL: boolean }) {
             className="h-[44px] lg:h-[52px] bg-[#f3f4f6] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] text-[16px] text-[#17284a] placeholder:text-[#5d5d61] focus:outline-none focus:ring-2 focus:ring-[#17284a]/20"
             placeholder={
               isRTL
-                ? "مثال: شركاء تطوير القاهرة"
+                ? "مثال: شركة الحمد للتجاره"
                 : "e.g. Cairo Development Partners"
             }
           />

@@ -134,7 +134,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
         >
           {!inStock || !isValidVariant
             ? isRTL ? "غير متوفر" : "Out of stock"
-            : isRTL ? "اطلب عرض سعر" : "Request a Quote"}
+            : isRTL ? "اطلب عرض سعر الآن" : "Request a Quote now"}
         </button>
       </div>
 

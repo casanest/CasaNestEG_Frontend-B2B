@@ -97,7 +97,7 @@ export default function QuoteForm({ locale }: QuoteFormProps) {
   const phonePlaceholder = isRTL ? "مثال: 01001234567" : "e.g. 01001234567"
 
   const companyLabel = isRTL ? "اسم الشركة" : "Company Name"
-  const companyPlaceholder = isRTL ? "مثال: شركاء تطوير القاهرة" : "e.g. Cairo Development Partners"
+  const companyPlaceholder = isRTL ? "مثال: شركة الحمد للتجاره" : "e.g. Cairo Development Partners"
   const messageLabel = isRTL ? "الرسالة (اختياري)" : "Message (Optional)"
   const messagePlaceholder = isRTL
     ? "أخبرنا عن متطلبات مشروعك، الكميات، والجداول الزمنية..."
@@ -181,7 +181,8 @@ export default function QuoteForm({ locale }: QuoteFormProps) {
   }
 
   const changeQuantity = (item: QuoteItem, quantity: number) => {
-    if (quantity < 1) return
+    const minQty = item.minOrderQty || 1
+    if (quantity < minQty) return
     updateItemQuantity(item.id, quantity)
   }
 
@@ -683,7 +684,7 @@ export default function QuoteForm({ locale }: QuoteFormProps) {
                               <button
                                 onClick={() => changeQuantity(item, item.quantity - 1)}
                                 className="text-[#707176] hover:text-[#17284a] transition-colors disabled:opacity-30"
-                                disabled={item.quantity <= 1}
+                                disabled={item.quantity <= (item.minOrderQty || 1)}
                                 aria-label="Decrease quantity"
                               >
                                 <Minus className="size-4" />
@@ -694,7 +695,7 @@ export default function QuoteForm({ locale }: QuoteFormProps) {
                               <button
                                 onClick={() => changeQuantity(item, item.quantity + 1)}
                                 className="text-[#707176] hover:text-[#17284a] transition-colors disabled:opacity-30"
-                                disabled={item.quantity >= 10}
+                                disabled={item.quantity >= 999}
                                 aria-label="Increase quantity"
                               >
                                 <Plus className="size-4" />

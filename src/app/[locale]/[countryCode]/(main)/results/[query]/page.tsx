@@ -14,17 +14,14 @@ type Params = {
   searchParams: Promise<{
     sortBy?: string
     page?: string
-    collection?: string
-    type?: string
-    material?: string
-    price?: string
+    [key: string]: string | string[] | undefined
   }>
 }
 
 export default async function SearchResults(props: Params) {
   const searchParams = await props.searchParams
   const params = await props.params
-  const { sortBy, page } = searchParams
+  const { sortBy, page, ...filterParams } = searchParams
   const { query, countryCode } = params
   const decodedQuery = safeDecodeURIComponent(query)
 
@@ -37,6 +34,7 @@ export default async function SearchResults(props: Params) {
       page={page}
       currency_code={region?.currency_code || 'USD'}
       countryCode={params.countryCode}
+      searchParams={filterParams}
     />
   )
 }

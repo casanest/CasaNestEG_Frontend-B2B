@@ -155,12 +155,10 @@ export const listProducts = async ({
     // Apply client-side filtering for unsupported API parameters
     if (inStock || onSale || madeToOrder || price || colors?.length || materials?.length || sizes?.length) {
       products = products.filter(product => {
-        // In Stock filtering - products with a price
+        // With Price filtering - products where show_price flag is true
         if (inStock === 'true') {
-          const hasPrice = product.variants?.some(variant =>
-            typeof variant.calculated_price?.calculated_amount === 'number'
-          )
-          if (!hasPrice) return false
+          const showPrice = (product as any).show_price === true
+          if (!showPrice) return false
         }
 
         // Sale filtering
@@ -179,12 +177,10 @@ export const listProducts = async ({
           }
         }
 
-        // Made to order filtering - products with no price
+        // Price on Request filtering - products where show_price flag is false
         if (madeToOrder === 'true') {
-          const hasPrice = product.variants?.some(variant =>
-            typeof variant.calculated_price?.calculated_amount === 'number'
-          )
-          if (hasPrice) return false
+          const showPrice = (product as any).show_price === true
+          if (showPrice) return false
         }
 
         // Price filtering - check all variant prices against the range
@@ -316,12 +312,10 @@ export const listProductsWithSort = async ({
   let filteredProducts = products
   if (hasClientFilters) {
     filteredProducts = products.filter(product => {
-      // In Stock filtering - products with a price
+      // With Price filtering - products where show_price flag is true
       if (inStock === 'true') {
-        const hasPrice = product.variants?.some(variant =>
-          typeof variant.calculated_price?.calculated_amount === 'number'
-        )
-        if (!hasPrice) return false
+        const showPrice = (product as any).show_price === true
+        if (!showPrice) return false
       }
 
       // Sale filtering
@@ -340,12 +334,10 @@ export const listProductsWithSort = async ({
         }
       }
 
-      // Made to order filtering - products with no price
+      // Price on Request filtering - products where show_price flag is false
       if (madeToOrder === 'true') {
-        const hasPrice = product.variants?.some(variant =>
-          typeof variant.calculated_price?.calculated_amount === 'number'
-        )
-        if (hasPrice) return false
+        const showPrice = (product as any).show_price === true
+        if (showPrice) return false
       }
 
         // Price filtering - check all variant prices against the range

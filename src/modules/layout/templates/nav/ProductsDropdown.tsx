@@ -135,7 +135,10 @@ export default function ProductsDropdown({
                     }`}
                     onMouseEnter={() => setActiveIndex(idx)}
                   >
-                    <div className="flex items-center gap-[16px] flex-1 min-w-0">
+                    <LocalizedClientLink
+                      href={`/categories/${getCatHandle(cat)}`}
+                      className="flex items-center gap-[16px] flex-1 min-w-0"
+                    >
                       <div
                         className={`size-[44px] rounded-[4px] overflow-hidden shrink-0 ${
                           isActive
@@ -166,7 +169,7 @@ export default function ProductsDropdown({
                       >
                         {getCatName(cat)}
                       </span>
-                    </div>
+                    </LocalizedClientLink>
                     <ChevronRight
                       className={`size-[20px] shrink-0 ${
                         isActive ? "text-[#fdb022]" : "text-[#cdd6e9]"

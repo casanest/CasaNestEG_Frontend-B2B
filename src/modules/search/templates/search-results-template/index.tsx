@@ -7,6 +7,7 @@ import RefinementList from '@modules/store/components/refinement-list'
 import { listCategories } from '@lib/data/categories'
 import CategoryChipsBar from '@modules/categories/components/category-chips-bar'
 import LocalizedClientLink from '@modules/common/components/localized-client-link'
+import { getMeilisearchClientConfig } from '@lib/meilisearch-config'
 
 export const runtime = 'edge'
 
@@ -16,6 +17,7 @@ type SearchResultsTemplateProps = {
   page?: string
   currency_code: string
   countryCode: string
+  searchParams?: { [key: string]: string | string[] | undefined }
 }
 
 export default async function SearchResultsTemplate({
@@ -24,6 +26,7 @@ export default async function SearchResultsTemplate({
   page,
   currency_code,
   countryCode,
+  searchParams,
 }: SearchResultsTemplateProps) {
   const pageNumber = page ? parseInt(page) : 1
   const locale = await getLocale()
@@ -59,7 +62,29 @@ export default async function SearchResultsTemplate({
     parent_category_id: category.parent_category_id ?? null,
   }))
 
-  const searchParams = { q: query }
+  let productsIds: string[] | undefined
+
+  if (decodedQuery) {
+    try {
+      const meili = await getMeilisearchClientConfig()
+      if (meili) {
+        const meiliRes = await fetch(
+          `${meili.search_url}/indexes/products/search?q=${encodeURIComponent(decodedQuery)}&limit=1000`,
+          {
+            headers: { authorization: `Bearer ${meili.search_api_key}` },
+            cache: 'no-store',
+          }
+        )
+        if (meiliRes.ok) {
+          const meiliData = await meiliRes.json()
+          const hits = (meiliData.hits || []).map((hit: { id: string }) => hit.id)
+          productsIds = hits.length > 0 ? hits : ['no-match']
+        }
+      }
+    } catch {
+      // fall through to Medusa API search
+    }
+  }
 
   return (
     <div
@@ -137,6 +162,7 @@ export default async function SearchResultsTemplate({
                 sortBy={sort as any}
                 page={pageNumber}
                 countryCode={countryCode}
+                productsIds={productsIds}
                 searchParams={searchParams}
                 isRTL={isRTL}
               />

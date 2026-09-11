@@ -125,7 +125,8 @@ export default function PackageItemCard({
         <div className="bg-white border border-[#E5E7EB] border-solid flex flex-row items-center justify-center p-[6px] md:p-2 gap-[24px] md:gap-3 rounded-[8px] w-[162px] md:w-[100px] h-[33px] md:h-[37px]">
           <button
             onClick={(e) => { e.stopPropagation(); e.preventDefault(); onDecrement() }}
-            className="shrink-0 flex items-center justify-center w-[32px] h-[32px] md:w-5 md:h-5"
+            disabled={quantity <= moq}
+            className="shrink-0 flex items-center justify-center w-[32px] h-[32px] md:w-5 md:h-5 disabled:opacity-30"
             aria-label="Decrease quantity"
           >
             <Minus className="w-[14px] h-[14px] md:w-5 md:h-5 text-[#17284A]" strokeWidth={2} />

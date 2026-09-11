@@ -196,7 +196,7 @@ export default function SingleProductQuoteForm({ product, region }: SingleProduc
   const phonePlaceholder = isRTL ? "مثال: 01001234567" : "e.g. 01001234567"
 
   const companyLabel = isRTL ? "اسم الشركة" : "Company Name"
-  const companyPlaceholder = isRTL ? "مثال: شركاء تطوير القاهرة" : "e.g. Cairo Development Partners"
+  const companyPlaceholder = isRTL ? "مثال: شركة الحمد للتجاره" : "e.g. Cairo Development Partners"
   const subjectLabel = isRTL ? "اسم المنتج" : "Product Name"
   const messageLabel = isRTL ? "متطلبات خاصة أو ملاحظات (اختياري)" : "Special Requirements or Notes (Optional)"
   const messagePlaceholder = isRTL

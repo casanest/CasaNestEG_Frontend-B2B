@@ -3,7 +3,7 @@ import { satoshiStyle, caveatStyle, type Props } from "./styles"
 export default function MissionV1({ isRTL }: Props) {
   return (
     <section
-      className="bg-[#faf8f5] flex flex-col gap-6 lg:flex-row lg:gap-[clamp(24px,4vw,60px)] items-start lg:items-center py-11 lg:py-[clamp(28px,5vw,80px)] relative w-full"
+      className="bg-[#faf8f5] flex flex-col gap-6 lg:flex-row lg:gap-[clamp(24px,4vw,60px)] items-start lg:items-center py-11 lg:py-[clamp(14px,2.5vw,40px)] relative w-full"
       dir={isRTL ? "rtl" : "ltr"}
     >
       <div className="content-container flex flex-col gap-6 lg:flex-row lg:gap-[clamp(24px,4vw,60px)] items-start lg:items-center w-full">
