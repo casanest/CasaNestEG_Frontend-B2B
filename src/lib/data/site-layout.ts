@@ -84,7 +84,7 @@ export const getSiteLayout = cache(async (): Promise<SiteLayoutData> => {
     "/store/site-layout",
     {
       method: "GET",
-      next: { revalidate: 300, tags: ["packages", "portfolio", "products"] },
+      next: { revalidate: 300, tags: ["packages", "portfolio", "products", "categories", "collections", "social-media"] },
     }
   )
 

@@ -225,5 +225,5 @@ async function handlePageRequest(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|images|assets|.*\\..*).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|images|assets|api/revalidate|.*\\..*).*)"],
 }
