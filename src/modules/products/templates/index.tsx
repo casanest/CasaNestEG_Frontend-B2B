@@ -42,55 +42,34 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
 
   const specs = [
     {
-      label: isRTL ? "الخامة" : "Material",
-      value: product.material || "-",
+      label: isRTL ? "الارتفاع" : "Height",
+      value: product.height ? `${product.height} cm` : "-",
     },
     {
       label: isRTL ? "العرض" : "Width",
       value: product.width ? `${product.width} cm` : "-",
     },
     {
-      label: isRTL ? "الارتفاع" : "Height",
-      value: product.height ? `${product.height} cm` : "-",
-    },
-    {
-      label: isRTL ? "العمق" : "Depth",
+      label: isRTL ? "الطول" : "Length",
       value: product.length ? `${product.length} cm` : "-",
     },
+    {
+      label: isRTL ? "الوزن" : "Weight",
+      value: product.weight ? `${product.weight}` : "-",
+    },
+    {
+      label: isRTL ? "رمز MID" : "MID code",
+      value: (product as any).mid_code || "-",
+    },
+    {
+      label: isRTL ? "رمز HS" : "HS code",
+      value: (product as any).hs_code || "-",
+    },
+    {
+      label: isRTL ? "بلد المنشأ" : "Country of origin",
+      value: (product as any).origin_country || "-",
+    },
   ]
-
-  // Build specs from product metadata (skip internal/structural keys)
-  const metadataSkipKeys = [
-    "localizations",
-    "is_new",
-    "title_ar",
-    "title_en",
-    "description_ar",
-    "description_en",
-    "min_order_qty",
-    "MOQ",
-    "localization_updated_at",
-    "warranty",
-    "moq",
-    "document_url",
-  ]
-  if (product.metadata) {
-    for (const [key, value] of Object.entries(product.metadata)) {
-      if (metadataSkipKeys.includes(key)) continue
-      if (typeof value === "object" && value !== null) continue
-      if (value === null || value === undefined || value === "") continue
-
-      const label = key
-        .split(/[_\s]+/)
-        .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-        .join(" ")
-
-      specs.push({
-        label,
-        value: String(value),
-      })
-    }
-  }
 
   const firstCategory = product.categories?.[0] as any
   const categoryTitle = (isRTL

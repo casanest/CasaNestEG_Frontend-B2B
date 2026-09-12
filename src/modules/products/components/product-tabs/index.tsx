@@ -33,7 +33,7 @@ const ProductTabs = ({ specs, description, documentUrl }: ProductTabsProps) => {
   const locale = useLocale()
   const isRTL = locale === "ar"
   const visibleSpecs = specs.filter(
-    (spec) => typeof spec.value === "string" && spec.value.trim() !== "-"
+    (spec) => spec.value !== "-"
   )
 
   const hasSpecs = visibleSpecs.length > 0

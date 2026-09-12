@@ -93,11 +93,17 @@ export async function generateMetadata(
     product.images?.[0]?.url ||
     "/opengraph-image.png"
 
+  const metaKeywords =
+    (isRTL
+      ? localized?.ar?.meta_keywords
+      : localized?.en?.meta_keywords) || undefined
+
   const locale = isRTL ? "ar" : "en"
 
   return {
     title: `${title} | CASANEST`,
     description,
+    ...(metaKeywords ? { keywords: metaKeywords } : {}),
 
     openGraph: {
       title: `${title} | CASANEST`,
