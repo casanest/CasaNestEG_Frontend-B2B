@@ -127,6 +127,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
                 specs={specs}
                 description={description}
                 documentUrl={(product as any).document_url ?? null}
+                showDocument={(product as any).show_document ?? false}
               />
             </div>
           </div>
@@ -142,6 +143,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
               specs={specs}
               description={description}
               documentUrl={(product as any).document_url ?? null}
+              showDocument={(product as any).show_document ?? false}
             />
           </div>
         </div>

@@ -27,9 +27,10 @@ type ProductTabsProps = {
   specs: SpecItem[]
   description: string
   documentUrl?: string | null
+  showDocument?: boolean
 }
 
-const ProductTabs = ({ specs, description, documentUrl }: ProductTabsProps) => {
+const ProductTabs = ({ specs, description, documentUrl, showDocument }: ProductTabsProps) => {
   const locale = useLocale()
   const isRTL = locale === "ar"
   const visibleSpecs = specs.filter(
@@ -37,7 +38,7 @@ const ProductTabs = ({ specs, description, documentUrl }: ProductTabsProps) => {
   )
 
   const hasSpecs = visibleSpecs.length > 0
-  const hasDocuments = !!documentUrl
+  const hasDocuments = !!documentUrl && !!showDocument
 
   const tabs = [
     { id: "description" as const, label: isRTL ? "الوصف" : "Description" },
