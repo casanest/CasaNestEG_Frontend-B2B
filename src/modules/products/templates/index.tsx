@@ -12,6 +12,7 @@ import { notFound } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
 import { getLocale } from "next-intl/server"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { getLeafCategory, buildCategoryParentMap } from "@lib/util/product"
 
 type ProductTemplateProps = {
   product: HttpTypes.StoreProduct
@@ -71,11 +72,12 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
     },
   ]
 
-  const firstCategory = product.categories?.[0] as any
+  const categoryParentMap = await buildCategoryParentMap(product.categories?.map((c: any) => c.id))
+  const leafCategory = getLeafCategory(product.categories, categoryParentMap) as any
   const categoryTitle = (isRTL
-    ? firstCategory?.metadata?.localizations?.ar?.name
-    : firstCategory?.name) || firstCategory?.name || product.collection?.title || ""
-  const categoryHandle = firstCategory?.handle || (product.collection ? `/collections/${product.collection.handle}` : "/products")
+    ? leafCategory?.metadata?.localizations?.ar?.name
+    : leafCategory?.name) || leafCategory?.name || product.collection?.title || ""
+  const categoryHandle = leafCategory?.handle || (product.collection ? `/collections/${product.collection.handle}` : "/products")
 
   return (
     <>

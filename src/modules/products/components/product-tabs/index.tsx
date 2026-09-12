@@ -96,9 +96,16 @@ const ProductTabs = ({ specs, description, documentUrl, showDocument }: ProductT
         {activeTab === "description" && (
           <div className="py-2">
             {description ? (
-              <p className="text-[20px] leading-[1.5] text-[#505055] whitespace-pre-line">
-                {renderWithStyledBullets(description.replace(/^[\s\u200e\u200f\u202a-\u202e]*[-*‣◦▪●◆■□►▶○◇∙⋅‧–—]/gm, "•"))}
-              </p>
+              <div
+                dir={isRTL ? "ltr" : "rtl"}
+                className={`max-h-[300px] lg:max-h-[400px] overflow-y-auto custom-scrollbar ${isRTL ? "pr-4" : "pl-4"}`}
+              >
+                <div dir={isRTL ? "rtl" : "ltr"}>
+                  <p className="text-[17px] leading-[1.5] text-[#505055] whitespace-pre-line">
+                    {renderWithStyledBullets(description.replace(/^[\s\u200e\u200f\u202a-\u202e]*[-*‣◦▪●◆■□►▶○◇∙⋅‧–—]/gm, "•"))}
+                  </p>
+                </div>
+              </div>
             ) : (
               <p className="text-[14px] text-[#707176]">
                 {isRTL ? "لا يوجد وصف متاح" : "No description available"}
