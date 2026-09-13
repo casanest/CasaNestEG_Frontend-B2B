@@ -266,7 +266,18 @@ export default async function Home({
   return (
     <>
       <div className="-mt-[80px] md:-mt-[112px]">
-        <HeroSection banners={homepageData.banners.hero} locale={locale} dir={dir} />
+        {/* Mobile hero - shown only on mobile */}
+        <div className="md:hidden">
+          <HeroSection
+            banners={homepageData.banners.mobile_hero ?? []}
+            locale={locale}
+            dir={dir}
+          />
+        </div>
+        {/* Desktop hero - shown only on desktop */}
+        <div className="hidden md:block">
+          <HeroSection banners={homepageData.banners.hero} locale={locale} dir={dir} />
+        </div>
       </div>
       <OurClients banners={clientBanners} locale={locale} dir={dir} />
       <Suspense fallback={<SkeletonProductGrid numberOfProducts={5} />}>

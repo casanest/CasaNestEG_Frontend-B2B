@@ -62,6 +62,7 @@ export type HomepageTestimonial = {
 export type HomepageData = {
   banners: {
     hero: HomepageBanner[]
+    mobile_hero: HomepageBanner[]
     past_customer: HomepageBanner[]
     partners: HomepageBanner[]
   }
