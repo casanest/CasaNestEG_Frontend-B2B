@@ -88,6 +88,7 @@ type RefinementListProps = {
   inline?: boolean
   categories?: CategoryOption[]
   currentCategoryId?: string
+  filterOptions?: FilterOptions
 }
 
 type ProductCategoryInfo = {
@@ -256,6 +257,7 @@ const RefinementList = ({
   inline = false,
   categories,
   currentCategoryId,
+  filterOptions: filterOptionsProp,
 }: RefinementListProps) => {
   const router = useRouter()
   const pathname = usePathname()
@@ -263,16 +265,18 @@ const RefinementList = ({
   const isRTL = locale === "ar"
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
-    collections: [],
-    types: [],
-    colors: [],
-    materials: [],
-    sizes: [],
-    priceRange: { min: 0, max: 0 },
-    totalProducts: 0,
-    productCategories: [],
-  })
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>(
+    filterOptionsProp ?? {
+      collections: [],
+      types: [],
+      colors: [],
+      materials: [],
+      sizes: [],
+      priceRange: { min: 0, max: 0 },
+      totalProducts: 0,
+      productCategories: [],
+    }
+  )
 
   // Active filters = committed to URL
   const activeFilters = useMemo(() => {
@@ -307,14 +311,16 @@ const RefinementList = ({
   // The filters we render = pending (what user sees in UI)
   const filters = pendingFilters
 
-  // Load filter options on component mount
+  // Load filter options on component mount — only when not passed as prop
+  // (store page fallback still uses client-side fetch)
   useEffect(() => {
+    if (filterOptionsProp) return
     const loadFilterOptions = async () => {
       const options = await getProductFilterOptions(countryCode, currentCategoryId)
       setFilterOptions(options)
     }
     loadFilterOptions()
-  }, [countryCode, currentCategoryId])
+  }, [countryCode, currentCategoryId, filterOptionsProp])
 
   const commitFilters = useCallback((newFilters: typeof activeFilters) => {
     const params = new URLSearchParams(searchParams.toString())

@@ -8,6 +8,89 @@ import { getLocale } from "next-intl/server"
 import { Category, listCategories } from "@lib/data/categories"
 import RefinementList from "@modules/store/components/refinement-list"
 import CategoryChipsBar from "../components/category-chips-bar"
+import { getCategoryFilterOptions } from "@lib/data/category-filters"
+import { getRegion } from "@lib/data/regions"
+
+type CategoryOption = {
+  id: string
+  name_en: string
+  name_ar: string
+  parent_category_id: string | null
+}
+
+function FilterSkeleton() {
+  return (
+    <div className="flex flex-col gap-6 animate-pulse">
+      {[1, 2, 3, 4].map((i) => (
+        <div key={i} className="flex flex-col gap-3">
+          <div className="h-4 w-24 bg-gray-200 rounded" />
+          <div className="h-3 w-full bg-gray-100 rounded" />
+          <div className="h-3 w-3/4 bg-gray-100 rounded" />
+          <div className="h-3 w-2/3 bg-gray-100 rounded" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+async function MobileCategoryFilters({
+  countryCode,
+  categoryId,
+  locale,
+  sortBy,
+  categories,
+  regionId,
+}: {
+  countryCode: string
+  categoryId: string
+  locale: string
+  sortBy: SortOptions
+  categories: CategoryOption[]
+  regionId?: string
+}) {
+  const filterOptions = await getCategoryFilterOptions(categoryId, regionId)
+
+  return (
+    <RefinementList
+      locale={locale}
+      sortBy={sortBy}
+      countryCode={countryCode}
+      categories={categories}
+      currentCategoryId={categoryId}
+      filterOptions={filterOptions}
+    />
+  )
+}
+
+async function DesktopCategoryFilters({
+  countryCode,
+  categoryId,
+  locale,
+  sortBy,
+  categories,
+  regionId,
+}: {
+  countryCode: string
+  categoryId: string
+  locale: string
+  sortBy: SortOptions
+  categories: CategoryOption[]
+  regionId?: string
+}) {
+  const filterOptions = await getCategoryFilterOptions(categoryId, regionId)
+
+  return (
+    <RefinementList
+      locale={locale}
+      sortBy={sortBy}
+      countryCode={countryCode}
+      categories={categories}
+      currentCategoryId={categoryId}
+      filterOptions={filterOptions}
+      inline
+    />
+  )
+}
 
 export default async function CategoryTemplate({
   category,
@@ -29,6 +112,7 @@ export default async function CategoryTemplate({
   const pageNumber = page ? parseInt(page) : 1
   const sort = sortBy || "created_at"
 
+  const region = await getRegion(countryCode)
   const categoryTree = await listCategories()
 
   // 1) Flatten مرة واحدة فقط
@@ -136,32 +220,37 @@ export default async function CategoryTemplate({
         productCount={0}
       />
 
-      {/* Mobile Filter Bar (Filters + Sort) */}
-      <RefinementList
-        locale={locale}
-        sortBy={sort}
-        countryCode={countryCode}
-        categories={allCategories || []}
-        currentCategoryId={category.id}
-      />
+      {/* Mobile Filter Bar — streams independently via Suspense */}
+      <Suspense fallback={<div className="small:hidden h-14 bg-gray-50 animate-pulse" />}>
+        <MobileCategoryFilters
+          countryCode={countryCode}
+          categoryId={category.id}
+          locale={locale}
+          sortBy={sort}
+          categories={allCategories || []}
+          regionId={region?.id}
+        />
+      </Suspense>
 
       {/* Main Content Layout: Sidebar + Product Grid */}
       <div className="w-full bg-[#fefefe] px-4 sm:px-6 lg:px-[60px] py-8">
         <div className="flex flex-col small:flex-row small:items-start gap-8">
-          {/* Sidebar Filters */}
+          {/* Sidebar Filters — streams independently via Suspense */}
           <aside
             dir={isRTL ? "rtl" : "ltr"}
             className="hidden small:block w-full small:w-[280px] flex-shrink-0"
           >
             <div className="sticky top-[220px]">
-              <RefinementList
-                locale={locale}
-                sortBy={sort}
-                countryCode={countryCode}
-                categories={allCategories || []}
-                currentCategoryId={category.id}
-                inline
-              />
+              <Suspense fallback={<FilterSkeleton />}>
+                <DesktopCategoryFilters
+                  countryCode={countryCode}
+                  categoryId={category.id}
+                  locale={locale}
+                  sortBy={sort}
+                  categories={allCategories || []}
+                  regionId={region?.id}
+                />
+              </Suspense>
             </div>
           </aside>
 
