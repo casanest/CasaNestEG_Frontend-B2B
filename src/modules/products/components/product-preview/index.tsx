@@ -52,12 +52,16 @@ export default function ProductPreview({
   const minOrderQty = rawMoq ? parseInt(String(rawMoq)) : null
   const productCode = (product.metadata?.product_code as string) || product.variants?.[0]?.sku || null
 
-  const categoryName = product.categories?.[0]
+  const leafCategory = product.categories?.find(
+    (cat) => !product.categories?.some((other) => other.parent_category_id === cat.id)
+  ) || product.categories?.[0]
+
+  const categoryName = leafCategory
     ? (isRTL
-      ? (product.categories[0] as any)?.metadata?.localizations?.ar?.name
-      : (product.categories[0] as any)?.name)
-      || (product.categories[0] as any)?.name
-      || (product.categories[0] as any)?.metadata?.localizations?.en?.name
+      ? (leafCategory as any)?.metadata?.localizations?.ar?.name
+      : (leafCategory as any)?.name)
+      || (leafCategory as any)?.name
+      || (leafCategory as any)?.metadata?.localizations?.en?.name
     : null
 
   const startCycling = useCallback(() => {
@@ -87,7 +91,7 @@ export default function ProductPreview({
     try {
       const variant = defaultVariant as any
       const priceInfo = getPricesForVariant(variant)
-      const category = product.categories?.[0] as any
+      const category = leafCategory as any
 
       addItem({
         productId: product.id,

@@ -64,8 +64,8 @@ const CartDropdown = ({
                   style={{
                     fontFamily: "Satoshi, sans-serif",
                     fontWeight: 500,
-                    width: "14px",
-                    height: "14px",
+                    width: "20px",
+                    height: "16px",
                     left: "17px",
                     top: "-6px",
                   }}

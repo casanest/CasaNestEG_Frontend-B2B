@@ -50,7 +50,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, locale }) => {
         try {
             const variant = defaultVariant as any
             const priceInfo = getPricesForVariant(variant)
-            const category = product.categories?.[0] as any
+            const category = product.categories?.find(
+                (cat) => !product.categories?.some((other) => other.parent_category_id === cat.id)
+            ) || product.categories?.[0] as any
 
             addItem({
                 productId: product.id,

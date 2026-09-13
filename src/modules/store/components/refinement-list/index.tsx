@@ -642,6 +642,21 @@ const RefinementList = ({
             const enriched = categoryTree.byId.get(rootId)
             const children = enriched?.children || []
 
+            if (children.length === 0) {
+              return (
+                <CheckboxRow
+                  key={rootNode.id}
+                  id={`${variant}-category-${rootId}`}
+                  label={rootLabel}
+                  checked={filters.category_id.includes(rootId)}
+                  onCheckedChange={(checked) =>
+                    handleArrayFilterChange("category_id", rootId, checked)
+                  }
+                  count={productCategoryCountMap.get(rootId)}
+                />
+              )
+            }
+
             return (
               <SectionCard
                 key={rootNode.id}
@@ -649,38 +664,26 @@ const RefinementList = ({
                 variant={variant}
               >
                 <div className="flex flex-col gap-3 mt-3">
-                  {children.length > 0 ? (
-                    children
-                      .filter((child) => hasProductsInSubtree(child))
-                      .map((childNode) => {
-                        const childId = String(childNode.id)
-                        const childLabel = isRTL ? childNode.name_ar ?? childNode.name_en : childNode.name_en
-                        const count = productCategoryCountMap.get(childId)
+                  {children
+                    .filter((child) => hasProductsInSubtree(child))
+                    .map((childNode) => {
+                      const childId = String(childNode.id)
+                      const childLabel = isRTL ? childNode.name_ar ?? childNode.name_en : childNode.name_en
+                      const count = productCategoryCountMap.get(childId)
 
-                        return (
-                          <CheckboxRow
-                            key={childId}
-                            id={`${variant}-category-${childId}`}
-                            label={childLabel}
-                            checked={filters.category_id.includes(childId)}
-                            onCheckedChange={(checked) =>
-                              handleArrayFilterChange("category_id", childId, checked)
-                            }
-                            count={count}
-                          />
-                        )
-                      })
-                  ) : (
-                    <CheckboxRow
-                      id={`${variant}-category-${rootId}`}
-                      label={rootLabel}
-                      checked={filters.category_id.includes(rootId)}
-                      onCheckedChange={(checked) =>
-                        handleArrayFilterChange("category_id", rootId, checked)
-                      }
-                      count={productCategoryCountMap.get(rootId)}
-                    />
-                  )}
+                      return (
+                        <CheckboxRow
+                          key={childId}
+                          id={`${variant}-category-${childId}`}
+                          label={childLabel}
+                          checked={filters.category_id.includes(childId)}
+                          onCheckedChange={(checked) =>
+                            handleArrayFilterChange("category_id", childId, checked)
+                          }
+                          count={count}
+                        />
+                      )
+                    })}
                 </div>
               </SectionCard>
             )
