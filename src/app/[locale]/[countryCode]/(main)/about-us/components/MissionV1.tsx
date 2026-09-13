@@ -21,7 +21,7 @@ export default function MissionV1({ isRTL }: Props) {
         </h2>
         <p className="text-[#5d5d61] lg:text-[#1c1b1c] text-[14px] lg:text-[clamp(13px,1.3vw,18px)] leading-[1.5] lg:opacity-80" style={satoshiStyle}>
           {isRTL
-            ? "نحن موجودون لحل مشكلة عملية الشراء المجزأة في القطاع التجاري المصري. من خلال جمع الأثاث والأجهزة والأجهزة التجارية في محفظة استفسار واحدة مدارة بالكامل، نحول المخططات الهيكلية الفارغة إلى بيئات وظيفية ديناميكية."
+            ? "نَجْمَع لك الأثاث، الأجهزة، والتكنولوجيا في جهة واحدة، لنحول مساحاتك الفارغة إلى بيئات عمل ديناميكية جاهزة للتشغيل الفوري."
             : "We exist to solve the fragmented procurement process in Egypt's commercial sector. By bringing furniture, hardware, and commercial-grade appliances into a single, fully-managed inquiry portfolio, we turn empty structural blueprints into dynamic functional environments."}
         </p>
       </div>

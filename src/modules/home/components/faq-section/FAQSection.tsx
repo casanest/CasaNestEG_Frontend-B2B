@@ -68,7 +68,7 @@ export default function FAQSection({ dir }: FAQSectionProps) {
                 </div>
               </button>
               {isOpen && (
-                <p className="text-[#5d5d61] text-[14px] leading-[1.5]">
+                <p className="text-[#5d5d61] text-[14px] leading-[1.5] whitespace-pre-line">
                   {faq.a}
                 </p>
               )}
@@ -107,7 +107,7 @@ export default function FAQSection({ dir }: FAQSectionProps) {
               </button>
               {isOpen && (
                 <div className="pb-[clamp(16px,1.8vw,24px)]">
-                  <p className="text-[#2c2e35] text-[clamp(13px,1.3vw,18px)] leading-[1.5] max-w-[1100px]">
+                  <p className="text-[#2c2e35] text-[clamp(13px,1.3vw,18px)] leading-[1.5] max-w-[1100px] whitespace-pre-line">
                     {faq.a}
                   </p>
                 </div>

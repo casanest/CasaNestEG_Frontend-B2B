@@ -116,7 +116,7 @@ export default function HeroSection({ banners, locale, dir }: HeroSectionProps) 
               <br />
               {t("titleLine2")}
             </h1>
-            <p className="text-white/80 text-[16px] md:text-[clamp(14px,1.6vw,20px)] leading-[1.4] max-w-[629px] md:max-w-[clamp(512px,45.5vw,720px)]">
+            <p className="text-white/80 text-[16px] md:text-[clamp(14px,1.6vw,20px)] leading-[1.4] max-w-[629px] md:max-w-[clamp(512px,45.5vw,720px)] whitespace-pre-line">
               {t("description")}
             </p>
           </div>

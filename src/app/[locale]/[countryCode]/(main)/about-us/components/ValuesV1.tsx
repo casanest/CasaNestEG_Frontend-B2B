@@ -21,7 +21,7 @@ export default function ValuesV1({ isRTL }: Props) {
       titleAr: "توصيل وتركيب متكامل",
       desc: "From the moment your inquiry is confirmed, we handle inland freight, customs clearance, unboxing, assembly, and on-site installation — so your team can focus on what matters.",
       descAr:
-        "من لحظة تأكيد استفسارك، نتولى النقل الداخلي وتخليص الجمارك والفتح والتجميع والتركيب في الموقع — حتى يتمكن فريقك من التركيز على ما يهم.",
+        "بمجرد تأكيد طلبك، نتولى كافة مهام النقل الداخلي، التجميع، والتركيب في الموقع، ليركز فريقك على مهامه الأساسية.",
     },
   ]
 

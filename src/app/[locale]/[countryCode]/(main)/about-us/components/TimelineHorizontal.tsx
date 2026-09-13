@@ -9,7 +9,7 @@ const milestones = [
     description:
       "Casanest opens its first furniture showroom in New Cairo, marking the beginning of a journey to equip professional spaces.",
     descriptionAr:
-      "كازانيست تفتتح أول صالة عرض للأثاث في القاهرة الجديدة، مما يمثل بداية رحلة تجهيز المساحات المهنية.",
+      "باسم (المصرية لمهمات المكاتب)\nومنذ عام 2001، انطلقت كازانيست لتكون الشريك المتكامل للمؤسسات، عبر توريد كافة المستلزمات المكتبية والأجهزة الكهربائية والإلكترونية بأعلى معايير الجودة.",
     image: "/about-us/timeline-2001.webp",
   },
   {
@@ -19,7 +19,7 @@ const milestones = [
     description:
       "Added IT hardware & networking equipment to the catalog, expanding the offering to support modern workplaces.",
     descriptionAr:
-      "تمت إضافة أجهزة تكنولوجيا المعلومات ومعدات الشبكات إلى الكتالوج، لتوسيع العرض لدعم أماكن العمل الحديثة.",
+      "وفي عام 2005، وسعنا نطاق خدماتنا ليشمل قطاع التطوير التعليمي والتدريبي، من خلال توفير تجهيزات متكاملة شملت السبورات الذكية، معامل اللغات، والأثاث المدرسي.",
     image: "/about-us/timeline-2005.webp",
   },
   {
@@ -29,7 +29,7 @@ const milestones = [
     description:
       "Shifted to enterprise clients: hotels, offices, hospitals—delivering large-scale furniture and technology solutions.",
     descriptionAr:
-      "التحول إلى عملاء المؤسسات: الفنادق والمكاتب والمستشفيات - تقديم حلول الأثاث والتكنولوجيا واسعة النطاق.",
+      "وفي عام 2010، ركزنا على تقديم خدمات الـ B2B لبناء شراكات استراتيجية متينة وتوسيع قاعدة شركاء نجاحنا، لنضمن تحقيق أكبر وصول لعملائنا وتلبية تطلعاتهم.",
     image: "/about-us/timeline-2010.webp",
   },
   {
@@ -39,7 +39,7 @@ const milestones = [
     description:
       "Opened regional offices in Alexandria & Hurghada, expanding delivery capabilities across Egypt.",
     descriptionAr:
-      "افتتاح مكاتب إقليمية في الإسكندرية والغردقة، وتوسيع قدرات التوصيل في جميع أنحاء مصر.",
+      "وفي عام 2015، ضاعفنا قدراتنا التشغيلية واللوجستية وطورنا منظومة العمل لدينا، لضمان سرعة الاستجابة وتلبية حجم الطلب المتزايد بكفاءة واحترافية.",
     image: "/about-us/timeline-2015.webp",
   },
   {
@@ -49,7 +49,7 @@ const milestones = [
     description:
       "Launched online inquiry & quote management system to streamline client workflows and speed up delivery.",
     descriptionAr:
-      "إطلاق نظام الاستفسار وإدارة عروض الأسعار عبر الإنترنت لتبسيط سير عمل العملاء وتسريع التسليم.",
+      "وفي عام 2020، انطلقنا نحو التغطية الوطنية الشاملة لخدمة كافة مؤسسات الوطن في جميع الأرجاء، إيمانًا منا بأن بناء الدول القوية يقوم على تكاتف أبنائها؛ حتى نتمكن من تحقيق رؤيتنا: (أينما كنت.. كازانيست الأقرب إليك).",
     image: "/about-us/timeline-2020.webp",
     highlight: true,
   },

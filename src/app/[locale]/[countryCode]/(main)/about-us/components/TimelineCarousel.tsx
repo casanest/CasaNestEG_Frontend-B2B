@@ -88,7 +88,7 @@ export default function TimelineCarousel({ milestones, isRTL }: Props) {
               {isRTL ? m.titleAr : m.title}
             </p>
             <p
-              className="text-[#5d5d61] text-[14px] w-full"
+              className="text-[#5d5d61] text-[14px] w-full whitespace-pre-line"
               style={{ fontFamily: "Satoshi, sans-serif" }}
             >
               {isRTL ? m.descriptionAr : m.description}

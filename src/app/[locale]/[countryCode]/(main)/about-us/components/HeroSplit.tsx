@@ -12,13 +12,13 @@ export default function HeroSplit({ isRTL, locale }: Props) {
           style={{ ...satoshiStyle, fontWeight: 700 }}
         >
           {isRTL
-            ? "شريكك الاستراتيجي لتجهيز المقرات بنظام تسليم المفتاح"
+            ? "شريكك الاستراتيجي لتجهيز مقرك بالكامل."
             : "Your Strategic Partner for Turnkey Fit-Outs"}
         </h1>
         <div className="flex flex-col gap-6 lg:gap-[clamp(16px,1.2vw,32px)] items-start max-w-[689px] w-full">
           <p className="text-[#a8b8cc] text-[14px] lg:text-[clamp(13px,1.3vw,18px)] leading-[1.5]" style={{ ...satoshiStyle, fontWeight: 300 }}>
             {isRTL
-              ? "بخبرة تمتد لأكثر من 25 عاما، كازانيست هي شريكك الاستراتيجي لتجهيز كافة المقرات بنظام تسليم المفتاح. من الأثاث الإداري والأجهزة الكهربائية إلى البنية التكنولوجية، نوفر عليك عناء التنسيق مع جهات مختلفة، لنخلق مساحات عمل ذكية تلبي تطلعاتك وتوفر وقت وميزانية شركتك."
+              ? "بخبرة 25 عاماً، كازانيست هي شريكك الاستراتيجي لتجهيز مقراتك بالكامل. نوفر لك الأثاث، الأجهزة، والبنية التكنولوجية في مكان واحد، لنوفر وقت وميزانية شركتك."
               : "With over 25 years of experience, CasaNest is your strategic partner for turnkey fit-outs. From premium furniture and electrical appliances to advanced IT infrastructure, we save you the hassle of coordinating multiple vendors by delivering smart, fully integrated workspaces."}
           </p>
           <a
