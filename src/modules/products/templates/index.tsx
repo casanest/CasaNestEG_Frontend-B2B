@@ -110,7 +110,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = async ({
         </div>
 
         {/* Product Hero - 3 column on desktop, stacked on mobile */}
-        <div className="flex flex-col lg:flex-row gap-[24px] lg:gap-[clamp(24px,2.5vw,40px)] px-[16px] lg:px-[clamp(32px,4vw,60px)] pt-[44px] pb-[160px] lg:pt-5 lg:pb-[clamp(32px,4vw,60px)]">
+        <div className="flex flex-col lg:flex-row gap-[24px] lg:gap-[clamp(24px,2.5vw,40px)] px-[16px] lg:px-[clamp(32px,4vw,60px)] pt-[44px] pb-[72px] lg:pt-5 lg:pb-[clamp(32px,4vw,60px)]">
           {/* Gallery Column - Left on desktop */}
           <div className="lg:w-[clamp(456px,43.2vw,624px)] shrink-0 self-start w-full">
             <ImageGallery
