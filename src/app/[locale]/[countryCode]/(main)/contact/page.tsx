@@ -110,7 +110,7 @@ export default async function ContactPage({ params }: PageProps) {
                       {isRTL ? "اتصل بنا" : "Call Us"}
                     </p>
                     <p className="text-[14px] lg:text-[16px] font-bold text-[#17284a]">
-                      01233365368
+                      01233365362
                     </p>
                   </div>
                   {/* Email Card */}

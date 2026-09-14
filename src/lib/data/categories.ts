@@ -197,19 +197,27 @@ export const listCategories = cache(async (query?: Record<string, any>): Promise
   const cacheOpts = await getCacheOptions("categories")
   const next = { ...cacheOpts, tags: ["categories", ...(("tags" in cacheOpts ? cacheOpts.tags : []) || [])] }
 
-  // Step 1: Fetch ALL categories flat — no parent filter
-  const { product_categories } = await sdk.client.fetch<{
-    product_categories: any[]
-  }>("/store/product-categories", {
-    query: {
-      // fields: "*products,*parent_category",
-      fields: "id,name,handle,parent_category_id,metadata",
-      limit: 100, // get everything
-      ...query,
-    }, 
-    next,
-    cache: "force-cache",
-  })
+  // Step 1: Fetch ALL categories flat — no parent filter (paginate to get everything)
+  const product_categories: any[] = []
+  let catOffset = 0
+  let hasMoreCats = true
+  while (hasMoreCats) {
+    const { product_categories: batch } = await sdk.client.fetch<{
+      product_categories: any[]
+    }>("/store/product-categories", {
+      query: {
+        fields: "id,name,handle,parent_category_id,metadata",
+        limit: 100,
+        offset: catOffset,
+        ...query,
+      },
+      next,
+      cache: "force-cache",
+    })
+    product_categories.push(...batch)
+    catOffset += batch.length
+    hasMoreCats = batch.length === 100
+  }
 
   // Step 2: Normalize each category (children array starts empty)
   const normalized: Category[] = product_categories.map((cat) => {
@@ -259,18 +267,26 @@ export const getCategoryByHandle = async (
   const next = { ...cacheOpts, tags: ["categories", ...(("tags" in cacheOpts ? cacheOpts.tags : []) || [])] }
 
   try {
-    // Step 1: Fetch ALL categories flat (same approach as listCategories)
-    const { product_categories } = await sdk.client.fetch<{
-      product_categories: any[]
-    }>("/store/product-categories", {
-      query: {
-        // fields: "*products,*parent_category",
-        fields: "id,name,handle,parent_category_id,metadata",
-        limit: 100,
-      },
-      next,
-      cache: "force-cache",
-    })
+    // Step 1: Fetch ALL categories flat (paginate to get everything)
+    const product_categories: any[] = []
+    let catOffset = 0
+    let hasMoreCats = true
+    while (hasMoreCats) {
+      const { product_categories: batch } = await sdk.client.fetch<{
+        product_categories: any[]
+      }>("/store/product-categories", {
+        query: {
+          fields: "id,name,handle,parent_category_id,metadata",
+          limit: 100,
+          offset: catOffset,
+        },
+        next,
+        cache: "force-cache",
+      })
+      product_categories.push(...batch)
+      catOffset += batch.length
+      hasMoreCats = batch.length === 100
+    }
 
     // Step 2: Normalize flat
     const normalized: Category[] = product_categories.map((cat) => {

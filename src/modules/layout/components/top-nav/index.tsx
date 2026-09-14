@@ -11,7 +11,7 @@ export default function TopNav() {
   const translations = {
     faqs: isRTL ? "الأسئلة الشائعة" : "FAQs",
     contactUs: isRTL ? "تواصل معنا" : "Contact Us",
-    phoneNumber: "01233365368"
+    phoneNumber: "01233365362"
   };
 
   return (

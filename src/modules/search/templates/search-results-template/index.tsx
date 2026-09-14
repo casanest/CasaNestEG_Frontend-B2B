@@ -8,6 +8,8 @@ import { listCategories } from '@lib/data/categories'
 import CategoryChipsBar from '@modules/categories/components/category-chips-bar'
 import LocalizedClientLink from '@modules/common/components/localized-client-link'
 import { getMeilisearchClientConfig } from '@lib/meilisearch-config'
+import { getSearchFilterOptions } from '@lib/data/category-filters'
+import { getRegion } from '@lib/data/regions'
 
 export const runtime = 'edge'
 
@@ -86,6 +88,12 @@ export default async function SearchResultsTemplate({
     }
   }
 
+  const region = await getRegion(countryCode)
+  const searchFilterOptions = await getSearchFilterOptions(
+    productsIds && productsIds[0] !== 'no-match' ? productsIds : [],
+    region?.id
+  )
+
   return (
     <div
       dir={isRTL ? 'rtl' : 'ltr'}
@@ -134,6 +142,7 @@ export default async function SearchResultsTemplate({
         sortBy={sort as any}
         countryCode={countryCode}
         categories={allCategories || []}
+        filterOptions={searchFilterOptions}
       />
 
       {/* Main Content Layout: Sidebar + Product Grid */}
@@ -150,6 +159,7 @@ export default async function SearchResultsTemplate({
                 sortBy={sort as any}
                 countryCode={countryCode}
                 categories={allCategories || []}
+                filterOptions={searchFilterOptions}
                 inline
               />
             </div>

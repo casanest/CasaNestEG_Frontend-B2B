@@ -158,7 +158,7 @@ export default function Footer({ productCategories, collections, locale, socialM
                     </div>
                     <div className="flex items-center gap-3 lg:gap-[12px] py-2">
                       <Phone className="w-5 h-5 lg:w-6 lg:h-6 text-white/80 flex-shrink-0" />
-                      <span>01233365368</span>
+                      <span>01233365362</span>
                     </div>
                     <div className="flex items-start gap-3 lg:gap-[12px] py-2">
                       <MapPin className="w-5 h-5 lg:w-6 lg:h-6 text-white/80 flex-shrink-0 mt-0.5" />
