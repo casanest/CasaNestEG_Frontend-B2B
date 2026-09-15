@@ -225,6 +225,8 @@ export default function QuoteForm({ locale }: QuoteFormProps) {
 
       const rfqItems = items.map((item) => ({
         product_id: item.productId,
+        variant_id: item.variantId,
+        variant_title: item.variantTitle || undefined,
         quantity: item.quantity,
       }))
       formPayload.append("items", JSON.stringify(rfqItems))
