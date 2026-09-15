@@ -46,7 +46,7 @@ export default function Footer({ productCategories, collections, locale, socialM
   const casanestLinks = [
     { href: "/", label: isRTL ? "الرئيسية" : "Home" },
     { href: "/our-services", label: isRTL ? "سابقة الأعمال" : "Portfolio" },
-    { href: "/store", label: isRTL ? "الحلول المتكاملة" : "Integrated Solutions" },
+    { href: "/pre-curated-solutions", label: isRTL ? "الحلول المتكاملة" : "Integrated Solutions" },
     { href: "/about-us", label: isRTL ? "من نحن" : "About Us" },
   ];
 
@@ -119,7 +119,7 @@ export default function Footer({ productCategories, collections, locale, socialM
                 {isRTL ? "المنتجات" : "Products"}
               </h3>
               <ul className="flex flex-col gap-4 text-[16px] text-white/80 font-satoshi" data-testid="footer-categories">
-                  {productCategories.slice(0, 5).map((c) => (
+                  {productCategories.slice(0, 7).map((c) => (
                     <li key={c.id}>
                       <LocalizedClientLink
                         href={`/categories/${isRTL ? c.handle_ar ?? c.handle_en : c.handle_en ?? c.handle_ar}`}
