@@ -482,6 +482,8 @@ const RefinementList = ({
     return enriched.children.some((child) => hasProductsInSubtree(child))
   }, [productCategoryCountMap, categoryTree])
 
+  const MAX_CATEGORY_DEPTH = 7
+
   const renderCategoryNode = (
     node: CategoryOption,
     level = 0,
@@ -490,7 +492,7 @@ const RefinementList = ({
     const nodeId = String(node.id)
     const enriched = categoryTree.byId.get(nodeId)
     const children = enriched?.children || []
-    const hasChildren = children.length > 0
+    const hasChildren = children.length > 0 && level < MAX_CATEGORY_DEPTH - 1
     const isOpen = expandedCategories.has(nodeId)
     const label = isRTL ? node.name_ar ?? node.name_en : node.name_en
     const count = productCategoryCountMap.get(nodeId)
