@@ -461,27 +461,10 @@ const RefinementList = ({
     return current.children
   }, [categoryTree, currentCategoryId])
 
-  const currentBranchIds = useMemo(() => {
-    if (!currentCategoryId) return [] as string[]
-    const current = categoryTree.byId.get(String(currentCategoryId))
-    if (!current) return [] as string[]
-
-    const ids: string[] = []
-    const walk = (node: CategoryOption) => {
-      ids.push(String(node.id))
-      const enriched = categoryTree.byId.get(String(node.id))
-      if (enriched) {
-        enriched.children.forEach(walk)
-      }
-    }
-    walk(current)
-    return ids
-  }, [categoryTree, currentCategoryId])
-
   useEffect(() => {
-    if (!currentBranchIds.length) return
-    setExpandedCategories(new Set(currentBranchIds))
-  }, [currentBranchIds])
+    const rootIds = visibleCategoryRoots.map((r) => String(r.id))
+    setExpandedCategories(new Set(rootIds))
+  }, [visibleCategoryRoots])
 
   const productCategoryCountMap = useMemo(() => {
     const map = new Map<string, number>()
@@ -501,7 +484,8 @@ const RefinementList = ({
 
   const renderCategoryNode = (
     node: CategoryOption,
-    level = 0
+    level = 0,
+    variant: "inline" | "drawer" = "inline"
   ) => {
     const nodeId = String(node.id)
     const enriched = categoryTree.byId.get(nodeId)
@@ -534,7 +518,7 @@ const RefinementList = ({
             <span className="inline-block h-5 w-5 flex-shrink-0" />
           )}
           <CheckboxRow
-            id={`category-${nodeId}`}
+            id={`${variant}-category-${nodeId}`}
             label={label}
             checked={filters.category_id.includes(nodeId)}
             onCheckedChange={(checked) =>
@@ -547,7 +531,7 @@ const RefinementList = ({
           <div className="flex flex-col w-full mt-1">
             {children
               .filter((child) => hasProductsInSubtree(child))
-              .map((child) => renderCategoryNode(child, level + 1))}
+              .map((child) => renderCategoryNode(child, level + 1, variant))}
           </div>
         )}
       </div>
@@ -638,62 +622,18 @@ const RefinementList = ({
     return (
     <div className="flex flex-col gap-6">
 
-      {/* Dynamic Sections per Root Category */}
+      {/* Full Category Tree — recursive with expand/collapse */}
       {categories?.length ? (
-        visibleCategoryRoots
-          .filter((rootNode) => hasProductsInSubtree(rootNode))
-          .map((rootNode) => {
-            const rootId = String(rootNode.id)
-            const rootLabel = isRTL ? rootNode.name_ar ?? rootNode.name_en : rootNode.name_en
-            const enriched = categoryTree.byId.get(rootId)
-            const children = enriched?.children || []
-
-            if (children.length === 0) {
-              return (
-                <CheckboxRow
-                  key={rootNode.id}
-                  id={`${variant}-category-${rootId}`}
-                  label={rootLabel}
-                  checked={filters.category_id.includes(rootId)}
-                  onCheckedChange={(checked) =>
-                    handleArrayFilterChange("category_id", rootId, checked)
-                  }
-                  count={productCategoryCountMap.get(rootId)}
-                />
-              )
-            }
-
-            return (
-              <SectionCard
-                key={rootNode.id}
-                title={rootLabel}
-                variant={variant}
-              >
-                <div className="flex flex-col gap-3 mt-3">
-                  {children
-                    .filter((child) => hasProductsInSubtree(child))
-                    .map((childNode) => {
-                      const childId = String(childNode.id)
-                      const childLabel = isRTL ? childNode.name_ar ?? childNode.name_en : childNode.name_en
-                      const count = productCategoryCountMap.get(childId)
-
-                      return (
-                        <CheckboxRow
-                          key={childId}
-                          id={`${variant}-category-${childId}`}
-                          label={childLabel}
-                          checked={filters.category_id.includes(childId)}
-                          onCheckedChange={(checked) =>
-                            handleArrayFilterChange("category_id", childId, checked)
-                          }
-                          count={count}
-                        />
-                      )
-                    })}
-                </div>
-              </SectionCard>
-            )
-          })
+        <SectionCard
+          title={isRTL ? "الفئات" : "Categories"}
+          variant={variant}
+        >
+          <div className="flex flex-col gap-1">
+            {visibleCategoryRoots
+              .filter((rootNode) => hasProductsInSubtree(rootNode))
+              .map((rootNode) => renderCategoryNode(rootNode, 0, variant))}
+          </div>
+        </SectionCard>
       ) : null}
 
       {/* Collections */}

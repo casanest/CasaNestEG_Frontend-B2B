@@ -77,7 +77,7 @@ export default function SideMenu({ productCategories, packages = [], projectGrou
   const navItems = [
     { href: '/', labelEn: 'Home', labelAr: 'الرئيسية', showArrow: false },
     { action: 'submenu' as const, submenuView: 'solutions' as const, labelEn: 'Integrated Solutions', labelAr: 'الحلول المتكاملة' },
-    { action: 'submenu' as const, submenuView: 'products' as const, labelEn: 'Products & Systems', labelAr: 'الأنظمة والتجهيزات' },
+    { action: 'submenu' as const, submenuView: 'products' as const, labelEn: 'Products & Systems', labelAr: 'المنتجات و الحلول' },
     { action: 'submenu' as const, submenuView: 'projects' as const, labelEn: 'Portfolio', labelAr: 'سابقة الأعمال' },
     { href: '/about-us', labelEn: 'About Us', labelAr: 'من نحن', showArrow: false },
     { href: '/contact', labelEn: 'Contact Us', labelAr: 'تواصل معنا', showArrow: false },
@@ -99,7 +99,7 @@ export default function SideMenu({ productCategories, packages = [], projectGrou
   const isSolutionsActive = pathname.includes('/pre-curated-solutions')
   const isProjectsActive = pathname.includes('/our-services')
 
-  const productsText = isRTL ? 'الأنظمة والتجهيزات' : 'Products & Systems'
+  const productsText = isRTL ? 'المنتجات و الحلول' : 'Products & Systems'
   const solutionsText = isRTL ? 'الحلول المتكاملة' : 'Integrated Solutions'
   const projectsText = isRTL ? 'سابقة الأعمال' : 'Portfolio'
   const viewAllProductsText = isRTL ? 'عرض كل المنتجات' : 'View All Products'

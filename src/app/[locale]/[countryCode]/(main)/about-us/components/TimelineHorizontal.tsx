@@ -54,13 +54,23 @@ const milestones = [
     highlight: true,
   },
   {
-    year: "2025",
+    year: "2026",
     title: "500+ Clients",
     titleAr: "+500 عميل",
     description:
       "Serving over 500 enterprise clients across Egypt with complete space solutions.",
     descriptionAr:
       "نخدم أكثر من 500 عميل مؤسسي في جميع أنحاء مصر بحلول مساحات كاملة.",
+    image: "/about-us/timeline-2025.webp",
+  },
+  {
+    year: "2030",
+    title: "Toward Leadership",
+    titleAr: "نحو الريادة",
+    description:
+      "Continuing to expand in furnishing and supply solutions, building stronger partnerships and delivering greater value to organizations across Egypt.",
+    descriptionAr:
+      "نواصل التوسع في حلول التجهيز والتوريد، لبناء شراكات أقوى وتقديم قيمة أكبر للمؤسسات في جميع أنحاء مصر.",
     image: "/about-us/timeline-2025.webp",
     faded: true,
   },
@@ -73,48 +83,51 @@ export default function TimelineHorizontal({ isRTL }: Props) {
       dir={isRTL ? "rtl" : "ltr"}
     >
       <div className="content-container flex flex-col gap-5 lg:gap-[clamp(16px,2vw,32px)] items-start w-full">
-      <div className="flex flex-col gap-1.5 lg:gap-[clamp(8px,0.8vw,12px)] items-start w-full">
-        <p className="text-[#17284a] text-[32px] lg:text-[clamp(28px,2.5vw,40px)]" style={caveatStyle}>
-          {isRTL ? "رحلتنا" : "Our Journey"}
-        </p>
-        <h2 className="text-[#051026] text-[24px] lg:text-[clamp(24px,2.8vw,40px)]" style={{ ...satoshiStyle, fontWeight: 700 }}>
-          {isRTL ? "قصة كازانيست" : "The Casanest Story"}
-        </h2>
-      </div>
+        <div className="flex flex-col gap-1.5 lg:gap-[clamp(8px,0.8vw,12px)] items-start w-full">
+          <p className="text-[#17284a] text-[32px] lg:text-[clamp(28px,2.5vw,40px)]" style={caveatStyle}>
+            {isRTL ? "رحلتنا" : "Our Journey"}
+          </p>
+          <h2 className="text-[#051026] text-[24px] lg:text-[clamp(24px,2.8vw,40px)]" style={{ ...satoshiStyle, fontWeight: 700 }}>
+            {isRTL ? "قصة كازانيست" : "The Casanest Story"}
+          </h2>
+        </div>
 
-      {/* Timeline track - desktop only */}
-      <div className="relative w-full h-[clamp(40px,3.5vw,50px)] hidden lg:block">
-        <div className="absolute left-0 right-0 top-[12px] h-[2px] bg-[#fdb022] opacity-30" />
-        {milestones.map((m, i) => {
-          const pct = (i / (milestones.length - 1)) * 100
-          return (
-            <div key={i} className="absolute -translate-x-1/2" style={{ left: `${pct}%`, top: 0 }}>
-              <div
-                className={[
-                  "rounded-full",
-                  m.highlight
-                    ? "w-[clamp(12px,1.1vw,16px)] h-[clamp(12px,1.1vw,16px)] bg-[#fdb022] ring-4 ring-[#fdb022]/30"
-                    : "w-[clamp(10px,0.8vw,12px)] h-[clamp(10px,0.8vw,12px)] bg-[#17284a]",
-                ].join(" ")}
-                style={{ marginTop: m.highlight ? "4px" : "6px" }}
-              />
-              <p
-                className="text-[14px] text-center mt-[14px] whitespace-nowrap"
-                style={{
-                  ...satoshiStyle,
-                  fontWeight: 700,
-                  color: m.faded ? "#707176" : "#17284a",
-                }}
-              >
-                {m.year}
-              </p>
-            </div>
-          )
-        })}
-      </div>
+        {/* Timeline track dots aligned to match LTR / RTL layout */}
+        <div className="relative w-full h-[clamp(40px,3.5vw,50px)] hidden lg:block">
+          <div className="absolute left-0 right-0 top-[12px] h-[2px] bg-[#fdb022] opacity-30" />
+          {milestones.map((m, i) => {
+            const pct = (i / (milestones.length - 1)) * 100
+            // Align dots with cards layout: RTL starts 2001 on the right, LTR starts 2001 on the left
+            const dotLeftPosition = isRTL ? 100 - pct : pct
 
-      {/* Timeline cards carousel */}
-      <TimelineCarousel milestones={milestones} isRTL={isRTL} />
+            return (
+              <div key={i} className="absolute -translate-x-1/2" style={{ left: `${dotLeftPosition}%`, top: 0 }}>
+                <div
+                  className={[
+                    "rounded-full",
+                    m.highlight
+                      ? "w-[clamp(12px,1.1vw,16px)] h-[clamp(12px,1.1vw,16px)] bg-[#fdb022] ring-4 ring-[#fdb022]/30"
+                      : "w-[clamp(10px,0.8vw,12px)] h-[clamp(10px,0.8vw,12px)] bg-[#17284a]",
+                  ].join(" ")}
+                  style={{ marginTop: m.highlight ? "4px" : "6px" }}
+                />
+                <p
+                  className="text-[14px] text-center mt-[14px] whitespace-nowrap"
+                  style={{
+                    ...satoshiStyle,
+                    fontWeight: 700,
+                    color: m.faded ? "#707176" : "#17284a",
+                  }}
+                >
+                  {m.year}
+                </p>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Timeline cards carousel */}
+        <TimelineCarousel milestones={milestones} isRTL={isRTL} />
       </div>
     </section>
   )

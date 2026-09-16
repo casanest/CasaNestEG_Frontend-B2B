@@ -25,31 +25,34 @@ export default function TimelineCarousel({ milestones, isRTL }: Props) {
   const scroll = (direction: "left" | "right") => {
     if (!scrollRef.current) return
     const amount = 276
-    const sign = direction === "left" ? -1 : 1
+    const delta = direction === "left" ? -amount : amount
     scrollRef.current.scrollBy({
-      left: isRTL ? -sign * amount : sign * amount,
+      left: delta,
       behavior: "smooth",
     })
   }
 
   return (
     <div className="w-full relative">
-      {/* Left arrow - positioned on the outer left side */}
+      {/* Left arrow */}
       <button
         onClick={() => scroll("left")}
         className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-[#17284a] flex items-center justify-center p-2 rounded-full hover:opacity-80 transition-opacity hidden lg:flex"
         aria-label="Previous"
       >
-        {isRTL ? <ChevronRight size={24} color="white" /> : <ChevronLeft size={24} color="white" />}
+        <ChevronLeft size={24} color="white" />
       </button>
-      {/* Right arrow - positioned on the outer right side */}
+
+      {/* Right arrow */}
       <button
         onClick={() => scroll("right")}
         className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-[#17284a] flex items-center justify-center p-2 rounded-full hover:opacity-80 transition-opacity hidden lg:flex"
         aria-label="Next"
       >
-        {isRTL ? <ChevronLeft size={24} color="white" /> : <ChevronRight size={24} color="white" />}
+        <ChevronRight size={24} color="white" />
       </button>
+
+      {/* Cards Container */}
       <div
         ref={scrollRef}
         className="flex gap-4 lg:gap-[clamp(12px,1vw,18px)] items-stretch overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2 lg:px-12"
