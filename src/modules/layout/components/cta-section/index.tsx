@@ -110,7 +110,7 @@ export default async function CtaSection({ locale }: CtaSectionProps) {
         </div>
 
         {/* Mobile Image (Positioned at bottom, overflowing lower edge) */}
-        <div className="block lg:hidden w-full relative h-[clamp(280px,55vw,420px)] overflow-visible [clip-path:inset(-50%_0_0_0_round_0_0_32px_32px)] mt-2">
+        <div className="block lg:hidden w-full relative h-[clamp(280px,55vw,420px)] overflow-visible [clip-path:inset(-50%_0_0_0_round_0_0_20px_20px)] mt-2">
           <Image
             src="/mobile.webp"
             alt="Interior Chair Arrangement"
