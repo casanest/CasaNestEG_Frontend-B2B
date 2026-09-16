@@ -146,7 +146,7 @@ export default function HeroSection({ banners, locale, dir }: HeroSectionProps) 
         </div>
 
         {/* Bottom carousel meta - desktop only */}
-        <div className="hidden md:flex items-center justify-between w-full mt-[clamp(24px,2vw,40px)]">
+        <div className="hidden md:flex items-center justify-between w-full mt-[clamp(0px,0vw,0px)]">
           {/* Slide dots */}
           <div className="flex gap-[8px]">
             {Array.from({ length: slideCount }).map((_, idx) => (
