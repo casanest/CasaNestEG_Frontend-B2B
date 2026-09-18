@@ -6,39 +6,39 @@ import { satoshiStyle, type Props } from "./styles"
 
 const teamMembers = [
   {
-    image: "/founder.jpeg",
+    image: "/founder.webp",
     name: "Eng. Mahmoud Taha El-Gahed",
     nameAr: "م/ محمود طه الجاحد",
-    role: "Founder",
-    roleAr: "المؤسس",
+    role: "CEO",
+    roleAr: "المدير التنفيذي",
   },
   {
-    image: "/production-manager.jpeg",
+    image: "/production-manager.webp",
     name: "Eng. Bassem Essam",
     nameAr: "م/ باسم عصام",
-    role: "Production Manager",
-    roleAr: "مدير الأنتاج",
+    role: "Production and Quality Manager",
+    roleAr: "مدير الإنتاج والجوده",
   },
   {
-    image: "/project-manager.jpeg",
+    image: "/project-manager.webp",
     name: "Eng. Mohamed El-Gahed",
     nameAr: "م/ محمد الجاحد",
     role: "Project Manager",
     roleAr: "مدير المشروع",
   },
   {
-    image: "/public-relations.jpeg",
+    image: "/public-relations.webp",
     name: "Eng. Tarek El-Dahabi",
     nameAr: "م/ طارق الذهبي",
-    role: "Diplomatic Relations",
-    roleAr: "العلاقات الدبلوماسية",
+    role: "Managing Director",
+    roleAr: "عضو منتدب",
   },
   {
-    image: "/parteners-relation.jpeg",
+    image: "/parteners-relation.webp",
     name: "Eng. Adel Qadous",
     nameAr: "م/ عادل قادوس",
-    role: "Partner Relations Officer",
-    roleAr: "مسئول العلاقات مع الشركاء",
+    role: "Systems and Information Expert",
+    roleAr: "خبير النظم والمعلومات",
   },
 ]
 
