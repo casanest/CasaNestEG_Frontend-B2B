@@ -38,7 +38,8 @@ export default function PortfolioTemplate({ categories, projects }: Props) {
     <main dir={isRTL ? "rtl" : "ltr"} className="bg-white min-h-screen">
       {/* Hero — mobile: Figma 337:9093, desktop: Figma 286:9991 */}
       <section className="bg-white">
-        <Container className="!py-[44px] small:!py-[40px]">
+        {/* Expanded width and reduced padding to minimize side whitespace */}
+        <Container className="!py-[44px] small:!py-[40px] !max-w-full !px-4 small:!px-6">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -65,7 +66,8 @@ export default function PortfolioTemplate({ categories, projects }: Props) {
 
       {/* Filters — mobile: horizontal scroll, desktop: centered wrap */}
       <div
-        className="bg-white px-4 small:px-14 py-[12px] small:py-0 small:pb-8 small:flex small:justify-center"
+        // Reduced side padding here as well
+        className="bg-white px-4 small:px-6 py-[12px] small:py-0 small:pb-8 small:flex small:justify-center"
         dir={isRTL ? "rtl" : "ltr"}
       >
         <div className="flex gap-[8px] small:gap-3 overflow-x-auto small:overflow-visible small:flex-wrap whitespace-nowrap small:whitespace-normal [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
@@ -90,7 +92,8 @@ export default function PortfolioTemplate({ categories, projects }: Props) {
       </div>
 
       {/* Projects grid */}
-      <Container className="!py-[44px] small:!py-[80px]">
+      {/* Expanded width and reduced padding to match hero section */}
+      <Container className="!py-[44px] small:!py-[80px] !max-w-full !px-4 small:!px-6">
         {filteredProjects.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-[#5D5D61] text-lg">
@@ -102,7 +105,8 @@ export default function PortfolioTemplate({ categories, projects }: Props) {
         ) : (
           <motion.div
             layout
-            className="flex flex-col gap-[32px] small:grid small:grid-cols-2"
+            // Depending on the screen width and card max-width, this could comfortably hold 3 or more cards now
+            className="flex flex-col gap-[32px] small:grid small:grid-cols-3 small:gap-6 large:gap-8"
           >
             {filteredProjects.map((project, index) => (
               <motion.div

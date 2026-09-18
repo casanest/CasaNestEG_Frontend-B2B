@@ -1,7 +1,8 @@
-import { useTranslations, useLocale } from "next-intl"
+import { useTranslations } from "next-intl"
 import { ArrowRight } from "lucide-react"
 import { PortfolioProjectListItem } from "@lib/data/portfolio"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import ProjectCard from "@modules/portfolio/components/project-card"
 
 type OurWorkProps = {
   projects: PortfolioProjectListItem[]
@@ -12,18 +13,6 @@ type OurWorkProps = {
 export default function OurWork({ projects, locale, dir }: OurWorkProps) {
   const t = useTranslations("home.ourWork")
   const isRTL = locale === "ar"
-
-  const formatDate = (dateStr: string) => {
-    try {
-      const date = new Date(dateStr)
-      return date.toLocaleDateString(locale === "ar" ? "ar-EG" : "en-US", {
-        month: "long",
-        year: "numeric",
-      })
-    } catch {
-      return dateStr
-    }
-  }
 
   return (
     <section
@@ -46,44 +35,20 @@ export default function OurWork({ projects, locale, dir }: OurWorkProps) {
       </div>
 
       {/* Project cards - horizontal scroll on mobile, 2x2 grid on desktop */}
-      <div className="md:hidden flex gap-[16px] overflow-x-auto scrollbar-hide snap-x w-full pb-2">
+      <div className="md:hidden flex gap-[16px] overflow-x-auto scrollbar-hide snap-x w-full pb-2 [zoom:0.9]">
         {projects.slice(0, 4).map((project, idx) => (
-          <ProjectCard
+          <div
             key={project.id || idx}
-            project={project}
-            locale={locale}
-            formatDate={formatDate}
-            mobile
-          />
+            className="w-[85vw] max-w-[380px] shrink-0 snap-center"
+          >
+            <ProjectCard project={project} />
+          </div>
         ))}
       </div>
-      <div className="hidden md:flex flex-col gap-[clamp(20px,2.4vw,32px)] w-full max-w-[calc(63vw+389px)]">
-        {projects.slice(0, 4).length > 0 && (
-          <>
-            <div className="flex gap-[clamp(20px,2.4vw,32px)] w-full">
-              {projects.slice(0, 2).map((project, idx) => (
-                <ProjectCard
-                  key={project.id || idx}
-                  project={project}
-                  locale={locale}
-                  formatDate={formatDate}
-                />
-              ))}
-            </div>
-            {projects.length > 2 && (
-              <div className="flex gap-[clamp(20px,2.4vw,32px)] w-full">
-                {projects.slice(2, 4).map((project, idx) => (
-                  <ProjectCard
-                    key={project.id || idx}
-                    project={project}
-                    locale={locale}
-                    formatDate={formatDate}
-                  />
-                ))}
-              </div>
-            )}
-          </>
-        )}
+      <div className="hidden md:grid grid-cols-2 gap-[clamp(20px,2.4vw,32px)] w-full max-w-[calc(63vw+389px)] [zoom:0.9]">
+        {projects.slice(0, 4).map((project, idx) => (
+          <ProjectCard key={project.id || idx} project={project} />
+        ))}
       </div>
 
       {/* Explore all button - full width on mobile */}
@@ -97,85 +62,5 @@ export default function OurWork({ projects, locale, dir }: OurWorkProps) {
         <ArrowRight className={`w-[20px] h-[20px] md:w-[clamp(16px,1.3vw,20px)] md:h-[clamp(16px,1.3vw,20px)] text-black group-hover:text-white ${isRTL ? "rotate-180" : ""}`} />
       </LocalizedClientLink>
     </section>
-  )
-}
-
-function ProjectCard({
-  project,
-  locale,
-  formatDate,
-  mobile = false,
-}: {
-  project: PortfolioProjectListItem
-  locale: string
-  formatDate: (d: string) => string
-  mobile?: boolean
-}) {
-  const title = locale === "ar" ? project.title_ar : project.title_en
-  const category =
-    locale === "ar"
-      ? project.category_name_ar || ""
-      : project.category_name_en || ""
-
-  if (mobile) {
-    return (
-      <LocalizedClientLink
-        href={`/our-services/projects/${project.slug}`}
-        className="flex flex-col gap-[10px] w-[380px] shrink-0 snap-center"
-      >
-        {/* Image */}
-        <div className="bg-[#f3f1ef] border border-black/50 h-[340px] rounded-[16px] overflow-hidden relative">
-          <img
-            src={project.hero_image_url}
-            alt={title || ""}
-            className="w-full h-full object-cover"
-          />
-        </div>
-
-        {/* Info bar */}
-        <div className="bg-[#e5e7eb] flex items-center justify-between p-[12px] rounded-[12px]">
-          <span className="text-black text-[14px] font-medium leading-[1.3] truncate">
-            {title}
-          </span>
-          <div className="flex gap-[6px] items-center opacity-80 shrink-0">
-            <span className="text-black text-[11px] truncate">{category}</span>
-            <span className="w-1 h-1 rounded-full bg-black shrink-0" />
-            <span className="text-black text-[11px] shrink-0">
-              {formatDate(project.project_date)}
-            </span>
-          </div>
-        </div>
-      </LocalizedClientLink>
-    )
-  }
-
-  return (
-    <LocalizedClientLink
-      href={`/our-services/projects/${project.slug}`}
-      className="flex flex-col gap-[7px] flex-1 min-w-0"
-    >
-      {/* Image */}
-      <div className="bg-[#f3f1ef] border border-black/50 h-[clamp(238px,25.2vw,364px)] rounded-[16px] overflow-hidden relative">
-        <img
-          src={project.hero_image_url}
-          alt={title || ""}
-          className="w-full h-full object-cover"
-        />
-      </div>
-
-      {/* Info bar */}
-      <div className="bg-[#e5e7eb] flex items-center justify-between p-[clamp(12px,1.08vw,18px)] rounded-[12px]">
-        <span className="text-black text-[clamp(14px,1.35vw,20px)] font-medium leading-[1.3]">
-          {title}
-        </span>
-        <div className="flex gap-[8px] items-center opacity-80">
-          <span className="text-black text-[clamp(12px,1vw,14px)]">{category}</span>
-          <span className="w-1 h-1 rounded-full bg-black" />
-          <span className="text-black text-[clamp(12px,1vw,14px)]">
-            {formatDate(project.project_date)}
-          </span>
-        </div>
-      </div>
-    </LocalizedClientLink>
   )
 }

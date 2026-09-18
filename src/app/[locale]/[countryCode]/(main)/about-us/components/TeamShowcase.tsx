@@ -1,30 +1,57 @@
+"use client"
+
+import { useRef } from "react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import { satoshiStyle, type Props } from "./styles"
 
 const teamMembers = [
   {
-    image: "/about-us/team-1.webp",
-    name: "Sherif El-Ganzouri",
-    nameAr: "شريف الجنزوري",
-    role: "Co-Founder & Managing Director",
-    roleAr: "المؤسس المشارك والمدير العام",
+    image: "/founder.jpeg",
+    name: "Eng. Mahmoud Taha El-Gahed",
+    nameAr: "م/ محمود طه الجاحد",
+    role: "Founder",
+    roleAr: "المؤسس",
   },
   {
-    image: "/about-us/team-2.webp",
-    name: "Sherif El-Ganzouri",
-    nameAr: "شريف الجنزوري",
-    role: "Co-Founder & Managing Director",
-    roleAr: "المؤسس المشارك والمدير العام",
+    image: "/production-manager.jpeg",
+    name: "Eng. Bassem Essam",
+    nameAr: "م/ باسم عصام",
+    role: "Production Manager",
+    roleAr: "مدير الأنتاج",
   },
   {
-    image: "/about-us/team-3.webp",
-    name: "Sherif El-Ganzouri",
-    nameAr: "شريف الجنزوري",
-    role: "Co-Founder & Managing Director",
-    roleAr: "المؤسس المشارك والمدير العام",
+    image: "/project-manager.jpeg",
+    name: "Eng. Mohamed El-Gahed",
+    nameAr: "م/ محمد الجاحد",
+    role: "Project Manager",
+    roleAr: "مدير المشروع",
+  },
+  {
+    image: "/public-relations.jpeg",
+    name: "Eng. Tarek El-Dahabi",
+    nameAr: "م/ طارق الذهبي",
+    role: "Diplomatic Relations",
+    roleAr: "العلاقات الدبلوماسية",
+  },
+  {
+    image: "/parteners-relation.jpeg",
+    name: "Eng. Adel Qadous",
+    nameAr: "م/ عادل قادوس",
+    role: "Partner Relations Officer",
+    roleAr: "مسئول العلاقات مع الشركاء",
   },
 ]
 
 export default function TeamShowcase({ isRTL }: Props) {
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  const scroll = (direction: "left" | "right") => {
+    const el = scrollRef.current
+    if (!el) return
+    const amount = el.clientWidth * 0.8
+    el.scrollBy({ left: direction === "right" ? amount : -amount, behavior: "smooth" })
+  }
+
   return (
     <section
       className="bg-[#faf8f5] flex flex-col gap-6 lg:gap-[clamp(24px,3.5vw,48px)] items-start py-11 lg:pt-[3vw] lg:pb-[3vw] relative w-full"
@@ -41,13 +68,30 @@ export default function TeamShowcase({ isRTL }: Props) {
             : "The procurement experts, architects, and technical professionals leading our divisions."}
         </p>
       </div>
-      <div className="flex flex-col lg:flex-row gap-4 lg:gap-[2vw] lg:justify-center items-start lg:items-center w-full">
+      <div className="relative w-full">
+        <button
+          type="button"
+          onClick={() => scroll("left")}
+          aria-label={isRTL ? "تمرير لليسار" : "Scroll left"}
+          className="absolute left-[calc(50%_-_50vw_+_1rem)] top-1/2 -translate-y-1/4 z-10 bg-white rounded-full shadow-md p-3 lg:p-4 text-[#17284a] hover:bg-gray-50 transition-colors"
+        >
+          <ChevronLeft size={30} />
+        </button>
+        <button
+          type="button"
+          onClick={() => scroll("right")}
+          aria-label={isRTL ? "تمرير لليمين" : "Scroll right"}
+          className="absolute right-[calc(50%_-_50vw_+_1rem)] top-1/2 -translate-y-1/4 z-10 bg-white rounded-full shadow-md p-3 lg:p-4 text-[#17284a] hover:bg-gray-50 transition-colors"
+        >
+          <ChevronRight size={30} />
+        </button>
+      <div ref={scrollRef} className="flex flex-row gap-4 lg:gap-[2vw] items-start w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide scroll-smooth">
         {teamMembers.map((member, i) => (
           <div
             key={i}
-            className="flex flex-col gap-2 h-[387px] items-start relative w-full lg:w-[clamp(300px,32vw,435px)]"
+            className="flex flex-col gap-2 h-[560px] items-start relative shrink-0 snap-start w-[85vw] sm:w-[340px] lg:w-[clamp(300px,30vw,435px)]"
           >
-            <div className="h-[387px] relative rounded-xl w-full overflow-hidden">
+            <div className="h-[560px] relative rounded-xl w-full overflow-hidden">
               <img
                 alt={member.name}
                 src={member.image}
@@ -61,12 +105,10 @@ export default function TeamShowcase({ isRTL }: Props) {
               <p className="text-[#707176] text-[16px]" style={satoshiStyle}>
                 {isRTL ? member.roleAr : member.role}
               </p>
-              <p className="text-[#3a4f7a] text-[16px]" style={{ ...satoshiStyle, fontWeight: 500 }}>
-                example@gmail.com
-              </p>
             </div>
           </div>
         ))}
+      </div>
       </div>
       </div>
     </section>
