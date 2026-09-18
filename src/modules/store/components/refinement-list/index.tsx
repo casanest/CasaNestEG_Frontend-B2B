@@ -1039,6 +1039,7 @@ const RefinementList = ({
         <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
           <DrawerContent
             data-testid={dataTestId}
+            dir={isRTL ? "rtl" : "ltr"}
             className="max-h-[92vh] rounded-t-[24px] border-none bg-white shadow-2xl"
           >
             <div className="flex h-full flex-col overflow-hidden">
