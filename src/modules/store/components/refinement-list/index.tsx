@@ -536,7 +536,7 @@ const RefinementList = ({
               <ChevronDown
                 className={clx(
                   "h-3.5 w-3.5 transition-transform duration-200",
-                  !isOpen && "-rotate-90"
+                  !isOpen && (isRTL ? "rotate-90" : "-rotate-90")
                 )}
               />
             </button>

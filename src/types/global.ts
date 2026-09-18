@@ -65,6 +65,13 @@ export type SearchedProduct = {
   regular_price: string
   created_at: string
   updated_at: string
+  metadata?: {
+    localizations?: {
+      ar?: {
+        title?: string
+      }
+    }
+  }
 }
 
 export type SearchedProducts = {

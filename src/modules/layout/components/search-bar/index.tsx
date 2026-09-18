@@ -158,25 +158,30 @@ export default function SearchBar({ variant = "desktop", onResultSelect }: Searc
           </div>
         ) : results.length > 0 ? (
           <>
-            {results.map((product) => (
-              <LocalizedClientLink
-                key={product.id}
-                href={`/products/${product.handle}`}
-                onClick={handleResultClick}
-                className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 transition-colors"
-              >
-                <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 shrink-0">
-                  {product.thumbnail ? (
-                    <img src={product.thumbnail} alt={product.title} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <span className="text-[12px] text-slate-300">{product.title?.charAt(0)}</span>
-                    </div>
-                  )}
-                </div>
-                <span className="text-[14px] text-[#17284a] truncate flex-1">{product.title}</span>
-              </LocalizedClientLink>
-            ))}
+            {results.map((product) => {
+              const localizedTitle =
+                (isRTL && product.metadata?.localizations?.ar?.title) ||
+                product.title
+              return (
+                <LocalizedClientLink
+                  key={product.id}
+                  href={`/products/${product.handle}`}
+                  onClick={handleResultClick}
+                  className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 transition-colors"
+                >
+                  <div className="w-[52px] h-[52px] rounded-lg overflow-hidden bg-slate-100 shrink-0">
+                    {product.thumbnail ? (
+                      <img src={product.thumbnail} alt={localizedTitle} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <span className="text-[12px] text-slate-300">{localizedTitle?.charAt(0)}</span>
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-[14px] text-[#17284a] truncate flex-1">{localizedTitle}</span>
+                </LocalizedClientLink>
+              )
+            })}
             <LocalizedClientLink
               href={`/results/${encodeURIComponent(query.trim())}`}
               onClick={handleResultClick}
