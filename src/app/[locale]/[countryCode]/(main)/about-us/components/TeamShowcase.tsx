@@ -22,7 +22,7 @@ const teamMembers = [
   {
     image: "/project-manager.webp",
     name: "Eng. Mohamed El-Gahed",
-    nameAr: "م/ محمد الجاحد",
+    nameAr: "م/ محمد حسام الجاحد",
     role: "Project Manager",
     roleAr: "مدير المشروع",
   },

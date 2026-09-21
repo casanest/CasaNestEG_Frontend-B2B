@@ -44,13 +44,42 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
         dragFree: true,
     })
 
+    const [lightboxThumbRef, lightboxThumbApi] = useEmblaCarousel({
+        containScroll: "trimSnaps",
+        dragFree: true,
+    })
+
+    const stripPointerDown = useRef<{ x: number; y: number } | null>(null)
+
+    const handleStripPointerDown = useCallback((e: React.PointerEvent) => {
+        stripPointerDown.current = { x: e.clientX, y: e.clientY }
+    }, [])
+
+    const isStripClick = useCallback((e: React.MouseEvent) => {
+        const down = stripPointerDown.current
+        stripPointerDown.current = null
+        if (!down || e.detail === 0) return true
+        const dx = e.clientX - down.x
+        const dy = e.clientY - down.y
+        return dx * dx + dy * dy < 100
+    }, [])
+
     const scrollTo = useCallback(
         (index: number) => {
             thumbApi?.scrollTo(index)
+            if (lightboxOpen && lightboxThumbApi) {
+                lightboxThumbApi.scrollTo(index)
+            }
             setSelectedIndex(index)
         },
-        [thumbApi]
+        [thumbApi, lightboxThumbApi, lightboxOpen]
     )
+
+    useEffect(() => {
+        if (lightboxOpen && lightboxThumbApi) {
+            lightboxThumbApi.scrollTo(selectedIndex, true)
+        }
+    }, [lightboxOpen, lightboxThumbApi])
 
     const prev = useCallback(() => {
         const next = (selectedIndex - 1 + display.length) % display.length
@@ -146,33 +175,34 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
 
                 {/* Thumbnail Strip */}
                 {display.length > 1 && (
-                    <div className="relative w-full overflow-hidden">
-                        <div className="overflow-hidden w-full" ref={thumbRef}>
-                            <div className="flex gap-2.5 lg:gap-[clamp(8px,0.8vw,12px)] overflow-x-auto scrollbar-hide py-1 justify-center">
-                                {display.map((img, i) => (
-                                    <button
-                                        key={img.id}
-                                        onClick={() => scrollTo(i)}
-                                        className={clx(
-                                            "relative flex-shrink-0 w-[88px] h-[88px] sm:w-[clamp(80px,7vw,96px)] sm:h-[clamp(80px,7vw,96px)] rounded-[10px] overflow-hidden bg-gray-50 transition-all duration-300",
-                                            i === selectedIndex
-                                                ? "border-2 border-[#17284a]"
-                                                : "border border-[#e5e7eb] opacity-70 hover:opacity-100"
-                                        )}
-                                    >
-                                        <div className="relative w-full h-full">
-                                            <Image
-                                                src={img.url}
-                                                alt={`Thumbnail ${i + 1}`}
-                                                fill
-                                                sizes="96px"
-                                                className="object-cover object-center"
-                                                unoptimized={shouldUseUnoptimizedImage(img.url)}
-                                            />
-                                        </div>
-                                    </button>
-                                ))}
-                            </div>
+                    <div className="overflow-hidden w-full" ref={thumbRef} onPointerDown={handleStripPointerDown}>
+                        <div className="flex gap-2.5 lg:gap-[clamp(8px,0.8vw,12px)] py-1 justify-[safe_center] touch-pan-y">
+                            {display.map((img, i) => (
+                                <button
+                                    key={img.id}
+                                    onClick={(e) => {
+                                        if (!isStripClick(e)) return
+                                        scrollTo(i)
+                                    }}
+                                    className={clx(
+                                        "relative flex-shrink-0 w-[88px] h-[88px] sm:w-[clamp(80px,7vw,96px)] sm:h-[clamp(80px,7vw,96px)] rounded-[10px] overflow-hidden bg-gray-50 transition-all duration-300",
+                                        i === selectedIndex
+                                            ? "border-2 border-[#17284a]"
+                                            : "border border-[#e5e7eb] opacity-70 hover:opacity-100"
+                                    )}
+                                >
+                                    <div className="relative w-full h-full">
+                                        <Image
+                                            src={img.url}
+                                            alt={`Thumbnail ${i + 1}`}
+                                            fill
+                                            sizes="96px"
+                                            className="object-cover object-center"
+                                            unoptimized={shouldUseUnoptimizedImage(img.url)}
+                                        />
+                                    </div>
+                                </button>
+                            ))}
                         </div>
                     </div>
                 )}
@@ -234,30 +264,36 @@ const ImageGallery = ({ images, fallbackImage }: ImageGalleryProps) => {
 
                         {/* Thumbnail strip */}
                         {display.length > 1 && (
-                            <div className="flex gap-2 items-center justify-center overflow-x-auto scrollbar-hide">
-                                {display.map((img, i) => (
-                                    <button
-                                        key={img.id}
-                                        onClick={(e) => { e.stopPropagation(); scrollTo(i) }}
-                                        className={clx(
-                                            "relative flex-shrink-0 w-[137px] h-[89px] rounded-[8px] overflow-hidden bg-gray-50 transition-all",
-                                            i === selectedIndex
-                                                ? "opacity-100 ring-2 ring-[#17284a]"
-                                                : "opacity-70 hover:opacity-100"
-                                        )}
-                                    >
-                                        <div className="relative w-full h-full">
-                                            <Image
-                                                src={img.url}
-                                                alt={`Thumbnail ${i + 1}`}
-                                                fill
-                                                sizes="137px"
-                                                className="object-cover object-center"
-                                                unoptimized={shouldUseUnoptimizedImage(img.url)}
-                                            />
-                                        </div>
-                                    </button>
-                                ))}
+                            <div className="overflow-hidden w-full" ref={lightboxThumbRef} onPointerDown={handleStripPointerDown}>
+                                <div className="flex gap-2 py-1 justify-[safe_center] touch-pan-y">
+                                    {display.map((img, i) => (
+                                        <button
+                                            key={img.id}
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                if (!isStripClick(e)) return
+                                                scrollTo(i)
+                                            }}
+                                            className={clx(
+                                                "relative flex-shrink-0 w-[137px] h-[89px] rounded-[8px] overflow-hidden bg-gray-50 transition-all",
+                                                i === selectedIndex
+                                                    ? "opacity-100 ring-2 ring-[#17284a]"
+                                                    : "opacity-70 hover:opacity-100"
+                                            )}
+                                        >
+                                            <div className="relative w-full h-full">
+                                                <Image
+                                                    src={img.url}
+                                                    alt={`Thumbnail ${i + 1}`}
+                                                    fill
+                                                    sizes="137px"
+                                                    className="object-cover object-center"
+                                                    unoptimized={shouldUseUnoptimizedImage(img.url)}
+                                                />
+                                            </div>
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         )}
                     </div>

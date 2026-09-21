@@ -81,7 +81,7 @@ export default function PortfolioTemplate({ categories, projects }: Props) {
                 className={`px-[20px] py-[10px] rounded-[100px] text-[14px] font-medium transition-all shrink-0 small:shrink ${
                   isActive
                     ? "bg-[#17284a] text-white font-bold"
-                    : "text-black small:border small:border-[#E5E7EB] small:text-[#5D5D61] small:hover:border-[#17284a] small:hover:text-[#17284a]"
+                    : "text-black border border-[#E5E7EB] small:text-[#5D5D61] small:hover:border-[#17284a] small:hover:text-[#17284a]"
                 }`}
               >
                 {label}

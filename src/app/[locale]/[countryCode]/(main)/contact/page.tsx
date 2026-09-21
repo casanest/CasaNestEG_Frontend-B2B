@@ -102,7 +102,10 @@ export default async function ContactPage({ params }: PageProps) {
                 {/* Row 1 - Phone & Email side by side */}
                 <div className="flex gap-[12px] lg:gap-[20px]">
                   {/* Phone Card */}
-                  <div className="flex-1 bg-white border border-[#e5e7eb] rounded-[12px] p-[16px] lg:p-[20px] flex flex-col gap-[8px] lg:gap-[12px]">
+                  <a
+                    href="tel:01233365362"
+                    className="flex-1 bg-white border border-[#e5e7eb] rounded-[12px] p-[16px] lg:p-[20px] flex flex-col gap-[8px] lg:gap-[12px] hover:shadow-lg transition"
+                  >
                     <div className="w-[40px] h-[40px] lg:w-[44px] lg:h-[44px] rounded-full bg-[#f3f4f6] flex items-center justify-center">
                       <Phone size={20} className="text-[#17284a]" />
                     </div>
@@ -112,7 +115,7 @@ export default async function ContactPage({ params }: PageProps) {
                     <p className="text-[14px] lg:text-[16px] font-bold text-[#17284a]">
                       01233365362
                     </p>
-                  </div>
+                  </a>
                   {/* Email Card */}
                   <div className="flex-1 bg-white border border-[#e5e7eb] rounded-[12px] p-[16px] lg:p-[20px] flex flex-col gap-[8px] lg:gap-[12px]">
                     <div className="w-[40px] h-[40px] lg:w-[44px] lg:h-[44px] rounded-full bg-[#f3f4f6] flex items-center justify-center">

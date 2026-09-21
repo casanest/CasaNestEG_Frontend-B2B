@@ -6,7 +6,7 @@ import { FileAddIcon } from "@modules/common/icons/file-add"
 
 export default function MobileCartButton() {
   const items = useCartStore((state) => state.items)
-  const totalItems = items.reduce((acc, item) => acc + item.quantity, 0)
+  const totalItems = items.length
 
   return (
     <LocalizedClientLink

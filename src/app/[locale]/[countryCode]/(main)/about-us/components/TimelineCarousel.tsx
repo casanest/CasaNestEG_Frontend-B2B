@@ -62,12 +62,12 @@ export default function TimelineCarousel({ milestones, isRTL }: Props) {
           <div
             key={i}
             className={[
-              "bg-white border border-[#e5e7eb] border-solid flex flex-col gap-3 lg:gap-3 min-w-[260px] max-w-[260px] lg:min-w-[clamp(240px,24vw,320px)] lg:max-w-[clamp(240px,24vw,320px)] items-start p-4 lg:p-[clamp(12px,1vw,18px)] relative rounded-xl shrink-0 snap-center",
+              "bg-white border flex flex-col gap-3 lg:gap-3 min-w-[260px] max-w-[260px] lg:min-w-[clamp(240px,24vw,320px)] lg:max-w-[clamp(240px,24vw,320px)] items-start p-4 lg:p-[clamp(12px,1vw,18px)] relative rounded-xl shrink-0 snap-center",
               m.highlight
-                ? "lg:border-[3px] lg:border-[#fdb022] lg:shadow-[0px_4px_8px_rgba(0,0,0,0.12)]"
+                ? "border-[#e5e7eb] border-solid lg:border-[3px] lg:border-[#fdb022] lg:shadow-[0px_4px_8px_rgba(0,0,0,0.12)]"
                 : m.faded
-                  ? "lg:border-[#ccc] lg:border-dashed lg:opacity-50"
-                  : "lg:shadow-[0px_2px_4px_rgba(0,0,0,0.06)]",
+                  ? "border-[#ccc] border-dashed opacity-50"
+                  : "border-[#e5e7eb] border-solid lg:shadow-[0px_2px_4px_rgba(0,0,0,0.06)]",
             ].join(" ")}
             style={{ minHeight: "clamp(240px,25vw,340px)" }}
           >

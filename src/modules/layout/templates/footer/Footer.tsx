@@ -192,9 +192,9 @@ export default function Footer({ productCategories, collections, locale, socialM
               <LocalizedClientLink href="/terms" className="hover:text-[#17284a] transition-colors">
                 {isRTL ? "شروط الخدمة" : "Terms of service"}
               </LocalizedClientLink>
-              <LocalizedClientLink href="/cookies" className="hover:text-[#17284a] transition-colors">
+              {/* <LocalizedClientLink href="/cookies" className="hover:text-[#17284a] transition-colors">
                 {isRTL ? "إعدادات الكوكيز" : "Cookie settings"}
-              </LocalizedClientLink>
+              </LocalizedClientLink> */}
             </div>
           </div>
         </div>

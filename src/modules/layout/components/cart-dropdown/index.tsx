@@ -26,7 +26,7 @@ const CartDropdown = ({
   const items = useCartStore((state) => state.items)
   const removeItem = useCartStore((state) => state.removeItem)
 
-  const totalItems = items.reduce((acc, item) => acc + item.quantity, 0)
+  const totalItems = items.length
 
   const subtotal = items.reduce((acc, item) => acc + (item.showPrice !== false && item.unitPrice != null ? item.unitPrice * item.quantity : 0), 0)
   const currencyCode = items[0]?.currencyCode || "usd"

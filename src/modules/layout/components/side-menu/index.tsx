@@ -49,7 +49,7 @@ export default function SideMenu({ productCategories, packages = [], projectGrou
   const isRTL = locale === 'ar'
 
   const cartItems = useCartStore((state) => state.items)
-  const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0)
+  const cartCount = cartItems.length
 
   const switchTo = (newLocale: string) => {
     const pathWithoutLocale = pathname.replace(`/${locale}`, '')
@@ -426,7 +426,7 @@ export default function SideMenu({ productCategories, packages = [], projectGrou
                 key={pkg.id}
                 href={"/pre-curated-solutions/" + pkg.slug}
                 onClick={handleClose}
-                className="flex h-16 items-center gap-4 px-4 w-full"
+                className="flex h-16 items-center gap-4 px-4 w-full mt-2.5"
               >
                 {renderThumbnail(pkg.image_url, pkgName)}
                 <span className="font-satoshi font-medium text-[18px] text-white">
