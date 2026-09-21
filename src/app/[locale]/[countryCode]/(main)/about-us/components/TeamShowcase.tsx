@@ -73,7 +73,7 @@ export default function TeamShowcase({ isRTL }: Props) {
           type="button"
           onClick={() => scroll("left")}
           aria-label={isRTL ? "تمرير لليسار" : "Scroll left"}
-          className="absolute left-[calc(50%_-_50vw_+_1rem)] top-1/2 -translate-y-1/4 z-10 bg-white rounded-full shadow-md p-3 lg:p-4 text-[#17284a] hover:bg-gray-50 transition-colors"
+          className="hidden lg:flex absolute left-[calc(50%_-_50vw_+_1rem)] top-1/2 -translate-y-1/4 z-10 bg-white rounded-full shadow-md p-3 lg:p-4 text-[#17284a] hover:bg-gray-50 transition-colors"
         >
           <ChevronLeft size={30} />
         </button>
@@ -81,7 +81,7 @@ export default function TeamShowcase({ isRTL }: Props) {
           type="button"
           onClick={() => scroll("right")}
           aria-label={isRTL ? "تمرير لليمين" : "Scroll right"}
-          className="absolute right-[calc(50%_-_50vw_+_1rem)] top-1/2 -translate-y-1/4 z-10 bg-white rounded-full shadow-md p-3 lg:p-4 text-[#17284a] hover:bg-gray-50 transition-colors"
+          className="hidden lg:flex absolute right-[calc(50%_-_50vw_+_1rem)] top-1/2 -translate-y-1/4 z-10 bg-white rounded-full shadow-md p-3 lg:p-4 text-[#17284a] hover:bg-gray-50 transition-colors"
         >
           <ChevronRight size={30} />
         </button>

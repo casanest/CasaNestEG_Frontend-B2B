@@ -107,10 +107,10 @@ export default function HeroSection({ banners, locale, dir }: HeroSectionProps) 
       </div>
 
       {/* Content overlay */}
-      <div className="absolute inset-0 flex flex-col justify-end items-center p-[16px] md:px-[clamp(60px,8vw,100px)] md:pt-[clamp(20px,4vw,60px)] pb-[16px] md:pb-[clamp(20px,3vw,40px)]">
+      <div className="absolute inset-0 flex flex-col justify-end items-center p-[16px] md:px-[clamp(60px,8vw,100px)] md:pt-[clamp(20px,4vw,60px)] pb-[16px] md:pb-[clamp(20px,3vw,40px)] pointer-events-none">
         <div className="flex flex-col gap-[16px] md:gap-[clamp(16px,2vw,24px)] max-w-[calc(70vw+432px)] w-full">
           {/* Heading */}
-          <div className="flex flex-col gap-[8px] md:gap-[clamp(10px,1.2vw,16px)]">
+          <div className="flex flex-col gap-[8px] md:gap-[clamp(10px,1.2vw,16px)] pointer-events-auto">
             <h1 className="text-white text-[28px] md:text-[clamp(28px,4.5vw,56px)] leading-[1.25] font-normal">
               {t("titleLine1")}
               <br />
@@ -122,7 +122,7 @@ export default function HeroSection({ banners, locale, dir }: HeroSectionProps) 
           </div>
 
           {/* CTAs - stacked on mobile, side-by-side on desktop */}
-          <div className="flex flex-col gap-[12px] md:flex-row md:gap-[clamp(12px,1vw,20px)] mt-[0vw]">
+          <div className="flex flex-col gap-[12px] md:flex-row md:gap-[clamp(12px,1vw,20px)] mt-[0vw] pointer-events-auto">
             <LocalizedClientLink
               href="/store"
               className="bg-[#17284a] flex gap-[8px] items-center justify-center px-[20px] md:px-[clamp(20px,2.5vw,36px)] py-[20px] md:py-[clamp(16px,1.6vw,24px)] rounded-[16px] w-full md:w-[clamp(220px,20vw,320px)] hover:bg-[#0f1a2e] transition-colors"
@@ -146,7 +146,7 @@ export default function HeroSection({ banners, locale, dir }: HeroSectionProps) 
         </div>
 
         {/* Bottom carousel meta - desktop only */}
-        <div className="hidden md:flex items-center justify-between w-full mt-[clamp(0px,0vw,0px)]">
+        <div className="hidden md:flex items-center justify-between w-full mt-[clamp(0px,0vw,0px)] pointer-events-auto">
           {/* Slide dots */}
           <div className="flex gap-[8px]">
             {Array.from({ length: slideCount }).map((_, idx) => (
