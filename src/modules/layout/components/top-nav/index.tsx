@@ -11,7 +11,8 @@ export default function TopNav() {
   const translations = {
     faqs: isRTL ? "الأسئلة الشائعة" : "FAQs",
     contactUs: isRTL ? "تواصل معنا" : "Contact Us",
-    phoneNumber: "01233365362"
+    phoneNumber: "01277779373",
+    landlineNumber: "0842202790"
   };
 
   return (
@@ -36,12 +37,21 @@ export default function TopNav() {
         </LocalizedClientLink>
         <div className="flex items-center gap-2" dir="ltr">
           <Phone className="w-5 h-5 text-[#17284a]" />
-          <a
-            href={`tel:${translations.phoneNumber.replace(/\s/g, "")}`}
-            className="text-[14px] font-bold text-[#17284a] hover:underline"
-          >
-            {translations.phoneNumber}
-          </a>
+          <div className="flex items-center gap-1">
+            <a
+              href={`tel:${translations.phoneNumber.replace(/\s/g, "")}`}
+              className="text-[14px] font-bold text-[#17284a] hover:underline"
+            >
+              {translations.phoneNumber}
+            </a>
+            <span className="text-[#17284a] text-[14px] font-bold">-</span>
+            <a
+              href={`tel:${translations.landlineNumber.replace(/\s/g, "")}`}
+              className="text-[14px] font-bold text-[#17284a] hover:underline"
+            >
+              {translations.landlineNumber}
+            </a>
+          </div>
         </div>
       </div>
     </div>

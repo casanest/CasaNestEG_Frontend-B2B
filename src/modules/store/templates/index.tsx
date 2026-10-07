@@ -48,7 +48,22 @@ async function StoreFilters({
   regionId?: string
   inline?: boolean
 }) {
-  const filterOptions = await getStoreFilterOptions(regionId)
+  let filterOptions
+  try {
+    filterOptions = await getStoreFilterOptions(regionId)
+  } catch (error) {
+    console.error("StoreFilters: Failed to fetch filter options:", error)
+    filterOptions = {
+      collections: [],
+      types: [],
+      colors: [],
+      materials: [],
+      sizes: [],
+      priceRange: { min: 0, max: 0 },
+      totalProducts: 0,
+      productCategories: [],
+    }
+  }
 
   return (
     <RefinementList
@@ -78,8 +93,19 @@ const StoreTemplate = async ({
   const locale = await getLocale()
   const isRTL = locale === "ar"
 
-  const region = await getRegion(countryCode)
-  const categoryTree = await listCategories()
+  let region = null
+  try {
+    region = await getRegion(countryCode)
+  } catch (error) {
+    console.error("StoreTemplate: Failed to fetch region:", error)
+  }
+
+  let categoryTree: Category[] = []
+  try {
+    categoryTree = await listCategories()
+  } catch (error) {
+    console.error("StoreTemplate: Failed to fetch categories:", error)
+  }
 
   const flatList: Category[] = []
   const flatten = (cats: Category[]) => {

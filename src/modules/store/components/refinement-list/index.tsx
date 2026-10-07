@@ -587,6 +587,8 @@ const RefinementList = ({
     defaultOpen = true,
     isLast = false,
     variant = "inline",
+    checkboxGroup,
+    count,
   }: {
     title: string
     helper?: string
@@ -594,11 +596,58 @@ const RefinementList = ({
     defaultOpen?: boolean
     isLast?: boolean
     variant?: "inline" | "drawer"
+    count?: number
+    checkboxGroup?: {
+      id: string
+      checked: boolean
+      onCheckedChange: (checked: boolean) => void
+    }
   }) => {
+    const renderCheckbox = () => {
+      if (!checkboxGroup) return null
+      return (
+        <label
+          htmlFor={checkboxGroup.id}
+          onClick={(e) => e.stopPropagation()}
+          className="flex items-center flex-shrink-0 cursor-pointer"
+        >
+          <div
+            className={clx(
+              "flex items-center justify-center h-[18px] w-[18px] rounded-[4px] border-[1.5px] transition-all flex-shrink-0",
+              checkboxGroup.checked
+                ? "bg-[#17284a] border-[#17284a]"
+                : "bg-white border-[#ccc] hover:border-[#17284a]/50"
+            )}
+          >
+            {checkboxGroup.checked && (
+              <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+              </svg>
+            )}
+          </div>
+          <input
+            id={checkboxGroup.id}
+            type="checkbox"
+            checked={checkboxGroup.checked}
+            onChange={(e) => checkboxGroup.onCheckedChange(e.target.checked)}
+            className="sr-only"
+          />
+        </label>
+      )
+    }
+
     if (variant === "drawer") {
       return (
         <div className={clx("flex flex-col gap-4", !isLast && "border-b border-[#e5e7eb] pb-[24px]")}>
-          <span className="text-[16px] font-bold text-[#17284a]">{title}</span>
+          <div className="flex items-center gap-3">
+            {renderCheckbox()}
+            <span className={clx("text-[16px] text-[#17284a]", checkboxGroup?.checked ? "font-bold" : "font-medium")}>
+              {title}
+              {count !== undefined && (
+                <span className="mx-1 text-[14px] text-[#707176] font-normal">({count})</span>
+              )}
+            </span>
+          </div>
           <div className="flex flex-col gap-3">
             {children}
           </div>
@@ -611,7 +660,15 @@ const RefinementList = ({
         open={defaultOpen}
       >
         <summary className="flex cursor-pointer items-center justify-between w-full">
-          <span className="text-[16px] font-bold text-[#17284a]">{title}</span>
+          <div className="flex items-center gap-3">
+            {renderCheckbox()}
+            <span className={clx("text-[16px] text-[#17284a]", checkboxGroup?.checked ? "font-bold" : "font-medium")}>
+              {title}
+              {count !== undefined && (
+                <span className="mx-1 text-[14px] text-[#707176] font-normal">({count})</span>
+              )}
+            </span>
+          </div>
           <ChevronDown className="h-4 w-4 text-[#17284a] transition-transform duration-200 group-open:rotate-180" />
         </summary>
         <div className="flex flex-col gap-3 group-open:animate-in group-open:fade-in group-open:slide-in-from-top-1">
@@ -651,55 +708,62 @@ const RefinementList = ({
       : filterOptions.materials.slice(0, 5)
 
     return (
-    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6">
 
-      {/* Dynamic Sections per Root Category */}
-      {categories?.length ? (
-        visibleCategoryRoots
-          .filter((rootNode) => hasProductsInSubtree(rootNode))
-          .map((rootNode) => {
-            const rootId = String(rootNode.id)
-            const rootLabel = isRTL ? rootNode.name_ar ?? rootNode.name_en : rootNode.name_en
-            const enriched = categoryTree.byId.get(rootId)
-            const children = enriched?.children || []
+        {/* Dynamic Sections per Root Category */}
+        {categories?.length ? (
+          visibleCategoryRoots
+            .filter((rootNode) => hasProductsInSubtree(rootNode))
+            .map((rootNode) => {
+              const rootId = String(rootNode.id)
+              const rootLabel = isRTL ? rootNode.name_ar ?? rootNode.name_en : rootNode.name_en
+              const enriched = categoryTree.byId.get(rootId)
+              const children = enriched?.children || []
 
-            if (children.length === 0) {
+              if (children.length === 0) {
+                return (
+                  <CheckboxRow
+                    key={rootNode.id}
+                    id={`${variant}-category-${rootId}`}
+                    label={rootLabel}
+                    checked={filters.category_id.includes(rootId)}
+                    onCheckedChange={(checked) =>
+                      handleArrayFilterChange("category_id", rootId, checked)
+                    }
+                    count={productCategoryCountMap.get(rootId)}
+                  />
+                )
+              }
+
               return (
-                <CheckboxRow
+                <SectionCard
                   key={rootNode.id}
-                  id={`${variant}-category-${rootId}`}
-                  label={rootLabel}
-                  checked={filters.category_id.includes(rootId)}
-                  onCheckedChange={(checked) =>
-                    handleArrayFilterChange("category_id", rootId, checked)
-                  }
+                  title={rootLabel}
+                  variant={variant}
                   count={productCategoryCountMap.get(rootId)}
-                />
+                  checkboxGroup={{
+                    id: `${variant}-root-category-${rootId}`,
+                    checked: filters.category_id.includes(rootId),
+                    onCheckedChange: (checked) =>
+                      handleArrayFilterChange("category_id", rootId, checked)
+                  }}
+                >
+                  <div className="flex flex-col gap-3 mt-3">
+                    {children
+                      .filter((child) => hasProductsInSubtree(child))
+                      .map((childNode) => renderChildCategoryNode(childNode, variant))}
+                  </div>
+                </SectionCard>
               )
-            }
+            })
+        ) : null}
 
-            return (
-              <SectionCard
-                key={rootNode.id}
-                title={rootLabel}
-                variant={variant}
-              >
-                <div className="flex flex-col gap-3 mt-3">
-                  {children
-                    .filter((child) => hasProductsInSubtree(child))
-                    .map((childNode) => renderChildCategoryNode(childNode, variant))}
-                </div>
-              </SectionCard>
-            )
-          })
-      ) : null}
-
-      {/* Collections */}
-      {filterOptions.collections.length > 0 && (
-        <SectionCard
-          title={isRTL ? "المجموعات" : "Collections"}
-          variant={variant}
-        >
+        {/* Collections */}
+        {filterOptions.collections.length > 0 && (
+          <SectionCard
+            title={isRTL ? "المجموعات" : "Collections"}
+            variant={variant}
+          >
             <div className="flex flex-col gap-3">
               {visibleCollections.map((collection) => (
                 <CheckboxRow
@@ -717,14 +781,14 @@ const RefinementList = ({
               )}
             </div>
           </SectionCard>
-      )}
+        )}
 
-      {/* Product Types */}
-      {filterOptions.types.length > 0 && (
-        <SectionCard
-          title={isRTL ? "الأنواع" : "Product Types"}
-          variant={variant}
-        >
+        {/* Product Types */}
+        {filterOptions.types.length > 0 && (
+          <SectionCard
+            title={isRTL ? "الأنواع" : "Product Types"}
+            variant={variant}
+          >
             <div className="flex flex-col gap-3">
               {visibleTypes.map((type) => (
                 <CheckboxRow
@@ -742,14 +806,14 @@ const RefinementList = ({
               )}
             </div>
           </SectionCard>
-      )}
+        )}
 
-      {/* Colors */}
-      {filterOptions.colors.length > 0 && (
-        <SectionCard
-          title={isRTL ? "الألوان" : "Colors"}
-          variant={variant}
-        >
+        {/* Colors */}
+        {filterOptions.colors.length > 0 && (
+          <SectionCard
+            title={isRTL ? "الألوان" : "Colors"}
+            variant={variant}
+          >
             <div className="flex flex-col gap-3">
               {visibleColors.map((color) => (
                 <CheckboxRow
@@ -767,14 +831,14 @@ const RefinementList = ({
               )}
             </div>
           </SectionCard>
-      )}
+        )}
 
-      {/* Materials */}
-      {filterOptions.materials.length > 0 && (
-        <SectionCard
-          title={isRTL ? "المواد" : "Materials"}
-          variant={variant}
-        >
+        {/* Materials */}
+        {filterOptions.materials.length > 0 && (
+          <SectionCard
+            title={isRTL ? "المواد" : "Materials"}
+            variant={variant}
+          >
             <div className="flex flex-col gap-3">
               {visibleMaterials.map((material) => (
                 <CheckboxRow
@@ -792,14 +856,14 @@ const RefinementList = ({
               )}
             </div>
           </SectionCard>
-      )}
+        )}
 
-      {/* Sizes */}
-      {filterOptions.sizes.length > 0 && (
-        <SectionCard
-          title={isRTL ? "المقاسات" : "Sizes"}
-          variant={variant}
-        >
+        {/* Sizes */}
+        {filterOptions.sizes.length > 0 && (
+          <SectionCard
+            title={isRTL ? "المقاسات" : "Sizes"}
+            variant={variant}
+          >
             <div className="grid grid-cols-2 gap-2">
               {filterOptions.sizes.map((size) => (
                 <button
@@ -843,97 +907,97 @@ const RefinementList = ({
           </SectionCard>
         )}
 
-      {/* Availability - Radio buttons (single-select) */}
-      <SectionCard
-        title={isRTL ? "التوفر" : "Availability"}
-        isLast
-        variant={variant}
-      >
-        <div className="flex flex-col gap-3">
-          {[
-            { value: "all", label: isRTL ? "الكل" : "All", key: "all" },
-            { value: "inStock", label: isRTL ? "بالسعر" : "With Price", key: "inStock" },
-            { value: "madeToOrder", label: isRTL ? "السعر عند الطلب" : "Price on Request", key: "madeToOrder" },
-          ].map((opt) => {
-            const isSelected = opt.value === "all"
-              ? !filters.inStock && !filters.onSale && !filters.madeToOrder
-              : opt.value === "inStock"
-                ? filters.inStock
-                : opt.value === "madeToOrder"
-                  ? filters.madeToOrder
-                  : filters.onSale
-            return (
-              <label
-                key={opt.key}
-                htmlFor={`${variant}-availability-${opt.key}`}
-                className="flex items-center gap-3 cursor-pointer w-full"
-              >
-                <span
-                  className={clx(
-                    "flex items-center justify-center h-[18px] w-[18px] rounded-full transition-all flex-shrink-0",
-                    isSelected
-                      ? "border-[2px] border-[#17284a] bg-white"
-                      : "border-[1.5px] border-[#ccc] bg-white hover:border-[#17284a]/50"
-                  )}
+        {/* Availability - Radio buttons (single-select) */}
+        <SectionCard
+          title={isRTL ? "التوفر" : "Availability"}
+          isLast
+          variant={variant}
+        >
+          <div className="flex flex-col gap-3">
+            {[
+              { value: "all", label: isRTL ? "الكل" : "All", key: "all" },
+              { value: "inStock", label: isRTL ? "بالسعر" : "With Price", key: "inStock" },
+              { value: "madeToOrder", label: isRTL ? "السعر عند الطلب" : "Price on Request", key: "madeToOrder" },
+            ].map((opt) => {
+              const isSelected = opt.value === "all"
+                ? !filters.inStock && !filters.onSale && !filters.madeToOrder
+                : opt.value === "inStock"
+                  ? filters.inStock
+                  : opt.value === "madeToOrder"
+                    ? filters.madeToOrder
+                    : filters.onSale
+              return (
+                <label
+                  key={opt.key}
+                  htmlFor={`${variant}-availability-${opt.key}`}
+                  className="flex items-center gap-3 cursor-pointer w-full"
                 >
-                  {isSelected && (
-                    <span className="h-[10px] w-[10px] rounded-full bg-[#17284a]" />
-                  )}
-                </span>
-                <input
-                  id={`${variant}-availability-${opt.key}`}
-                  type="radio"
-                  name={`${variant}-availability`}
-                  checked={isSelected}
-                  onChange={() => {
-                    if (opt.value === "all") {
-                      setPendingFilters(prev => ({ ...prev, inStock: false, onSale: false, madeToOrder: false }))
-                    } else if (opt.value === "inStock") {
-                      setPendingFilters(prev => ({ ...prev, inStock: true, onSale: false, madeToOrder: false }))
-                    } else if (opt.value === "madeToOrder") {
-                      setPendingFilters(prev => ({ ...prev, inStock: false, onSale: false, madeToOrder: true }))
-                    }
-                  }}
-                  className="sr-only"
-                />
-                <span className={clx("text-[14px]", isSelected ? "font-bold text-[#1c1b1c]" : "text-[#1c1b1c]")}>
-                  {opt.label}
-                </span>
-              </label>
-            )
-          })}
-        </div>
-      </SectionCard>
+                  <span
+                    className={clx(
+                      "flex items-center justify-center h-[18px] w-[18px] rounded-full transition-all flex-shrink-0",
+                      isSelected
+                        ? "border-[2px] border-[#17284a] bg-white"
+                        : "border-[1.5px] border-[#ccc] bg-white hover:border-[#17284a]/50"
+                    )}
+                  >
+                    {isSelected && (
+                      <span className="h-[10px] w-[10px] rounded-full bg-[#17284a]" />
+                    )}
+                  </span>
+                  <input
+                    id={`${variant}-availability-${opt.key}`}
+                    type="radio"
+                    name={`${variant}-availability`}
+                    checked={isSelected}
+                    onChange={() => {
+                      if (opt.value === "all") {
+                        setPendingFilters(prev => ({ ...prev, inStock: false, onSale: false, madeToOrder: false }))
+                      } else if (opt.value === "inStock") {
+                        setPendingFilters(prev => ({ ...prev, inStock: true, onSale: false, madeToOrder: false }))
+                      } else if (opt.value === "madeToOrder") {
+                        setPendingFilters(prev => ({ ...prev, inStock: false, onSale: false, madeToOrder: true }))
+                      }
+                    }}
+                    className="sr-only"
+                  />
+                  <span className={clx("text-[14px]", isSelected ? "font-bold text-[#1c1b1c]" : "text-[#1c1b1c]")}>
+                    {opt.label}
+                  </span>
+                </label>
+              )
+            })}
+          </div>
+        </SectionCard>
 
-      {/* Apply + Clear - inline (desktop sidebar) */}
-      {variant === "inline" && (
-        <div className="flex flex-col gap-2 mt-2">
-          <button
-            type="button"
-            onClick={applyFilters}
-            disabled={!hasPendingChanges}
-            className={clx(
-              "w-full bg-[#17284a] text-white rounded-[12px] py-3 px-6 text-[15px] font-medium transition-all hover:bg-[#0f1d38] active:scale-[0.98]",
-              !hasPendingChanges && "opacity-40 cursor-not-allowed hover:bg-[#17284a]"
-            )}
-          >
-            {isRTL ? "تطبيق الفلاتر" : "Apply Filters"}
-          </button>
-          <button
-            type="button"
-            onClick={clearFilters}
-            className={clx(
-              "w-full bg-[#DCE3F2] text-[#17284a] rounded-[12px] py-3 px-6 text-[15px] font-medium transition-all hover:bg-[#CED5E8] active:scale-[0.98]",
-              !hasActiveFilters && "opacity-50 cursor-not-allowed"
-            )}
-            disabled={!hasActiveFilters}
-          >
-            {isRTL ? "مسح جميع الفلاتر" : "Clear All Filters"}
-          </button>
-        </div>
-      )}
-    </div>
-  )
+        {/* Apply + Clear - inline (desktop sidebar) */}
+        {variant === "inline" && (
+          <div className="flex flex-col gap-2 mt-2">
+            <button
+              type="button"
+              onClick={applyFilters}
+              disabled={!hasPendingChanges}
+              className={clx(
+                "w-full bg-[#17284a] text-white rounded-[12px] py-3 px-6 text-[15px] font-medium transition-all hover:bg-[#0f1d38] active:scale-[0.98]",
+                !hasPendingChanges && "opacity-40 cursor-not-allowed hover:bg-[#17284a]"
+              )}
+            >
+              {isRTL ? "تطبيق الفلاتر" : "Apply Filters"}
+            </button>
+            <button
+              type="button"
+              onClick={clearFilters}
+              className={clx(
+                "w-full bg-[#DCE3F2] text-[#17284a] rounded-[12px] py-3 px-6 text-[15px] font-medium transition-all hover:bg-[#CED5E8] active:scale-[0.98]",
+                !hasActiveFilters && "opacity-50 cursor-not-allowed"
+              )}
+              disabled={!hasActiveFilters}
+            >
+              {isRTL ? "مسح جميع الفلاتر" : "Clear All Filters"}
+            </button>
+          </div>
+        )}
+      </div>
+    )
   }
   const activeFilterCount = [
     filters.inStock,

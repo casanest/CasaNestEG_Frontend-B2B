@@ -116,9 +116,9 @@ export default function Footer({ productCategories, collections, locale, socialM
             {productCategories.length > 0 && (
               <div className="flex flex-col gap-4 flex-1">
                 <h3 className="font-satoshi text-[18px] font-medium">
-                {isRTL ? "المنتجات" : "Products"}
-              </h3>
-              <ul className="flex flex-col gap-4 text-[16px] text-white/80 font-satoshi" data-testid="footer-categories">
+                  {isRTL ? "المنتجات" : "Products"}
+                </h3>
+                <ul className="flex flex-col gap-4 text-[16px] text-white/80 font-satoshi" data-testid="footer-categories">
                   {productCategories.slice(0, 7).map((c) => (
                     <li key={c.id}>
                       <LocalizedClientLink
@@ -158,11 +158,11 @@ export default function Footer({ productCategories, collections, locale, socialM
                     </div>
                     <div className="flex items-center gap-3 lg:gap-[12px] py-2">
                       <Phone className="w-5 h-5 lg:w-6 lg:h-6 text-white/80 flex-shrink-0" />
-                      <span>01233365362</span>
+                      <span dir="ltr">01277779373 - 0842202790</span>
                     </div>
                     <div className="flex items-start gap-3 lg:gap-[12px] py-2">
                       <MapPin className="w-5 h-5 lg:w-6 lg:h-6 text-white/80 flex-shrink-0 mt-0.5" />
-                      <span>{isRTL ? "عماره 5 – شارع البرج – الدور الخامس – ميدان لبنان – المهندسين" : "Building 5 – Al Burj Street – Fifth Floor – Lebanon Square – Mohandessin"}</span>
+                      <span>{isRTL ? "عماره 5 – شارع البرج – الدور الثامن – ميدان لبنان – المهندسين" : "Building 5 – Al Burj Street –eighth floor – Lebanon Square – Mohandessin"}</span>
                     </div>
                     <div className="flex items-start gap-3 lg:gap-[12px] py-2">
                       <MapPin className="w-5 h-5 lg:w-6 lg:h-6 text-white/80 flex-shrink-0 mt-0.5" />

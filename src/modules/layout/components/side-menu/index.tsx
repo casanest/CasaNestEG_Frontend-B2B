@@ -282,10 +282,14 @@ export default function SideMenu({ productCategories, packages = [], projectGrou
             </div>
 
             {/* Phone */}
-            <div className="flex gap-3 h-14 items-center w-full">
+            <div className="flex gap-3 h-14 items-center w-full" dir="ltr">
               <Phone className="w-5 h-5 text-white" />
-              <a href="tel:01233365362" dir="ltr" className="font-satoshi font-medium text-[18px] text-white">
-                01233365362
+              <a href="tel:01277779373" className="font-satoshi font-medium text-[18px] text-white hover:underline">
+                01277779373
+              </a>
+              <span className="font-satoshi font-medium text-[18px] text-white">-</span>
+              <a href="tel:0842202790" className="font-satoshi font-medium text-[18px] text-white hover:underline">
+                0842202790
               </a>
             </div>
           </div>

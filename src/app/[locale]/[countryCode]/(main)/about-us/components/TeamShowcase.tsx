@@ -26,6 +26,13 @@ const teamMembers = [
     role: "Project Manager",
     roleAr: "مدير المشروع",
   },
+    {
+    image: "/marketing-manager.webp",
+    name: "Marketing manager",
+    nameAr: "مدير التسويق",
+    role: "Marketing manager",
+    roleAr: "مدير التسويق والعلامة التجارية",
+  },
   {
     image: "/public-relations.webp",
     name: "Eng. Tarek El-Dahabi",

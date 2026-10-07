@@ -202,21 +202,26 @@ export const listCategories = cache(async (query?: Record<string, any>): Promise
   let catOffset = 0
   let hasMoreCats = true
   while (hasMoreCats) {
-    const { product_categories: batch } = await sdk.client.fetch<{
-      product_categories: any[]
-    }>("/store/product-categories", {
-      query: {
-        fields: "id,name,handle,parent_category_id,metadata",
-        limit: 100,
-        offset: catOffset,
-        ...query,
-      },
-      next,
-      cache: "force-cache",
-    })
-    product_categories.push(...batch)
-    catOffset += batch.length
-    hasMoreCats = batch.length === 100
+    try {
+      const { product_categories: batch } = await sdk.client.fetch<{
+        product_categories: any[]
+      }>("/store/product-categories", {
+        query: {
+          fields: "id,name,handle,parent_category_id,metadata",
+          limit: 100,
+          offset: catOffset,
+          ...query,
+        },
+        next,
+        cache: "force-cache",
+      })
+      product_categories.push(...batch)
+      catOffset += batch.length
+      hasMoreCats = batch.length === 100
+    } catch (error) {
+      console.error("Failed to fetch product categories:", error)
+      hasMoreCats = false
+    }
   }
 
   // Step 2: Normalize each category (children array starts empty)

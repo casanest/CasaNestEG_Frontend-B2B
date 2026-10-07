@@ -35188,7 +35188,7 @@ export default function Footer({ productCategories, collections, locale }: Foote
           <Box className="flex flex-col items-center sm:items-start gap-1">
             <Text size="sm">
               {isRTL
-                ? `© ${new Date().getFullYear()} جميع الحقوق محفوظة ل CASANEST`
+                ? `© ${new Date().getFullYear()} جميع الحقوق محفوظة لM.O.S CASANEST`
                 : `© ${new Date().getFullYear()} All rights reserved to CASANEST`}
             </Text>
             <Text size="sm">
