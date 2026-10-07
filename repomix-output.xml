@@ -20188,7 +20188,7 @@ export default async function ContactPage({ params }: PageProps) {
 
                 <form
                   className="mt-6 grid gap-4"
-                  action="mailto:info@casanest.sa"
+                  action="mailto:info@casanest.com"
                   method="post"
                   encType="text/plain"
                 >
@@ -20247,7 +20247,7 @@ export default async function ContactPage({ params }: PageProps) {
                   {isRTL ? "بيانات التواصل" : "Contact Info"}
                 </h3>
                 <ul className="mt-4 grid gap-3 text-sm text-gray-600">
-                  <li>info@casanest.sa</li>
+                  <li>info@casanest.com</li>
                   <li>+201012345678</li>
                   <li>{isRTL ? "الفيوم، مصر" : "Fayoum, Egypt"}</li>
                 </ul>
@@ -35161,7 +35161,7 @@ export default function Footer({ productCategories, collections, locale }: Foote
                   <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                   <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                 </svg>
-                <span>info@casanest.sa</span>
+                <span>info@casanest.com</span>
               </li>
               <li className="flex items-start gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#043364] flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
