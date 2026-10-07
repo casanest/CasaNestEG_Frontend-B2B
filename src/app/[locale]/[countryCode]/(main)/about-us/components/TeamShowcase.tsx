@@ -28,8 +28,8 @@ const teamMembers = [
   },
     {
     image: "/marketing-manager.webp",
-    name: "Marketing manager",
-    nameAr: "مدير التسويق",
+    name: "End. Ahmed alaa",
+    nameAr: "م/احمد علاء",
     role: "Marketing manager",
     roleAr: "مدير التسويق والعلامة التجارية",
   },
